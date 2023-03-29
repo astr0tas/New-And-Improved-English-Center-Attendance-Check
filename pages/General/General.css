@@ -1,0 +1,18 @@
+@import url('https://fonts.googleapis.com/css?family=Nunito');
+
+.main-container{
+    background-color: #9CBFF5;
+    position: absolute;
+    right: 0;
+    width: 82%;
+    height: 100%;
+
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.nav-slide{
+    background-color: #EDEDED;
+    position: relative;
+}
