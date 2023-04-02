@@ -2,13 +2,11 @@ import './SignIn.css';
 import SignInFrame from './image/SignInFrame.jpg';
 import {useState} from 'react';
 import {Link} from 'react-router-dom';
-import { width } from '@mui/system';
 
 
-export function SignInAs() {
-    const [isPosition, setIsPosition] = useState("");
+export function SignInAs(props) {
     function halderSignIn(event){
-        setIsPosition(event.target.innerHTML);
+        props.position(event.target.innerHTML);
         console.log(event.target.innerHTML);
     }
     return ( 
@@ -17,14 +15,14 @@ export function SignInAs() {
             <div className = "container" id = "box">
                 <h1 class="card-title" style = {{top: '10%', position: 'relative', fontSize: 60}}>Sign in as</h1>
                 <div className = "button-con container flex-column">
-                    <button class="cus-btn btn btn-primary" type="button" style = {{fontSize: 30}} onClick = {halderSignIn}>
-                        <Link to = '/SignIn'>Admin</Link>
+                    <button class="cus-btn btn btn-primary" type="button" style = {{fontSize: 30}}>
+                        <Link to = '/SignIn' onClick = {halderSignIn}>Admin</Link>
                     </button>
-                    <button class="cus-btn btn btn-primary" type="button" style = {{fontSize: 30}} onClick = {halderSignIn}>
-                        <Link to = '/SignIn'>Teacher</Link>
+                    <button class="cus-btn btn btn-primary" type="button" style = {{fontSize: 30}}>
+                        <Link to = '/SignIn' onClick = {halderSignIn}>Teacher</Link>
                     </button>
-                    <button class="cus-btn btn btn-primary" type="button" style = {{fontSize: 30}} onClick = {halderSignIn}>
-                        <Link to = '/SignIn'>Supervisor</Link>
+                    <button class="cus-btn btn btn-primary" type="button" style = {{fontSize: 30}}>
+                        <Link to = '/SignIn' onClick = {halderSignIn}>Supervisor</Link>
                     </button>
                 </div>
             </div>
@@ -32,7 +30,7 @@ export function SignInAs() {
     );
 }
 
-export function SignIn(){
+export function SignIn(props){
     const [isWrong, setWrong] = useState(false);
 
     return (
@@ -84,7 +82,12 @@ export function SignIn(){
                         }
                     </div>
                 </div>
-                <button class="cus-btn btn btn-primary" type="button" style = {{top: '35%', position: 'relative', fontSize: 30}}>Sign in</button>
+                <button class="cus-btn btn btn-primary" type="button" 
+                        style = {{top: '35%', position: 'relative', fontSize: 30}}
+                        onClick = {props.onNavBar()}
+                >
+                    <Link to={"/"+ props.position + "/Home"}>Sign in</Link>
+                </button>
                 <p style = {{top: '30%', left: '30%', position: 'relative', fontSize: 30, cursor: 'pointer', width: '40%'}}>Forgot password?</p>
             </div>
         </div>
