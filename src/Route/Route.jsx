@@ -1,10 +1,10 @@
-import User from '../../pages/User/User';
+import User from '../pages/User/User';
 
+const routes = [
+  {
+    path: '/User',
+    component: User
+  }
+];
 
-export default routes = [
-    {path: '/User', component: User}
-    // ,{path: '/Staffs, component: Staffs},
-    // {path: '/Students, component: Students},
-    // {path: '/Classes, component: Classes},
-    // {path: '/MyClasses, component: MyClasses'}
-]
+export default routes;

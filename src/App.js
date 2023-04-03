@@ -1,10 +1,11 @@
 import { BrowserRouter, Routes, Route} from 'react-router-dom';
-import {useState} from 'react';
+import {useState}         from 'react';
 
 import './App.css';
 import {SignInAs, SignIn} from './pages/SignIn/SignIn.jsx';
-import {NavBar} from './components/NavBar/NavBar.jsx';
-import routes from './Route/Route'
+import User             from './pages/User/User.jsx';
+import Students           from './pages/Admin/Students/Student';
+import {NavBar}           from './components/NavBar/NavBar.jsx';
 
 var employee = {
   name: 'Nguyen Thi B',
@@ -17,7 +18,7 @@ var employee = {
 }
 
 function App() {
-  const [isPosition, setPosition] = useState("");
+  const [isPosition, setPosition] = useState("Admin");
   const [isNavBar, setNavBar] = useState(true);
   return (
     <div className="App container-fluid">
@@ -26,12 +27,8 @@ function App() {
         <Routes>
           <Route path ='/' element ={<SignInAs position = {(position) => setPosition(position)}/>} />
           <Route path ='/SignIn' element ={<SignIn position = {isPosition} onNavBar = {()=>setNavBar(true)}/>}/>
-          {
-            routes.map((route) => {
-              var to = '/' + isPosition + route.path;
-              return <Route path={to} element={route.component} />;
-            })
-          }
+          <Route path = {isPosition + '/User' } element = {<User employee={employee}/>}/>
+          <Route path = {isPosition + '/Students' } element = {<Students/>}/>
         </Routes>
       </BrowserRouter>
     </div>

@@ -1,10 +1,9 @@
 import '../General/General.css';
 import './User.css';
 import {useState} from 'react';
-import { fontWeight } from '@mui/system';
 
 
-export function User({employee}){
+export default function User({employee}){
     const [isEdit, setEdit] = useState(false);
     const [isSuccess, setSuccess] = useState(false);
     
