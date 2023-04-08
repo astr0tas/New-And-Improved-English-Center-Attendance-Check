@@ -29,11 +29,12 @@ export default function AddEntity(props){
                 <div className='avatar-container'>
                     
                 </div>  
-                <button class="img-btn"
-                        onClick = {handleAddImage}
-                >
-                    Add a picture
-                </button>  
+                
+                <>
+                    <label for="file-input" class="img-btn" onClick = {handleAddImage}>Add a picture</label>
+                    <input type="file" id="file-input" accept="image/*" multiple style={{display: 'none'}} />
+                </>
+                
 
                 <div class="info-container">
                     <div class="input-group">
