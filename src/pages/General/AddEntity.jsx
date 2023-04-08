@@ -1,29 +1,58 @@
 import './General.css';
-import React, {useState} from 'react';
 import Noti from './Noti.jsx';
+
+import React, {useState} from 'react';
+import axios from 'axios';
 
 export default function AddEntity(props){
     const [studentClasses, setClasses] = useState("");
     const [showListClass, setShowListClass] = useState(false);
     const [showNoti, setShow] = useState(false);
-    
+    const [curr_option, setCurr] = useState("");
 
     function handleAddImage(){
 
     }
 
-    function handleButton(){
-        props.offAdd()
+    function handleBack(){
+        props.offAdd();
+    }
+
+    function handleConfirm() {
+        if (document.getElementById('name') === null
+            || document.getElementById('ssn') === null
+            || document.getElementById('phone') === null
+            || document.getElementById('email') === null
+            || document.getElementById('birthday') === null
+            || document.getElementById('birthplace') === null
+            || document.getElementById('address') === null
+            ) {
+                setCurr("missing data");
+                setShow(true);
+                return;
+            }
+
+        const name = document.getElementById('name').value;
+        const ssn = document.getElementById('ssn').value;
+        const phone = document.getElementById('phone').value;
+        const email = document.getElementById('email').value;
+        const birthday = document.getElementById('birthday').value;
+        const birthplace = document.getElementById('birthplace').value;
+        const address = document.getElementById('address').value;
+
+        
+        setCurr("add");
+        setShow(true);
     }
 
     return (
         <>
             <div className = 'entity-box'>
                 {
-                    showListClass && <ClassList offClassList = {()=>setShowListClass(false)} showNoti = {() => setShow(true)}  addClass = {(value) => setClasses(value)}/>
+                    showListClass && <ClassList offClassList = {()=>setShowListClass(false)} addClass = {(value) => setClasses(value)}/>
                 }
                 {
-                    showNoti && <Noti offNoti = {() => setShow(false)} option = "add"/>
+                    showNoti && <Noti offNoti = {() => setShow(false)} option = {curr_option}/>
                 }
 
                 <div className='avatar-container'>
@@ -39,45 +68,45 @@ export default function AddEntity(props){
                 <div class="info-container">
                     <div class="input-group">
                         <span class="input-group-text" id="basic-addon1" >Name</span>
-                        <input type="text" class="form-control" aria-describedby="basic-addon1"/>
+                        <input id = 'name' type="text" class="form-control" aria-describedby="basic-addon1"/>
                     </div>
                 </div>
 
                 <div class="info-container" background = 'none'>
                     <div class="input-group">
                         <span class="input-group-text" id="basic-addon1" >SSN</span>
-                        <input type="text" class="form-control" aria-describedby="basic-addon1"/>
+                        <input is = 'ssn' type="text" class="form-control" aria-describedby="basic-addon1"/>
                     </div>
                 </div>
 
                 <div className='info-container'> 
                     <div class="input-group" style = {{width: '40%'}}>
                         <span class="input-group-text" id="basic-addon1" >Phone</span>
-                        <input type="text" class="form-control" aria-describedby="basic-addon1"/>
+                        <input id = 'phone'type="text" class="form-control" aria-describedby="basic-addon1"/>
                     </div>
 
                     <div class="input-group" style = {{width: '55%'}}>
                         <span class="input-group-text" id="basic-addon1" >Email</span>
-                        <input type="text" class="form-control" aria-describedby="basic-addon1"/>
+                        <input id = 'email' type="text" class="form-control" aria-describedby="basic-addon1"/>
                     </div>
                 </div>
 
                 <div class="info-container">
                     <div class="input-group" style = {{width: '40%'}}>
                         <span class="input-group-text" id="basic-addon1" >Birthday</span>
-                        <input type="text" class="form-control" aria-describedby="basic-addon1"/>
+                        <input id = 'birthday' type="text" class="form-control" aria-describedby="basic-addon1"/>
                     </div>
 
                     <div class="input-group" style = {{width: '55%'}}>
                         <span class="input-group-text" id="basic-addon1" >Birthplace</span>
-                        <input type="text" class="form-control" aria-describedby="basic-addon1"/>
+                        <input id = 'birthplace' type="text" class="form-control" aria-describedby="basic-addon1"/>
                     </div>
                 </div>
 
                 <div class="info-container">
                     <div class="input-group">
                         <span class="input-group-text" id="basic-addon1" >Address</span>
-                        <input type="text" class="form-control" aria-describedby="basic-addon1"/>
+                        <input id = 'address' type="text" class="form-control" aria-describedby="basic-addon1"/>
                     </div>
                 </div>
 
@@ -93,8 +122,8 @@ export default function AddEntity(props){
                 </div>
 
                 <div className = 'button-container' >
-                    <button class="btn btn-primary cus-btn" type="button" style = {{fontSize: 20}} onClick = {handleButton}>BACK</button>
-                    <button class="btn btn-primary cus-btn" type="button" style = {{fontSize: 20}} onClick = {handleButton}>CONFIRM</button>
+                    <button class="btn btn-primary cus-btn" type="button" style = {{fontSize: 20}} onClick = {handleBack}>BACK</button>
+                    <button class="btn btn-primary cus-btn" type="button" style = {{fontSize: 20}} onClick = {handleConfirm}>CONFIRM</button>
                 </div>
             </div>
             
@@ -103,35 +132,20 @@ export default function AddEntity(props){
     
 }
 
-var classList = [
-    {
-        name: 'TOEIC1',
-        current: 32,
-        total: 40
-    },
-    {
-        name: 'TOEIC2',
-        current: 36,
-        total: 40
-    },
-    {
-        name: 'TOEIC3',
-        current: 40,
-        total: 40
-    },
-    {
-        name: 'TOEIC4',
-        current: 31,
-        total: 40
-    }
-];
+var classList = [];
+
+axios.get('http://localhost:3030/api/classes')
+.then((res) =>{
+    classList = res.data;
+}
+)
+.catch(error => console.log(error));
 
 function ClassList(props){
     var classAdd = "";
 
     function handleConfirm(){
         props.offClassList();
-        props.showNoti();
         props.addClass(classAdd);
     }
 
@@ -186,8 +200,8 @@ function ClassDetails(props){
     const [isActive, setActive] = useState(false);
     var lclass =  props.class;
     function handleActive(){
-        if (lclass.current !== lclass.total) {
-            if(!isActive) props.add(lclass.name);
+        if (lclass.Current_stu !== lclass.Max_stu) {
+            if(!isActive) props.add(lclass.Name);
             else props.remove();
             
             setActive(!isActive);
@@ -195,9 +209,9 @@ function ClassDetails(props){
     }
     return(
         <div className = 'entity-container'>
-            <p>{lclass.name}</p> 
-            <p>{lclass.current}</p>
-            <p>{lclass.total}</p>
+            <p>{lclass.Name}</p> 
+            <p>{lclass.Current_stu}</p>
+            <p>{lclass.Max_stu}</p>
             <button class = "btn btn-primary" style = {{marginRight: '100px'}}>Details</button>
             <button class={"btn btn-primary" + (isActive ? " active" : "")} onClick = {handleActive}>Add</button>
         </div>

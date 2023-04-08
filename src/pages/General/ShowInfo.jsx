@@ -5,6 +5,9 @@ import {useState} from 'react';
 
 export default function ShowInfo(props){
     const [changeEntity, setChangeEntity] = useState(false);
+    var entity = props.entity;
+    var birthday = new Date(entity.birthday).toLocaleDateString('en-GB');
+
     return (
         <>
             <div className='entity-box'>
@@ -18,13 +21,13 @@ export default function ShowInfo(props){
                         borderRight: '3px black solid',
                     }}
                 > 
-                    <Detail field = "Name" value = {props.name}/>
-                    <Detail field = "SSN" value = {props.ssn}/>
-                    <Detail field = "Phone" value = {props.phone}/>
-                    <Detail field = "Email" value = {props.email}/>
-                    <Detail field = "Address" value = {props.address}/>
-                    <Detail field = "BirthDate" value = {props.birthDate}/>
-                    <Detail field = "BirthPlace" value = {props.birthPlace}/>
+                    <Detail field = "Name" value = {entity.name}/>
+                    <Detail field = "SSN" value = {entity.ssn}/>
+                    <Detail field = "Phone" value = {entity.phone}/>
+                    <Detail field = "Email" value = {entity.email}/>
+                    <Detail field = "Address" value = {entity.address}/>
+                    <Detail field = "BirthDate" value = {birthday}/>
+                    <Detail field = "BirthPlace" value = {entity.birthplace}/>
                 </div>
 
                 <div className = 'avatar-container' style = {{position: 'relative', left: '72.5%'}}>

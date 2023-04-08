@@ -1,9 +1,13 @@
 import './General.css';
 
 export default function Noti(props){
-    var changeNoti = "Student info successfully changed", addNoti = "Student successfully added", noti = "";
+    var changeNoti = "Student info successfully changed"
+        , addNoti = "Student successfully added", noti = ""
+        , missingData = "Missing data";
     if (props.option === 'change') noti = changeNoti;
-    else noti = addNoti;
+    if (props.option === 'add') noti = addNoti;
+    if (props.option === 'missing data') noti = missingData;
+
     return(
         <div className = "noti-container">
                 <p style = {{position: 'absolute', top: '35%'}}>{noti}</p>

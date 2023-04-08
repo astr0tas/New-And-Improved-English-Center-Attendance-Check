@@ -1,13 +1,14 @@
 import './SignIn.css';
 import SignInFrame from './image/SignInFrame.jpg';
-import {useState} from 'react';
-import {Link} from 'react-router-dom';
+import UserContext from '../General/UserContext';
+import {useState, useContext } from 'react';
+import {Link, useNavigate} from 'react-router-dom';
+import axios from 'axios';
 
 
 export function SignInAs(props) {
     function halderSignIn(event){
         props.position(event.target.innerHTML);
-        console.log(event.target.innerHTML);
     }
     return ( 
         <div>
@@ -15,15 +16,15 @@ export function SignInAs(props) {
             <div className = "container" id = "box">
                 <h1 class="card-title" style = {{top: '10%', position: 'relative', fontSize: 60}}>Sign in as</h1>
                 <div className = "button-con container flex-column">
-                    <button class="cus-btn btn btn-primary" type="button" style = {{fontSize: 30}}>
-                        <Link to = '/SignIn' onClick = {halderSignIn}>Admin</Link>
-                    </button>
-                    <button class="cus-btn btn btn-primary" type="button" style = {{fontSize: 30}}>
-                        <Link to = '/SignIn' onClick = {halderSignIn}>Teacher</Link>
-                    </button>
-                    <button class="cus-btn btn btn-primary" type="button" style = {{fontSize: 30}}>
-                        <Link to = '/SignIn' onClick = {halderSignIn}>Supervisor</Link>
-                    </button>
+                    <Link class="cus-btn btn btn-primary" to = '/SignIn' onClick = {halderSignIn} style = {{fontSize: 30, alignItems: 'center', justifyContent: 'center', display: 'flex'}}>
+                         Admin
+                    </Link>
+                    <Link class="cus-btn btn btn-primary" to = '/SignIn' onClick = {halderSignIn} style = {{fontSize: 30, alignItems: 'center', justifyContent: 'center', display: 'flex'}}>
+                        Teacher
+                    </Link>
+                    <Link class="cus-btn btn btn-primary" to = '/SignIn' onClick = {halderSignIn} style = {{fontSize: 30, alignItems: 'center', justifyContent: 'center', display: 'flex'}}>
+                        Supervisor
+                    </Link>
                 </div>
             </div>
         </div>
@@ -32,6 +33,36 @@ export function SignInAs(props) {
 
 export function SignIn(props){
     const [isWrong, setWrong] = useState(false);
+    const { setUser } = useContext(UserContext);
+    const navigate = useNavigate();
+    
+    function handleSignIn() {
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        if (username === "" || password === "") {
+            setWrong(true);
+            return;
+        }
+
+        axios.get('http://localhost:3030/api/user/' + username)
+        .then(res => {
+            var user = res.data;
+
+            if (!user || user.password !== password) {
+                setWrong(true);
+                return;
+            }
+            else{
+                localStorage.setItem('user', JSON.stringify({user, position: props.position}));
+                setUser({user, position: props.position});
+                console.log(props.position);
+                props.onNavBar();
+                navigate('/' + props.position + '/Home');
+            }
+        })
+        .catch(error => console.log(error));
+    }
 
     return (
         <div>
@@ -55,7 +86,7 @@ export function SignIn(props){
                 <div className='container flex-column' style = {{top: '25%', position: 'relative', width: '60%'}}>
                     <p style = {{left: '-40%'}}>Username</p>
                     <div class="input-group input-group-lg cus-input">
-                        <input type="text" class="form-control " placeholder="Username" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-lg"/>
+                        <input id = "username" type="text" class="form-control" placeholder="Username" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-lg"/>
                         {
                             isWrong &&
                             <span>
@@ -69,7 +100,7 @@ export function SignIn(props){
                     </div>
                     <p style = {{left: '-40%', marginTop: '50px'}}>Password</p>
                     <div class="input-group input-group-lg cus-input">
-                        <input type="password" class="form-control " placeholder="Password" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-lg"/>
+                        <input id = "password" type="password" class="form-control " placeholder="Password" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-lg"/>
                         {
                             isWrong &&
                             <span>
@@ -82,11 +113,12 @@ export function SignIn(props){
                         }
                     </div>
                 </div>
+
                 <button class="cus-btn btn btn-primary" type="button" 
                         style = {{top: '35%', position: 'relative', fontSize: 30}}
-                        onClick = {props.onNavBar()}
+                        onClick = {handleSignIn}
                 >
-                    <Link to={"/"+ props.position + "/Home"}>Sign in</Link>
+                    Sign in
                 </button>
                 <p style = {{top: '30%', left: '30%', position: 'relative', fontSize: 30, cursor: 'pointer', width: '40%'}}>Forgot password?</p>
             </div>

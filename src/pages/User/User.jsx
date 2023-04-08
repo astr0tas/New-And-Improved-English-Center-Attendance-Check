@@ -3,20 +3,23 @@ import './User.css';
 import {useState} from 'react';
 
 
-export default function User({employee}){
+export default function User({user}){
+    var f_user = user.user;
+    var birthday = new Date(f_user.birthday).toLocaleDateString('en-GB');
+    
     const [isEdit, setEdit] = useState(false);
     const [isSuccess, setSuccess] = useState(false);
     
     return (
         <div className='main-container'>
             <div className='ssn-container'>
-                {employee.ssn}
+                {f_user.ssn}
             </div>
             <div className='img-container'>
                 <img src={'he'} alt=""/>
             </div>
             <div className='name-container'>
-                {employee.name}
+                {f_user.name}
             </div>
             {isSuccess && <Successfull notEdit = {()=>setEdit(false)} notSuccess = {() => setSuccess(false)}/>}
             <div className='details-container'>
@@ -57,11 +60,11 @@ export default function User({employee}){
                             </svg>
                         </div>
                 }
-                <Detail field = "Address" value = {employee.address} edit = {isEdit} notEdit = {()=>setEdit(false)}/>
-                <Detail field = "BirthDate" value = {employee.birthDate} edit = {isEdit} notEdit = {()=>setEdit(false)}/>
-                <Detail field = "BirthPlace" value = {employee.birthPlace} edit = {isEdit} notEdit = {()=>setEdit(false)}/>
-                <Detail field = "Email" value = {employee.email} edit = {isEdit} notEdit = {()=>setEdit(false)}/>
-                <Detail field = "Phone" value = {employee.phone} edit = {isEdit} notEdit = {()=>setEdit(false)}/>
+                <Detail field = "Address" value = {f_user.address} edit = {isEdit} notEdit = {()=>setEdit(false)}/>
+                <Detail field = "BirthDate" value = {birthday} edit = {isEdit} notEdit = {()=>setEdit(false)}/>
+                <Detail field = "BirthPlace" value = {f_user.birthplace} edit = {isEdit} notEdit = {()=>setEdit(false)}/>
+                <Detail field = "Email" value = {f_user.email} edit = {isEdit} notEdit = {()=>setEdit(false)}/>
+                <Detail field = "Phone" value = {f_user.phone} edit = {isEdit} notEdit = {()=>setEdit(false)}/>
             </div>
         </div>
     )

@@ -1,65 +1,28 @@
 import '../../General/General.css';
 import './Student.css';
+
+import axios from 'axios';
 import AddEntity from '../../General/AddEntity';
 import ShowInfo from '../../General/ShowInfo';
 
 import {useState} from 'react';
 
-var studentList = [
-    {
-        no: 1,
-        name: 'A',
-        ssn: 233,
-        phone: 895764,
-        email: 'dashd@gmail.com',
-        address: 'XYZ-ABC',
-        birthdate: '1/10/2001',
-        birthplace: 'ABC',
-        class: 'TOEIC1, TOEIC4'
-    },
-    {
-        no: 2,
-        name: 'B',
-        ssn: 189,
-        phone: 914257,
-        email: 'dashd@gmail.com',
-        address: 'XYZ-ABC',
-        birthdate: '1/10/2001',
-        birthplace: 'ABC',
-        class: 'TOEIC2, TOEIC4'
-    },
-    {
-        no: 3,
-        name: 'K',
-        ssn: 133,
-        phone: 8523457,
-        email: 'dashd@gmail.com',
-        address: 'XYZ-ABC',
-        birthdate: '1/10/2001',
-        birthplace: 'ABC',
-        class: 'TOEIC1, TOEIC9'
-    },
-    {
-        no: 4,
-        name: 'M',
-        ssn: 127,
-        phone: 1123757,
-        email: 'dashd@gmail.com',
-        address: 'XYZ-ABC',
-        birthdate: '1/10/2001',
-        birthplace: 'ABC',
-        class: 'TOEIC4, TOEIC8'
-    }
-];
+var studentList = [];
+
+axios.get(`http://localhost:3030/api/Students`)
+.then(res => {
+    studentList = res.data;
+})
+.catch(error => console.log(error));
 
 export default function Students(){
     const [addEntity, setAddEntity] = useState(false);
     const [showInfo, setShowInfo] = useState(false);
 
-    const [curr_student, setCurr] = useState();
+    const [curr_student, setCurr] = useState(studentList[0]);
     function handleShowInfo(student){
         setShowInfo(true);
-        setCurr(student)
+        setCurr(student);
     }
     
     return (
@@ -78,7 +41,7 @@ export default function Students(){
 
                 <div className = 'entity-list-container'>
                     {
-                        studentList.map((i_student)=> <StudentDetails student = {i_student} onInfo = {(i_student) => {handleShowInfo(i_student)}} />)
+                        studentList.map((i_student)=> <StudentDetails student = {i_student} onInfo = {() => {handleShowInfo(i_student)}} />)
                     }
                 </div>
 
@@ -102,8 +65,8 @@ export default function Students(){
 function StudentDetails(props){
     return (
         <div className = 'entity-container'>
-            <p>{props.student.no}</p>
-            <p>{props.student.name}</p>
+            <p>{props.student.ssn}</p>
+            <p style= {{width: '400px'}}>{props.student.name}</p>
             <p>{props.student.class}</p>
             <button class = "btn btn-primary" onClick = {() => props.onInfo(true)}>Details</button>
         </div>
