@@ -1,9 +1,12 @@
 import { Link, useResolvedPath, useMatch} from 'react-router-dom';
+import { useContext } from 'react';
 
+import UserContext from '../../pages/General/UserContext.jsx';
 import '../../pages/General/General.css';
 import './NavBar.css';
 
 export function NavBar({position}){
+    const { user } = useContext(UserContext);
     return (
         <div class = "nav-slide flex-column position-absolute" style = {{left: '-2%',width: '20%', height: '100%'}}>
             <ActivePage to = {position + '/Home' }>
