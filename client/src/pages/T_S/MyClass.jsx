@@ -27,13 +27,13 @@ const Card = (className, start_date, end_date, status, currentStudent, maxStuden
       }
       else if (status === 1)
       {
-            status_str = "Inactive";
-            style = "#FF0000";
+            status_str = "No session available";
+            style = "#A8A8A8";
       }
       else
       {
-            status_str = "No session available";
-            style = "#A8A8A8";
+            status_str = "Inactive";
+            style = "#FF0000";
       }
 
       return $("<div>")
@@ -89,11 +89,13 @@ export const MyClasses = () =>
 {
       const render = useRef(false);
       const [offset, setOffset] = useState(0);
+      const [flag, setFlag] = useState(false);
       useEffect(() =>
       {
             if (!render.current)
             {
                   console.log(offset);
+                  console.log(flag);
                   $('[name="my_classes"]').css("fill", "#0083FD");
                   $('[name="my_classes"]').css("color", "#0083FD");
                   $('[name="my_classes"]').css("background-color", "#c7edff");
@@ -107,10 +109,12 @@ export const MyClasses = () =>
                         {
                               if (res.data.length !== 0)
                               {
+                                    setFlag(false);
                                     $("#class_list").append(Card(res.data[0].Name, res.data[0].Start_date, res.data[0].End_date, res.data[0].Status, res.data[0].Current_stu, res.data[0].Max_stu));
                                     $("#class_list").append(Card(res.data[1].Name, res.data[1].Start_date, res.data[1].End_date, res.data[1].Status, res.data[1].Current_stu, res.data[1].Max_stu));
                                     $("#class_list").append(Card(res.data[2].Name, res.data[2].Start_date, res.data[2].End_date, res.data[2].Status, res.data[2].Current_stu, res.data[2].Max_stu));
                               }
+                              else setFlag(true);
                         })
                         .catch(error => console.log(error));
                   // const target = ReactDOM.createRoot(document.getElementById('class_list'));
@@ -205,7 +209,7 @@ export const MyClasses = () =>
                   </div>
                   <div className="w-100 d-flex justify-content-center alig-items-center" style={ { height: '10%' } }>
                         <GrFormPrevious className={ `${ styles.page_button }` } onClick={ () => { if (offset !== 0) { setOffset(offset - 3); render.current = false; $("#class_list").empty(); } } } />
-                        <GrFormNext className={ `${ styles.page_button }` } onClick={ () => { setOffset(offset + 3); render.current = false; $("#class_list").empty(); } } />
+                        <GrFormNext className={ `${ styles.page_button }` } onClick={ () => { if (!flag) { setOffset(offset + 3); render.current = false; $("#class_list").empty(); } } } />
                   </div>
             </div>
       );
