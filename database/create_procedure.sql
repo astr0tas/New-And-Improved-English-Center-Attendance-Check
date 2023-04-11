@@ -8,7 +8,7 @@ CREATE PROCEDURE newStudent(
 	IN p_address varchar(100)
 )
 BEGIN
-	DECLARE p_ssn varchar(12) DEFAULT ssnForNew();
+	DECLARE p_ssn varchar(12) DEFAULT numberOfStudents();
 	INSERT INTO student VALUES(p_ssn, p_name, p_phone, p_birthday, p_birthplace, CONCAT(p_ssn, "@gmail.com"), p_address);
 END $$
 DELIMITER ;

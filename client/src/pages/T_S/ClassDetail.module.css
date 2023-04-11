@@ -1,0 +1,38 @@
+.page {
+      background-color: rgba(0, 136, 255, 0.5);
+}
+
+.board {
+      width: 90%;
+      height: 90%;
+      background-color: #EDEDED;
+      border: 1px solid black;
+      border-radius: 20px;
+}
+
+.button {
+      background-color: #4E7EF8;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      height: 50px;
+      width: 150px;
+      font-size: 20px;
+}
+
+.button:active {
+      background-color: #8bacff;
+}
+
+.back {
+      background-color: #BFBFBF;
+      border: none;
+      border-radius: 10px;
+      height: 50px;
+      width: 150px;
+      font-size: 20px;
+}
+
+.back:active {
+      background-color: #a2a1a1;
+}

@@ -54,7 +54,7 @@ CREATE TABLE CLASS (
   Start_date DATE,
   End_date DATE,
   Name VARCHAR(50),
-  Status VARCHAR(50) NOT NULL,
+  Status int NOT NULL,
   Max_stu INT NOT NULL,
   Current_stu INT,
   PRIMARY KEY (Name)
@@ -105,13 +105,13 @@ CREATE TABLE SESSION (
 	ON UPDATE CASCADE,
     RoomNumber varchar(10) references CLASSROOM(Number) on delete cascade on update cascade,
     Session_number INT,
-    Status VARCHAR(50),
+    Status INT,
      -- Teacher responsible for the session
     TeacherSSN varchar(12) not null references TEACHER(SSN) on delete cascade on update cascade,
      -- Supervisor responsible for the session
     SupervisorSSN VARCHAR(12) NOT NULL references SUPERVISOR(SSN) on delete cascade on update cascade,
     NoteForClass text,
-    TeacherAttendanceStatus varchar(10) not null,
+    TeacherAttendanceStatus int,
     TeacherAttendanceNote text,
     ClassName VARCHAR(50) not null references CLASS(Name) on delete cascade on update cascade,
     -- Make up for a session
@@ -131,7 +131,7 @@ CREATE TABLE STUDENT_ATTENDANCE (
 	Session_date DATE,
 	RoomNumber varchar(10),
     Session_number INT,
-    Status VARCHAR(10) not null,
+    Status int not null,
     Note text,
     PRIMARY KEY(StudentSSN, Start_hour,End_hour,Session_date,RoomNumber,Session_number),
     FOREIGN KEY(Start_hour,End_hour,Session_date,RoomNumber,Session_number) REFERENCES SESSION(Start_hour,End_hour,Session_date,RoomNumber,Session_number) ON DELETE CASCADE ON UPDATE CASCADE,

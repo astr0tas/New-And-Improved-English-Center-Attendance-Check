@@ -2,13 +2,23 @@ import './SignIn.css';
 import SignInFrame from './image/SignInFrame.jpg';
 import UserContext from '../General/UserContext';
 
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 
 export function SignInAs()
 {
+    useEffect(() =>
+    {
+        const cookies = document.cookie.split('; ');
+        for (let i = 0; i < cookies.length; i++)
+        {
+            const cookie = cookies[i].split('=');
+            document.cookie = cookie[0] + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+        }
+    })
+
     const { user } = useContext(UserContext);
     function halderSignIn(event)
     {
@@ -42,6 +52,7 @@ export function SignIn(props)
     const navigate = useNavigate();
     var f_position = user.position;
 
+
     function handleSignIn()
     {
         const username = document.getElementById('username').value;
@@ -53,27 +64,53 @@ export function SignIn(props)
             return;
         }
 
-        axios.get('http://localhost:3030/' + user.position + '/user/' + username)
-            .then(res =>
-            {
-                var user = res.data;
+        if (user.position === "Admin")
+        {
+            axios.get('http://localhost:3030/' + user.position + '/user/' + username)
+                .then(res =>
+                {
+                    var user = res.data;
 
-                if (!user || user.password !== password)
+                    if (!user || user.password !== password)
+                    {
+                        setWrong(true);
+                        return;
+                    }
+                    else
+                    {
+                        localStorage.setItem('user', JSON.stringify({ user, position: f_position }));
+                        localStorage.setItem('navbar', true);
+                        setUser({ user, position: f_position });
+                        console.log(f_position);
+                        props.onNavBar();
+                        navigate('/' + f_position + '/Home');
+                    }
+                })
+                .catch(error => console.log(error));
+        }
+        else
+        {
+            axios.post('http://localhost:3030/TS/login', { params: { account: username, password: password } })
+                .then(res =>
                 {
-                    setWrong(true);
-                    return;
-                }
-                else
-                {
-                    localStorage.setItem('user', JSON.stringify({ user, position: f_position }));
-                    localStorage.setItem('navbar', true);
-                    setUser({ user, position: f_position });
-                    console.log(f_position);
-                    props.onNavBar();
-                    navigate('/' + f_position + '/Home');
-                }
-            })
-            .catch(error => console.log(error));
+                    if (!res.data)
+                        setWrong(true);
+                    else
+                    {
+                        document.cookie = `ssn=${ res.data };`;
+                        document.cookie = 'userType=TS;';
+                        // SHOULD BE CHANGED
+                        localStorage.setItem('user', JSON.stringify({ user, position: f_position }));
+                        localStorage.setItem('navbar', true);
+                        setUser({ user, position: f_position });
+                        console.log(f_position);
+                        props.onNavBar();
+                        navigate('/' + f_position + '/Home');
+                        // SHOULD BE CHANGED
+                    }
+                })
+                .catch(error => console.log(error));
+        }
     }
 
     return (

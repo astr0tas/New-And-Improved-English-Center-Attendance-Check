@@ -7,6 +7,8 @@ import { SignInAs, SignIn } from './pages/SignIn/SignIn.jsx';
 import User from './pages/User/User.jsx';
 import Students from './pages/Admin/Students/Student.jsx';
 import { NavBar } from './pages/NavBar/NavBar.jsx';
+import { MyClasses } from './pages/T_S/MyClass';
+import ClassDetail from './pages/T_S/ClassDetail';
 
 
 function App()
@@ -22,11 +24,11 @@ function App()
       setUser(JSON.parse(savedUser));
     }
     setNavBar(localStorage.getItem('navbar'));
-      
+
   }, []);
 
   return (
-    <div className="App container-fluid">
+    <div className="App">
       <UserContext.Provider value={ { user, setUser } }>
         <BrowserRouter>
           { isNavBar && <NavBar position={ user.position } /> }
@@ -35,6 +37,10 @@ function App()
             <Route path='/SignIn' element={ <SignIn onNavBar={ () => setNavBar(true) } /> } />
             <Route path={ user.position + '/User' } element={ <User /> } />
             <Route path={ user.position + '/Students' } element={ <Students /> } />
+            <Route>
+              <Route path={ `${ user.position }/MyClasses` } element={ <MyClasses /> } />
+              <Route path={ `${ user.position }/MyClasses/ClassDetail` } element={ <ClassDetail /> } />
+            </Route>
           </Routes>
         </BrowserRouter>
       </UserContext.Provider>
