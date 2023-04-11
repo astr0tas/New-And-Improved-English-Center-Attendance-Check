@@ -1,6 +1,44 @@
 @import url('https://fonts.googleapis.com/css?family=Nunito');
 
-.pageName-container{
+.navBar {
+    background-color: #EDEDED;
+}
+
+.icon {
+    width: 80px;
+    height: 80px;
+}
+
+.tab {
+    font-size: 40px;
+    text-decoration: none;
+    color: black;
+}
+
+.link {
+    height: 150px;
+}
+
+.link:hover {
+    cursor: pointer;
+}
+
+.link:not(:last-child):hover {
+    background-color: #c7edff;
+}
+
+.link:not(:last-child):hover>* {
+    color: #0083FD;
+    fill: #0083FD;
+}
+
+.link:last-child>* {
+    color: red;
+    fill: red;
+}
+
+
+/* .pageName-container{
     width: 100%;
     height: 6%;
     
@@ -73,4 +111,4 @@ sgv{
     position: absolute;
     left: 10%;
     background-color: red;
-}
+} */

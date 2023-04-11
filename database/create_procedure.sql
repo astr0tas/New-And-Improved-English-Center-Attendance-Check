@@ -13,7 +13,7 @@ BEGIN
 END $$
 DELIMITER ;
 
---add new student to class
+-- add new student to class
 DELIMITER $$
 CREATE PROCEDURE addStudent(
 	IN p_ssn varchar(12),
@@ -26,7 +26,7 @@ END $$
 DELIMITER ;
 
 
---change class of student
+-- change class of student
 DELIMITER $$
 CREATE PROCEDURE changeClass(
 	IN p_ssn varchar(12),

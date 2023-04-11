@@ -3,7 +3,8 @@ CREATE DATABASE ENGLISH_CENTER;
 USE ENGLISH_CENTER;
 
 CREATE TABLE EMPLOYEE (
-  ssn VARCHAR(12) NOT NULL,
+  id VARCHAR(12),
+  ssn VARCHAR(12) unique NOT NULL,
   name VARCHAR(50) NOT NULL,
   phone VARCHAR(10) not null,
   username VARCHAR(20) UNIQUE NOT NULL,
@@ -12,7 +13,7 @@ CREATE TABLE EMPLOYEE (
   birthplace VARCHAR(50),
   email VARCHAR(100) not null,
   address VARCHAR(100),
-  PRIMARY KEY (ssn)
+  PRIMARY KEY (id)
 );
 
 CREATE TABLE STUDENT (
@@ -27,25 +28,25 @@ CREATE TABLE STUDENT (
 );
 
 CREATE TABLE ADMIN (
-    ssn VARCHAR(12) PRIMARY KEY,
-    FOREIGN KEY (ssn)
-        REFERENCES EMPLOYEE(ssn)
+    id VARCHAR(12) PRIMARY KEY,
+    FOREIGN KEY (id)
+        REFERENCES EMPLOYEE(id)
         ON DELETE CASCADE
         ON UPDATE CASCADE
 );
 
 CREATE TABLE SUPERVISOR (
-    ssn VARCHAR(12) PRIMARY KEY,
-    FOREIGN KEY (ssn)
-        REFERENCES EMPLOYEE(ssn)
+    id VARCHAR(12) PRIMARY KEY,
+    FOREIGN KEY (id)
+        REFERENCES EMPLOYEE(id)
         ON DELETE CASCADE
         ON UPDATE CASCADE
 );
 
 CREATE TABLE TEACHER (
-    SSN VARCHAR(12) PRIMARY KEY,
-    FOREIGN KEY (SSN)
-        REFERENCES EMPLOYEE(ssn)
+    id VARCHAR(12) PRIMARY KEY,
+    FOREIGN KEY (id)
+        REFERENCES EMPLOYEE(id)
         ON DELETE CASCADE
         ON UPDATE CASCADE
 );
@@ -107,9 +108,9 @@ CREATE TABLE SESSION (
     Session_number INT,
     Status INT,
      -- Teacher responsible for the session
-    TeacherSSN varchar(12) not null references TEACHER(SSN) on delete cascade on update cascade,
+    TeacherID varchar(12) not null references TEACHER(id) on delete cascade on update cascade,
      -- Supervisor responsible for the session
-    SupervisorSSN VARCHAR(12) NOT NULL references SUPERVISOR(SSN) on delete cascade on update cascade,
+    SupervisorID VARCHAR(12) NOT NULL references SUPERVISOR(id) on delete cascade on update cascade,
     NoteForClass text,
     TeacherAttendanceStatus int,
     TeacherAttendanceNote text,

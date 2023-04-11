@@ -1,8 +1,8 @@
 import './SignIn.css';
 import SignInFrame from './image/SignInFrame.jpg';
-import UserContext from '../General/UserContext';
-
-import { useState, useContext, useEffect } from 'react';
+// import UserContext from '../General/UserContext';
+// import { useContext } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
@@ -19,24 +19,28 @@ export function SignInAs()
         }
     })
 
-    const { user } = useContext(UserContext);
+    // const { user } = useContext(UserContext);
     function halderSignIn(event)
     {
-        user.position = event.target.innerHTML;
+        // user.position = event.target.innerHTML;
+        if (event.target.innerHTML === "Admin")
+            document.cookie = `userType=Admin;`;
+        else
+            document.cookie = `userType=TS;`;
     }
     return (
         <div>
             <img alt="" className="position-absolute" src={ SignInFrame } style={ { top: 0, left: 0, width: '100%', height: '100%', zIdex: 0 } } />
             <div className="container" id="box">
-                <h1 class="card-title" style={ { top: '10%', position: 'relative', fontSize: 60 } }>Sign in as</h1>
+                <h1 className="card-title" style={ { top: '10%', position: 'relative', fontSize: 60 } }>Sign in as</h1>
                 <div className="button-con container flex-column">
-                    <Link class="cus-btn btn btn-primary" to='/SignIn' onClick={ halderSignIn } style={ { fontSize: 30, alignItems: 'center', justifyContent: 'center', display: 'flex' } }>
+                    <Link className="cus-btn btn btn-primary" to='/SignIn' onClick={ halderSignIn } style={ { fontSize: 30, alignItems: 'center', justifyContent: 'center', display: 'flex' } }>
                         Admin
                     </Link>
-                    <Link class="cus-btn btn btn-primary" to='/SignIn' onClick={ halderSignIn } style={ { fontSize: 30, alignItems: 'center', justifyContent: 'center', display: 'flex' } }>
+                    <Link className="cus-btn btn btn-primary" to='/SignIn' onClick={ halderSignIn } style={ { fontSize: 30, alignItems: 'center', justifyContent: 'center', display: 'flex' } }>
                         Teacher
                     </Link>
-                    <Link class="cus-btn btn btn-primary" to='/SignIn' onClick={ halderSignIn } style={ { fontSize: 30, alignItems: 'center', justifyContent: 'center', display: 'flex' } }>
+                    <Link className="cus-btn btn btn-primary" to='/SignIn' onClick={ halderSignIn } style={ { fontSize: 30, alignItems: 'center', justifyContent: 'center', display: 'flex' } }>
                         Supervisor
                     </Link>
                 </div>
@@ -48,10 +52,33 @@ export function SignInAs()
 export function SignIn(props)
 {
     const [isWrong, setWrong] = useState(false);
-    const { user, setUser } = useContext(UserContext);
+    // const { user, setUser } = useContext(UserContext);
     const navigate = useNavigate();
-    var f_position = user.position;
+    // var f_position = user.position;
 
+    function cookieExists(cookieName)
+    {
+        const cookies = document.cookie.split('; ');
+        for (let i = 0; i < cookies.length; i++)
+        {
+            const cookie = cookies[i].split('=');
+            if (cookie[0] === cookieName)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    useEffect(() =>
+    {
+        if (cookieExists('userType') && cookieExists('id'))
+            navigate("/Home");
+        else if (cookieExists('userType') && !cookieExists('id'))
+            ;
+        else
+            navigate("/");
+    });
 
     function handleSignIn()
     {
@@ -64,12 +91,28 @@ export function SignIn(props)
             return;
         }
 
-        if (user.position === "Admin")
+        function getCookieValue(cookieName)
         {
-            axios.get('http://localhost:3030/' + user.position + '/user/' + username)
+            const cookies = document.cookie.split('; ');
+            for (let i = 0; i < cookies.length; i++)
+            {
+                const cookie = cookies[i].split('=');
+                if (cookie[0] === cookieName)
+                {
+                    return decodeURIComponent(cookie[1]);
+                }
+            }
+            return null;
+        }
+
+        if (getCookieValue('userType') === "Admin")
+        {
+            axios.get('http://localhost:3030/admin/user/' + username)
                 .then(res =>
                 {
                     var user = res.data;
+
+                    console.log(user);
 
                     if (!user || user.password !== password)
                     {
@@ -78,12 +121,13 @@ export function SignIn(props)
                     }
                     else
                     {
-                        localStorage.setItem('user', JSON.stringify({ user, position: f_position }));
-                        localStorage.setItem('navbar', true);
-                        setUser({ user, position: f_position });
-                        console.log(f_position);
-                        props.onNavBar();
-                        navigate('/' + f_position + '/Home');
+                        document.cookie = `id=${ user.id };`;
+                        // localStorage.setItem('user', JSON.stringify({ user, position: f_position }));
+                        // localStorage.setItem('navbar', true);
+                        // setUser({ user, position: f_position });
+                        // console.log(f_position);
+                        // props.onNavBar();
+                        navigate('/Home');
                     }
                 })
                 .catch(error => console.log(error));
@@ -97,15 +141,15 @@ export function SignIn(props)
                         setWrong(true);
                     else
                     {
-                        document.cookie = `ssn=${ res.data };`;
-                        document.cookie = 'userType=TS;';
+                        document.cookie = `id=${ res.data };`;
+                        navigate('/Home');
                         // SHOULD BE CHANGED
-                        localStorage.setItem('user', JSON.stringify({ user, position: f_position }));
-                        localStorage.setItem('navbar', true);
-                        setUser({ user, position: f_position });
-                        console.log(f_position);
-                        props.onNavBar();
-                        navigate('/' + f_position + '/Home');
+                        // localStorage.setItem('user', JSON.stringify({ user, position: f_position }));
+                        // localStorage.setItem('navbar', true);
+                        // setUser({ user, position: f_position });
+                        // console.log(f_position);
+                        // props.onNavBar();
+                        // navigate('/' + f_position + '/Home');
                         // SHOULD BE CHANGED
                     }
                 })
@@ -117,7 +161,7 @@ export function SignIn(props)
         <div>
             <img alt="" className="position-absolute" src={ SignInFrame } style={ { top: 0, left: 0, width: '100%', height: '100%', zIdex: 0 } } />
             <div className="container flex-column" id='box'>
-                <h1 class="card-title" style={ { top: '10%', position: 'relative', fontSize: 60 } }>Sign in</h1>
+                <h1 className="card-title" style={ { top: '10%', position: 'relative', fontSize: 60 } }>Sign in</h1>
                 {
                     isWrong &&
                     <p
@@ -134,36 +178,36 @@ export function SignIn(props)
                 }
                 <div className='container flex-column' style={ { top: '25%', position: 'relative', width: '60%' } }>
                     <p style={ { left: '-40%' } }>Username</p>
-                    <div class="input-group input-group-lg cus-input">
-                        <input id="username" type="text" class="form-control" placeholder="Username" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-lg" />
+                    <div className="input-group input-group-lg cus-input">
+                        <input id="username" type="text" className="form-control" placeholder="Username" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-lg" />
                         {
                             isWrong &&
                             <span>
                                 <svg width="45" height="45" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M52 32C52 43.0457 43.0457 52 32 52C20.9543 52 12 43.0457 12 32C12 20.9543 20.9543 12 32 12C43.0457 12 52 20.9543 52 32Z" stroke="#EE1C1C" stroke-width="2" />
-                                    <path d="M24 24L40 40" stroke="#EE1C1C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                                    <path d="M40 24L24 40" stroke="#EE1C1C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                    <path d="M52 32C52 43.0457 43.0457 52 32 52C20.9543 52 12 43.0457 12 32C12 20.9543 20.9543 12 32 12C43.0457 12 52 20.9543 52 32Z" stroke="#EE1C1C" strokeWidth="2" />
+                                    <path d="M24 24L40 40" stroke="#EE1C1C" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                    <path d="M40 24L24 40" stroke="#EE1C1C" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                                 </svg>
                             </span>
                         }
                     </div>
                     <p style={ { left: '-40%', marginTop: '50px' } }>Password</p>
-                    <div class="input-group input-group-lg cus-input">
-                        <input id="password" type="password" class="form-control " placeholder="Password" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-lg" />
+                    <div className="input-group input-group-lg cus-input">
+                        <input id="password" type="password" className="form-control " placeholder="Password" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-lg" />
                         {
                             isWrong &&
                             <span>
                                 <svg width="45" height="45" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M52 32C52 43.0457 43.0457 52 32 52C20.9543 52 12 43.0457 12 32C12 20.9543 20.9543 12 32 12C43.0457 12 52 20.9543 52 32Z" stroke="#EE1C1C" stroke-width="2" />
-                                    <path d="M24 24L40 40" stroke="#EE1C1C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                                    <path d="M40 24L24 40" stroke="#EE1C1C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                    <path d="M52 32C52 43.0457 43.0457 52 32 52C20.9543 52 12 43.0457 12 32C12 20.9543 20.9543 12 32 12C43.0457 12 52 20.9543 52 32Z" stroke="#EE1C1C" strokeWidth="2" />
+                                    <path d="M24 24L40 40" stroke="#EE1C1C" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                    <path d="M40 24L24 40" stroke="#EE1C1C" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                                 </svg>
                             </span>
                         }
                     </div>
                 </div>
 
-                <button class="cus-btn btn btn-primary" type="button"
+                <button className="cus-btn btn btn-primary" type="button"
                     style={ { top: '35%', position: 'relative', fontSize: 30 } }
                     onClick={ handleSignIn }
                 >
