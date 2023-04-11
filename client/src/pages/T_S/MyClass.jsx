@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { GrFormPrevious, GrFormNext } from 'react-icons/gr'
 import styles from "./MyClass.module.css";
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const Card = (className, start_date, end_date, status, currentStudent, maxStudent) =>
 {
@@ -66,23 +67,6 @@ const Card = (className, start_date, end_date, status, currentStudent, maxStuden
                         .append($("<h5>").text("Students: " + currentStudent + "/" + maxStudent))
                         .append($("<a>").addClass("btn").addClass("btn-primary").addClass("mt-auto").addClass("mb-5").attr("href", "./MyClasses/" + className).text("Class Detail"))
             );
-
-
-      // return (
-      //       <div className="d-flex flex-column align-items-center h-75" style={ { width: '20%', backgroundColor: "#EDEDED", border: "2px solid black", borderRadius: "20px" } }>
-      //             <img className="w-100 h-25" src="https://img.freepik.com/free-vector/flat-design-english-school-illustration_23-2149491248.jpg" alt="image" style={ {
-      //                   borderTopRightRadius: "20px",
-      //                   borderTopLeftRadius: "20px"
-      //             } } />
-      //             <div className="d-flex flex-column align-items-center h-75">
-      //                   <h1>{ props.clasName }</h1>
-      //                   <p>Period: { props.period } - { props.period }</p>
-      //                   <p>Status: { props.status }</p>
-      //                   <p>Students:{ props.currentStudent }/{ props.maxStudent }</p>
-      //                   <a href="#" className="btn btn-primary mt-auto mb-5">Class Detail</a>
-      //             </div>
-      //       </div>
-      // );
 }
 
 export const MyClasses = () =>
@@ -90,8 +74,26 @@ export const MyClasses = () =>
       const render = useRef(false);
       const [offset, setOffset] = useState(0);
       const [flag, setFlag] = useState(false);
+      const Navigate = useNavigate();
+
+      function cookieExists(cookieName)
+      {
+            const cookies = document.cookie.split('; ');
+            for (let i = 0; i < cookies.length; i++)
+            {
+                  const cookie = cookies[i].split('=');
+                  if (cookie[0] === cookieName)
+                  {
+                        return true;
+                  }
+            }
+            return false;
+      }
+
       useEffect(() =>
       {
+            if (!cookieExists('userType') || !cookieExists('id'))
+                  Navigate("/");
             if (!render.current)
             {
                   console.log(offset);
@@ -117,10 +119,6 @@ export const MyClasses = () =>
                               else setFlag(true);
                         })
                         .catch(error => console.log(error));
-                  // const target = ReactDOM.createRoot(document.getElementById('class_list'));
-                  // target.render(<Card />);
-                  // target.render(<Card />);
-                  // target.render(<Card />);
                   render.current = true;
             }
       }, [offset]);
@@ -128,84 +126,6 @@ export const MyClasses = () =>
       return (
             <div className={ `h-100 ${ styles.page }` } style={ { marginLeft: '300px', width: 'calc(100% - 300px)' } }>
                   <div className="w-100 d-flex justify-content-around align-items-center" id="class_list" style={ { height: '90%' } }>
-                        {/* <div className="d-flex flex-column align-items-center h-75" style={ { width: '25%', backgroundColor: "#EDEDED", border: "2px solid black", borderRadius: "20px" } }>
-                              <img className="w-100 h-25" src="https://img.freepik.com/free-vector/flat-design-english-school-illustration_23-2149491248.jpg" alt="" style={ {
-                                    borderTopRightRadius: "20px",
-                                    borderTopLeftRadius: "20px"
-                              } } />
-                              <div className="d-flex flex-column align-items-center h-75">
-                                    <h1>CLASS NAME</h1>
-                                    <p>Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                    <p>Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                    <p>Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                    <a href="./MyClasses/ClassDetail" className={ `mt-auto mb-5  ${ styles.detail }` }>Class Detail</a>
-                              </div>
-                        </div>
-                        <div className="d-flex flex-column align-items-center h-75" style={ { width: '25%', backgroundColor: "#EDEDED", border: "2px solid black", borderRadius: "20px" } }>
-                              <img className="w-100 h-25" src="https://img.freepik.com/free-vector/flat-design-english-school-illustration_23-2149491248.jpg" alt="" style={ {
-                                    borderTopRightRadius: "20px",
-                                    borderTopLeftRadius: "20px"
-                              } } />
-                              <div className="d-flex flex-column align-items-center h-75">
-                                    <h1>CLASS NAME</h1>
-                                    <p>Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                    <p>Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                    <p>Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                    <a href="./MyClasses/ClassDetail" className={ `mt-auto mb-5  ${ styles.detail }` }>Class Detail</a>
-                              </div>
-                        </div>
-                        <div className="d-flex flex-column align-items-center h-75" style={ { width: '25%', backgroundColor: "#EDEDED", border: "2px solid black", borderRadius: "20px" } }>
-                              <img className="w-100 h-25" src="https://img.freepik.com/free-vector/flat-design-english-school-illustration_23-2149491248.jpg" alt="" style={ {
-                                    borderTopRightRadius: "20px",
-                                    borderTopLeftRadius: "20px"
-                              } } />
-                              <div className="d-flex flex-column align-items-center h-75">
-                                    <h1>CLASS NAME</h1>
-                                    <p>Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                    <p>Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                    <p>Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                    <a href="./MyClasses/ClassDetail" className={ `mt-auto mb-5 ${ styles.detail }` }>Class Detail</a>
-                              </div>
-                        </div> */}
-                        {/* <div className="card h-75" style={ { width: '20%', backgroundColor: "#EDEDED", border: "2px solid black", borderRadius: "20px" } }>
-                              <img className="card-img-top" src="https://img.freepik.com/free-vector/flat-design-english-school-illustration_23-2149491248.jpg" alt="image" style={ {
-                                    borderTopRightRadius: "20px",
-                                    borderTopLeftRadius: "20px"
-                              } } />
-                              <div className="card-body">
-                                    <h1 className="card-title">CLASS NAME</h1>
-                                    <p className="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                    <p className="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                    <p className="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                    <a href="#" className="btn btn-primary" style={ { marginTop: '75%' } }>Class Detail</a>
-                              </div>
-                        </div>
-                        <div className="card h-75" style={ { width: '20%', backgroundColor: "#EDEDED", border: "2px solid black", borderRadius: "20px" } }>
-                              <img className="card-img-top" src="https://img.freepik.com/free-vector/flat-design-english-school-illustration_23-2149491248.jpg" alt="image" style={ {
-                                    borderTopRightRadius: "20px",
-                                    borderTopLeftRadius: "20px"
-                              } } />
-                              <div className="card-body">
-                                    <h1 className="card-title">CLASS NAME</h1>
-                                    <p className="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                    <p className="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                    <p className="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                    <a href="#" className="btn btn-primary" style={ { marginTop: '75%' } }>Class Detail</a>
-                              </div>
-                        </div>
-                        <div className="card h-75" style={ { width: '20%', backgroundColor: "#EDEDED", border: "2px solid black", borderRadius: "20px" } }>
-                              <img className="card-img-top" src="https://img.freepik.com/free-vector/flat-design-english-school-illustration_23-2149491248.jpg" alt="image" style={ {
-                                    borderTopRightRadius: "20px",
-                                    borderTopLeftRadius: "20px"
-                              } } />
-                              <div className="card-body">
-                                    <h1 className="card-title">CLASS NAME</h1>
-                                    <p className="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                    <p className="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                    <p className="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                    <a href="#" className="btn btn-primary" style={ { marginTop: '75%' } }>Class Detail</a>
-                              </div>
-                        </div> */}
                   </div>
                   <div className="w-100 d-flex justify-content-center alig-items-center" style={ { height: '10%' } }>
                         <GrFormPrevious className={ `${ styles.page_button }` } onClick={ () => { if (offset !== 0) { setOffset(offset - 3); render.current = false; $("#class_list").empty(); } } } />
