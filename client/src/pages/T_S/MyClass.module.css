@@ -1,5 +1,7 @@
 .page {
       background-color: rgba(0, 136, 255, 0.5);
+      margin-left: 250px;
+      width: calc(100% - 250px);
 }
 
 .page_button {
@@ -37,4 +39,18 @@
 
 .detail:active {
       background-color: #8bacff;
+}
+
+/* @media only screen and (max-width:1400px) {
+      .page {
+            margin-left: 250px;
+            width: calc(100% - 250px);
+      }
+} */
+
+@media only screen and (max-width:1200px) {
+      .page {
+            margin-left: 200px;
+            width: calc(100% - 200px);
+      }
 }

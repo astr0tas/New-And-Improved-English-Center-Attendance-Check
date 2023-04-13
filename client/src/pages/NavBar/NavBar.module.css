@@ -2,6 +2,7 @@
 
 .navBar {
     background-color: #EDEDED;
+    width: 250px;
 }
 
 .icon {
@@ -10,7 +11,7 @@
 }
 
 .tab {
-    font-size: 40px;
+    font-size: 30px;
     text-decoration: none;
     color: black;
 }
@@ -35,6 +36,26 @@
 .link:last-child>* {
     color: red;
     fill: red;
+}
+
+/* @media only screen and (max-width:1400px) {
+    .navBar {
+        width: 250px;
+    }
+
+    .tab {
+        font-size: 20px;
+    }
+} */
+
+@media only screen and (max-width:1200px) {
+    .navBar {
+        width: 200px;
+    }
+
+    .tab {
+        font-size: 18px;
+    }
 }
 
 

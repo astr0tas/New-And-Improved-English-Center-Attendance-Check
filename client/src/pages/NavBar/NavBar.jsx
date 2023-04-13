@@ -23,7 +23,7 @@ export function NavBar()
 
     return (
         <>
-            <div className={ `${ styles.navBar } d-flex flex-column position-fixed` } style={ { width: '300px', height: '100%' } }>
+            <div className={ `${ styles.navBar } d-flex flex-column position-fixed h-100` }>
                 {/* <ActivePage to={ '/Home' }> */ }
                 <div className={ `d-flex align-items-center ${ styles.link }` }>
                     <svg className={ `${ styles.icon }` } viewBox="0 0 45 45" xmlns="http://www.w3.org/2000/svg">

@@ -128,6 +128,7 @@ export const MyClasses = () =>
                   })
                         .then(res =>
                         {
+                              console.log(res);
                               if (res.data.length !== 0)
                               {
                                     setFlag(false);
@@ -150,7 +151,7 @@ export const MyClasses = () =>
       }, [offset]);
 
       return (
-            <div className={ `h-100 ${ styles.page }` } style={ { marginLeft: '300px', width: 'calc(100% - 300px)' } }>
+            <div className={ `h-100 ${ styles.page }` }>
                   <div className="w-100 d-flex justify-content-around align-items-center" id="class_list" style={ { height: '90%' } }>
                   </div>
                   <div className="w-100 d-flex justify-content-center alig-items-center" style={ { height: '10%' } }>

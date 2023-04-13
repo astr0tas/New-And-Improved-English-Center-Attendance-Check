@@ -57,7 +57,6 @@ CREATE TABLE CLASS (
   Name VARCHAR(50),
   Status int NOT NULL,
   Max_stu INT NOT NULL,
-  Current_stu INT,
   PRIMARY KEY (Name)
 );
 
