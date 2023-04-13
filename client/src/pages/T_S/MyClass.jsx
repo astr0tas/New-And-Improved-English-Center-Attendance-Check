@@ -81,7 +81,7 @@ const Card = (props) =>
                         <h1>{ props.class_name }</h1>
                         <p>Period: { start } - { end }</p>
                         <p>Status:  <span style={ { color: style } }>{ status_str }</span> </p>
-                        <p>Students:{ props.currentStudent }/{ props.maxStudent }</p>
+                        <p>Students: { props.currentStudent }/{ props.maxStudent }</p>
                         <a href={ `./MyClasses/${ props.class_name }` } className="btn btn-primary mt-auto mb-5">Class Detail</a>
                   </div>
             </div >
@@ -128,20 +128,31 @@ export const MyClasses = () =>
                   })
                         .then(res =>
                         {
-                              console.log(res);
+                              // console.log(res);
                               if (res.data.length !== 0)
                               {
-                                    setFlag(false);
-                                    let temp = [];
-                                    // className, start_date, end_date, status, currentStudent, maxStudent
-                                    temp.push(<Card key={ 0 } class_name={ res.data[0].Name } start_date={ res.data[0].Start_date } end_date={ res.data[0].End_date } status={ res.data[0].Status } currentStudent={ res.data[0].Current_stu } maxStudent={ res.data[0].Max_stu } />)
-                                    temp.push(<Card key={ 1 } class_name={ res.data[1].Name } start_date={ res.data[1].Start_date } end_date={ res.data[1].End_date } status={ res.data[1].Status } currentStudent={ res.data[1].Current_stu } maxStudent={ res.data[1].Max_stu } />)
-                                    temp.push(<Card key={ 2 } class_name={ res.data[2].Name } start_date={ res.data[2].Start_date } end_date={ res.data[2].End_date } status={ res.data[2].Status } currentStudent={ res.data[2].Current_stu } maxStudent={ res.data[2].Max_stu } />)
-                                    const target = ReactDOM.createRoot(document.getElementById('class_list'));
-                                    target.render(<>{ temp }</>);
-                                    // $("#class_list").append(Card(res.data[0].Name, res.data[0].Start_date, res.data[0].End_date, res.data[0].Status, res.data[0].Current_stu, res.data[0].Max_stu));
-                                    // $("#class_list").append(Card(res.data[1].Name, res.data[1].Start_date, res.data[1].End_date, res.data[1].Status, res.data[1].Current_stu, res.data[1].Max_stu));
-                                    // $("#class_list").append(Card(res.data[2].Name, res.data[2].Start_date, res.data[2].End_date, res.data[2].Status, res.data[2].Current_stu, res.data[2].Max_stu));
+                                    async function createCard()
+                                    {
+                                          setFlag(false);
+                                          let temp = [];
+                                          // className, start_date, end_date, status, currentStudent, maxStudent
+                                          for (let i = 0; i < res.data.length; i++)
+                                          {
+                                                await axios.get('http://localhost:3030/TS/myClasses/getCurrentStudent', {
+                                                      params: {
+                                                            className: res.data[i].Name
+                                                      },
+                                                })
+                                                      .then(res1 =>
+                                                      {
+                                                            temp.push(<Card key={ i } class_name={ res.data[i].Name } start_date={ res.data[i].Start_date } end_date={ res.data[i].End_date } status={ res.data[i].Status } currentStudent={ res1.data.Current_stu } maxStudent={ res.data[i].Max_stu } />);
+                                                      })
+                                                      .catch(error => console.log(error));
+                                          }
+                                          const target = ReactDOM.createRoot(document.getElementById('class_list'));
+                                          target.render(<>{ temp }</>);
+                                    }
+                                    createCard();
                               }
                               else setFlag(true);
                         })

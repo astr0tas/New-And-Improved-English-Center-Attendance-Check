@@ -1,22 +1,63 @@
 import styles from "./ClassDetail.module.css";
 import { useNavigate, useParams } from "react-router-dom";
+import ReactDOM from 'react-dom/client';
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import $ from 'jquery';
 
-const ListStudent = () =>
+const ListStudentHeader = () =>
 {
       return (
-            <>
-            </>
+            <tr>
+                  <th scope="col" className='col-1'>#</th>
+                  <th scope="col" className='col-3'>Name</th>
+                  <th scope="col" className='col-2'>Phone number</th>
+                  <th scope="col" className='col-2'>Email</th>
+                  <th scope="col" className='col-2'>Action</th>
+            </tr>
       );
 }
 
-const ListSession = () =>
+const ListStudent = (props) =>
 {
       return (
-            <>
-            </>
+            <tr>
+                  <th scope="row" className='col-1'>{ props.number }</th>
+                  <td className='col-3'>{ props.name }</td>
+                  <td className='col-2'>{ props.phone }</td>
+                  <td className='col-2'>{ props.email }</td>
+                  <td className='col-2'><button className={ `${ styles.action }` }><a href="#">Detail</a></button></td>
+            </tr>
+      );
+}
+
+const ListSessionHeader = () =>
+{
+      return (
+            <tr>
+                  <th scope="col" className='col-1'>Sessions</th>
+                  <th scope="col" className='col-3'>Time</th>
+                  <th scope="col" className='col-2'>Room</th>
+                  <th scope="col" className='col-2'>Action</th>
+            </tr>
+      );
+}
+
+const ListSession = (props) =>
+{
+      const date = new Date(props.date).toLocaleDateString('en-GB', {
+            day: 'numeric',
+            month: 'numeric',
+            year: 'numeric',
+      });
+
+      return (
+            <tr>
+                  <th scope="row" className='col-1'>Session { props.session }</th>
+                  <td className='col-3'>{ date }: { props.start } - { props.end }</td>
+                  <td className='col-2'>Room { props.room }</td>
+                  <td className='col-2'><button className={ `${ styles.action }` }><a href="#">Check attendance</a></button></td>
+            </tr>
       );
 }
 
@@ -31,69 +72,147 @@ const ClassDetail = () =>
       const [period, setPeriod] = useState({});
       const [students, setStudents] = useState({});
       const [status, setStatus] = useState({});
-      const [sessions, setSessions] = useState({});
+      const [sessions, setSessions] = useState();
+      const [defaultSessions, setDefaultSessions] = useState();
 
       useEffect(() =>
       {
             if (!render.current)
             {
-                  axios.get('http://localhost:3030/TS/myClasses/detail', { params: { className: className } })
-                        .then(res =>
-                        {
-                              console.log(res.data);
-                              setPeriod({
-                                    start: new Date(res.data.Start_date).toLocaleDateString('en-GB', {
-                                          day: 'numeric',
-                                          month: 'numeric',
-                                          year: 'numeric',
-                                    }), end: new Date(res.data.End_date).toLocaleDateString('en-GB', {
-                                          day: 'numeric',
-                                          month: 'numeric',
-                                          year: 'numeric',
-                                    })
-                              });
-                              setStudents(
+                  $('[name="my_classes"]').css("fill", "#0083FD");
+                  $('[name="my_classes"]').css("color", "#0083FD");
+                  $('[name="my_classes"]').css("background-color", "#c7edff");
+                  async function fetchData()
+                  {
+                        axios.get('http://localhost:3030/TS/myClasses/detail', { params: { className: className } })
+                              .then(res =>
+                              {
+                                    async function asignData()
                                     {
-                                          current: res.data.Current_stu,
-                                          max: res.data.Max_stu
+                                          setPeriod({
+                                                start: new Date(res.data.Start_date).toLocaleDateString('en-GB', {
+                                                      day: 'numeric',
+                                                      month: 'numeric',
+                                                      year: 'numeric',
+                                                }), end: new Date(res.data.End_date).toLocaleDateString('en-GB', {
+                                                      day: 'numeric',
+                                                      month: 'numeric',
+                                                      year: 'numeric',
+                                                })
+                                          });
+                                          if (res.data.Status === 2)
+                                                setStatus(
+                                                      {
+                                                            status_str: "Active",
+                                                            style: "#0B8700"
+                                                      }
+                                                )
+                                          else if (res.data.Status === 1)
+                                                setStatus(
+                                                      {
+                                                            status_str: "No session available",
+                                                            style: "#A8A8A8"
+                                                      }
+                                                )
+                                          else
+                                                setStatus(
+                                                      {
+                                                            status_str: "Inactive",
+                                                            style: "#FF0000"
+                                                      }
+                                                )
+                                          await axios.get('http://localhost:3030/TS/myClasses/getCurrentStudent', {
+                                                params: {
+                                                      className: className
+                                                },
+                                          })
+                                                .then(res1 =>
+                                                {
+                                                      setStudents(
+                                                            {
+                                                                  current: res1.data.Current_stu,
+                                                                  max: res.data.Max_stu
+                                                            }
+                                                      );
+                                                })
+                                                .catch(error => console.log(error));
+                                          await axios.get('http://localhost:3030/TS/myClasses/getSessions', {
+                                                params: {
+                                                      className: className
+                                                },
+                                          })
+                                                .then(res1 =>
+                                                {
+                                                      setSessions(res1.data.session);
+                                                })
+                                                .catch(error => console.log(error));
+                                          await axios.get('http://localhost:3030/TS/myClasses/getDefaultSessions', {
+                                                params: {
+                                                      className: className
+                                                },
+                                          })
+                                                .then(res1 =>
+                                                {
+                                                      setDefaultSessions(res1.data.session);
+                                                })
+                                                .catch(error => console.log(error));
                                     }
-                              );
-                              if (res.data.Status === 2)
-                                    setStatus(
-                                          {
-                                                status_str: "Active",
-                                                style: "#0B8700"
-                                          }
-                                    )
-                              else if (res.data.Status === 1)
-                                    setStatus(
-                                          {
-                                                status_str: "No session available",
-                                                style: "#A8A8A8"
-                                          }
-                                    )
-                              else
-                                    setStatus(
-                                          {
-                                                status_str: "Inactive",
-                                                style: "#FF0000"
-                                          }
-                                    )
-                        })
-                        .catch(error => console.log(error));
+                                    asignData();
+                              })
+                              .catch(error => console.log(error));
+                  }
+                  fetchData();
                   if (flag)
                   {
+                        $("#table_head").empty();
+                        $("#table_body").empty();
                         $(".sessionList").css("background-color", "#a2a1a1");
                         $(".sessionList").css("color", "black");
                         $(".studentList").css("background-color", "#4E7EF8");
                         $(".studentList").css("color", "white");
+                        let target = ReactDOM.createRoot(document.getElementById('table_head'));
+                        target.render(<ListStudentHeader />);
+                        axios.get('http://localhost:3030/TS/myClasses/getStudentList', {
+                              params: {
+                                    className: className
+                              },
+                        })
+                              .then(res =>
+                              {
+                                    console.log(res);
+                                    let temp = [];
+                                    for (let i = 0; i < res.data.length; i++)
+                                          temp.push(<ListStudent key={ i } number={ i } name={ res.data[i].name } phone={ res.data[i].phone } email={ res.data[i].email } />);
+                                    target = ReactDOM.createRoot(document.getElementById('table_body'));
+                                    target.render(<>{ temp }</>);
+                              })
+                              .catch(error => console.log(error));
                   }
                   else
                   {
+                        $("#table_head").empty();
+                        $("#table_body").empty();
                         $(".studentList").css("background-color", "#a2a1a1");
                         $(".studentList").css("color", "black");
                         $(".sessionList").css("background-color", "#4E7EF8");
                         $(".sessionList").css("color", "white");
+                        let target = ReactDOM.createRoot(document.getElementById('table_head'));
+                        target.render(<ListSessionHeader />);
+                        axios.get('http://localhost:3030/TS/myClasses/getSessionList', {
+                              params: {
+                                    className: className
+                              },
+                        })
+                              .then(res =>
+                              {
+                                    console.log(res);
+                                    let temp = [];
+                                    for (let i = 0; i < res.data.length; i++)
+                                          temp.push(<ListSession key={ i } session={ res.data[i].Session_number } date={ res.data[i].Session_date } room={ res.data[i].RoomNumber } start={ res.data[i].Start_hour } end={ res.data[i].End_hour } />);
+                                    target = ReactDOM.createRoot(document.getElementById('table_body'));
+                                    target.render(<>{ temp }</>);
+                              })
+                              .catch(error => console.log(error));
                   }
                   render.current = true;
             }
@@ -107,14 +226,21 @@ const ClassDetail = () =>
                               <p>Period: { period.start } - { period.end }</p>
                               <p>Status: <span style={ { color: status.style } }>{ status.status_str }</span></p>
                               <p>Number of student: { students.current }/{ students.max }</p>
-                              <p>Number of sessions: { null }/24</p>
+                              <p>Number of sessions: { sessions }/{ defaultSessions }</p>
                         </div>
                         <div className="w-25 d-flex justify-content-around align-items-center">
                               <button className={ `${ styles.button } mx-3 studentList` } onClick={ () => { render.current = false; setFlag(true); } }>Students</button>
                               <button className={ `${ styles.button } mx-3 sessionList` } onClick={ () => { render.current = false; setFlag(false); } }>Sessions</button>
                         </div>
-                        <div className={ `overflow-auto mt-2 SSList` }>
-
+                        <table className="table table-hover mb-1 mt-3" style={ { width: '80%' } }>
+                              <thead style={ { borderBottom: "2px solid black" } } id="table_head">
+                              </thead>
+                        </table>
+                        <div className={ `overflow-auto` } style={ { width: '80%', height: '55%' } }>
+                              <table className="table table-hover w-100">
+                                    <tbody id="table_body">
+                                    </tbody>
+                              </table>
                         </div>
                         <button className={ `mt-auto mb-3 ${ styles.back }` } onClick={ () => { Navigate(-1); } }>Back</button>
                   </div>

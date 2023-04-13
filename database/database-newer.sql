@@ -106,14 +106,14 @@ CREATE TABLE SESSION (
     RoomNumber varchar(10) references CLASSROOM(Number) on delete cascade on update cascade,
     Session_number INT,
     Status INT,
-     -- Teacher responsible for the session
-    TeacherID varchar(12) not null references TEACHER(id) on delete cascade on update cascade,
-     -- Supervisor responsible for the session
-    SupervisorID VARCHAR(12) NOT NULL references SUPERVISOR(id) on delete cascade on update cascade,
+	ClassName VARCHAR(50) not null references CLASS(Name) on delete cascade on update cascade,
+	-- Teacher responsible for the session
+    TeacherID varchar(12)  references TEACHER(id) on delete cascade on update cascade,
+	-- Supervisor responsible for the session
+    SupervisorID VARCHAR(12)  references SUPERVISOR(id) on delete cascade on update cascade,
     NoteForClass text,
     TeacherAttendanceStatus int,
     TeacherAttendanceNote text,
-    ClassName VARCHAR(50) not null references CLASS(Name) on delete cascade on update cascade,
     -- Make up for a session
     MakeUpRoomNumber varchar(10),
     MakeUpSession_date date,
@@ -121,7 +121,7 @@ CREATE TABLE SESSION (
     MakeUpEnd_hour time,
     MakeUpSession_number int,
     foreign key(MakeUpRoomNumber,MakeUpSession_date,MakeUpStart_hour,MakeUpEnd_hour,MakeUpSession_number) references SESSION(RoomNumber,Session_date,Start_hour,End_hour,Session_number),
-    PRIMARY KEY(RoomNumber,Session_date,Start_hour,End_hour,Session_number)
+    PRIMARY KEY(RoomNumber,Session_date,Start_hour,End_hour,Session_number,ClassName)
 );
 
 CREATE TABLE STUDENT_ATTENDANCE (

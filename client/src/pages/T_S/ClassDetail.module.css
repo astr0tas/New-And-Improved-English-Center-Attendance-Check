@@ -39,6 +39,26 @@
       background-color: #a2a1a1;
 }
 
+.action>* {
+      text-decoration: none;
+      color: white;
+      background-color: #4E7EF8;
+}
+
+.action>*:hover {
+      color: white;
+}
+
+.action>*:active {
+      color: rgb(0, 21, 255);
+}
+
+.action {
+      background-color: #4E7EF8;
+      border: none;
+      border-radius: 10px;
+}
+
 /* @media only screen and (max-width:1400px) {
       .page {
             margin-left: 250px;
