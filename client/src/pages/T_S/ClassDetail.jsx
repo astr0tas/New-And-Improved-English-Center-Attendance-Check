@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import ReactDOM from 'react-dom/client';
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
+import { format, detailFormat } from "../../tools/date_formatting";
 import $ from 'jquery';
 
 const ListStudentHeader = () =>
@@ -45,11 +46,7 @@ const ListSessionHeader = () =>
 
 const ListSession = (props) =>
 {
-      const date = new Date(props.date).toLocaleDateString('en-GB', {
-            day: 'numeric',
-            month: 'numeric',
-            year: 'numeric',
-      });
+      const date = detailFormat(props.date);
 
       return (
             <tr>
@@ -87,31 +84,18 @@ const ClassDetail = () =>
                         axios.get('http://localhost:3030/TS/myClasses/detail', { params: { className: className } })
                               .then(res =>
                               {
+                                    console.log(res);
                                     async function asignData()
                                     {
                                           setPeriod({
-                                                start: new Date(res.data.Start_date).toLocaleDateString('en-GB', {
-                                                      day: 'numeric',
-                                                      month: 'numeric',
-                                                      year: 'numeric',
-                                                }), end: new Date(res.data.End_date).toLocaleDateString('en-GB', {
-                                                      day: 'numeric',
-                                                      month: 'numeric',
-                                                      year: 'numeric',
-                                                })
+                                                start: format(res.data.Start_date),
+                                                end: format(res.data.End_date)
                                           });
-                                          if (res.data.Status === 2)
+                                          if (res.data.Status === 1)
                                                 setStatus(
                                                       {
                                                             status_str: "Active",
                                                             style: "#0B8700"
-                                                      }
-                                                )
-                                          else if (res.data.Status === 1)
-                                                setStatus(
-                                                      {
-                                                            status_str: "No session available",
-                                                            style: "#A8A8A8"
                                                       }
                                                 )
                                           else
@@ -121,6 +105,7 @@ const ClassDetail = () =>
                                                             style: "#FF0000"
                                                       }
                                                 )
+                                          setDefaultSessions(res.data.Initial_number_of_sessions);
                                           await axios.get('http://localhost:3030/TS/myClasses/getCurrentStudent', {
                                                 params: {
                                                       className: className
@@ -131,7 +116,7 @@ const ClassDetail = () =>
                                                       setStudents(
                                                             {
                                                                   current: res1.data.Current_stu,
-                                                                  max: res.data.Max_stu
+                                                                  max: res.data.Max_number_of_students
                                                             }
                                                       );
                                                 })
@@ -144,16 +129,6 @@ const ClassDetail = () =>
                                                 .then(res1 =>
                                                 {
                                                       setSessions(res1.data.session);
-                                                })
-                                                .catch(error => console.log(error));
-                                          await axios.get('http://localhost:3030/TS/myClasses/getDefaultSessions', {
-                                                params: {
-                                                      className: className
-                                                },
-                                          })
-                                                .then(res1 =>
-                                                {
-                                                      setDefaultSessions(res1.data.session);
                                                 })
                                                 .catch(error => console.log(error));
                                     }
@@ -182,7 +157,7 @@ const ClassDetail = () =>
                                     console.log(res);
                                     let temp = [];
                                     for (let i = 0; i < res.data.length; i++)
-                                          temp.push(<ListStudent key={ i } number={ i } name={ res.data[i].name } phone={ res.data[i].phone } email={ res.data[i].email } />);
+                                          temp.push(<ListStudent key={ i } number={ i + 1 } name={ res.data[i].name } phone={ res.data[i].phone } email={ res.data[i].email } />);
                                     target = ReactDOM.createRoot(document.getElementById('table_body'));
                                     target.render(<>{ temp }</>);
                               })
@@ -208,7 +183,7 @@ const ClassDetail = () =>
                                     console.log(res);
                                     let temp = [];
                                     for (let i = 0; i < res.data.length; i++)
-                                          temp.push(<ListSession key={ i } session={ res.data[i].Session_number } date={ res.data[i].Session_date } room={ res.data[i].RoomNumber } start={ res.data[i].Start_hour } end={ res.data[i].End_hour } />);
+                                          temp.push(<ListSession key={ i } session={ res.data[i].Session_number } date={ res.data[i].Session_date } room={ res.data[i].Classroom_ID } start={ res.data[i].Start_hour } end={ res.data[i].End_hour } />);
                                     target = ReactDOM.createRoot(document.getElementById('table_body'));
                                     target.render(<>{ temp }</>);
                               })

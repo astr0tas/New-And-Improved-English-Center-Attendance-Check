@@ -5,6 +5,7 @@ import SignInFrame from './image/SignInFrame.jpg';
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { cookieExists, getCookieValue } from '../../tools/cookies';
 
 
 export function SignInAs()
@@ -49,26 +50,12 @@ export function SignInAs()
     );
 }
 
-export function SignIn(props)
+export function SignIn()
 {
     const [isWrong, setWrong] = useState(false);
     // const { user, setUser } = useContext(UserContext);
     const navigate = useNavigate();
     // var f_position = user.position;
-
-    function cookieExists(cookieName)
-    {
-        const cookies = document.cookie.split('; ');
-        for (let i = 0; i < cookies.length; i++)
-        {
-            const cookie = cookies[i].split('=');
-            if (cookie[0] === cookieName)
-            {
-                return true;
-            }
-        }
-        return false;
-    }
 
     useEffect(() =>
     {
@@ -89,20 +76,6 @@ export function SignIn(props)
         {
             setWrong(true);
             return;
-        }
-
-        function getCookieValue(cookieName)
-        {
-            const cookies = document.cookie.split('; ');
-            for (let i = 0; i < cookies.length; i++)
-            {
-                const cookie = cookies[i].split('=');
-                if (cookie[0] === cookieName)
-                {
-                    return decodeURIComponent(cookie[1]);
-                }
-            }
-            return null;
         }
 
         if (getCookieValue('userType') === "Admin")
@@ -137,6 +110,7 @@ export function SignIn(props)
             axios.post('http://localhost:3030/TS/login', { params: { account: username, password: password } })
                 .then(res =>
                 {
+                    console.log(res);
                     if (!res.data)
                         setWrong(true);
                     else

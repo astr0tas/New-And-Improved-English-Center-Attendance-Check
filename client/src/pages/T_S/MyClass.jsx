@@ -5,34 +5,22 @@ import styles from "./MyClass.module.css";
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import ReactDOM from 'react-dom/client';
+import { format } from '../../tools/date_formatting';
 
 
 // className, start_date, end_date, status, currentStudent, maxStudent
 const Card = (props) =>
 {
 
-      const start = new Date(props.start_date).toLocaleDateString('en-GB', {
-            day: 'numeric',
-            month: 'numeric',
-            year: 'numeric',
-      });
-      const end = new Date(props.end_date).toLocaleDateString('en-GB', {
-            day: 'numeric',
-            month: 'numeric',
-            year: 'numeric',
-      });
+      const start = format(props.start_date);
+      const end = format(props.end_date);
 
       let status_str, style;
 
-      if (props.status === 2)
+      if (props.status === 1)
       {
             status_str = "Active";
             style = "#0B8700";
-      }
-      else if (props.status === 1)
-      {
-            status_str = "No session available";
-            style = "#A8A8A8";
       }
       else
       {
@@ -128,7 +116,7 @@ export const MyClasses = () =>
                   })
                         .then(res =>
                         {
-                              // console.log(res);
+                              console.log(res);
                               if (res.data.length !== 0)
                               {
                                     async function createCard()
@@ -145,7 +133,7 @@ export const MyClasses = () =>
                                                 })
                                                       .then(res1 =>
                                                       {
-                                                            temp.push(<Card key={ i } class_name={ res.data[i].Name } start_date={ res.data[i].Start_date } end_date={ res.data[i].End_date } status={ res.data[i].Status } currentStudent={ res1.data.Current_stu } maxStudent={ res.data[i].Max_stu } />);
+                                                            temp.push(<Card key={ i } class_name={ res.data[i].Name } start_date={ res.data[i].Start_date } end_date={ res.data[i].End_date } status={ res.data[i].Status } currentStudent={ res1.data.Current_stu } maxStudent={ res.data[i].Max_number_of_students } />);
                                                       })
                                                       .catch(error => console.log(error));
                                           }
