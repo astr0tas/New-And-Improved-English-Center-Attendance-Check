@@ -66,7 +66,7 @@ export function getSessions(className, callback)
 
 export function getStudentList(className, callback)
 {
-      con.query(`select STUDENT.name,STUDENT.phone,STUDENT.email,STUDENT.ID from STUDENT join IN_CLASS on IN_CLASS.Student_ID=STUDENT.ID WHERE IN_CLASS.Class_name='${ className }' ORDER BY STUDENT.name`, (err, res) =>
+      con.query(`select STUDENT.name,STUDENT.phone,STUDENT.email,STUDENT.ID from STUDENT join IN_CLASS on IN_CLASS.Student_ID=STUDENT.ID WHERE IN_CLASS.Class_name='${ className }' ORDER BY STUDENT.ID`, (err, res) =>
       {
             if (err)
                   callback(err, null);

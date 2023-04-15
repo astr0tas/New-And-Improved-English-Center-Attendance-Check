@@ -82,7 +82,7 @@ CREATE PROCEDURE GenSession(
 )
 BEGIN
     DECLARE i INT DEFAULT 1;
-    WHILE current_day <= end_day DO
+    WHILE current_day <= end_day AND i<=12 DO
         IF DAYNAME(current_day) = target_day THEN
              -- SELECT current_day;
 			-- SELECT i+offset+(studyDays-1)*(i-1);

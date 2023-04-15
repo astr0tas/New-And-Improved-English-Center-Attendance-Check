@@ -12,6 +12,7 @@ export function SignInAs()
 {
     useEffect(() =>
     {
+        // console.log("reset");
         const cookies = document.cookie.split('; ');
         for (let i = 0; i < cookies.length; i++)
         {

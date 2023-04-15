@@ -219,7 +219,7 @@ const ClassDetail = () =>
                                     </tbody>
                               </table>
                         </div>
-                        <button className={ `mt-auto mb-3 ${ styles.back }` } onClick={ () => { Navigate(-1); } }>Back</button>
+                        <button className={ `mt-auto mb-3 ${ styles.back }` } onClick={ () => { Navigate("/MyClasses"); } }>Back</button>
                   </div>
             </div>
       );

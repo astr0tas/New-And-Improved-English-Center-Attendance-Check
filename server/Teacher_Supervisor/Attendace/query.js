@@ -39,3 +39,61 @@ export function getSupervisor(sessionNumber, className, callback)
                   callback(null, res);
       });
 }
+
+export function getStudents(className, callback)
+{
+      con.query(`select IN_CLASS.Student_ID,STUDENT.name from IN_CLASS join STUDENT on STUDENT.ID=IN_CLASS.Student_ID where IN_CLASS.Class_name='${ className }' order by IN_CLASS.Student_ID`, (err, res) =>
+      {
+            if (err)
+                  callback(err, null);
+            else
+                  callback(null, res);
+      });
+}
+
+export function getstudentAttendance(sessionNumber, className, ID, callback)
+{
+      con.query(`select Status,Note from STUDENT_ATTENDANCE where Session_number='${ sessionNumber }' and Class_name='${ className }' and Student_ID='${ ID }'`, (err, res) =>
+      {
+            if (err)
+                  callback(err, null);
+            else
+                  callback(null, res);
+      });
+}
+
+export function getTeacherAttendance(sessionNumber, className, ID, callback)
+{
+      con.query(`select Status,Note from TEACHER_RESPONSIBLE where Session_number='${ sessionNumber }' and Class_name='${ className }' and Teacher_ID='${ ID }'`, (err, res) =>
+      {
+            if (err)
+                  callback(err, null);
+            else
+                  callback(null, res);
+      });
+}
+
+export function teacherUpdateAttendace(sessionNumber, className, StudentID, Status, Note, callback)
+{
+      // console.log(sessionNumber, className, StudentID, Status, Note)
+      // con.query(``, (err, res) =>
+      // {
+      //       if (err)
+      //             callback(err, null);
+      //       else
+      //             callback(null, res);
+      // });
+}
+
+
+export function supervisorUpdateAttendace(sessionNumber, className, TeacherID, Status, Note, callback)
+{
+      console.log(sessionNumber, className, TeacherID, Status, Note)
+      // con.query(``, (err, res) =>
+      // {
+      //       if (err)
+      //             callback(err, null);
+      //       else
+      //             callback(null, res);
+      // });
+}

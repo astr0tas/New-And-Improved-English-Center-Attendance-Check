@@ -50,3 +50,25 @@
 .detail:active {
       background-color: #9b9b9b;
 }
+
+.detail>* {
+      text-decoration: none;
+      color: white;
+}
+
+.detail>*:hover {
+      color: white;
+}
+
+.empty,
+.invalidDay,
+.complete,
+.teacherMissing {
+      position: absolute;
+      width: 50%;
+      height: 40%;
+      z-index: 1000;
+      background-color: #D9D9D9;
+      border-radius: 20px;
+      display: none;
+}
