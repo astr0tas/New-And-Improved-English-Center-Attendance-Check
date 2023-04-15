@@ -5,6 +5,9 @@ import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import { format, detailFormat } from "../../tools/date_formatting";
 import $ from 'jquery';
+import { AiOutlineClockCircle } from 'react-icons/ai';
+import { cookieExists } from '../../tools/cookies';
+
 
 const ListStudentHeader = () =>
 {
@@ -51,9 +54,9 @@ const ListSession = (props) =>
       return (
             <tr>
                   <th scope="row" className='col-1'>Session { props.session }</th>
-                  <td className='col-3'>{ date }: { props.start } - { props.end }</td>
+                  <td className='col-3'><AiOutlineClockCircle /> { date }: { props.start } - { props.end }</td>
                   <td className='col-2'>Room { props.room }</td>
-                  <td className='col-2'><button className={ `${ styles.action }` }><a href="#">Check attendance</a></button></td>
+                  <td className='col-2'><button className={ `${ styles.action }` }><a href={ `./${ props.name }/${ props.session }` }>Check attendance</a></button></td>
             </tr>
       );
 }
@@ -74,17 +77,16 @@ const ClassDetail = () =>
 
       useEffect(() =>
       {
+            if (!cookieExists('userType') || !cookieExists('id'))
+                  Navigate("/");
             if (!render.current)
             {
-                  $('[name="my_classes"]').css("fill", "#0083FD");
-                  $('[name="my_classes"]').css("color", "#0083FD");
-                  $('[name="my_classes"]').css("background-color", "#c7edff");
                   async function fetchData()
                   {
                         axios.get('http://localhost:3030/TS/myClasses/detail', { params: { className: className } })
                               .then(res =>
                               {
-                                    console.log(res);
+                                    // console.log(res);
                                     async function asignData()
                                     {
                                           setPeriod({
@@ -154,7 +156,7 @@ const ClassDetail = () =>
                         })
                               .then(res =>
                               {
-                                    console.log(res);
+                                    // console.log(res);
                                     let temp = [];
                                     for (let i = 0; i < res.data.length; i++)
                                           temp.push(<ListStudent key={ i } number={ i + 1 } name={ res.data[i].name } phone={ res.data[i].phone } email={ res.data[i].email } />);
@@ -180,10 +182,10 @@ const ClassDetail = () =>
                         })
                               .then(res =>
                               {
-                                    console.log(res);
+                                    // console.log(res);
                                     let temp = [];
                                     for (let i = 0; i < res.data.length; i++)
-                                          temp.push(<ListSession key={ i } session={ res.data[i].Session_number } date={ res.data[i].Session_date } room={ res.data[i].Classroom_ID } start={ res.data[i].Start_hour } end={ res.data[i].End_hour } />);
+                                          temp.push(<ListSession key={ i } name={ className } session={ res.data[i].Session_number } date={ res.data[i].Session_date } room={ res.data[i].Classroom_ID } start={ res.data[i].Start_hour } end={ res.data[i].End_hour } />);
                                     target = ReactDOM.createRoot(document.getElementById('table_body'));
                                     target.render(<>{ temp }</>);
                               })

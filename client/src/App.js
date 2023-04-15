@@ -10,6 +10,7 @@ import { SignInAs, SignIn } from './pages/SignIn/SignIn.jsx';
 import { NavBar } from './pages/NavBar/NavBar.jsx';
 import { MyClasses } from './pages/T_S/MyClass';
 import ClassDetail from './pages/T_S/ClassDetail';
+import Attendance from './pages/T_S/Attendace';
 
 
 function App()
@@ -43,6 +44,7 @@ function App()
             <Route>
               <Route path={ `/MyClasses` } element={ <MyClasses /> } />
               <Route path={ `/MyClasses/:name` } element={ <ClassDetail name="" /> } />
+              <Route path={ `/MyClasses/:name/:session` } element={ <Attendance /> } />
             </Route>
           </Route>
         </Routes>

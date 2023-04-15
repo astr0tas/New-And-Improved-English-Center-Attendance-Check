@@ -41,14 +41,15 @@ ID VARCHAR(15) PRIMARY KEY,
 );
 
 CREATE TABLE STUDENT (
-  SSN VARCHAR(12),
+  ID VARCHAR(15),
   name VARCHAR(100) NOT NULL,
   phone VARCHAR(10) UNIQUE NOT NULL,
   birthday DATE,
   birthplace text,
   email VARCHAR(50) UNIQUE NOT NULL,
   address text,
-  PRIMARY KEY (SSN)
+  SSN varchar(12) unique not null,
+  PRIMARY KEY (ID)
 );
 
 CREATE TABLE CLASS (
@@ -122,20 +123,20 @@ CREATE TABLE SUPERVISOR_RESPONSIBLE (
 CREATE TABLE STUDENT_ATTENDANCE (
     Session_number INT,
     Class_name VARCHAR(100),
-    Student_SSN VARCHAR(12),
-    PRIMARY KEY(Session_number,Class_name,Student_SSN),
+    Student_ID VARCHAR(12),
+    PRIMARY KEY(Session_number,Class_name,Student_ID),
     Status int,
     Note text,
     FOREIGN KEY(Session_number,Class_name) REFERENCES SESSION(Session_number,Class_name) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY(Student_SSN) REFERENCES STUDENT(SSN)
+    FOREIGN KEY(Student_ID) REFERENCES STUDENT(ID)
 );  
 
 CREATE TABLE IN_CLASS(
-    Student_ssn VARCHAR(12),
+    Student_ID VARCHAR(12),
     Class_name VARCHAR(100),
-    FOREIGN KEY(Student_ssn) REFERENCES STUDENT(SSN) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY(Student_ID) REFERENCES STUDENT(ID) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY(Class_name) REFERENCES CLASS(Name) ON DELETE CASCADE ON UPDATE CASCADE,
-    PRIMARY KEY(Student_ssn,Class_name)
+    PRIMARY KEY(Student_ID,Class_name)
 );   
  
 CREATE TABLE TEACH(

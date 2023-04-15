@@ -4,8 +4,7 @@ const con = mysql.createPool({
       host: "localhost",
       user: "englishcenter",
       password: "englishcenter123",
-      database: "english_center",
-      multipleStatements: true,
+      database: "english_center"
 });
 
 export function validateTSLoginInfo(account, password, callback)

@@ -1,3 +1,5 @@
+USE ENGLISH_CENTER;
+
 INSERT INTO `employee` VALUES('ADMIN01','743290625854', 'Phan Hoàng Trọng', '0127059835', 'ADMIN01', '0', '1999-06-11', 'Hồ Chí Minh', 'ADMIN01@gmail.com', 'Hồ Chí Minh');
 INSERT INTO ADMIN VALUES('ADMIN01');
 

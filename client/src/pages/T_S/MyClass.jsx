@@ -6,6 +6,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import ReactDOM from 'react-dom/client';
 import { format } from '../../tools/date_formatting';
+import { cookieExists } from '../../tools/cookies';
 
 
 // className, start_date, end_date, status, currentStudent, maxStudent
@@ -83,20 +84,6 @@ export const MyClasses = () =>
       const [flag, setFlag] = useState(false);
       const Navigate = useNavigate();
 
-      function cookieExists(cookieName)
-      {
-            const cookies = document.cookie.split('; ');
-            for (let i = 0; i < cookies.length; i++)
-            {
-                  const cookie = cookies[i].split('=');
-                  if (cookie[0] === cookieName)
-                  {
-                        return true;
-                  }
-            }
-            return false;
-      }
-
       useEffect(() =>
       {
             if (!cookieExists('userType') || !cookieExists('id'))
@@ -105,9 +92,6 @@ export const MyClasses = () =>
             {
                   console.log(offset);
                   console.log(flag);
-                  $('[name="my_classes"]').css("fill", "#0083FD");
-                  $('[name="my_classes"]').css("color", "#0083FD");
-                  $('[name="my_classes"]').css("background-color", "#c7edff");
                   axios.get('http://localhost:3030/TS/myClasses', {
                         withCredentials: true,
                         params: {

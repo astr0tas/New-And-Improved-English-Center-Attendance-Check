@@ -1,3 +1,5 @@
+USE ENGLISH_CENTER;
+
 -- add new student to system
 -- DELIMITER $$
 -- CREATE PROCEDURE newStudent(
@@ -71,18 +73,15 @@ DELIMITER $$
 CREATE PROCEDURE GenSession(
 	IN className varchar(100),
 	IN current_day DATE,
+    IN end_day DATE,
 	IN target_day VARCHAR(10),
     IN TimeTableID INT,
     IN room varchar(10),
-    IN weeks INT,
     IN offset INT,
     IN studyDays INT
 )
 BEGIN
-    DECLARE end_day DATE;
     DECLARE i INT DEFAULT 1;
-    SET end_day = DATE_ADD(current_day, INTERVAL weeks*7 DAY);
-    SET current_day= DATE_ADD(current_day, INTERVAL 7 DAY);
     WHILE current_day <= end_day DO
         IF DAYNAME(current_day) = target_day THEN
              -- SELECT current_day;
@@ -96,48 +95,46 @@ BEGIN
 END $$
 DELIMITER ;
 
--- call GenSession('TOEIC04','2023-01-30','Monday',6,'ROOM03',12,0,3);
--- call GenSession('TOEIC04','2023-01-30','Wednesday',6,'ROOM03',12,1,3);
--- call GenSession('TOEIC04','2023-01-30','Friday',6,'ROOM03',12,2,3);
+call GenSession('TOEIC04','2023-01-30','2023-04-30','Monday',6,'ROOM03',0,3);
+call GenSession('TOEIC04','2023-01-30','2023-04-30','Wednesday',6,'ROOM03',1,3);
+call GenSession('TOEIC04','2023-01-30','2023-04-30','Friday',6,'ROOM03',2,3);
 -- select *,DATE_FORMAT(Session_date, '%W, %M %e, %Y') AS formatted_date from SESSION where Class_name='TOEIC04' order by session_number;
 
--- call GenSession('TOEIC03','2023-01-30','Tuesday',6,'ROOM01',12,0,2);
--- call GenSession('TOEIC03','2023-01-30','Thursday',8,'ROOM01',12,1,2);
+call GenSession('TOEIC03','2023-01-30','2023-04-30','Tuesday',6,'ROOM01',0,2);
+call GenSession('TOEIC03','2023-01-30','2023-04-30','Thursday',8,'ROOM01',1,2);
 -- select *,DATE_FORMAT(Session_date, '%W, %M %e, %Y') AS formatted_date from SESSION where Class_name='TOEIC03'order by Session_date,session_number;
 
 -- assign teacher for a session
--- DROP PROCEDURE IF EXISTS GenSession;
--- DELIMITER $$
--- CREATE PROCEDURE GenSession(
---     IN className varchar(50),
---     IN target_day VARCHAR(9),
---     IN start TIME,
---     IN end TIME,
---     IN room varchar(10),
---     IN weeks INT,
---     IN offset INT,
---     IN studyDays INT
--- )
--- BEGIN
--- 	DECLARE i INT DEFAULT 1;
---     DECLARE next_day DATE;
---     
---     WHILE i <= weeks DO
---         SET next_day = DATE_ADD(CURDATE(), INTERVAL (9 - DAYOFWEEK(CURDATE())) % 7 + 1 + (i - 1) * 7 DAY);
---         WHILE DATE_FORMAT(next_day, '%W') != target_day DO
---             SET next_day = DATE_ADD(next_day, INTERVAL 1 DAY);
---         END WHILE;
---         INSERT INTO SESSION_TIME VALUES(start,end,next_day);
---         INSERT INTO SESSION(Start_hour,End_hour,Session_date,RoomNumber,Session_number,Status,ClassName) values(start,end,next_day,room,i+offset+(studyDays-1)*(i-1),2,className);
---         SET i = i + 1;
---     END WHILE;
--- END $$
--- DELIMITER ;
+DROP PROCEDURE IF EXISTS AssignSessionForTeacher;
+DELIMITER $$
+CREATE PROCEDURE AssignSessionForTeacher(
+	IN sessionNumber INT,
+    IN className varchar(100),
+    IN teacherID varchar(15)
+)
+BEGIN
+	IF teacherID IN (select Teacher_ID from TEACH where Class_name=className) THEN
+		INSERT INTO TEACHER_RESPONSIBLE(Session_number,Class_name,Teacher_ID) VALUES(sessionNumber,className,teacherID);
+    END IF;
+END $$
+DELIMITER ;
 
--- SET SQL_SAFE_UPDATES=0;
--- UPDATE SESSION SET TeacherID='TEACHER01' WHERE ClassName='TOEIC03' and Session_number%2=1;
--- UPDATE SESSION SET TeacherID='TEACHER02' WHERE ClassName='TOEIC03'and Session_number%2=0;
--- UPDATE SESSION SET TeacherID='TEACHER01' WHERE ClassName='TOEIC04' and Session_number%3=1;
--- UPDATE SESSION SET TeacherID='TEACHER02' WHERE ClassName='TOEIC04' and Session_number%3=2;
--- UPDATE SESSION SET TeacherID='TEACHER03' WHERE ClassName='TOEIC04' and Session_number%3=0;
--- SET SQL_SAFE_UPDATES=0;
+call AssignSessionForTeacher(1,'TOEIC03','TEACHER01');
+call AssignSessionForTeacher(2,'TOEIC03','TEACHER01');
+call AssignSessionForTeacher(3,'TOEIC03','TEACHER01');
+call AssignSessionForTeacher(4,'TOEIC03','TEACHER01');
+call AssignSessionForTeacher(5,'TOEIC03','TEACHER02');
+call AssignSessionForTeacher(6,'TOEIC03','TEACHER02');
+call AssignSessionForTeacher(7,'TOEIC03','TEACHER02');
+call AssignSessionForTeacher(8,'TOEIC03','TEACHER02');
+
+call AssignSessionForTeacher(1,'TOEIC04','TEACHER01');
+call AssignSessionForTeacher(2,'TOEIC04','TEACHER01');
+call AssignSessionForTeacher(3,'TOEIC04','TEACHER01');
+call AssignSessionForTeacher(4,'TOEIC04','TEACHER02');
+call AssignSessionForTeacher(5,'TOEIC04','TEACHER02');
+call AssignSessionForTeacher(6,'TOEIC04','TEACHER02');
+call AssignSessionForTeacher(7,'TOEIC04','TEACHER03');
+call AssignSessionForTeacher(8,'TOEIC04','TEACHER03');
+call AssignSessionForTeacher(9,'TOEIC04','TEACHER03');
+
