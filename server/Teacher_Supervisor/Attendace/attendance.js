@@ -1,13 +1,11 @@
 import express from "express";
 // import bodyParser from "body-parser";
-// import cookieParser from "cookie-parser";
 
 import { getSessionDetail, getTeacher, getSupervisor, getStudents, teacherUpdateAttendace, supervisorUpdateAttendace, getstudentAttendance, getTeacherAttendance, getClassNote, updateClassNote } from "./query.js";
 
 const Attendace = express.Router();
 
 // Attendace.use(bodyParser.json());
-// Attendace.use(cookieParser())
 
 
 Attendace.get('/attendance/session', (req, res) =>

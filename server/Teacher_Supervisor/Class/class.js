@@ -1,17 +1,11 @@
 import express from "express";
-// import bodyParser from "body-parser";
-import cookieParser from "cookie-parser";
-
 
 import { getClassList, getClassDetail, getCurrentStudent, getSessions, getStudentList, getSessionList } from "./query.js";
 const MyClassAPI = express.Router();
 
-MyClassAPI.use(cookieParser())
-// MyClassAPI.use(bodyParser.json());
-
 MyClassAPI.get('/myClasses', (req, res) =>
 {
-      getClassList(req.cookies.id, req.query.offset, (err, result) =>
+      getClassList(req.query.id, req.query.offset, (err, result) =>
       {
             if (err)
                   res.status(500).send('Error retrieving user from database.');
@@ -21,7 +15,7 @@ MyClassAPI.get('/myClasses', (req, res) =>
             }
       });
 });
-
+      
 MyClassAPI.get('/myClasses/getCurrentStudent', (req, res) =>
 {
       getCurrentStudent(req.query.className, (err, result) =>

@@ -63,7 +63,9 @@
 .empty,
 .invalidDay,
 .complete,
-.teacherMissing {
+.teacherMissing,
+.noTeacher,
+.invalidPerson {
       position: absolute;
       width: 50%;
       height: 40%;

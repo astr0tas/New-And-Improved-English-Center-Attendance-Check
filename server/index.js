@@ -7,10 +7,7 @@ import Attendace from "./Teacher_Supervisor/Attendace/attendance.js";
 
 
 const app = express();
-app.use(cors({
-      origin: 'http://localhost:3000',
-      credentials: true
-}));
+app.use(cors());
 
 app.use('/admin', adminRoutes);
 

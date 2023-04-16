@@ -14,16 +14,18 @@ function App()
     <div className="App">
       <BrowserRouter>
         <Routes>
-          <Route index element={ <SignInAs /> } />
-          <Route path='/SignIn' element={ <SignIn /> } />
-          <Route element={ <NavBar /> }>
-            {/* <Route path={ user.position + '/User' } element={ <User /> } />
+          <Route path="/" >
+            <Route index element={ <SignInAs /> } />
+            <Route path='/SignIn' element={ <SignIn /> } />
+            <Route element={ <NavBar /> }>
+              {/* <Route path={ user.position + '/User' } element={ <User /> } />
           <Route path={ user.position + '/Students' } element={ <Students /> } /> */}
-            <Route path="/Home" />
-            <Route>
-              <Route path={ `/MyClasses` } element={ <MyClasses /> } />
-              <Route path={ `/MyClasses/:name` } element={ <ClassDetail name="" /> } />
-              <Route path={ `/MyClasses/:name/:session` } element={ <Attendance /> } />
+              <Route path="/Home" />
+              <Route>
+                <Route path={ `/MyClasses` } element={ <MyClasses /> } />
+                <Route path={ `/MyClasses/:name` } element={ <ClassDetail name="" /> } />
+                <Route path={ `/MyClasses/:name/:session` } element={ <Attendance /> } />
+              </Route>
             </Route>
           </Route>
         </Routes>

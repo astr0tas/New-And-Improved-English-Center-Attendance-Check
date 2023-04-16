@@ -17,7 +17,7 @@ TSLogin.post('/login', (req, res) =>
                   res.status(500).send('Error retrieving user from database.');
             else
             {
-                  res.status(200).send(result[0].ID);
+                  res.status(200).send(result);
             }
       });
 });

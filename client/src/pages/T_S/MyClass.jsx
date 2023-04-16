@@ -6,10 +6,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import ReactDOM from 'react-dom/client';
 import { format } from '../../tools/date_formatting';
-import { cookieExists } from '../../tools/cookies';
 
-
-// className, start_date, end_date, status, currentStudent, maxStudent
 const Card = (props) =>
 {
 
@@ -28,37 +25,6 @@ const Card = (props) =>
             status_str = "Inactive";
             style = "#FF0000";
       }
-
-      // return $("<div>")
-      //       .addClass("d-flex")
-      //       .addClass("flex-column")
-      //       .addClass("align-items-center")
-      //       .addClass("h-75")
-      //       .css("width", "20%")
-      //       .css("background-color", "#EDEDED")
-      //       .css("border", "2px solid black")
-      //       .css("border-radius", "20px")
-      //       .append(
-      //             $("<img>")
-      //                   .addClass("w-100")
-      //                   .addClass("h-25")
-      //                   .attr("src", "https://img.freepik.com/free-vector/flat-design-english-school-illustration_23-2149491248.jpg")
-      //                   .attr("alt", "image")
-      //                   .css("border-top-right-radius", "20px")
-      //                   .css("border-top-left-radius", "20px")
-      //       )
-      //       .append(
-      //             $("<div>")
-      //                   .addClass("d-flex")
-      //                   .addClass("flex-column")
-      //                   .addClass("align-items-center")
-      //                   .addClass("h-75")
-      //                   .append($("<h1>").text(className))
-      //                   .append($("<h5>").text("Period: " + start + " - " + end))
-      //                   .append($("<h5>").text("Status: ").append($("<span>").text(status_str).css("color", style)))
-      //                   .append($("<h5>").text("Students: " + currentStudent + "/" + maxStudent))
-      //                   .append($("<a>").addClass("btn").addClass("btn-primary").addClass("mt-auto").addClass("mb-5").attr("href", "./MyClasses/" + className).text("Class Detail"))
-      //       );
 
       return (
             <div className="d-flex flex-column align-items-center h-75" style={ { width: '20%', backgroundColor: "#EDEDED", border: "2px solid black", borderRadius: "20px" } }>
@@ -86,16 +52,16 @@ export const MyClasses = () =>
 
       useEffect(() =>
       {
-            if (!cookieExists('userType') || !cookieExists('id'))
+            if (localStorage.getItem('userType') === null || localStorage.getItem('id') === null)
                   Navigate("/");
             if (!render.current)
             {
                   console.log(offset);
                   console.log(flag);
                   axios.get('http://localhost:3030/TS/myClasses', {
-                        withCredentials: true,
                         params: {
-                              offset: offset
+                              offset: offset,
+                              id: localStorage.getItem("id")
                         },
                   })
                         .then(res =>
@@ -107,7 +73,6 @@ export const MyClasses = () =>
                                     {
                                           setFlag(false);
                                           let temp = [];
-                                          // className, start_date, end_date, status, currentStudent, maxStudent
                                           for (let i = 0; i < res.data.length; i++)
                                           {
                                                 await axios.get('http://localhost:3030/TS/myClasses/getCurrentStudent', {

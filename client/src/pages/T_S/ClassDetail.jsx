@@ -6,7 +6,6 @@ import { useEffect, useRef, useState } from "react";
 import { format, detailFormat } from "../../tools/date_formatting";
 import $ from 'jquery';
 import { AiOutlineClockCircle } from 'react-icons/ai';
-import { cookieExists } from '../../tools/cookies';
 
 
 const ListStudentHeader = () =>
@@ -77,7 +76,7 @@ const ClassDetail = () =>
 
       useEffect(() =>
       {
-            if (!cookieExists('userType') || !cookieExists('id'))
+            if (localStorage.getItem('userType') === null || localStorage.getItem('id')===null)
                   Navigate("/");
             if (!render.current)
             {

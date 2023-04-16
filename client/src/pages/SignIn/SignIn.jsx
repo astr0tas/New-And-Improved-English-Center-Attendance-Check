@@ -3,7 +3,6 @@ import SignInFrame from './image/SignInFrame.jpg';
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { cookieExists, getCookieValue } from '../../tools/cookies';
 
 
 export function SignInAs()
@@ -12,16 +11,18 @@ export function SignInAs()
 
     useEffect(() =>
     {
-        if (cookieExists("id") && cookieExists("userType"))
+        if (localStorage.getItem("id") !== null && localStorage.getItem("userType") !== null)
             Navigate("/Home");
     })
 
     function halderSignIn(event)
     {
         if (event.target.innerHTML === "Admin")
-            document.cookie = `userType=Admin;`;
+            localStorage.setItem("userType", "Admin");
+
         else
-            document.cookie = `userType=TS;`;
+            localStorage.setItem("userType", "TS");
+
     }
 
     return (
@@ -52,9 +53,9 @@ export function SignIn()
 
     useEffect(() =>
     {
-        if (cookieExists('userType') && cookieExists('id'))
+        if (localStorage.getItem('userType') !== null && localStorage.getItem('id') !== null)
             navigate("/Home");
-        else if (cookieExists('userType') && !cookieExists('id'))
+        else if (localStorage.getItem('userType') !== null && localStorage.getItem('id') === null)
             ;
         else
             navigate("/");
@@ -71,7 +72,7 @@ export function SignIn()
             return;
         }
 
-        if (getCookieValue('userType') === "Admin")
+        if (localStorage.getItem('userType') === "Admin")
         {
             axios.get('http://localhost:3030/admin/user/' + username)
                 .then(res =>
@@ -87,7 +88,7 @@ export function SignIn()
                     }
                     else
                     {
-                        document.cookie = `id=${ user.id };`;
+                        localStorage.setItem("id", user.id);
                         navigate('/Home');
                     }
                 })
@@ -98,12 +99,11 @@ export function SignIn()
             axios.post('http://localhost:3030/TS/login', { params: { account: username, password: password } })
                 .then(res =>
                 {
-                    console.log(res);
-                    if (!res.data)
+                    if (!res.data.length)
                         setWrong(true);
                     else
                     {
-                        document.cookie = `id=${ res.data };`;
+                        localStorage.setItem("id", res.data[0].ID);
                         navigate('/Home');
                     }
                 })

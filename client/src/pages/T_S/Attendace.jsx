@@ -3,7 +3,6 @@ import styles from './Attendace.module.css';
 import ReactDOM from 'react-dom/client';
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
-import { cookieExists, getCookieValue } from "../../tools/cookies";
 import { AiOutlineClockCircle } from 'react-icons/ai';
 import { detailFormat } from "../../tools/date_formatting";
 import $ from 'jquery';
@@ -22,7 +21,6 @@ const StudentList = (props) =>
                   axios.get('http://localhost:3030/TS/attendance/studentAttendance', { params: { sessionNumber: props.sessionNumber, className: props.className, ID: props.id } })
                         .then(res =>
                         {
-                              // console.log(res);
                               if (res.data.length !== 0)
                               {
                                     students[props.number - 1].status = res.data.Status;
@@ -139,7 +137,6 @@ const Teacher = (props) =>
                   })
                         .then(res =>
                         {
-                              // console.log(res);
                               setSupervisor({ id: res.data.ID, name: res.data.name });
                         })
                         .catch(error => console.log(error));
@@ -167,8 +164,9 @@ const Teacher = (props) =>
       const handleSubmit = () =>
       {
             const currentDate = detailFormat(new Date());
-            // console.log(students);
-            if (time.date === currentDate)
+            if (typeof (teacher.id) === "undefined" || teacher.id !== localStorage.getItem("id"))
+                  $(`.${ styles.invalidPerson }`).css("display", "flex");
+            else if (time.date === currentDate)
             {
                   if (isCurrentTimeInRange(time.start, time.end))
                   {
@@ -326,7 +324,6 @@ const Supervisor = (props) =>
                         })
                               .then(res =>
                               {
-                                    // console.log(res);
                                     setSupervisor({ id: res.data.ID, name: res.data.name });
                               })
                               .catch(error => console.log(error));
@@ -360,12 +357,10 @@ const Supervisor = (props) =>
                               {
                                     if (res.data.length !== 0)
                                     {
-                                          // console.log(res);
                                           $('.note_for_class').val(res.data.Note_for_class);
                                     }
                               })
                               .catch(error => { console.log(error); })
-                        // note_for_class
                         axios.get('http://localhost:3030/TS/attendance/students', {
                               params: {
                                     className: props.className
@@ -391,9 +386,12 @@ const Supervisor = (props) =>
 
       const handleSubmit = () =>
       {
-            if (isInWeekPeriod(time.date))
+            if (typeof (teacher.id) === "undefined")
+                  $(`.${ styles.noTeacher }`).css("display", "flex");
+            else if (typeof (supervisor.id) === "undefined" || supervisor.id !== localStorage.getItem("id"))
+                  $(`.${ styles.invalidPerson }`).css("display", "flex");
+            else if (isInWeekPeriod(time.date))
             {
-                  // console.log(teacherAttendace.status);
                   if (teacherAttendace.status === null)
                   {
                         $(`.${ styles.teacherMissing }`).css("display", "flex");
@@ -556,12 +554,12 @@ const Attendance = () =>
 
       useEffect(() =>
       {
-            if (!cookieExists('userType') || !cookieExists('id'))
+            if (localStorage.getItem('userType') === null || localStorage.getItem('id') === null)
                   Navigate("/");
             if (!render.current)
             {
                   const target = ReactDOM.createRoot(document.getElementById('attendance'));
-                  if (getCookieValue("id").includes("TEACHER"))
+                  if (localStorage.getItem("id").includes("TEACHER"))
                         target.render(<Teacher className={ className } sessionNumber={ session } />);
                   else
                         target.render(<Supervisor className={ className } sessionNumber={ session } />);
@@ -600,6 +598,18 @@ const Attendance = () =>
                         <button className={ `${ styles.confirm }` } style={ {
                               width: "150px", height: "50px", fontSize: "30px"
                         } } onClick={ () => { $(`.${ styles.teacherMissing }`).css("display", "none") } }>Okay</button>
+                  </div>
+                  <div className={ `${ styles.noTeacher } flex-column justify-content-around align-items-center` }>
+                        <h1>There is no teacher for this session!</h1>
+                        <button className={ `${ styles.confirm }` } style={ {
+                              width: "150px", height: "50px", fontSize: "30px"
+                        } } onClick={ () => { $(`.${ styles.noTeacher }`).css("display", "none") } }>Okay</button>
+                  </div>
+                  <div className={ `${ styles.invalidPerson } flex-column justify-content-around align-items-center` }>
+                        <h1>You are not the person responsible for this session!</h1>
+                        <button className={ `${ styles.confirm }` } style={ {
+                              width: "150px", height: "50px", fontSize: "30px"
+                        } } onClick={ () => { $(`.${ styles.invalidPerson }`).css("display", "none") } }>Okay</button>
                   </div>
             </div>
       );
