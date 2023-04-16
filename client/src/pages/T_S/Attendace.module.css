@@ -72,3 +72,7 @@
       border-radius: 20px;
       display: none;
 }
+
+.checkbox:hover {
+      cursor: pointer;
+}

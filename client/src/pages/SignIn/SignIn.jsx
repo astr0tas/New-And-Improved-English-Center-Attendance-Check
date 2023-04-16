@@ -1,7 +1,5 @@
 import './SignIn.css';
 import SignInFrame from './image/SignInFrame.jpg';
-// import UserContext from '../General/UserContext';
-// import { useContext } from 'react';
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -10,26 +8,22 @@ import { cookieExists, getCookieValue } from '../../tools/cookies';
 
 export function SignInAs()
 {
+    const Navigate = useNavigate();
+
     useEffect(() =>
     {
-        // console.log("reset");
-        const cookies = document.cookie.split('; ');
-        for (let i = 0; i < cookies.length; i++)
-        {
-            const cookie = cookies[i].split('=');
-            document.cookie = cookie[0] + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-        }
+        if (cookieExists("id") && cookieExists("userType"))
+            Navigate("/Home");
     })
 
-    // const { user } = useContext(UserContext);
     function halderSignIn(event)
     {
-        // user.position = event.target.innerHTML;
         if (event.target.innerHTML === "Admin")
             document.cookie = `userType=Admin;`;
         else
             document.cookie = `userType=TS;`;
     }
+
     return (
         <div>
             <img alt="" className="position-absolute" src={ SignInFrame } style={ { top: 0, left: 0, width: '100%', height: '100%', zIdex: 0 } } />
@@ -54,9 +48,7 @@ export function SignInAs()
 export function SignIn()
 {
     const [isWrong, setWrong] = useState(false);
-    // const { user, setUser } = useContext(UserContext);
     const navigate = useNavigate();
-    // var f_position = user.position;
 
     useEffect(() =>
     {
@@ -96,11 +88,6 @@ export function SignIn()
                     else
                     {
                         document.cookie = `id=${ user.id };`;
-                        // localStorage.setItem('user', JSON.stringify({ user, position: f_position }));
-                        // localStorage.setItem('navbar', true);
-                        // setUser({ user, position: f_position });
-                        // console.log(f_position);
-                        // props.onNavBar();
                         navigate('/Home');
                     }
                 })
@@ -118,14 +105,6 @@ export function SignIn()
                     {
                         document.cookie = `id=${ res.data };`;
                         navigate('/Home');
-                        // SHOULD BE CHANGED
-                        // localStorage.setItem('user', JSON.stringify({ user, position: f_position }));
-                        // localStorage.setItem('navbar', true);
-                        // setUser({ user, position: f_position });
-                        // console.log(f_position);
-                        // props.onNavBar();
-                        // navigate('/' + f_position + '/Home');
-                        // SHOULD BE CHANGED
                     }
                 })
                 .catch(error => console.log(error));

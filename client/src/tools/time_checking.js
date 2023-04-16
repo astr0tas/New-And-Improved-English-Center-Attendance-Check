@@ -1,5 +1,6 @@
 function formatTime(time)
 {
+      // format start and end time from hh:mm:ss to hh:mm
       const [hours, minutes] = time.split(':');
       return `${ hours }:${ minutes }`;
 }
@@ -26,12 +27,6 @@ export function isCurrentTimeInRange(start, end)
       endTime.setMinutes(parseInt(end.split(":")[1], 10));
       endTime.setSeconds(0);
       endTime.setMilliseconds(0);
-
-      // If end time is before start time, add a day to end time
-      // if (endTime < startTime)
-      // {
-      //       endTime.setDate(endTime.getDate() + 1);
-      // }
 
       // Check if current time is between start and end time
       return currentTime >= startTime && currentTime <= endTime;

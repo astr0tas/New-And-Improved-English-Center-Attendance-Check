@@ -10,10 +10,8 @@ import $ from 'jquery';
 import { isCurrentTimeInRange, isInWeekPeriod } from "../../tools/time_checking";
 
 const students = [];
-
 const StudentList = (props) =>
 {
-      const [attendance, setAttendance] = useState({ status: null, note: "" });
 
       const render = useRef(false);
 
@@ -21,14 +19,16 @@ const StudentList = (props) =>
       {
             if (!render.current)
             {
-                  axios.get('http://localhost:3030/TS/attendance/studentAttendance', { params: { sessionNumber: props.sessionNumber, className: props.class_name, ID: props.id } })
+                  axios.get('http://localhost:3030/TS/attendance/studentAttendance', { params: { sessionNumber: props.sessionNumber, className: props.className, ID: props.id } })
                         .then(res =>
                         {
                               // console.log(res);
                               if (res.data.length !== 0)
                               {
-                                    // res.data.Note
-                                    setAttendance({ status: res.data.Status, note: res.data.Note });
+                                    students[props.number - 1].status = res.data.Status;
+                                    students[props.number - 1].note = (res.data.Note === null) ? "" : res.data.Note;
+
+                                    $(`.attendance_note_${ props.id }`).val(res.data.Note);
                                     $(`.attendance_check_${ props.id }`).each(function ()
                                     {
                                           if (parseInt($(this).val()) === res.data.Status)
@@ -73,10 +73,10 @@ const StudentList = (props) =>
                   <th scope="row" className='col-1'>{ props.number }</th>
                   <td className='col-3'>{ props.name }</td>
                   <td className='col-1'><button className={ `${ styles.detail }` }><a href="#">Detail</a></button></td>
-                  <td className='col-1'><input value="2" className={ `attendance_check_${ props.id }` } onChange={ handleCheck } type="checkbox" style={ { width: "30px", height: "30px" } }></input></td>
-                  <td className='col-1'><input value="1" className={ `attendance_check_${ props.id }` } onChange={ handleCheck } type="checkbox" style={ { width: "30px", height: "30px", marginLeft: "20px" } }></input></td>
-                  <td className='col-1'><input value="0" className={ `attendance_check_${ props.id }` } onChange={ handleCheck } type="checkbox" style={ { width: "30px", height: "30px", marginLeft: "20px" } }></input></td>
-                  <td className='col-3'><input type="text" style={ { width: "300px", marginLeft: "30px" } } onChange={ handleNote } defaultValue={ attendance.note }></input></td>
+                  <td className='col-1'><input value="2" className={ `attendance_check_${ props.id } ${ styles.checkbox }` } onChange={ handleCheck } type="checkbox" style={ { width: "30px", height: "30px" } }></input></td>
+                  <td className='col-1'><input value="1" className={ `attendance_check_${ props.id } ${ styles.checkbox }` } onChange={ handleCheck } type="checkbox" style={ { width: "30px", height: "30px", marginLeft: "20px" } }></input></td>
+                  <td className='col-1'><input value="0" className={ `attendance_check_${ props.id } ${ styles.checkbox }` } onChange={ handleCheck } type="checkbox" style={ { width: "30px", height: "30px", marginLeft: "20px" } }></input></td>
+                  <td className='col-3'><input type="text" style={ { width: "300px", marginLeft: "30px" } } onChange={ handleNote } className={ `attendance_note_${ props.id }` }></input></td>
             </tr>
       );
 }
@@ -94,7 +94,7 @@ const Teacher = (props) =>
 
       const addStudent = (id) =>
       {
-            students.push({ id: id, status: null, note: null });
+            students.push({ id: id, status: null, note: "" });
       };
 
       useEffect(() =>
@@ -154,7 +154,7 @@ const Teacher = (props) =>
                               for (let i = 0; i < res.data.length; i++)
                               {
                                     addStudent(res.data[i].Student_ID);
-                                    temp.push(<StudentList key={ i } number={ i + 1 } name={ res.data[i].name } id={ res.data[i].Student_ID } sessionNumber={ props.sessionNumber } class_name={ props.className } />);
+                                    temp.push(<StudentList key={ i } number={ i + 1 } name={ res.data[i].name } id={ res.data[i].Student_ID } sessionNumber={ props.sessionNumber } className={ props.className } />);
                               }
                               const root = ReactDOM.createRoot(document.getElementById('student_list'));
                               root.render(<>{ temp }</>);
@@ -167,7 +167,7 @@ const Teacher = (props) =>
       const handleSubmit = () =>
       {
             const currentDate = detailFormat(new Date());
-            console.log(students);
+            // console.log(students);
             if (time.date === currentDate)
             {
                   if (isCurrentTimeInRange(time.start, time.end))
@@ -263,6 +263,7 @@ const Teacher = (props) =>
       );
 }
 
+const teacherAttendace = { status: null };
 const Supervisor = (props) =>
 {
       const render = useRef(false);
@@ -274,98 +275,116 @@ const Supervisor = (props) =>
       const [teacher, setTeacher] = useState({});
       const [supervisor, setSupervisor] = useState({});
 
-      const teacherAttendace = { status: null, note: "" };
-
       const addStudent = (id) =>
       {
-            students.push({ id: id, status: null, note: null });
+            students.push({ id: id, status: null, note: "" });
       };
 
       useEffect(() =>
       {
             if (!render.current)
             {
-                  axios.get('http://localhost:3030/TS/attendance/session', {
-                        params: {
-                              sessionNumber: props.sessionNumber,
-                              className: props.className
-                        }
-                  })
-                        .then(res =>
-                        {
-                              setRoom(res.data.Classroom_ID);
-                              setTime({ date: detailFormat(res.data.Session_date), start: res.data.Start_hour, end: res.data.End_hour });
-                              if (res.data.Status === 2)
-                                    setStatus({ status: "On going", color: "#0B8700" });
-                              else if (res.data.Status === 1)
-                                    setStatus({ status: "Finished", color: "#7E7E7E" });
-                              else
-                                    setStatus({ status: "Cancelled", color: "#FF0000" });
-                              setMakeup(res.data.Session_number_make_up_for);
-                        })
-                        .catch(error => console.log(error));
-                  axios.get('http://localhost:3030/TS/attendance/teacher', {
-                        params: {
-                              sessionNumber: props.sessionNumber,
-                              className: props.className
-                        }
-                  })
-                        .then(res =>
-                        {
-                              setTeacher({ id: res.data.ID, name: res.data.name });
-                        })
-                        .catch(error => console.log(error));
-                  axios.get('http://localhost:3030/TS/attendance/supervisor', {
-                        params: {
-                              sessionNumber: props.sessionNumber,
-                              className: props.className
-                        }
-                  })
-                        .then(res =>
-                        {
-                              // console.log(res);
-                              setSupervisor({ id: res.data.ID, name: res.data.name });
-                        })
-                        .catch(error => console.log(error));
-                  axios.get('http://localhost:3030/TS/attendance/students', {
-                        params: {
-                              className: props.className
-                        }
-                  })
-                        .then(res =>
-                        {
-                              let temp = [];
-                              for (let i = 0; i < res.data.length; i++)
-                              {
-                                    addStudent(res.data[i].Student_ID);
-                                    temp.push(<StudentList key={ i } number={ i + 1 } name={ res.data[i].name } id={ res.data[i].Student_ID } />);
+                  async function Foo()
+                  {
+                        let teacherID;
+                        axios.get('http://localhost:3030/TS/attendance/session', {
+                              params: {
+                                    sessionNumber: props.sessionNumber,
+                                    className: props.className
                               }
-                              const root = ReactDOM.createRoot(document.getElementById('student_list'));
-                              root.render(<>{ temp }</>);
                         })
-                        .catch(error => console.log(error));
-                  axios.get('http://localhost:3030/TS/attendance/teacherAttendance', { params: { sessionNumber: props.sessionNumber, className: props.class_name, ID: teacher.id } })
-                        .then(res =>
-                        {
-                              if (res.data.length !== 0)
+                              .then(res =>
                               {
-                                    teacherAttendace.status = res.data.Status;
-                                    teacherAttendace.note = res.data.Note;
-
-                                    $(`.teacher_attendace_check`).each(function ()
+                                    setRoom(res.data.Classroom_ID);
+                                    setTime({ date: detailFormat(res.data.Session_date), start: res.data.Start_hour, end: res.data.End_hour });
+                                    if (res.data.Status === 2)
+                                          setStatus({ status: "On going", color: "#0B8700" });
+                                    else if (res.data.Status === 1)
+                                          setStatus({ status: "Finished", color: "#7E7E7E" });
+                                    else
+                                          setStatus({ status: "Cancelled", color: "#FF0000" });
+                                    setMakeup(res.data.Session_number_make_up_for);
+                              })
+                              .catch(error => console.log(error));
+                        await axios.get('http://localhost:3030/TS/attendance/teacher', {
+                              params: {
+                                    sessionNumber: props.sessionNumber,
+                                    className: props.className
+                              }
+                        })
+                              .then(res =>
+                              {
+                                    setTeacher({ id: res.data.ID, name: res.data.name });
+                                    teacherID = res.data.ID;
+                              })
+                              .catch(error => console.log(error));
+                        axios.get('http://localhost:3030/TS/attendance/supervisor', {
+                              params: {
+                                    sessionNumber: props.sessionNumber,
+                                    className: props.className
+                              }
+                        })
+                              .then(res =>
+                              {
+                                    // console.log(res);
+                                    setSupervisor({ id: res.data.ID, name: res.data.name });
+                              })
+                              .catch(error => console.log(error));
+                        axios.get('http://localhost:3030/TS/attendance/teacherAttendance', { params: { sessionNumber: props.sessionNumber, className: props.className, ID: teacherID } })
+                              .then(res =>
+                              {
+                                    if (res.data.length !== 0)
                                     {
-                                          if (parseInt($(this).val()) === teacherAttendace.status)
+                                          teacherAttendace.status = res.data.Status;
+                                          // teacherAttendace.note = (res.data.Note === null) ? "" : res.data.Note;
+
+                                          // $('.teacher_attendace_note').val(teacherAttendace.note);
+                                          $('.teacher_attendace_note').val((res.data.Note === null) ? "" : res.data.Note);
+
+                                          $(`.teacher_attendace_check`).each(function ()
                                           {
-                                                $(this).prop("checked", true);
-                                          }
-                                          else
-                                          {
-                                                $(this).prop("checked", false);
-                                          }
-                                    });
+                                                if (parseInt($(this).val()) === teacherAttendace.status)
+                                                {
+                                                      $(this).prop("checked", true);
+                                                }
+                                                else
+                                                {
+                                                      $(this).prop("checked", false);
+                                                }
+                                          });
+                                    }
+                              })
+                              .catch(error => { console.log(error); })
+                        axios.get('http://localhost:3030/TS/attendance/classNote', { params: { sessionNumber: props.sessionNumber, className: props.className } })
+                              .then(res =>
+                              {
+                                    if (res.data.length !== 0)
+                                    {
+                                          // console.log(res);
+                                          $('.note_for_class').val(res.data.Note_for_class);
+                                    }
+                              })
+                              .catch(error => { console.log(error); })
+                        // note_for_class
+                        axios.get('http://localhost:3030/TS/attendance/students', {
+                              params: {
+                                    className: props.className
                               }
                         })
-                        .catch(error => { console.log(error); })
+                              .then(res =>
+                              {
+                                    let temp = [];
+                                    for (let i = 0; i < res.data.length; i++)
+                                    {
+                                          addStudent(res.data[i].Student_ID);
+                                          temp.push(<StudentList key={ i } number={ i + 1 } name={ res.data[i].name } id={ res.data[i].Student_ID } sessionNumber={ props.sessionNumber } className={ props.className } />);
+                                    }
+                                    const root = ReactDOM.createRoot(document.getElementById('student_list'));
+                                    root.render(<>{ temp }</>);
+                              })
+                              .catch(error => console.log(error));
+                  }
+                  Foo();
                   render.current = true;
             }
       });
@@ -374,6 +393,7 @@ const Supervisor = (props) =>
       {
             if (isInWeekPeriod(time.date))
             {
+                  // console.log(teacherAttendace.status);
                   if (teacherAttendace.status === null)
                   {
                         $(`.${ styles.teacherMissing }`).css("display", "flex");
@@ -387,30 +407,30 @@ const Supervisor = (props) =>
                               return;
                         }
                   }
-                  // for (let i = 0; i < students.length; i++)
-                  // {
-                  //       axios.post('http://localhost:3030/TS/attendance/teacherUpdate', {
-                  //             params: {
-                  //                   sessionNumber: props.sessionNumber,
-                  //                   className: props.className,
-                  //                   id: students[i].id,
-                  //                   status: students[i].status,
-                  //                   note: students[i].note
-                  //             }
-                  //       })
-                  //             .then(res =>
-                  //             {
-                  //                   console.log(res.data);
-                  //             })
-                  //             .catch(error => { console.log(error); });
-                  // }
+                  for (let i = 0; i < students.length; i++)
+                  {
+                        axios.post('http://localhost:3030/TS/attendance/teacherUpdate', {
+                              params: {
+                                    sessionNumber: props.sessionNumber,
+                                    className: props.className,
+                                    id: students[i].id,
+                                    status: students[i].status,
+                                    note: students[i].note
+                              }
+                        })
+                              .then(res =>
+                              {
+                                    console.log(res.data);
+                              })
+                              .catch(error => { console.log(error); });
+                  }
                   axios.post('http://localhost:3030/TS/attendance/supervisorUpdate', {
                         params: {
                               sessionNumber: props.sessionNumber,
                               className: props.className,
                               id: teacher.id,
                               status: teacherAttendace.status,
-                              note: teacherAttendace.note
+                              note: $('.teacher_attendace_note').val()
                         }
                   })
                         .then(res =>
@@ -418,6 +438,12 @@ const Supervisor = (props) =>
                               console.log(res.data);
                         })
                         .catch(error => { console.log(error); });
+                  axios.post('http://localhost:3030/TS/attendance/classNote', { params: { sessionNumber: props.sessionNumber, className: props.className, note: $(".note_for_class").val() } })
+                        .then(res =>
+                        {
+                              console.log(res.data);
+                        })
+                        .catch(error => { console.log(error); })
                   $(`.${ styles.complete }`).css("display", "flex");
             }
             else
@@ -461,21 +487,21 @@ const Supervisor = (props) =>
                                     <div className="d-flex justify-content-around align-items-center w-100">
                                           <div>
                                                 <h4>On class</h4>
-                                                <input type="checkbox" style={ { width: "30px", height: "30px" } } onChange={ handleTeacherCheck } value="2" className="teacher_attendace_check"></input>
+                                                <input type="checkbox" style={ { width: "30px", height: "30px" } } onChange={ handleTeacherCheck } value="2" className={ `teacher_attendace_check ${ styles.checkbox }` }></input>
                                           </div>
                                           <div>
                                                 <h4>Late</h4>
-                                                <input type="checkbox" style={ { width: "30px", height: "30px" } } onChange={ handleTeacherCheck } value="1" className="teacher_attendace_check"></input>
+                                                <input type="checkbox" style={ { width: "30px", height: "30px" } } onChange={ handleTeacherCheck } value="1" className={ `teacher_attendace_check ${ styles.checkbox }` }></input>
                                           </div>
                                           <div>
                                                 <h4>Absent</h4>
-                                                <input type="checkbox" style={ { width: "30px", height: "30px" } } onChange={ handleTeacherCheck } value="0" className="teacher_attendace_check"></input>
+                                                <input type="checkbox" style={ { width: "30px", height: "30px" } } onChange={ handleTeacherCheck } value="0" className={ `teacher_attendace_check ${ styles.checkbox }` }></input>
                                           </div>
                                     </div>
                                     <div className="d-flex justify-content-center align-items-center mt-5">
                                           <div className="d-flex flex-column justify-content-center align-items-center">
                                                 <h4>Note</h4>
-                                                <textarea style={ { width: '250px', minHeight: '60px', resize: 'none' } } onChange={ (event) => { teacherAttendace.note = event.target.value; } } className="teacher_attendace_note" defaultValue={ teacherAttendace.note }></textarea>
+                                                <textarea style={ { width: '250px', minHeight: '60px', resize: 'none' } } onChange={ (event) => { $('.teacher_attendace_note').val(event.target.value); } } className="teacher_attendace_note"></textarea>
                                           </div>
                                     </div>
                               </div >
@@ -507,7 +533,7 @@ const Supervisor = (props) =>
                               </div>
                               <div className="d-flex align-items-center justify-content-center mt-4">
                                     <p className="m-0">Class note:</p>
-                                    <textarea className="mx-3" style={ { width: '400px', minHeight: '60px', resize: 'none' } }></textarea>
+                                    <textarea className={ `mx-3 note_for_class` } style={ { width: '400px', minHeight: '60px', resize: 'none' } }></textarea>
                               </div>
                         </div>
                         <div className="d-flex justify-content-center align-items-center mt-5">
@@ -563,7 +589,11 @@ const Attendance = () =>
                         <h1>Attendance check complete!</h1>
                         <button className={ `${ styles.confirm }` } style={ {
                               width: "150px", height: "50px", fontSize: "30px"
-                        } } onClick={ () => { $(`.${ styles.complete }`).css("display", "none") } }>Okay</button>
+                        } } onClick={ () =>
+                        {
+                              $(`.${ styles.complete }`).css("display", "none"); window.location.reload();
+
+                        } }>Okay</button>
                   </div>
                   <div className={ `${ styles.teacherMissing } flex-column justify-content-around align-items-center` }>
                         <h1>You did not check teacher's attendance!</h1>

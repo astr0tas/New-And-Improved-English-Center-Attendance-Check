@@ -53,6 +53,7 @@ export function getStudents(className, callback)
 
 export function getstudentAttendance(sessionNumber, className, ID, callback)
 {
+      // console.log(sessionNumber, className, ID)
       con.query(`select Status,Note from STUDENT_ATTENDANCE where Session_number='${ sessionNumber }' and Class_name='${ className }' and Student_ID='${ ID }'`, (err, res) =>
       {
             if (err)
@@ -76,24 +77,64 @@ export function getTeacherAttendance(sessionNumber, className, ID, callback)
 export function teacherUpdateAttendace(sessionNumber, className, StudentID, Status, Note, callback)
 {
       // console.log(sessionNumber, className, StudentID, Status, Note)
-      // con.query(``, (err, res) =>
-      // {
-      //       if (err)
-      //             callback(err, null);
-      //       else
-      //             callback(null, res);
-      // });
+      if (Note === '')
+            con.query(`call StudentAttendance('${ sessionNumber }','${ className }','${ StudentID }','${ Status }',NULL)`, (err, res) =>
+            {
+                  if (err)
+                        callback(err, null);
+                  else
+                        callback(null, res);
+            });
+      else
+            con.query(`call StudentAttendance('${ sessionNumber }','${ className }','${ StudentID }','${ Status }','${ Note }')`, (err, res) =>
+            {
+                  if (err)
+                        callback(err, null);
+                  else
+                        callback(null, res);
+            });
 }
 
 
 export function supervisorUpdateAttendace(sessionNumber, className, TeacherID, Status, Note, callback)
 {
-      console.log(sessionNumber, className, TeacherID, Status, Note)
-      // con.query(``, (err, res) =>
-      // {
-      //       if (err)
-      //             callback(err, null);
-      //       else
-      //             callback(null, res);
-      // });
+      // console.log(sessionNumber, className, TeacherID, Status, Note)
+      if (Note === '')
+            con.query(`call TeacherAttendance(${ parseInt(sessionNumber) },'${ className }','${ TeacherID }',${ Status },NULL)`, (err, res) =>
+            {
+                  if (err)
+                        callback(err, null);
+                  else
+                        callback(null, res);
+            });
+      else
+            con.query(`call TeacherAttendance(${ parseInt(sessionNumber) },'${ className }','${ TeacherID }',${ Status },'${ Note }')`, (err, res) =>
+            {
+                  if (err)
+                        callback(err, null);
+                  else
+                        callback(null, res);
+            });
+}
+
+export function getClassNote(sessionNumber, className, callback)
+{
+      con.query(`select Note_for_class from SUPERVISOR_RESPONSIBLE where Session_number='${ sessionNumber }' and Class_name='${ className }'`, (err, res) =>
+      {
+            if (err)
+                  callback(err, null);
+            else
+                  callback(null, res);
+      });
+}
+
+export function updateClassNote(sessionNumber, className, note, callback)
+{
+      con.query(`update SUPERVISOR_RESPONSIBLE set Note_for_class='${ note }' where Session_number='${ sessionNumber }' and Class_name='${ className }'`, (err, res) =>
+      {
+            if (err)
+                  callback(err, null);
+            else
+                  callback(null, res);
+      });
 }

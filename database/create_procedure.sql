@@ -127,6 +127,7 @@ call AssignSessionForTeacher(5,'TOEIC03','TEACHER02');
 call AssignSessionForTeacher(6,'TOEIC03','TEACHER02');
 call AssignSessionForTeacher(7,'TOEIC03','TEACHER02');
 call AssignSessionForTeacher(8,'TOEIC03','TEACHER02');
+call AssignSessionForTeacher(21,'TOEIC03','TEACHER02');
 
 call AssignSessionForTeacher(1,'TOEIC04','TEACHER01');
 call AssignSessionForTeacher(2,'TOEIC04','TEACHER01');
@@ -138,3 +139,40 @@ call AssignSessionForTeacher(7,'TOEIC04','TEACHER03');
 call AssignSessionForTeacher(8,'TOEIC04','TEACHER03');
 call AssignSessionForTeacher(9,'TOEIC04','TEACHER03');
 
+-- check teacher attendace
+DROP PROCEDURE IF EXISTS TeacherAttendance;
+DELIMITER $$
+CREATE PROCEDURE TeacherAttendance(
+	IN sessionNumber INT,
+    IN className varchar(100),
+    IN teacherID varchar(15),
+    IN Status INT,
+    IN Note text
+)
+BEGIN
+	update TEACHER_RESPONSIBLE set TEACHER_RESPONSIBLE.Status=Status,TEACHER_RESPONSIBLE.Note=Note where Session_number=sessionNumber and Class_name=className and Teacher_ID=teacherID;
+END $$
+DELIMITER ;
+
+-- check student attendace
+DROP PROCEDURE IF EXISTS StudentAttendance;
+DELIMITER $$
+CREATE PROCEDURE StudentAttendance(
+	IN sessionNumber INT,
+    IN className varchar(100),
+    IN studentID varchar(15),
+    IN Status INT,
+    IN Note text
+)
+BEGIN
+	if exists(select Status from STUDENT_ATTENDANCE where Session_number=sessionNumber and Class_name=className and Student_ID=studentID) then
+		update STUDENT_ATTENDANCE set Status=Status, Note=Note where Session_number=sessionNumber and Class_name=className and Student_ID=studentID;
+    else
+		insert into STUDENT_ATTENDANCE values(sessionNumber,className,studentID,Status,Note);
+    end if;
+END $$
+DELIMITER ;
+
+select * from TEACHER_RESPONSIBLE where Session_number='21' and Class_name='TOEIC03' and Teacher_ID='TEACHER02';
+select * from STUDENT_ATTENDANCE;
+select * from SUPERVISOR_RESPONSIBLE;
