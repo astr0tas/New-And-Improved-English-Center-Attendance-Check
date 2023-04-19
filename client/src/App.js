@@ -1,39 +1,35 @@
-import { BrowserRouter, Routes, Route} from 'react-router-dom';
-import {useState, useEffect}         from 'react';
-
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import './App.css';
-import UserContext from './pages/General/UserContext.jsx';
-import {SignInAs, SignIn} from './pages/SignIn/SignIn.jsx';
-import User             from './pages/User/User.jsx';
-import Students           from './pages/Admin/Students/Student.jsx';
-import {NavBar }          from './pages/NavBar/NavBar.jsx';
+import { SignInAs, SignIn } from './pages/SignIn/SignIn.jsx';
+import { NavBar } from './pages/NavBar/NavBar.jsx';
+import { MyClasses } from './pages/T_S/MyClass';
+import ClassDetail from './pages/T_S/ClassDetail';
+import Attendance from './pages/T_S/Attendace';
 
 
-function App() {
-  const [user, setUser] = useState({user: null, position: ""});
-
-  useEffect(() => {
-      const savedUser = localStorage.getItem('user');
-      if (savedUser) {
-          setUser(JSON.parse(savedUser));
-      }
-  }, []);
-
-  const [isNavBar, setNavBar] = useState(true);
+function App()
+{
 
   return (
-    <div className="App container-fluid">
-      <UserContext.Provider value={{ user, setUser }}>
-        <BrowserRouter>
-          {isNavBar && <NavBar position = {user.position}/>}
-          <Routes>
-            <Route path ='/' element = {<SignInAs/>} />
-            <Route path ='/SignIn' element ={<SignIn onNavBar = {()=>setNavBar(true)}/>}/>
-            <Route path = {user.position + '/User' } element = {<User/>}/>
-            <Route path = {user.position + '/Students' } element = {<Students/>}/>
-          </Routes>
-        </BrowserRouter>
-      </UserContext.Provider>
+    <div className="App">
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" >
+            <Route index element={ <SignInAs /> } />
+            <Route path='/SignIn' element={ <SignIn /> } />
+            <Route element={ <NavBar /> }>
+              {/* <Route path={ user.position + '/User' } element={ <User /> } />
+          <Route path={ user.position + '/Students' } element={ <Students /> } /> */}
+              <Route path="/Home" />
+              <Route>
+                <Route path={ `/MyClasses` } element={ <MyClasses /> } />
+                <Route path={ `/MyClasses/:name` } element={ <ClassDetail name="" /> } />
+                <Route path={ `/MyClasses/:name/:session` } element={ <Attendance /> } />
+              </Route>
+            </Route>
+          </Route>
+        </Routes>
+      </BrowserRouter>
     </div>
   );
 }
