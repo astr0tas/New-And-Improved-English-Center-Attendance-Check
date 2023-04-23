@@ -1,43 +1,30 @@
 import './SignIn.css';
 import SignInFrame from './image/SignInFrame.jpg';
-import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import UserContext from '../General/UserContext';
+
+import {useState, useContext } from 'react';
+import {Link, useNavigate} from 'react-router-dom';
 import axios from 'axios';
 
 
-export function SignInAs()
-{
-    const Navigate = useNavigate();
-
-    useEffect(() =>
-    {
-        if (localStorage.getItem("id") !== null && localStorage.getItem("userType") !== null)
-            Navigate("/Home");
-    })
-
-    function halderSignIn(event)
-    {
-        if (event.target.innerHTML === "Admin")
-            localStorage.setItem("userType", "Admin");
-
-        else
-            localStorage.setItem("userType", "TS");
-
+export function SignInAs(props) {
+    const { user } = useContext(UserContext);
+    function halderSignIn(event){
+        user.position = event.target.innerHTML;
     }
-
-    return (
+    return ( 
         <div>
-            <img alt="" className="position-absolute" src={ SignInFrame } style={ { top: 0, left: 0, width: '100%', height: '100%', zIdex: 0 } } />
-            <div className="container" id="box">
-                <h1 className="card-title" style={ { top: '10%', position: 'relative', fontSize: 60 } }>Sign in as</h1>
-                <div className="button-con container flex-column">
-                    <Link className="cus-btn btn btn-primary" to='/SignIn' onClick={ halderSignIn } style={ { fontSize: 30, alignItems: 'center', justifyContent: 'center', display: 'flex' } }>
-                        Admin
+            <img alt = "" className = "position-absolute"src = {SignInFrame} style = {{top: 0, left: 0, width: '100%', height: '100%', zIdex: 0}}/>
+            <div className = "container" id = "box">
+                <h1 class="card-title" style = {{top: '10%', position: 'relative', fontSize: 60}}>Sign in as</h1>
+                <div className = "button-con container flex-column">
+                    <Link class="cus-btn btn btn-primary" to = '/SignIn' onClick = {halderSignIn} style = {{fontSize: 30, alignItems: 'center', justifyContent: 'center', display: 'flex'}}>
+                         Admin
                     </Link>
-                    <Link className="cus-btn btn btn-primary" to='/SignIn' onClick={ halderSignIn } style={ { fontSize: 30, alignItems: 'center', justifyContent: 'center', display: 'flex' } }>
+                    <Link class="cus-btn btn btn-primary" to = '/SignIn' onClick = {halderSignIn} style = {{fontSize: 30, alignItems: 'center', justifyContent: 'center', display: 'flex'}}>
                         Teacher
                     </Link>
-                    <Link className="cus-btn btn btn-primary" to='/SignIn' onClick={ halderSignIn } style={ { fontSize: 30, alignItems: 'center', justifyContent: 'center', display: 'flex' } }>
+                    <Link class="cus-btn btn btn-primary" to = '/SignIn' onClick = {halderSignIn} style = {{fontSize: 30, alignItems: 'center', justifyContent: 'center', display: 'flex'}}>
                         Supervisor
                     </Link>
                 </div>
@@ -46,128 +33,97 @@ export function SignInAs()
     );
 }
 
-export function SignIn()
-{
+export function SignIn(props){
     const [isWrong, setWrong] = useState(false);
+    const { user, setUser } = useContext(UserContext);
     const navigate = useNavigate();
-
-    useEffect(() =>
-    {
-        if (localStorage.getItem('userType') !== null && localStorage.getItem('id') !== null)
-            navigate("/Home");
-        else if (localStorage.getItem('userType') !== null && localStorage.getItem('id') === null)
-            ;
-        else
-            navigate("/");
-    });
-
-    function handleSignIn()
-    {
+    var f_position = user.position;
+    
+    function handleSignIn() {
         const username = document.getElementById('username').value;
         const password = document.getElementById('password').value;
 
-        if (username === "" || password === "")
-        {
+        if (username === "" || password === "") {
             setWrong(true);
             return;
         }
 
-        if (localStorage.getItem('userType') === "Admin")
-        {
-            axios.get('http://localhost:3030/admin/user/' + username)
-                .then(res =>
-                {
-                    var user = res.data;
+        axios.get('http://localhost:3030/' + user.position +'/user/' + username)
+        .then(res => {
+            var user = res.data;
 
-                    console.log(user);
-
-                    if (!user || user.password !== password)
-                    {
-                        setWrong(true);
-                        return;
-                    }
-                    else
-                    {
-                        localStorage.setItem("id", user.id);
-                        navigate('/Home');
-                    }
-                })
-                .catch(error => console.log(error));
-        }
-        else
-        {
-            axios.post('http://localhost:3030/TS/login', { params: { account: username, password: password } })
-                .then(res =>
-                {
-                    if (!res.data.length)
-                        setWrong(true);
-                    else
-                    {
-                        localStorage.setItem("id", res.data[0].ID);
-                        navigate('/Home');
-                    }
-                })
-                .catch(error => console.log(error));
-        }
+            if (!user || user.password !== password) {
+                setWrong(true);
+                return;
+            }
+            else{
+                localStorage.setItem('user', JSON.stringify({user, position: f_position}));
+                setUser({user, position: f_position});
+                console.log(f_position);
+                props.onNavBar();
+                navigate('/' + f_position + '/Home');
+            }
+        })
+        .catch(error => console.log(error));
     }
 
     return (
         <div>
-            <img alt="" className="position-absolute" src={ SignInFrame } style={ { top: 0, left: 0, width: '100%', height: '100%', zIdex: 0 } } />
-            <div className="container flex-column" id='box'>
-                <h1 className="card-title" style={ { top: '10%', position: 'relative', fontSize: 60 } }>Sign in</h1>
+            <img alt = "" className = "position-absolute"src = {SignInFrame} style = {{top: 0, left: 0, width: '100%', height: '100%', zIdex: 0}}/>
+            <div className = "container flex-column" id = 'box'>
+                <h1 class="card-title" style = {{top: '10%', position: 'relative', fontSize: 60}}>Sign in</h1>
                 {
-                    isWrong &&
+                    isWrong && 
                     <p
-                        style={ {
+                        style = {{
                             top: '20%',
                             left: '20%',
                             color: 'red',
                             width: '60%',
                             textAlign: 'center'
-                        } }
+                        }}
                     >
                         The username and/or password are not correct
                     </p>
                 }
-                <div className='container flex-column' style={ { top: '25%', position: 'relative', width: '60%' } }>
-                    <p style={ { left: '-40%' } }>Username</p>
-                    <div className="input-group input-group-lg cus-input">
-                        <input id="username" type="text" className="form-control" placeholder="Username" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-lg" />
+                <div className='container flex-column' style = {{top: '25%', position: 'relative', width: '60%'}}>
+                    <p style = {{left: '-40%'}}>Username</p>
+                    <div class="input-group input-group-lg cus-input">
+                        <input id = "username" type="text" class="form-control" placeholder="Username" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-lg"/>
                         {
                             isWrong &&
                             <span>
                                 <svg width="45" height="45" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M52 32C52 43.0457 43.0457 52 32 52C20.9543 52 12 43.0457 12 32C12 20.9543 20.9543 12 32 12C43.0457 12 52 20.9543 52 32Z" stroke="#EE1C1C" strokeWidth="2" />
-                                    <path d="M24 24L40 40" stroke="#EE1C1C" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                                    <path d="M40 24L24 40" stroke="#EE1C1C" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                    <path d="M52 32C52 43.0457 43.0457 52 32 52C20.9543 52 12 43.0457 12 32C12 20.9543 20.9543 12 32 12C43.0457 12 52 20.9543 52 32Z" stroke="#EE1C1C" stroke-width="2"/>
+                                    <path d="M24 24L40 40" stroke="#EE1C1C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M40 24L24 40" stroke="#EE1C1C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                                 </svg>
                             </span>
                         }
                     </div>
-                    <p style={ { left: '-40%', marginTop: '50px' } }>Password</p>
-                    <div className="input-group input-group-lg cus-input">
-                        <input id="password" type="password" className="form-control " placeholder="Password" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-lg" />
+                    <p style = {{left: '-40%', marginTop: '50px'}}>Password</p>
+                    <div class="input-group input-group-lg cus-input">
+                        <input id = "password" type="password" class="form-control " placeholder="Password" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-lg"/>
                         {
                             isWrong &&
                             <span>
                                 <svg width="45" height="45" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M52 32C52 43.0457 43.0457 52 32 52C20.9543 52 12 43.0457 12 32C12 20.9543 20.9543 12 32 12C43.0457 12 52 20.9543 52 32Z" stroke="#EE1C1C" strokeWidth="2" />
-                                    <path d="M24 24L40 40" stroke="#EE1C1C" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                                    <path d="M40 24L24 40" stroke="#EE1C1C" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                    <path d="M52 32C52 43.0457 43.0457 52 32 52C20.9543 52 12 43.0457 12 32C12 20.9543 20.9543 12 32 12C43.0457 12 52 20.9543 52 32Z" stroke="#EE1C1C" stroke-width="2"/>
+                                    <path d="M24 24L40 40" stroke="#EE1C1C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M40 24L24 40" stroke="#EE1C1C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                                 </svg>
                             </span>
                         }
                     </div>
                 </div>
 
-                <button className="cus-btn btn btn-primary" type="button"
-                    style={ { top: '35%', position: 'relative', fontSize: 30 } }
-                    onClick={ handleSignIn }
+                <button class="cus-btn btn btn-primary" type="button" 
+                        style = {{top: '35%', position: 'relative', fontSize: 30}}
+                        onClick = {handleSignIn}
                 >
                     Sign in
                 </button>
-                <p style={ { top: '30%', left: '30%', position: 'relative', fontSize: 30, cursor: 'pointer', width: '40%' } }>Forgot password?</p>
+                <p style = {{top: '30%', left: '30%', position: 'relative', fontSize: 30, cursor: 'pointer', width: '40%'}}>Forgot password?</p>
             </div>
         </div>
     )
