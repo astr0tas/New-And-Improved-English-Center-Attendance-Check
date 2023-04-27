@@ -6,7 +6,7 @@ export default function ChangeEntity(props){
     const [studentClasses, setClasses] = useState("");
     const [showListClass, setShowListClass] = useState(false);
     const [showNoti, setShow] = useState(false);
-        
+    var entity = props.entity;
 
     function handleAddImage(){
 
@@ -32,51 +32,44 @@ export default function ChangeEntity(props){
                   
                 <>
                     <label for="file-input" class="img-btn" onClick = {handleAddImage}>Add a picture</label>
-                    <input type="file" id="file-input" accept="image/*" multiple style={{display: 'none'}} />
+                    <input type="file" id="file-input" accept="image/*" multiple style={{display: 'none'}}/>
                 </>
 
                 <div class="info-container">
                     <div class="input-group">
                         <span class="input-group-text" id="basic-addon1" >Name</span>
-                        <input type="text" class="form-control" aria-describedby="basic-addon1"/>
-                    </div>
-                </div>
-
-                <div class="info-container" background = 'none'>
-                    <div class="input-group">
-                        <span class="input-group-text" id="basic-addon1" >SSN</span>
-                        <input type="text" class="form-control" aria-describedby="basic-addon1"/>
+                        <input type="text" class="form-control" aria-describedby="basic-addon1" placeholder= {entity.name}/>
                     </div>
                 </div>
 
                 <div className='info-container'> 
                     <div class="input-group" style = {{width: '40%'}}>
                         <span class="input-group-text" id="basic-addon1" >Phone</span>
-                        <input type="text" class="form-control" aria-describedby="basic-addon1"/>
+                        <input type="text" class="form-control" aria-describedby="basic-addon1" placeholder= {entity.phone}/>
                     </div>
 
                     <div class="input-group" style = {{width: '55%'}}>
                         <span class="input-group-text" id="basic-addon1" >Email</span>
-                        <input type="text" class="form-control" aria-describedby="basic-addon1"/>
+                        <input type="text" class="form-control" aria-describedby="basic-addon1" placeholder= {entity.email}/>
                     </div>
                 </div>
 
                 <div class="info-container">
                     <div class="input-group" style = {{width: '40%'}}>
                         <span class="input-group-text" id="basic-addon1" >Birthday</span>
-                        <input type="text" class="form-control" aria-describedby="basic-addon1"/>
+                        <input type="text" class="form-control" aria-describedby="basic-addon1" placeholder= {entity.birthday}/>
                     </div>
 
                     <div class="input-group" style = {{width: '55%'}}>
                         <span class="input-group-text" id="basic-addon1" >Birthplace</span>
-                        <input type="text" class="form-control" aria-describedby="basic-addon1"/>
+                        <input type="text" class="form-control" aria-describedby="basic-addon1" placeholder= {entity.birthplace}/>
                     </div>
                 </div>
 
                 <div class="info-container">
                     <div class="input-group">
                         <span class="input-group-text" id="basic-addon1" >Address</span>
-                        <input type="text" class="form-control" aria-describedby="basic-addon1"/>
+                        <input type="text" class="form-control" aria-describedby="basic-addon1" placeholder= {entity.address}/>
                     </div>
                 </div>
 

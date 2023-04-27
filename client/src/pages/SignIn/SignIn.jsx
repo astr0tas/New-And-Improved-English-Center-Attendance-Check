@@ -48,10 +48,10 @@ export function SignIn(props){
             return;
         }
 
-        axios.get('http://localhost:3030/' + user.position +'/user/' + username)
+        axios.get('http://localhost:3030/' + f_position.toLowerCase() + '/user/' + username)
         .then(res => {
             var user = res.data;
-
+            console.log(user);
             if (!user || user.password !== password) {
                 setWrong(true);
                 return;
@@ -59,7 +59,7 @@ export function SignIn(props){
             else{
                 localStorage.setItem('user', JSON.stringify({user, position: f_position}));
                 setUser({user, position: f_position});
-                console.log(f_position);
+                
                 props.onNavBar();
                 navigate('/' + f_position + '/Home');
             }

@@ -2,34 +2,44 @@ import '../../General/General.css';
 import './Student.css';
 
 import axios from 'axios';
-import AddEntity from '../../General/AddEntity';
-import ShowInfo from '../../General/ShowInfo';
+import NewStudent from './NewStudent';
+import ShowInfo from './ShowInfo';
+import UserContext from '../../General/UserContext.jsx';
 
-import {useState} from 'react';
+import {useState, useContext} from 'react';
+import {Link} from 'react-router-dom';
 
-var studentList = [];
 
-axios.get(`http://localhost:3030/admin/Students`)
-.then(res => {
-    studentList = res.data;
-})
-.catch(error => console.log(error));
 
 export default function Students(){
-    const [addEntity, setAddEntity] = useState(false);
+    const { user } = useContext(UserContext);
+    const [newStudent, setNewStudent] = useState(false);
     const [showInfo, setShowInfo] = useState(false);
+    const [studentList, setStudentList] = useState([]);
+
+    axios.get(`http://localhost:3030/admin/Students`)
+    .then(res => {
+        setStudentList(res.data);
+    })
+    .catch(error => console.log(error));
 
     const [curr_student, setCurr] = useState(studentList[0]);
     function handleShowInfo(student){
         setShowInfo(true);
         setCurr(student);
     }
+
+    const [searchInput, setSearchInput] = useState("");
+    function handleSearch(event) {
+        event.preventDefault();
+        setSearchInput(event.target.value);
+    };
     
     return (
         <div className = 'main-container'>
             <div className = 'entity-box'>
                 <div className = 'search-container'>
-                    <input id = 'search' type = 'text'/>
+                    <input id = 'search' type = 'text' onChange={handleSearch} value={searchInput}/>
                     {/*onclick={()=>document.getElementById("search").value = ""}*/}
                     <svg style = {{position: 'absolute', left: '83%', cursor: 'pointer' }} width="25" height="25" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M8 1.5C4.13438 1.5 1 4.63438 1 8.5C1 12.3656 4.13438 15.5 8 15.5C11.8656 15.5 15 12.3656 15 8.5C15 4.63438 11.8656 1.5 8 1.5ZM10.5844 11.1594L9.55313 11.1547L8 9.30313L6.44844 11.1531L5.41563 11.1578C5.34688 11.1578 5.29063 11.1031 5.29063 11.0328C5.29063 11.0031 5.30156 10.975 5.32031 10.9516L7.35313 8.52969L5.32031 6.10938C5.30143 6.08647 5.29096 6.0578 5.29063 6.02812C5.29063 5.95937 5.34688 5.90312 5.41563 5.90312L6.44844 5.90781L8 7.75938L9.55156 5.90938L10.5828 5.90469C10.6516 5.90469 10.7078 5.95937 10.7078 6.02969C10.7078 6.05937 10.6969 6.0875 10.6781 6.11094L8.64844 8.53125L10.6797 10.9531C10.6984 10.9766 10.7094 11.0047 10.7094 11.0344C10.7094 11.1031 10.6531 11.1594 10.5844 11.1594Z" fill="black" fill-opacity="0.25"/>
@@ -39,19 +49,33 @@ export default function Students(){
                     </svg>
                 </div>
 
-                <div className = 'entity-list-container'>
+                <div className='entity-list-container'>
                     {
-                        studentList.map((i_student)=> <StudentDetails student = {i_student} onInfo = {() => {handleShowInfo(i_student)}} />)
+                        studentList.filter((student) => {
+                            const idMatch = student.ID.toLowerCase().match(searchInput.toLowerCase());
+                            const nameMatch = student.name.toLowerCase().match(searchInput.toLowerCase());
+                            return nameMatch || idMatch;
+                        }).map((i_student, index) => (
+                            <StudentDetails
+                                key={index}
+                                student={i_student}
+                                onInfo={() => handleShowInfo(i_student)}
+                            />
+                        ))
                     }
                 </div>
 
+
+
                 <div className = 'button-container'>
-                    <button class="cus-btn btn btn-primary cus-btn" type="button" style = {{fontSize: 20}}>BACK</button>
-                    <button class="cus-btn btn btn-primary cus-btn" type="button" style = {{fontSize: 20}} onClick = {()=>setAddEntity(true)}>ADD A STUDENT</button>
+                    <Link to = {'/' + user.position + '/Home'} class="cus-btn btn btn-primary cus-btn" type="button" style = {{display: 'flex', fontSize: 20, alignItems: 'center', justifyContent: 'center'}}>
+                        BACK
+                    </Link>
+                    <button class="cus-btn btn btn-primary cus-btn" type="button" style = {{fontSize: 20}} onClick = {()=>setNewStudent(true)}>ADD A STUDENT</button>
                 </div>
             </div>
             {
-                addEntity && <AddEntity offAdd = {()=>setAddEntity(false)}/>
+                newStudent && <NewStudent offAdd = {()=>setNewStudent(false)}/>
             }
 
             {
@@ -65,7 +89,7 @@ export default function Students(){
 function StudentDetails(props){
     return (
         <div className = 'entity-container'>
-            <p>{props.student.ssn}</p>
+            <p>{props.student.ID}</p>
             <p style= {{width: '400px'}}>{props.student.name}</p>
             <p>{props.student.class}</p>
             <button class = "btn btn-primary" onClick = {() => props.onInfo(true)}>Details</button>

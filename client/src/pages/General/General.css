@@ -66,6 +66,8 @@
 
 .entity-list-container{
     position: absolute;
+    justify-content: center;
+
     top: 10%;
     left: 2%;
     width: 96%;
@@ -87,6 +89,7 @@
 .entity-list-container::-webkit-scrollbar-thumb {
     background: #888;
     border-radius: 30px;
+    height: 250px;
 }
 
 .entity-list-container::-webkit-scrollbar-thumb:hover {
@@ -216,6 +219,14 @@
     width: 20%;
     height: 28%;
     background: #BFBFBF;
+}
+
+.avatar-container img{
+    position: absolute;
+    width: 90%;
+    height: 90%;
+    top: 10%;
+    left: 8%;
 }
 
 .info-container{

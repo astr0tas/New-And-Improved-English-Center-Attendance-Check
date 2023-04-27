@@ -1,25 +1,70 @@
 import '../General/General.css';
 import './User.css';
-import {useContext, useState} from 'react';
 import UserContext from '../General/UserContext.jsx';
+import userImage from './image/image.png';
 
+import {useContext, useState} from 'react';
+import axios from 'axios';
 
 export default function User(){
-    const { user } = useContext(UserContext);
+    const { user, setUser } = useContext(UserContext);
 
     var f_user = user.user;
-    var birthday = new Date(f_user.birthday).toLocaleDateString('en-GB');
+    var fbirthday = new Date(f_user.birthday).toLocaleDateString('en-GB');
     
     const [isEdit, setEdit] = useState(false);
     const [isSuccess, setSuccess] = useState(false);
+
+    const [address, setAddress] = useState("");
+    const [birthday, setBirthday] = useState(null);
+    const [birthplace, setBirthplace] = useState("");
+    const [email, setEmail] = useState("");
+    const [phone, setPhone] = useState("");
     
+    function handelYes(){
+        axios.post("http://localhost:3030/"+ user.position.toLowerCase() +"/user/" + f_user.ID, {
+            ssn: f_user.SSN,
+            address: address,
+            birthday: birthday,
+            birthplace: birthplace,
+            email: email,
+            phone: phone
+
+        })
+        .then(
+           (res) => {
+                console.log(res);
+                if (address !== "") f_user.address = address;
+                if (birthday !== null) {
+                    fbirthday = new Date(birthday).toLocaleDateString('en-GB');
+                    f_user.birthday = birthday;
+                }
+                if (birthplace !== "") f_user.birthplace = birthplace;
+                if (email !== "") f_user.email = email;
+                if (phone !== "") f_user.phone = phone;
+
+                var position = user.position
+                axios.get('http://localhost:3030/' + position + '/user/' + f_user.ID)
+                .then(res => {
+                    var user = res.data;
+                    setUser({user, position: position});
+                })
+                .catch(error => console.log(error));
+                setSuccess(true);
+           } 
+        )
+        .catch(
+            error => console.log(error)
+        );
+    }
+
     return (
         <div className='main-container'>
             <div className='ssn-container'>
-                {f_user.ssn}
+                {f_user.SSN}
             </div>
             <div className='img-container'>
-                <img src={'he'} alt=""/>
+                <img src={userImage} alt=""/>
             </div>
             <div className='name-container'>
                 {f_user.name}
@@ -39,7 +84,7 @@ export default function User(){
                         >
                             <svg width="60" height="60" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"
                                  style = {{cursor: 'pointer'}}
-                                 onClick = {() => setSuccess(true)}
+                                 onClick = {handelYes}
                             >
                                 <path d="M52 32C52 43.0457 43.0457 52 32 52C20.9543 52 12 43.0457 12 32C12 20.9543 20.9543 12 32 12C43.0457 12 52 20.9543 52 32Z" stroke="#1CDC24" stroke-width="2"/>
                                 <path d="M20 32L26.7311 38.7311V38.7311C27.4319 39.4319 28.5681 39.4319 29.2689 38.7311V38.7311L44 24" stroke="#1CDC24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -63,15 +108,17 @@ export default function User(){
                             </svg>
                         </div>
                 }
-                <Detail field = "Address" value = {f_user.address} edit = {isEdit} notEdit = {()=>setEdit(false)}/>
-                <Detail field = "BirthDate" value = {birthday} edit = {isEdit} notEdit = {()=>setEdit(false)}/>
-                <Detail field = "BirthPlace" value = {f_user.birthplace} edit = {isEdit} notEdit = {()=>setEdit(false)}/>
-                <Detail field = "Email" value = {f_user.email} edit = {isEdit} notEdit = {()=>setEdit(false)}/>
-                <Detail field = "Phone" value = {f_user.phone} edit = {isEdit} notEdit = {()=>setEdit(false)}/>
+                <Detail field = "Address" value = {f_user.address} edit = {isEdit} notEdit = {()=>setEdit(false)} setValue = {(value) => setAddress(value)}/>
+                <Detail field = "BirthDate" value = {fbirthday} edit = {isEdit} notEdit = {()=>setEdit(false)} setValue = {(value) => setBirthday(value)}/>
+                <Detail field = "BirthPlace" value = {f_user.birthplace} edit = {isEdit} notEdit = {()=>setEdit(false)} setValue = {(value) => setBirthplace(value)}/>
+                <Detail field = "Email" value = {f_user.email} edit = {isEdit} notEdit = {()=>setEdit(false)} setValue = {(value) => setEmail(value)}/>
+                <Detail field = "Phone" value = {f_user.phone} edit = {isEdit} notEdit = {()=>setEdit(false)} setValue = {(value) => setPhone(value)}/>
             </div>
         </div>
     )
 }
+
+
 
 function Detail(props){
     return(
@@ -79,11 +126,24 @@ function Detail(props){
             <p style = {{position: 'absolute', right: '70%'}}>{props.field} :</p>
             {
                 props.edit ?
-                    <div class="input-group mb-3" style = {{position: 'absolute', left: '40%', width: '60%'}}>
-                        <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default"/>
-                    </div>
+                    (
+                        props.field !== "BirthDate" ? (
+                            <div class="input-group mb-3" style = {{position: 'absolute', left: '40%', width: '60%', fontFamily: 'Inter'}}>
+                                <input placeholder={props.value} type= "text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" onChange={(event) => props.setValue(event.target.value)}/>
+                            </div>
+                        )
+                        :
+                        (
+                            <div class="md-form md-outline input-with-post-icon datepicker" id="prefill" style={{ position: 'absolute', left: '40%', width: '60%', fontFamily: 'Inter' }}>
+                                <input placeholder={props.value} type="date" id="prefill-example" class="form-control" onChange={(event) => props.setValue(event.target.value)}/>
+                                <i class="fas fa-calendar input-prefix" />
+                            </div>
+                        )
+                    )
                 :
+                    (
                     <p style = {{position: 'absolute', left: '40%', textDecorationLine: props.field ==='Email' && 'underline' }}>{props.value}</p>
+                )
             }
         </div>
     )
