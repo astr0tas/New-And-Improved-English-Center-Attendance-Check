@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import './App.css';
+import AddClass from './pages/Admin/Classes/addClass';
 import { SignInAs, SignIn } from './pages/SignIn/SignIn.jsx';
 import { NavBar } from './pages/NavBar/NavBar.jsx';
 import { MyClasses } from './pages/T_S/MyClass';
@@ -26,6 +27,7 @@ function App()
                 <Route path={ `/MyClasses/:name` } element={ <ClassDetail name="" /> } />
                 <Route path={ `/MyClasses/:name/:session` } element={ <Attendance /> } />
               </Route>
+              <Route path='AddClass' element={ <AddClass /> } />
             </Route>
           </Route>
         </Routes>

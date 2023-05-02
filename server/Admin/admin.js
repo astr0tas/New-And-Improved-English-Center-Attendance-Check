@@ -1,7 +1,10 @@
 import express from "express";
-import { getEmployees, getStudents, getStudent, getUser, getClasses } from "./query.js";
+import { getEmployees } from './query.js';
+import { newStudent, getStudents, getStudent, getClasses, getNewID, getClassesOfStudent, getNotClassesOfStudent, getClassInfo, changeClass } from "./query.js";
+import { getUser, updateInfo } from "./query.js";
 
 const adminRoutes = express.Router();
+
 
 adminRoutes.get('/students', async (req, res) =>
 {
@@ -22,12 +25,73 @@ adminRoutes.get('/classes', async (req, res) =>
     res.json(classes);
 });
 
-// adminRoutes.post()
+adminRoutes.get('/newID', async (req, res) =>
+{
+    const [id] = await getNewID();
+    res.json(id);
+});
+
+adminRoutes.get('/class/:name', async (req, res) =>
+{
+    const classInfo = await getClassInfo(req.params.name);
+    res.json(classInfo);
+})
+
+adminRoutes.get('/:id/classes', async (req, res) =>
+{
+    const sClasses = await getClassesOfStudent(req.params.id);
+    res.json(sClasses);
+})
+
+adminRoutes.get('/:id/notclasses', async (req, res) =>
+{
+    const sClasses = await getNotClassesOfStudent(req.params.id);
+    res.json(sClasses);
+})
+
+adminRoutes.post('/:id/classes', async (req, res) =>
+{
+    let data = req.body;
+    await changeClass(data.id, data.old, data.new);
+    res.send("update sucessfully");
+})
+
+adminRoutes.post('/user/:account', async (req, res) =>
+{
+    let data = req.body;
+    await updateInfo(data.ssn, data.address, data.birthday, data.birthplace, data.email, data.phone);
+    res.send("update user information successfully");
+})
+
+adminRoutes.post('/new/student', async (req, res) =>
+{
+    let data = req.body;
+    await newStudent(data.name, data.phone, data.birthday, data.birthplace, data.email, data.address, data.classes);
+    res.send("add new student successfully");
+})
+
+// app.post('/', (req, res) => {
+//     let data = req.body;
+//     res.send('Data Received: ' + JSON.stringify(data));
+// })
 
 adminRoutes.use((err, req, res, next) =>
 {
     console.error(err.stack)
     res.status(500).send('Something broke!')
 })
+
+adminRoutes.get('/rooms', async (req, res) =>
+{
+    const rooms = await getRooms();
+    res.json(rooms);
+});
+
+adminRoutes.get('/teachers', async (req, res) =>
+{
+    const teachers = await getTeachers();
+    res.json(teachers);
+});
+
 
 export default adminRoutes;
