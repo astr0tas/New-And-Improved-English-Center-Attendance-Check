@@ -58,7 +58,7 @@ const AddClass = () =>
 {
       const [room, setRoom] = useState(null);
       const [teachers, setTeachers] = useState([]);
-      const root = useRef(false);
+      // const root = useRef(false);
 
       const [emptyRoom, setEmptyRoom] = useState(false);
       const [emptyTeacher, setEmptyTeacher] = useState(false);

@@ -1,6 +1,6 @@
 import express from "express";
 import { getEmployees } from './query.js';
-import { newStudent, getStudents, getStudent, getClasses, getNewID, getClassesOfStudent, getNotClassesOfStudent, getClassInfo, changeClass } from "./query.js";
+import { newStudent, getStudents, getStudent, getClasses, getNewID, getClassesOfStudent, getNotClassesOfStudent, getClassInfo, changeClass, getTeachers, getRooms } from "./query.js";
 import { getUser, updateInfo } from "./query.js";
 
 const adminRoutes = express.Router();
@@ -27,8 +27,8 @@ adminRoutes.get('/classes', async (req, res) =>
 
 adminRoutes.get('/newID', async (req, res) =>
 {
-    const [id] = await getNewID();
-    res.json(id);
+    // const [id] = await getNewID();
+    // res.json(id);
 });
 
 adminRoutes.get('/class/:name', async (req, res) =>

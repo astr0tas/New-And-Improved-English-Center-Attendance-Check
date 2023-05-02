@@ -40,8 +40,8 @@ export async function getStudent(id)
 
 export async function getNewID()
 {
-    const [id] = await pool.query(`SELECT newID()`);
-    return id;
+    // const [id] = await pool.query(`SELECT newID()`);
+    // return id;
 }
 
 export async function newStudent(name, phone, birthday, birthplace, email, address, classes)
@@ -79,21 +79,21 @@ export async function getClassesOfStudent(id)
 
 export async function getNotClassesOfStudent(id)
 {
-    var [classOfStudent] = await pool.query(`SELECT Name, Start_date, End_date, Status FROM class WHERE Status = 1 AND Current_number_of_student < Max_number_of_students AND Name NOT IN (SELECT DISTINCT Class_name FROM in_class WHERE Student_ID = '${ id }')`);
-    classOfStudent.map(
-        sClass =>
-        {
-            sClass.Start_date = new Date(sClass.Start_date).toLocaleDateString('en-GB')
-            sClass.End_date = new Date(sClass.End_date).toLocaleDateString('en-GB')
-        }
-    )
-    return classOfStudent;
+    // var [classOfStudent] = await pool.query(`SELECT Name, Start_date, End_date, Status FROM class WHERE Status = 1 AND Current_number_of_student < Max_number_of_students AND Name NOT IN (SELECT DISTINCT Class_name FROM in_class WHERE Student_ID = '${ id }')`);
+    // classOfStudent.map(
+    //     sClass =>
+    //     {
+    //         sClass.Start_date = new Date(sClass.Start_date).toLocaleDateString('en-GB')
+    //         sClass.End_date = new Date(sClass.End_date).toLocaleDateString('en-GB')
+    //     }
+    // )
+    // return classOfStudent;
 }
 
 export async function getClasses()
 {
-    const classes = await pool.query(`SELECT * FROM class WHERE Current_number_of_student < Max_number_of_students`);
-    return classes[0];
+    // const classes = await pool.query(`SELECT * FROM class WHERE Current_number_of_student < Max_number_of_students`);
+    // return classes[0];
 }
 
 export async function getClassInfo(className)
