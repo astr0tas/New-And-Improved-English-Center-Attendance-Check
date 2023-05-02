@@ -131,3 +131,11 @@ export async function getTeachers()
     const teachers = await pool.query(`select EMPLOYEE.ID,EMPLOYEE.name from TEACHER join EMPLOYEE on TEACHER.ID=EMPLOYEE.ID`);
     return teachers[0];
 }
+
+export async function getPeriod(dow, room, startDate, endDate)
+{
+    const periods = await pool.query(`
+        SELECT Start_hour,End_hour from TIMETABLE where ID not in (SELECT Timetable_ID from SESSION where Session_number_make_up_for=null and Session_date>=${ startDate } and Session_date<=${ endDate } and DAYOFWEEK(Session_date)=${ dow } and Classroom_ID='${ room }')
+    `);
+    return periods[0];
+}

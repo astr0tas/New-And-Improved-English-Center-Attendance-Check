@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
-import $ from 'jquery';
+import $, { param } from 'jquery';
 import styles from './addClass.module.css';
 import { AiOutlineClockCircle } from 'react-icons/ai';
 import ReactDOM from 'react-dom/client';
@@ -58,6 +58,8 @@ const AddClass = () =>
 {
       const [room, setRoom] = useState(null);
       const [teachers, setTeachers] = useState([]);
+      const [startDate, setStartDate] = useState(null);
+      const [endDate, setEndDate] = useState(null);
       // const root = useRef(false);
 
       const [emptyRoom, setEmptyRoom] = useState(false);
@@ -96,6 +98,18 @@ const AddClass = () =>
                   setEmptyRoom(true);
             if (teachers.length === 0)
                   setEmptyTeacher(true);
+            console.log(startDate);
+            console.log(endDate);
+            console.log(room);
+            console.log(teachers);
+      }
+
+      const getPeriod = (dow) =>
+      {
+            axios.post('http://localhost:3030/admin/getPeriod', { params: { dow: dow, room: room, start: startDate, end: endDate } }).then(res =>
+            {
+                  console.log(res);
+            }).catch(err => { console.log(err); })
       }
 
       return (
@@ -111,7 +125,13 @@ const AddClass = () =>
                                     <div className="flex-grow-1 mt-5 d-flex flex-column">
                                           <div className='d-flex flex-column'>
                                                 <span className={ `${ styles.input } my-3` }>Name: &nbsp; <input type="text" required></input></span>
-                                                <span className={ `${ styles.input } my-3` }>Period: &nbsp; Form: &nbsp;<input type="date" required></input> To: &nbsp;<input type="date" required></input></span>
+                                                <span className={ `${ styles.input } my-3` }>Period: &nbsp; Form: &nbsp;<input type="date" required onChange={ (e) =>
+                                                {
+                                                      setStartDate(e.target.value);
+                                                } }></input> To: &nbsp;<input type="date" required onChange={ (e) =>
+                                                {
+                                                      setEndDate(e.target.value);
+                                                } }></input></span>
                                                 <span className={ `${ styles.input } my-3 d-flex align-items-center align-self-center` }>
                                                       Timetable: &nbsp;
                                                       <div className={ `${ styles.box } d-flex align-items-center overflow-auto` } onClick={ () => { $(`.${ styles.timeTable }`).css("display", "flex"); } }>
@@ -149,32 +169,38 @@ const AddClass = () =>
                                     <button className={ `${ styles.dow }` } onClick={ (e) =>
                                     {
                                           $(`.${ styles.dow }`).css('background-color', '#dbdbdbc0').css('color', 'black');
-                                          $(e.target).css('background-color', '#4274F4').css('color', 'white')
+                                          $(e.target).css('background-color', '#4274F4').css('color', 'white');
+                                          getPeriod(2);
                                     } }>Monday</button>
                                     <button className={ `${ styles.dow }` } onClick={ (e) =>
                                     {
                                           $(`.${ styles.dow }`).css('background-color', '#dbdbdbc0').css('color', 'black');
-                                          $(e.target).css('background-color', '#4274F4').css('color', 'white')
+                                          $(e.target).css('background-color', '#4274F4').css('color', 'white');
+                                          getPeriod(3);
                                     } }>Tuesday</button>
                                     <button className={ `${ styles.dow }` } onClick={ (e) =>
                                     {
                                           $(`.${ styles.dow }`).css('background-color', '#dbdbdbc0').css('color', 'black');
-                                          $(e.target).css('background-color', '#4274F4').css('color', 'white')
+                                          $(e.target).css('background-color', '#4274F4').css('color', 'white');
+                                          getPeriod(4);
                                     } }>Wednesday</button>
                                     <button className={ `${ styles.dow }` } onClick={ (e) =>
                                     {
                                           $(`.${ styles.dow }`).css('background-color', '#dbdbdbc0').css('color', 'black');
-                                          $(e.target).css('background-color', '#4274F4').css('color', 'white')
+                                          $(e.target).css('background-color', '#4274F4').css('color', 'white');
+                                          getPeriod(5);
                                     } }>Thursday</button>
                                     <button className={ `${ styles.dow }` } onClick={ (e) =>
                                     {
                                           $(`.${ styles.dow }`).css('background-color', '#dbdbdbc0').css('color', 'black');
-                                          $(e.target).css('background-color', '#4274F4').css('color', 'white')
+                                          $(e.target).css('background-color', '#4274F4').css('color', 'white');
+                                          getPeriod(6);
                                     } }>Friday</button>
                                     <button className={ `${ styles.dow }` } onClick={ (e) =>
                                     {
                                           $(`.${ styles.dow }`).css('background-color', '#dbdbdbc0').css('color', 'black');
-                                          $(e.target).css('background-color', '#4274F4').css('color', 'white')
+                                          $(e.target).css('background-color', '#4274F4').css('color', 'white');
+                                          getPeriod(7);
                                     } }>Saturday</button>
                               </div>
                               <div className="flex-grow-1 mt-4 overflow-auto">
@@ -248,8 +274,8 @@ const AddClass = () =>
                                     <button className={ `${ styles.add } ms-5` } onClick={ () => { $(`.${ styles.room }`).css("display", "none"); } }>Confirm</button>
                               </div>
                         </div>
-                  </div>
-            </div>
+                  </div >
+            </div >
       );
 }
 
