@@ -17,7 +17,7 @@ app.use('/admin', adminRoutes);
 
 
 app.use('/TS', TSLogin);
-app.use('/TS', MyClassAPI); http://localhost:3030/TS/myClasses
+app.use('/TS', MyClassAPI);
 app.use('/TS', Attendace);
 
 app.listen(3030, () => { console.log("Server is listening on port 3030"); });
