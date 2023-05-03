@@ -4,7 +4,8 @@ const pool = mysql.createPool({
     host: `127.0.0.1`,
     user: 'englishcenter',
     password: 'englishcenter123',
-    database: 'english_center'
+    database: 'english_center',
+    multipleStatements: true
 }).promise();
 
 export async function getEmployees()
@@ -135,7 +136,64 @@ export async function getTeachers()
 export async function getPeriod(dow, room, startDate, endDate)
 {
     const periods = await pool.query(`
-        SELECT Start_hour,End_hour from TIMETABLE where ID not in (SELECT Timetable_ID from SESSION where Session_number_make_up_for=null and Session_date>=${ startDate } and Session_date<=${ endDate } and DAYOFWEEK(Session_date)=${ dow } and Classroom_ID='${ room }')
+        SELECT ID,Start_hour,End_hour from TIMETABLE where ID not in (SELECT Timetable_ID from SESSION where Session_number_make_up_for is null and
+            ((Session_date>='${ startDate }' and Session_date<='${ endDate }') or (Session_date<='${ startDate }' and Session_date>='${ endDate }') or (Session_date>='${ startDate }' and Session_date>='${ endDate }') or (Session_date<='${ startDate }' and Session_date<='${ endDate }'))
+            and DAYOFWEEK(Session_date)=${ dow } and Classroom_ID='${ room }')
     `);
     return periods[0];
+}
+
+function getWeeksBetween(start, end)
+{
+    start = new Date(start);
+    end = new Date(end);
+    // Calculate the difference in milliseconds between the two dates
+    const diffInMs = Math.abs(end - start);
+
+    // Calculate the number of milliseconds in a week
+    const msPerWeek = 1000 * 60 * 60 * 24 * 7;
+
+    // Divide the difference by the number of milliseconds in a week and round down to the nearest integer
+    const weeks = Math.ceil(diffInMs / msPerWeek);
+
+    // Return the number of weeks
+    return weeks;
+}
+
+export async function addClass(name, start, end, timetable, room, teachers)
+{
+    let sql = `call createClass('${ name }','${ start }','${ end }','${ room }'); `;
+    for (let i = 0; i < timetable.length; i++)
+    {
+        let dow;
+        switch (timetable[i].dow)
+        {
+            case 2:
+                dow = "Monday";
+                break;
+            case 3:
+                dow = "Tuesday";
+                break;
+            case 4:
+                dow = "Wednesday";
+                break;
+            case 5:
+                dow = "Thursday";
+                break;
+            case 6:
+                dow = "Friday";
+                break;
+            case 7:
+                dow = "Saturday";
+                break;
+        }
+        sql += `call GenSession('${ name }','${ start }','${ end }','${ dow }','${ timetable[i].periodID }','${ room }',${ i },${ timetable.length }); `;
+    }
+    for (let i = 0; i < teachers.length; i++)
+        sql += `insert into TEACH values('${ teachers[i] }','${ name }'); `;
+    for (let i = 1; i <= getWeeksBetween(start, end) * 2; i++)
+        sql += `call AssignSessionForTeacher(${ i },'${ name }','${ teachers[i % teachers.length] }'); `;
+    console.log(sql);
+    const periods = await pool.query(sql);
+    return periods;
 }

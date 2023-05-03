@@ -1,6 +1,9 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import './App.css';
 import AddClass from './pages/Admin/Classes/addClass';
+import Classes from './pages/Admin/Classes/Classes';
+import Staffs from './pages/Admin/Staffs/Staffs.jsx';
+
 import { SignInAs, SignIn } from './pages/SignIn/SignIn.jsx';
 import { NavBar } from './pages/NavBar/NavBar.jsx';
 import { MyClasses } from './pages/T_S/MyClass';
@@ -17,12 +20,13 @@ function App()
     <div className="App">
       <BrowserRouter>
         <Routes>
-          <Route path="/" >
-            <Route index element={ <SignInAs /> } />
-            <Route path='/SignIn' element={ <SignIn /> } />
+            <Route path="/"  element={ <SignInAs /> } />
+            <Route path='/SignIn' element={ <SignIn/> } />
             <Route element={ <NavBar /> }>
-              {/* <Route path={ user.position + '/User' } element={ <User /> } />
-          <Route path={ user.position + '/Students' } element={ <Students /> } /> */}
+              <Route path={'/User' } element={ <User/> } />
+              <Route path={'/Students' } element={ <Students /> } />
+              <Route path={'/Classes' } element={ <Classes /> } />
+              <Route path={'/Staffs' } element={ <Staffs /> } />
               <Route path="/Home" />
               <Route>
                 <Route path={ `/MyClasses` } element={ <MyClasses /> } />
@@ -31,7 +35,6 @@ function App()
               </Route>
               <Route path='AddClass' element={ <AddClass /> } />
             </Route>
-          </Route>
         </Routes>
       </BrowserRouter>
     </div>

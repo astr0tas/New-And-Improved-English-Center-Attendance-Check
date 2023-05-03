@@ -1,6 +1,6 @@
 import express from "express";
 import { getEmployees } from './query.js';
-import { newStudent, getStudents, getStudent, getClasses, getNewID, getClassesOfStudent, getNotClassesOfStudent, getClassInfo, changeClass, getTeachers, getRooms, getPeriod } from "./query.js";
+import { newStudent, getStudents, getStudent, getClasses, getNewID, getClassesOfStudent, getNotClassesOfStudent, getClassInfo, changeClass, getTeachers, getRooms, getPeriod, addClass } from "./query.js";
 import { getUser, updateInfo } from "./query.js";
 
 const adminRoutes = express.Router();
@@ -100,6 +100,12 @@ adminRoutes.post('/getPeriod', async (req, res) =>
     res.json(result);
 })
 
-
+adminRoutes.post('/addClass', async (req, res) =>
+{
+    const data = req.body.params;
+    console.log(data);
+    const result = await addClass(data.name,data.startDate,data.endDate,data.timeTable,data.room,data.teachers);
+    res.json(result);
+})
 
 export default adminRoutes;

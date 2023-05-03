@@ -534,7 +534,7 @@ const Supervisor = (props) =>
                                     <textarea className={ `mx-3 note_for_class` } style={ { width: '400px', minHeight: '60px', resize: 'none' } }></textarea>
                               </div>
                         </div>
-                        <div className="d-flex justify-content-center align-items-center mt-5">
+                        <div className="d-flex justify-content-center align-items-center mt-auto">
                               <button type="button" className={ `${ styles.back } mx-3` } onClick={ () => { window.location.href = "/MyClasses/" + props.className; } }>Back</button>
                               <button type="button" onClick={ handleSubmit } className={ `${ styles.confirm } mx-3` }>Confirm</button>
                         </div>
