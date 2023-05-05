@@ -1,12 +1,11 @@
-import styles from "./ClassDetail.module.css";
+import styles from "./detail.module.css";
 import { useNavigate, useParams } from "react-router-dom";
 import ReactDOM from 'react-dom/client';
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
-import { format, detailFormat } from "../../tools/date_formatting";
 import $ from 'jquery';
 import { AiOutlineClockCircle } from 'react-icons/ai';
-
+import { format, detailFormat } from "../../../tools/date_formatting";
 
 const ListStudentHeader = () =>
 {
@@ -23,9 +22,15 @@ const ListStudentHeader = () =>
 
 const ListStudent = (props) =>
 {
-      const handleClick = () =>
+      const deleteStudent = () =>
       {
-            // window.location.href = `./${ props.name }/${ props.session }`;
+            axios.post('http://localhost:3030/admin/deleteStudent', { params: { class: props.class, id: props.id } })
+                  .then(res =>
+                  {
+                        console.log(res);
+                        window.location.reload();
+                  })
+                  .catch(err => { console.log(err); });
       }
 
       return (
@@ -34,7 +39,7 @@ const ListStudent = (props) =>
                   <td className='col-3'>{ props.name }</td>
                   <td className='col-2'>{ props.phone }</td>
                   <td className='col-2'>{ props.email }</td>
-                  <td className='col-2'><button className={ `${ styles.action }` } onClick={ handleClick }>Detail</button></td>
+                  <td className='col-2'><button className={ `${ styles.action }` }><a href="#">Detail</a></button><button className={ `${ styles.delete } ms-3` } onClick={ deleteStudent }>Delete</button></td>
             </tr>
       );
 }
@@ -55,23 +60,17 @@ const ListSession = (props) =>
 {
       const date = detailFormat(props.date);
 
-      const handleClick = () =>
-      {
-            if (props.status.status_str === "Active")
-                  window.location.href = `./${ props.name }/${ props.session }`;
-      }
-
       return (
             <tr>
                   <th scope="row" className='col-1'>Session { props.session }</th>
                   <td className='col-3'><AiOutlineClockCircle /> { date }: { props.start } - { props.end }</td>
                   <td className='col-2'>Room { props.room }</td>
-                  <td className='col-2'><button className={ `${ styles.action }` } onClick={ handleClick }>Check attendance</button></td>
+                  <td className='col-2'><button className={ `${ styles.action }` }><a href={ `./${ props.name }/${ props.session }` }>Detail</a></button></td>
             </tr>
       );
 }
 
-const ClassDetail = () =>
+const AdminClassDetail = () =>
 {
       const Navigate = useNavigate();
 
@@ -110,12 +109,17 @@ const ClassDetail = () =>
                                                       }
                                                 )
                                           else
+                                          {
                                                 setStatus(
                                                       {
                                                             status_str: "Inactive",
                                                             style: "#FF0000"
                                                       }
                                                 )
+                                                $('#addAStudent').prop("disabled", true);
+                                                $('#addASession').prop("disabled", true);
+                                                $('#changeClassInfo').prop("disabled", true);
+                                          }
                                           setDefaultSessions(res.data.Initial_number_of_sessions);
                                           await axios.get('http://localhost:3030/TS/myClasses/getCurrentStudent', {
                                                 params: {
@@ -167,7 +171,7 @@ const ClassDetail = () =>
                               {
                                     let temp = [];
                                     for (let i = 0; i < res.data.length; i++)
-                                          temp.push(<ListStudent key={ i } number={ i + 1 } name={ res.data[i].name } phone={ res.data[i].phone } email={ res.data[i].email } />);
+                                          temp.push(<ListStudent key={ i } number={ i + 1 } name={ res.data[i].name } phone={ res.data[i].phone } email={ res.data[i].email } id={ res.data[i].ID } class={ className } />);
                                     target = ReactDOM.createRoot(document.getElementById('table_body'));
                                     target.render(<>{ temp }</>);
                               })
@@ -190,9 +194,10 @@ const ClassDetail = () =>
                         })
                               .then(res =>
                               {
+                                    // console.log(res);
                                     let temp = [];
                                     for (let i = 0; i < res.data.length; i++)
-                                          temp.push(<ListSession key={ i } name={ className } session={ res.data[i].Session_number } date={ res.data[i].Session_date } room={ res.data[i].Classroom_ID } start={ res.data[i].Start_hour } end={ res.data[i].End_hour } status={ status } />);
+                                          temp.push(<ListSession key={ i } name={ className } session={ res.data[i].Session_number } date={ res.data[i].Session_date } room={ res.data[i].Classroom_ID } start={ res.data[i].Start_hour } end={ res.data[i].End_hour } />);
                                     target = ReactDOM.createRoot(document.getElementById('table_body'));
                                     target.render(<>{ temp }</>);
                               })
@@ -202,11 +207,41 @@ const ClassDetail = () =>
             }
       }, [flag]);
 
+      const deactivateClass = () =>
+      {
+            axios.post('http://localhost:3030/admin/deactivateClass', { params: { name: className } })
+                  .then(res => { console.log(res); window.location.reload(); })
+                  .catch(err => { console.log(err); });
+      }
+
+      const activateClass = () =>
+      {
+            axios.post('http://localhost:3030/admin/activateClass', { params: { name: className } })
+                  .then(res => { console.log(res); window.location.reload(); })
+                  .catch(err => { console.log(err); });
+      }
+
+      const addStudent = () =>
+      {
+            if (students.current === students.max)
+                  $(`.${ styles.addStudent }`).css("display", "flex");
+            else
+                  ;
+      }
+
       return (
             <div className={ `h-100 ${ styles.page } d-flex align-items-center justify-content-center` }>
                   <div className={ `d-flex flex-column align-items-center ${ styles.board }` }>
                         <div className="mt-3">
-                              <h1>{ className }</h1>
+                              <div className="d-flex align-items-center">
+                                    <h1>{ className }</h1>
+                                    { status.status_str === "Active" && <button className={ `ms-3` } style={ {
+                                          border: "1px solid black", borderRadius: "10px", backgroundColor: "red", color: "white"
+                                    } } onClick={ deactivateClass }>Deactivate</button> }
+                                    { status.status_str === "Inactive" && <button className={ `ms-3` } style={ {
+                                          border: "1px solid black", borderRadius: "10px", backgroundColor: "#4E7EF8", color: "white"
+                                    } } onClick={ activateClass }>Activate</button> }
+                              </div>
                               <p>Period: { period.start } - { period.end }</p>
                               <p>Status: <span style={ { color: status.style } }>{ status.status_str }</span></p>
                               <p>Number of student: { students.current }/{ students.max }</p>
@@ -226,10 +261,19 @@ const ClassDetail = () =>
                                     </tbody>
                               </table>
                         </div>
-                        <button className={ `mt-auto mb-3 ${ styles.back }` } onClick={ () => { Navigate("/MyClasses"); } }>Back</button>
+                        <div className="mt-auto mb-4">
+                              <button className={ ` ${ styles.back } mx-3` } onClick={ () => { Navigate("/Classes"); } }>Back</button>
+                              { flag && <button className={ ` ${ styles.back } mx-3` } id="addAStudent" onClick={ addStudent }>Add a student</button> }
+                              { !flag && <button className={ ` ${ styles.back } mx-3` } id="addASession" onClick={ () => { window.location.href = `./${ className }/addSession`; } }>Add a session</button> }
+                              <button className={ ` ${ styles.back } mx-3` } id="changeClassInfo">Change info</button>
+                        </div>
+                  </div>
+                  <div className={ `${ styles.addStudent } flex-column align-items-center` }>
+                        <h1 className='mt-5'>The class is full!</h1>
+                        <button className={ `mt-auto mb-5 ${ styles.okay }` } onClick={ () => { $(`.${ styles.addStudent }`).css("display", "none"); } }>OKAY</button>
                   </div>
             </div>
       );
 }
 
-export default ClassDetail;
+export default AdminClassDetail;

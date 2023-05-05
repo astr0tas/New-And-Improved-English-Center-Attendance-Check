@@ -114,7 +114,10 @@ const Teacher = (props) =>
                               else if (res.data.Status === 1)
                                     setStatus({ status: "Finished", color: "#7E7E7E" });
                               else
+                              {
                                     setStatus({ status: "Cancelled", color: "#FF0000" });
+                                    $('#checkAttendanceTeacher').prop("disabled", true);
+                              }
                               setMakeup(res.data.Session_number_make_up_for);
                         })
                         .catch(error => console.log(error));
@@ -207,7 +210,7 @@ const Teacher = (props) =>
 
       return (
             <>
-                  <form className="w-100 h-100">
+                  <div className="w-100 h-100 d-flex flex-column">
                         <div className={ `w-100 d-flex` } style={ { height: '40%' } }>
                               <div className="h-100 d-flex flex-column justify-content-center align-items-center" style={ { width: '33%' } }>
                                     <h1>Session { props.sessionNumber }</h1>
@@ -247,16 +250,12 @@ const Teacher = (props) =>
                                           </tbody>
                                     </table>
                               </div>
-                              {/* <div className="d-flex align-items-center justify-content-center mt-4">
-                                    <p className="m-0">Class note:</p>
-                                    <textarea className="mx-3" style={ { width: '400px', minHeight: '60px', resize: 'none' } }></textarea>
-                              </div> */}
                         </div>
-                        <div className="d-flex justify-content-center align-items-center mt-5">
-                              <button type="button" className={ `${ styles.back } mx-3` } onClick={ () => { window.location.href = "/MyClasses/" + props.className; } }>Back</button>
-                              <button type="button" onClick={ handleSubmit } className={ `${ styles.confirm } mx-3` }>Confirm</button>
+                        <div className="d-flex justify-content-center align-items-center mt-auto mb-3">
+                              <button className={ `${ styles.back } mx-3` } onClick={ () => { window.location.href = "/MyClasses/" + props.className; } }>Back</button>
+                              <button onClick={ handleSubmit } className={ `${ styles.confirm } mx-3` } id="checkAttendanceTeacher">Confirm</button>
                         </div>
-                  </form>
+                  </div>
             </>
       );
 }
@@ -300,7 +299,10 @@ const Supervisor = (props) =>
                                     else if (res.data.Status === 1)
                                           setStatus({ status: "Finished", color: "#7E7E7E" });
                                     else
+                                    {
                                           setStatus({ status: "Cancelled", color: "#FF0000" });
+                                          $('#supervisorAttendanceCheck').prop("disabled", true);
+                                    }
                                     setMakeup(res.data.Session_number_make_up_for);
                               })
                               .catch(error => console.log(error));
@@ -467,7 +469,7 @@ const Supervisor = (props) =>
 
       return (
             <>
-                  <form className="w-100 h-100">
+                  <div className="w-100 h-100 d-flex flex-column">
                         <div className={ `w-100 d-flex` } style={ { height: '40%' } }>
                               <div className="h-100 d-flex flex-column justify-content-center align-items-center" style={ { width: '25%' } }>
                                     <h1>Session { props.sessionNumber }</h1>
@@ -534,11 +536,11 @@ const Supervisor = (props) =>
                                     <textarea className={ `mx-3 note_for_class` } style={ { width: '400px', minHeight: '60px', resize: 'none' } }></textarea>
                               </div>
                         </div>
-                        <div className="d-flex justify-content-center align-items-center mt-auto">
-                              <button type="button" className={ `${ styles.back } mx-3` } onClick={ () => { window.location.href = "/MyClasses/" + props.className; } }>Back</button>
-                              <button type="button" onClick={ handleSubmit } className={ `${ styles.confirm } mx-3` }>Confirm</button>
+                        <div className="d-flex justify-content-center align-items-center mt-auto mb-3">
+                              <button className={ `${ styles.back } mx-3` } onClick={ () => { window.location.href = "/MyClasses/" + props.className; } }>Back</button>
+                              <button onClick={ handleSubmit } className={ `${ styles.confirm } mx-3` } id="supervisorAttendanceCheck">Confirm</button>
                         </div>
-                  </form>
+                  </div>
             </>
       );
 }

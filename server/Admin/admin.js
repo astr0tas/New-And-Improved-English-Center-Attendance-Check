@@ -1,6 +1,17 @@
 import express from "express";
 import { getEmployees } from './query.js';
-import { newStudent, getStudents, getStudent, getClasses, getNewID, getClassesOfStudent, getNotClassesOfStudent, getClassInfo, changeClass, getTeachers, getRooms, getPeriod, addClass } from "./query.js";
+import
+{
+    newStudent, getStudents, getStudent,
+    getClasses, getNewID, getClassesOfStudent,
+    getNotClassesOfStudent, getClassInfo, changeClass,
+    getTeachers, getRooms, getPeriod,
+    addClass, deleteStudent, deactivateClass,
+    activateClass, cancelSession, activateSession,
+    getClassTeachers, countSession, getSessions,
+    supervisor, times, getSuitableRoom, createNewSession
+} from "./query.js";
+
 import { getUser, updateInfo } from "./query.js";
 
 const adminRoutes = express.Router();
@@ -103,9 +114,91 @@ adminRoutes.post('/getPeriod', async (req, res) =>
 adminRoutes.post('/addClass', async (req, res) =>
 {
     const data = req.body.params;
-    console.log(data);
-    const result = await addClass(data.name,data.startDate,data.endDate,data.timeTable,data.room,data.teachers);
+    const result = await addClass(data.name, data.startDate, data.endDate, data.timeTable, data.room, data.teachers);
     res.json(result);
 })
 
+adminRoutes.post('/deleteStudent', async (req, res) =>
+{
+    const data = req.body.params;
+    const result = await deleteStudent(data.id, data.class);
+    res.json(result);
+})
+
+adminRoutes.post('/activateClass', async (req, res) =>
+{
+    const data = req.body.params;
+    const result = await activateClass(data.name);
+    res.json(result);
+})
+
+adminRoutes.post('/deactivateClass', async (req, res) =>
+{
+    const data = req.body.params;
+    const result = await deactivateClass(data.name);
+    res.json(result);
+})
+
+adminRoutes.post('/cancelSession', async (req, res) =>
+{
+    const data = req.body.params;
+    const result = await cancelSession(data.className, data.sessionNumber);
+    res.json(result);
+})
+
+adminRoutes.post('/activateSession', async (req, res) =>
+{
+    const data = req.body.params;
+    const result = await activateSession(data.className, data.sessionNumber);
+    res.json(result);
+})
+
+adminRoutes.post('/getClassTeachers', async (req, res) =>
+{
+    const data = req.body.params;
+    const result = await getClassTeachers(data.name);
+    res.json(result);
+})
+
+adminRoutes.post('/countSession', async (req, res) =>
+{
+    const data = req.body.params;
+    const result = await countSession(data.name);
+    res.json(result);
+})
+
+adminRoutes.post('/getSessions', async (req, res) =>
+{
+    const data = req.body.params;
+    const result = await getSessions(data.name);
+    res.json(result);
+})
+
+adminRoutes.get('/supervisor', async (req, res) =>
+{
+    const result = await supervisor();
+    res.json(result);
+})
+
+
+adminRoutes.post('/times', async (req, res) =>
+{
+    const data = req.body.params;
+    const result = await times(data.room, data.date);
+    res.json(result);
+})
+
+adminRoutes.post('/getRooms', async (req, res) =>
+{
+    const data = req.body.params;
+    const result = await getSuitableRoom(data.name);
+    res.json(result);
+})
+
+adminRoutes.post('/createNewSession', async (req, res) =>
+{
+    const data = req.body.params;
+    const result = await createNewSession(data.name, data.newSession, data.room, data.date, data.time, data.session, data.teacher, data.supervisor);
+    res.json(result);
+})
 export default adminRoutes;

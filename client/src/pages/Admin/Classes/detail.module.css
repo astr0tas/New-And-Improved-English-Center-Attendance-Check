@@ -31,25 +31,25 @@
       border: none;
       border-radius: 10px;
       height: 40px;
-      width: 100px;
-      font-size: 18px;
+      width: 150px;
+      font-size: 16px;
 }
 
 .back:active {
       background-color: #a2a1a1;
 }
 
-.action {
+.action>* {
       text-decoration: none;
       color: white;
       background-color: #4E7EF8;
 }
 
-.action:hover {
+.action>*:hover {
       color: white;
 }
 
-.action:active {
+.action>*:active {
       color: rgb(0, 21, 255);
 }
 
@@ -57,6 +57,45 @@
       background-color: #4E7EF8;
       border: none;
       border-radius: 10px;
+}
+
+.delete {
+      background-color: red;
+      border: none;
+      border-radius: 10px;
+}
+
+.delete,
+.delete:hover {
+      text-decoration: none;
+      color: white;
+      background-color: red;
+}
+
+.delete:active {
+      color: rgb(255, 150, 150);
+}
+
+.addStudent {
+      width: 20%;
+      height: 20%;
+      position: absolute;
+      border: 1px solid black;
+      border-radius: 20px;
+      background-color: #BFBFBF;
+      display:none;
+}
+
+.okay {
+      font-size: 1.5rem;
+      background-color: #4E7EF8;
+      color: white;
+      border-radius: 10px;
+      border: 1px solid black;
+}
+
+.okay:active {
+      background-color: #96b2f8;
 }
 
 /* @media only screen and (max-width:1400px) {

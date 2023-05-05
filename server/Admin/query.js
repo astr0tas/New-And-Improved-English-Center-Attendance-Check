@@ -197,3 +197,79 @@ export async function addClass(name, start, end, timetable, room, teachers)
     const periods = await pool.query(sql);
     return periods;
 }
+
+export async function deleteStudent(id, className)
+{
+    const periods = await pool.query(`delete from STUDENT_ATTENDANCE where Class_name='${ className }' and Student_ID='${ id }'; delete from IN_CLASS where Student_ID='${ id }' and Class_name='${ className }'`);
+    return periods;
+}
+
+export async function deactivateClass(name)
+{
+    const periods = await pool.query(`update CLASS set Status=false where Name='${ name }'`);
+    return periods;
+}
+
+export async function activateClass(name)
+{
+    const periods = await pool.query(`update CLASS set Status=true where Name='${ name }'`);
+    return periods;
+}
+
+export async function cancelSession(name, number)
+{
+    const periods = await pool.query(`update SESSION set Status=0 where Class_name='${ name }' and Session_number='${ number }'`);
+    return periods;
+}
+
+export async function activateSession(name, number)
+{
+    const periods = await pool.query(`update SESSION set Status=2 where Class_name='${ name }' and Session_number='${ number }'`);
+    return periods;
+}
+
+export async function getClassTeachers(name)
+{
+    const result = await pool.query(`select Teacher_ID,name from TEACH join EMPLOYEE on Teacher_ID=ID where Class_name='${ name }'`);
+    return result[0];
+}
+
+export async function countSession(name)
+{
+    const result = await pool.query(`select count(*) as count from SESSION where Class_name='${ name }'`);
+    return result[0];
+}
+
+export async function getSessions(name)
+{
+    const result = await pool.query(`select Session_number from SESSION where Class_name='${ name }' and Status=0`);
+    return result[0];
+}
+
+export async function supervisor()
+{
+    const result = await pool.query(`select SUPERVISOR.ID,name from SUPERVISOR join EMPLOYEE on EMPLOYEE.ID=SUPERVISOR.ID`);
+    return result[0];
+}
+
+export async function times(room, date)
+{
+    const result = await pool.query(`select * from TIMETABLE where ID not in (select Timetable_ID from SESSION where Classroom_ID='${ room }' and Session_date='${ date }')`);
+    return result[0];
+}
+
+export async function getSuitableRoom(name)
+{
+    const result = await pool.query(`select * from CLASSROOM where Max_of_seat>=(select Max_number_of_students from CLASS where Name='${ name }')`);
+    return result[0];
+}
+
+export async function createNewSession(name, newSession, room, date, time, session, teacher, supervisor)
+{
+    const result = await pool.query(`
+    insert into SESSION values('${ newSession }','${ name }','${ time }','${ room }','${ date }',2,null,'${ session }','${ name }');
+    insert into TEACHER_RESPONSIBLE values('${ newSession }','${ name }','${ teacher }',null,null);
+    insert into SUPERVISOR_RESPONSIBLE values('${ newSession }','${ name }','${ supervisor }',null);
+    `);
+    return result;
+}

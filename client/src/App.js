@@ -3,6 +3,9 @@ import './App.css';
 import AddClass from './pages/Admin/Classes/addClass';
 import Classes from './pages/Admin/Classes/Classes';
 import Staffs from './pages/Admin/Staffs/Staffs.jsx';
+import AdminClassDetail from './pages/Admin/Classes/detail';
+import AdminAttendance from './pages/Admin/Classes/classAttendance';
+import AddSession from './pages/Admin/Classes/addSession';
 
 import { SignInAs, SignIn } from './pages/SignIn/SignIn.jsx';
 import { NavBar } from './pages/NavBar/NavBar.jsx';
@@ -20,21 +23,24 @@ function App()
     <div className="App">
       <BrowserRouter>
         <Routes>
-            <Route path="/"  element={ <SignInAs /> } />
-            <Route path='/SignIn' element={ <SignIn/> } />
-            <Route element={ <NavBar /> }>
-              <Route path={'/User' } element={ <User/> } />
-              <Route path={'/Students' } element={ <Students /> } />
-              <Route path={'/Classes' } element={ <Classes /> } />
-              <Route path={'/Staffs' } element={ <Staffs /> } />
-              <Route path="/Home" />
-              <Route>
-                <Route path={ `/MyClasses` } element={ <MyClasses /> } />
-                <Route path={ `/MyClasses/:name` } element={ <ClassDetail name="" /> } />
-                <Route path={ `/MyClasses/:name/:session` } element={ <Attendance /> } />
-              </Route>
-              <Route path='AddClass' element={ <AddClass /> } />
+          <Route path="/" element={ <SignInAs /> } />
+          <Route path='/SignIn' element={ <SignIn /> } />
+          <Route element={ <NavBar /> }>
+            <Route path={ '/User' } element={ <User /> } />
+            <Route path={ '/Students' } element={ <Students /> } />
+            <Route path={ '/Classes' } element={ <Classes /> } />
+            <Route path='/Classes/:name' element={ <AdminClassDetail /> } />
+            <Route path='/Classes/:name/addSession' element={ <AddSession /> } />
+            <Route path='/Classes/:name/:session' element={ <AdminAttendance /> } />
+            <Route path={ '/Staffs' } element={ <Staffs /> } />
+            <Route path="/Home" />
+            <Route>
+              <Route path={ `/MyClasses` } element={ <MyClasses /> } />
+              <Route path={ `/MyClasses/:name` } element={ <ClassDetail name="" /> } />
+              <Route path={ `/MyClasses/:name/:session` } element={ <Attendance /> } />
             </Route>
+            <Route path='AddClass' element={ <AddClass /> } />
+          </Route>
         </Routes>
       </BrowserRouter>
     </div>

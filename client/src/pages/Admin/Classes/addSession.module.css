@@ -1,0 +1,51 @@
+.page {
+      background-color: rgba(0, 136, 255, 0.5);
+      margin-left: 250px;
+      width: calc(100% - 250px);
+}
+
+.board {
+      width: 90%;
+      height: 90%;
+      background-color: #EDEDED;
+      border: 1px solid black;
+      border-radius: 20px;
+}
+
+.confirm {
+      background-color: #4E7EF8;
+      color: white;
+      border: 1px solid black;
+      border-radius: 10px;
+      font-size: 1.5rem;
+      width: 100px;
+}
+
+.confirm:active {
+      background-color: #89aaff;
+}
+
+.back {
+      background-color: #BFBFBF;
+      border: 1px solid black;
+      border-radius: 10px;
+      font-size: 1.5rem;
+      width: 100px;
+}
+
+.back:active {
+      background-color: #969696;
+}
+
+.font {
+      font-size: 1.5rem;
+}
+
+.inputs {
+      font-size: 1.5rem;
+      border-radius: 10px;
+      background-color: #BFBFBF;
+      border: 1px solid black;
+      min-width: 200px;
+      min-height:50px;
+}

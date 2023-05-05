@@ -66,8 +66,6 @@ BEGIN
     DECLARE i INT DEFAULT 1;
     WHILE current_day <= end_day AND i<=12 DO
         IF DAYNAME(current_day) = target_day THEN
-             -- SELECT current_day;
-			-- SELECT i+offset+(studyDays-1)*(i-1);
 			INSERT INTO SESSION(Timetable_ID,Session_date,Classroom_ID,Session_number,Status,Class_name) values(TimeTableID,current_day,room,i+offset+(studyDays-1)*(i-1),2,className);
 			UPDATE CLASS SET Status=true WHERE Name=className;
             SET i = i + 1;
@@ -77,14 +75,12 @@ BEGIN
 END $$
 DELIMITER ;
 
-call GenSession('TOEIC04','2023-04-30','2023-07-30','Monday',6,'ROOM03',0,3);
-call GenSession('TOEIC04','2023-04-30','2023-07-30','Wednesday',6,'ROOM03',1,3);
-call GenSession('TOEIC04','2023-04-30','2023-07-30','Friday',6,'ROOM03',2,3);
--- select *,DATE_FORMAT(Session_date, '%W, %M %e, %Y') AS formatted_date from SESSION where Class_name='TOEIC04' order by session_number;
+-- call GenSession('TOEIC04','2023-04-30','2023-07-30','Monday',6,'ROOM03',0,3);
+-- call GenSession('TOEIC04','2023-04-30','2023-07-30','Wednesday',6,'ROOM03',1,3);
+-- call GenSession('TOEIC04','2023-04-30','2023-07-30','Friday',6,'ROOM03',2,3);
 
-call GenSession('TOEIC03','2023-04-30','2023-07-30','Tuesday',6,'ROOM01',0,2);
-call GenSession('TOEIC03','2023-04-30','2023-07-30','Thursday',8,'ROOM01',1,2);
--- select *,DATE_FORMAT(Session_date, '%W, %M %e, %Y') AS formatted_date from SESSION where Class_name='TOEIC03'order by Session_date,session_number;
+-- call GenSession('TOEIC03','2023-04-30','2023-07-30','Tuesday',6,'ROOM01',0,2);
+-- call GenSession('TOEIC03','2023-04-30','2023-07-30','Thursday',8,'ROOM01',1,2);
 
 -- assign teacher for a session
 DROP PROCEDURE IF EXISTS AssignSessionForTeacher;
@@ -101,25 +97,25 @@ BEGIN
 END $$
 DELIMITER ;
 
-call AssignSessionForTeacher(1,'TOEIC03','TEACHER01');
-call AssignSessionForTeacher(2,'TOEIC03','TEACHER01');
-call AssignSessionForTeacher(3,'TOEIC03','TEACHER01');
-call AssignSessionForTeacher(4,'TOEIC03','TEACHER01');
-call AssignSessionForTeacher(5,'TOEIC03','TEACHER02');
-call AssignSessionForTeacher(6,'TOEIC03','TEACHER02');
-call AssignSessionForTeacher(7,'TOEIC03','TEACHER02');
-call AssignSessionForTeacher(8,'TOEIC03','TEACHER02');
-call AssignSessionForTeacher(21,'TOEIC03','TEACHER02');
+-- call AssignSessionForTeacher(1,'TOEIC03','TEACHER01');
+-- call AssignSessionForTeacher(2,'TOEIC03','TEACHER01');
+-- call AssignSessionForTeacher(3,'TOEIC03','TEACHER01');
+-- call AssignSessionForTeacher(4,'TOEIC03','TEACHER01');
+-- call AssignSessionForTeacher(5,'TOEIC03','TEACHER02');
+-- call AssignSessionForTeacher(6,'TOEIC03','TEACHER02');
+-- call AssignSessionForTeacher(7,'TOEIC03','TEACHER02');
+-- call AssignSessionForTeacher(8,'TOEIC03','TEACHER02');
+-- call AssignSessionForTeacher(21,'TOEIC03','TEACHER02');
 
-call AssignSessionForTeacher(1,'TOEIC04','TEACHER01');
-call AssignSessionForTeacher(2,'TOEIC04','TEACHER01');
-call AssignSessionForTeacher(3,'TOEIC04','TEACHER01');
-call AssignSessionForTeacher(4,'TOEIC04','TEACHER02');
-call AssignSessionForTeacher(5,'TOEIC04','TEACHER02');
-call AssignSessionForTeacher(6,'TOEIC04','TEACHER02');
-call AssignSessionForTeacher(7,'TOEIC04','TEACHER03');
-call AssignSessionForTeacher(8,'TOEIC04','TEACHER03');
-call AssignSessionForTeacher(9,'TOEIC04','TEACHER03');
+-- call AssignSessionForTeacher(1,'TOEIC04','TEACHER01');
+-- call AssignSessionForTeacher(2,'TOEIC04','TEACHER01');
+-- call AssignSessionForTeacher(3,'TOEIC04','TEACHER01');
+-- call AssignSessionForTeacher(4,'TOEIC04','TEACHER02');
+-- call AssignSessionForTeacher(5,'TOEIC04','TEACHER02');
+-- call AssignSessionForTeacher(6,'TOEIC04','TEACHER02');
+-- call AssignSessionForTeacher(7,'TOEIC04','TEACHER03');
+-- call AssignSessionForTeacher(8,'TOEIC04','TEACHER03');
+-- call AssignSessionForTeacher(9,'TOEIC04','TEACHER03');
 
 -- check teacher attendace
 DROP PROCEDURE IF EXISTS TeacherAttendance;
@@ -155,9 +151,9 @@ BEGIN
 END $$
 DELIMITER ;
 
-select * from TEACHER_RESPONSIBLE where Session_number='21' and Class_name='TOEIC03' and Teacher_ID='TEACHER02';
-select * from STUDENT_ATTENDANCE;
-select * from SUPERVISOR_RESPONSIBLE;
+-- select * from TEACHER_RESPONSIBLE where Session_number='21' and Class_name='TOEIC03' and Teacher_ID='TEACHER02';
+-- select * from STUDENT_ATTENDANCE;
+-- select * from SUPERVISOR_RESPONSIBLE;
 
 -- create a new class
 DROP PROCEDURE IF EXISTS createClass;
@@ -176,20 +172,23 @@ END $$
 DELIMITER ;
 
 
-SELECT Timetable_ID from SESSION where Session_number_make_up_for is null and
-            ((Session_date>='2023-05-02' and Session_date<='2023-06-07') or (Session_date<='2023-05-02' and Session_date>='2023-06-07') or (Session_date>='2023-05-02' and Session_date>='2023-06-07') or (Session_date<='2023-05-02' and Session_date<='2023-06-07'))
-            and DAYOFWEEK(Session_date)=3 and Classroom_ID='ROOM01';
+-- SELECT Timetable_ID from SESSION where Session_number_make_up_for is null and
+--             ((Session_date>='2023-05-02' and Session_date<='2023-06-07') or (Session_date<='2023-05-02' and Session_date>='2023-06-07') or (Session_date>='2023-05-02' and Session_date>='2023-06-07') or (Session_date<='2023-05-02' and Session_date<='2023-06-07'))
+--             and DAYOFWEEK(Session_date)=3 and Classroom_ID='ROOM01';
             
-insert into TEACH values('TEACHER02','test'); 
-insert into TEACH values('TEACHER01','test');
-call createClass('test','2023-05-07','2023-05-31','ROOM01');
-call GenSession('test','2023-05-07','2023-05-31','Monday','3','ROOM01',0,2); call GenSession('test','2023-05-07','2023-05-31','Wednesday','3','ROOM01',1,2);
-select *,DAYOFWEEK(Session_date) from session where class_name='test';
-select * from class;
-select * from TEACHER_RESPONSIBLE where class_name='test';
-select * from TEACH where class_name='test';
--- delete from class where name='test';
+-- insert into TEACH values('TEACHER02','test'); 
+-- insert into TEACH values('TEACHER01','test');
+-- call createClass('test','2023-05-07','2023-05-31','ROOM01');
+-- call GenSession('test','2023-05-07','2023-05-31','Monday','3','ROOM01',0,2); call GenSession('test','2023-05-07','2023-05-31','Wednesday','3','ROOM01',1,2);
+-- select *,DAYOFWEEK(Session_date) from session where class_name='test';
+-- select * from class;
+-- select * from TEACHER_RESPONSIBLE where class_name='test';
+-- select * from TEACH where class_name='test';
+-- -- delete from class where name='test';
 
-call AssignSessionForTeacher(1,'test','TEACHER01'); call AssignSessionForTeacher(2,'test','TEACHER02'); call AssignSessionForTeacher(3,'test','TEACHER01'); call AssignSessionForTeacher(4,'test','TEACHER02'); call AssignSessionForTeacher(5,'test','TEACHER01'); call AssignSessionForTeacher(6,'test','TEACHER02'); call AssignSessionForTeacher(7,'test','TEACHER01'); call AssignSessionForTeacher(8,'test','TEACHER02'); 
-call AssignSessionForTeacher(9,'test','TEACHER01'); call AssignSessionForTeacher(10,'test','TEACHER02'); call AssignSessionForTeacher(11,'test','TEACHER01'); call AssignSessionForTeacher(12,'test','TEACHER02'); call AssignSessionForTeacher(13,'test','TEACHER01'); call AssignSessionForTeacher(14,'test','TEACHER02'); call AssignSessionForTeacher(15,'test','TEACHER01'); call AssignSessionForTeacher(16,'test','TEACHER02'); 
-call AssignSessionForTeacher(17,'test','TEACHER01'); call AssignSessionForTeacher(18,'test','TEACHER02'); call AssignSessionForTeacher(19,'test','TEACHER01'); call AssignSessionForTeacher(20,'test','TEACHER02'); call AssignSessionForTeacher(21,'test','TEACHER01'); call AssignSessionForTeacher(22,'test','TEACHER02'); call AssignSessionForTeacher(23,'test','TEACHER01'); call AssignSessionForTeacher(24,'test','TEACHER02');
+-- call AssignSessionForTeacher(1,'test','TEACHER01'); call AssignSessionForTeacher(2,'test','TEACHER02'); call AssignSessionForTeacher(3,'test','TEACHER01'); call AssignSessionForTeacher(4,'test','TEACHER02'); call AssignSessionForTeacher(5,'test','TEACHER01'); call AssignSessionForTeacher(6,'test','TEACHER02'); call AssignSessionForTeacher(7,'test','TEACHER01'); call AssignSessionForTeacher(8,'test','TEACHER02'); 
+-- call AssignSessionForTeacher(9,'test','TEACHER01'); call AssignSessionForTeacher(10,'test','TEACHER02'); call AssignSessionForTeacher(11,'test','TEACHER01'); call AssignSessionForTeacher(12,'test','TEACHER02'); call AssignSessionForTeacher(13,'test','TEACHER01'); call AssignSessionForTeacher(14,'test','TEACHER02'); call AssignSessionForTeacher(15,'test','TEACHER01'); call AssignSessionForTeacher(16,'test','TEACHER02'); 
+-- call AssignSessionForTeacher(17,'test','TEACHER01'); call AssignSessionForTeacher(18,'test','TEACHER02'); call AssignSessionForTeacher(19,'test','TEACHER01'); call AssignSessionForTeacher(20,'test','TEACHER02'); call AssignSessionForTeacher(21,'test','TEACHER01'); call AssignSessionForTeacher(22,'test','TEACHER02'); call AssignSessionForTeacher(23,'test','TEACHER01'); call AssignSessionForTeacher(24,'test','TEACHER02');
+
+select * from session where Class_name='TOEIC03';
+delete from session where Class_name='TOEIC03' and Session_number=26;
