@@ -226,7 +226,7 @@ const AdminClassDetail = () =>
             if (students.current === students.max)
                   $(`.${ styles.addStudent }`).css("display", "flex");
             else
-                  ;
+                  Navigate(`./addStudent`);
       }
 
       return (
@@ -237,7 +237,7 @@ const AdminClassDetail = () =>
                                     <h1>{ className }</h1>
                                     { status.status_str === "Active" && <button className={ `ms-3` } style={ {
                                           border: "1px solid black", borderRadius: "10px", backgroundColor: "red", color: "white"
-                                    } } onClick={ deactivateClass }>Deactivate</button> }
+                                    } } onClick={ () => { $(`.${ styles.deactivateclass }`).css("display", "flex"); } }>Deactivate</button> }
                                     { status.status_str === "Inactive" && <button className={ `ms-3` } style={ {
                                           border: "1px solid black", borderRadius: "10px", backgroundColor: "#4E7EF8", color: "white"
                                     } } onClick={ activateClass }>Activate</button> }
@@ -271,6 +271,13 @@ const AdminClassDetail = () =>
                   <div className={ `${ styles.addStudent } flex-column align-items-center` }>
                         <h1 className='mt-5'>The class is full!</h1>
                         <button className={ `mt-auto mb-5 ${ styles.okay }` } onClick={ () => { $(`.${ styles.addStudent }`).css("display", "none"); } }>OKAY</button>
+                  </div>
+                  <div className={ `${ styles.deactivateclass } flex-column align-items-center` }>
+                        <h1 className='mt-5'>Are you sure you want to deactivate this class?</h1>
+                        <div className="mt-auto mb-5">
+                              <button className={ `${ styles.okay } mx-3` } onClick={ () => { $(`.${ styles.deactivateclass }`).css("display", "none"); } }>NO</button>
+                              <button className={ `${ styles.deactivate } mx-3` } onClick={ () => { $(`.${ styles.deactivateclass }`).css("display", "none"); deactivateClass(); } }>YES</button>
+                        </div>
                   </div>
             </div>
       );

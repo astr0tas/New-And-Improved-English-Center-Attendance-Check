@@ -6,6 +6,7 @@ import Staffs from './pages/Admin/Staffs/Staffs.jsx';
 import AdminClassDetail from './pages/Admin/Classes/detail';
 import AdminAttendance from './pages/Admin/Classes/classAttendance';
 import AddSession from './pages/Admin/Classes/addSession';
+import AddStudent from './pages/Admin/Classes/addStudent';
 
 import { SignInAs, SignIn } from './pages/SignIn/SignIn.jsx';
 import { NavBar } from './pages/NavBar/NavBar.jsx';
@@ -31,6 +32,7 @@ function App()
             <Route path={ '/Classes' } element={ <Classes /> } />
             <Route path='/Classes/:name' element={ <AdminClassDetail /> } />
             <Route path='/Classes/:name/addSession' element={ <AddSession /> } />
+            <Route path='/Classes/:name/addStudent' element={ <AddStudent /> } />
             <Route path='/Classes/:name/:session' element={ <AdminAttendance /> } />
             <Route path={ '/Staffs' } element={ <Staffs /> } />
             <Route path="/Home" />

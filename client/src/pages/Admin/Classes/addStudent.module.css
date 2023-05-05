@@ -1,0 +1,70 @@
+.page {
+      background-color: rgba(0, 136, 255, 0.5);
+      margin-left: 250px;
+      width: calc(100% - 250px);
+}
+
+.board {
+      width: 90%;
+      height: 90%;
+      background-color: #EDEDED;
+      border: 1px solid black;
+      border-radius: 20px;
+}
+
+.input {
+      border: 1px solid black;
+      border-radius: 10px;
+      background-color: #BFBFBF;
+      height: 60px;
+      font-size: 1.5rem;
+      padding-left: 10px;
+}
+
+.confirm {
+      color: white;
+      background-color: #4E7EF8;
+      font-size: 1.5rem;
+      border: 1px solid black;
+      border-radius: 10px;
+      width: 100px;
+}
+
+.confirm:active {
+      background-color: #9bb4f3;
+}
+
+.back {
+      border: 1px solid black;
+      border-radius: 10px;
+      font-size: 1.5rem;
+      width: 100px;
+      background-color: #BFBFBF;
+}
+
+.back:active {
+      background-color: #919191;
+}
+
+.empty {
+      position: absolute;
+      background-color: #BFBFBF;
+      border: 1px solid black;
+      border-radius: 20px;
+      width: 20%;
+      height: 20%;
+      display: none;
+}
+
+.okay {
+      font-size: 1.5rem;
+      background-color: #4E7EF8;
+      color: white;
+      border-radius: 10px;
+      border: 1px solid black;
+      width: 100px;
+}
+
+.okay:active {
+      background-color: #96b2f8;
+}

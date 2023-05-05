@@ -9,7 +9,8 @@ import
     addClass, deleteStudent, deactivateClass,
     activateClass, cancelSession, activateSession,
     getClassTeachers, countSession, getSessions,
-    supervisor, times, getSuitableRoom, createNewSession
+    supervisor, times, getSuitableRoom, createNewSession,
+    searchByName, searchBySSN, addStudentToClass
 } from "./query.js";
 
 import { getUser, updateInfo } from "./query.js";
@@ -199,6 +200,27 @@ adminRoutes.post('/createNewSession', async (req, res) =>
 {
     const data = req.body.params;
     const result = await createNewSession(data.name, data.newSession, data.room, data.date, data.time, data.session, data.teacher, data.supervisor);
+    res.json(result);
+})
+
+adminRoutes.post('/searchByName', async (req, res) =>
+{
+    const data = req.body.params;
+    const result = await searchByName(data.name);
+    res.json(result);
+})
+
+adminRoutes.post('/searchBySSN', async (req, res) =>
+{
+    const data = req.body.params;
+    const result = await searchBySSN(data.ssn);
+    res.json(result);
+})
+
+adminRoutes.post('/addStudentToClass', async (req, res) =>
+{
+    const data = req.body.params;
+    const result = await addStudentToClass(data.id, data.name);
     res.json(result);
 })
 export default adminRoutes;

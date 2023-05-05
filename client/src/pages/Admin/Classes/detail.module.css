@@ -83,7 +83,17 @@
       border: 1px solid black;
       border-radius: 20px;
       background-color: #BFBFBF;
-      display:none;
+      display: none;
+}
+
+.deactivateclass {
+      width: 30%;
+      height: 20%;
+      position: absolute;
+      border: 1px solid black;
+      border-radius: 20px;
+      background-color: #BFBFBF;
+      display: none;
 }
 
 .okay {
@@ -92,18 +102,25 @@
       color: white;
       border-radius: 10px;
       border: 1px solid black;
+      width: 100px;
 }
 
 .okay:active {
       background-color: #96b2f8;
 }
 
-/* @media only screen and (max-width:1400px) {
-      .page {
-            margin-left: 250px;
-            width: calc(100% - 250px);
-      }
-} */
+.deactivate {
+      font-size: 1.5rem;
+      color: white;
+      background-color: red;
+      width: 100px;
+      border-radius: 10px;
+      border: 1px solid black;
+}
+
+.deactivate:active {
+      background-color: rgb(255, 150, 150);
+}
 
 @media only screen and (max-width:1200px) {
       .page {

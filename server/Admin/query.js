@@ -273,3 +273,21 @@ export async function createNewSession(name, newSession, room, date, time, sessi
     `);
     return result;
 }
+
+export async function searchByName(name)
+{
+    const result = await pool.query(`select * from STUDENT where name like '%${ name }%'`);
+    return result[0];
+}
+
+export async function searchBySSN(ssn)
+{
+    const result = await pool.query(`select * from STUDENT where SSN like '%${ ssn }%'`);
+    return result[0];
+}
+
+export async function addStudentToClass(id, name)
+{
+    const result = await pool.query(`insert into IN_CLASS values('${ id }','${ name }')`);
+    return result;
+}

@@ -49,6 +49,7 @@ const AddSession = () =>
                                     {
                                           setTeacher(res.data[i].name);
                                           setChosenTeacher(res.data[i].Teacher_ID);
+                                          setEmptyTeacher(false);
                                     })
                               );
                         }
@@ -62,6 +63,7 @@ const AddSession = () =>
                                     {
                                           setRoom(res.data[i].ID);
                                           setChosenRoom(res.data[i].ID);
+                                          setEmptyRoom(false);
                                     })
                               );
                         }
@@ -79,6 +81,7 @@ const AddSession = () =>
                                     {
                                           setSession(`Session ${ res.data[i].Session_number }`);
                                           setChosenSession(res.data[i].Session_number);
+                                          setEmptySession(false);
                                     })
                               );
                         }
@@ -92,6 +95,7 @@ const AddSession = () =>
                                     {
                                           setSupervisor(res.data[i].name);
                                           setChosenSupervisor(res.data[i].ID);
+                                          setEmptySupervisor(false);
                                     })
                               );
                         }
@@ -143,89 +147,144 @@ const AddSession = () =>
 
       const getTimes = () =>
       {
-            axios.post('http://localhost:3030/admin/times', { params: { room: chosenRoom, date: chosenDate } }).then(res =>
+            let flag = true;
+            if (!chosenRoom)
             {
-                  for (let i = 0; i < res.data.length; i++)
+                  flag = false;
+                  setEmptyRoom(true);
+            }
+            if (!chosenDate)
+            {
+                  flag = false;
+                  setEmptyDate(true);
+            }
+            if (flag)
+            {
+                  axios.post('http://localhost:3030/admin/times', { params: { room: chosenRoom, date: chosenDate } }).then(res =>
                   {
-                        $('#timeList').append(
-                              $("<li>").addClass("dropdown-item").text(`${ res.data[i].Start_hour } - ${ res.data[i].End_hour }`).on("click", function ()
-                              {
-                                    setTime(`${ res.data[i].Start_hour } - ${ res.data[i].End_hour }`);
-                                    setChosenTimeTable(res.data[i].ID);
-                              })
-                        );
-                  }
-            }).catch(err => { console.log(err); })
+                        for (let i = 0; i < res.data.length; i++)
+                        {
+                              $('#timeList').append(
+                                    $("<li>").addClass("dropdown-item").text(`${ res.data[i].Start_hour } - ${ res.data[i].End_hour }`).on("click", function ()
+                                    {
+                                          setTime(`${ res.data[i].Start_hour } - ${ res.data[i].End_hour }`);
+                                          setChosenTimeTable(res.data[i].ID);
+                                          setEmptyTimetable(false);
+                                    })
+                              );
+                        }
+                  }).catch(err => { console.log(err); })
+            }
       }
 
       return (
             <div className={ `h-100 ${ styles.page } d-flex align-items-center justify-content-center` }>
                   <div className={ `d-flex flex-column align-items-center ${ styles.board }` }>
                         <h1 className="mt-3">Add a new session</h1>
-                        <div className="d-flex flex-column mt-5 justify-content-around h-50">
-                              <div>
-                                    <label className={ `me-5 ${ styles.font }` }>Session number: </label>
-                                    <input disabled className={ `${ styles.inputs } ps-3` } value={ newSession }></input>
-                              </div>
-                              <div className={ `d-flex align-items-center` }>
-                                    <label className={ `me-5 ${ styles.font }` }>Room: </label>
-                                    <div className="dropdown">
-                                          <button className={ `${ styles.inputs } ` } type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                                                { room }
-                                          </button>
-                                          <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton1" style={ { maxHeight: "200px", overflowY: "auto" } } id="roomList">
-                                          </ul>
+                        <div className="d-flex flex-column mt-5 justify-content-around h-75 w-100 align-items-center">
+                              <div className='row w-75 my-3'>
+                                    <div className="col-3 d-flex align-items-center">
+                                          <p style={ { fontSize: '1.5rem', marginBottom: '0' } }>Session number:</p>
                                     </div>
-                                    { emptyRoom && <div style={ { color: 'red', fontSize: '1.5rem' } }>&nbsp;&nbsp;<AiOutlineCloseCircle /> Select a class room!</div> }
-                              </div>
-                              <div className={ `d-flex align-items-center` }>
-                                    <label className={ `me-5 ${ styles.font }` }>Date: </label>
-                                    <input type='date' className={ `${ styles.inputs } ps-3` } onChange={ (e) => { setChosenDate(e.target.value); } }></input>
-                                    { emptyDate && <div style={ { color: 'red', fontSize: '1.5rem' } }>&nbsp;&nbsp;<AiOutlineCloseCircle /> Select date!</div> }
-                              </div>
-                              <div className={ `d-flex align-items-center` }>
-                                    <label className={ `me-5 ${ styles.font }` }>Time period: </label>
-                                    <div className="dropdown">
-                                          <button className={ `${ styles.inputs }` } type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false" onClick={ getTimes }>
-                                                { time }
-                                          </button>
-                                          <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton1" style={ { maxHeight: "200px", overflowY: "auto" } } id="timeList">
-                                          </ul>
+                                    <div className="col-5 text-start">
+                                          <input disabled className={ `${ styles.inputs } ps-3` } value={ newSession }></input>
                                     </div>
-                                    { emptyTimetable && <div style={ { color: 'red', fontSize: '1.5rem' } }>&nbsp;&nbsp;<AiOutlineCloseCircle /> Select time!</div> }
                               </div>
-                              <div className={ `d-flex align-items-center` }>
-                                    <label className={ `me-5 ${ styles.font }` }>Make up for session: </label>
-                                    <div className="dropdown">
-                                          <button className={ `${ styles.inputs }` } type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                                                { session }
-                                          </button>
-                                          <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton1" style={ { maxHeight: "200px", overflowY: "auto" } } id="sessionList">
-                                          </ul>
+                              <div className='row w-75 my-3'>
+                                    <div className="col-3 d-flex align-items-center">
+                                          <p style={ { fontSize: '1.5rem', marginBottom: '0' } }>Room:</p>
                                     </div>
-                                    { emptySession && <div style={ { color: 'red', fontSize: '1.5rem' } }>&nbsp;&nbsp;<AiOutlineCloseCircle /> Select a session!</div> }
+                                    <div className="col-5 text-start">
+                                          <div className="dropdown">
+                                                <button className={ `${ styles.inputs } ` } type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                                      { room }
+                                                </button>
+                                                <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton1" style={ { maxHeight: "200px", overflowY: "auto" } } id="roomList">
+                                                </ul>
+                                          </div>
+                                    </div>
+                                    <div className="col d-flex align-items-center">
+                                          { emptyRoom && <div style={ { color: 'red', fontSize: '1.5rem' } }>&nbsp;&nbsp;<AiOutlineCloseCircle /> Select a class room!</div> }
+                                    </div>
                               </div>
-                              <div className={ `d-flex align-items-center` }>
-                                    <label className={ `me-5 ${ styles.font }` }>Teacher: </label>
-                                    <div className="dropdown">
-                                          <button className={ `${ styles.inputs }` } type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                                                { teacher }
-                                          </button>
-                                          <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton1" style={ { maxHeight: "200px", overflowY: "auto" } } id="teacherList">
-                                          </ul>
+                              <div className='row w-75 my-3'>
+                                    <div className="col-3 d-flex align-items-center">
+                                          <p style={ { fontSize: '1.5rem', marginBottom: '0' } }>Date:</p>
                                     </div>
-                                    { emptyTeacher && <div style={ { color: 'red', fontSize: '1.5rem' } }>&nbsp;&nbsp;<AiOutlineCloseCircle /> Select a teacher!</div> }
+                                    <div className="col-5 text-start">
+                                          <input type='date' className={ `${ styles.inputs } ps-3` } onChange={ (e) => { setChosenDate(e.target.value); setEmptyDate(false); } }></input>
+                                    </div>
+                                    <div className="col d-flex align-items-center">
+                                          { emptyDate && <div style={ { color: 'red', fontSize: '1.5rem' } }>&nbsp;&nbsp;<AiOutlineCloseCircle /> Select date!</div> }
+                                    </div>
                               </div>
-                              <div className={ `d-flex align-items-center` }>
-                                    <label className={ `me-5 ${ styles.font }` }>Supervisor: </label>
-                                    <div className="dropdown">
-                                          <button className={ `${ styles.inputs }` } type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                                                { supervisor }
-                                          </button>
-                                          <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton1" style={ { maxHeight: "200px", overflowY: "auto" } } id="supervisorList">
-                                          </ul>
+                              <div className='row w-75 my-3'>
+                                    <div className="col-3 d-flex align-items-center">
+                                          <p style={ { fontSize: '1.5rem', marginBottom: '0' } }>Time period:</p>
                                     </div>
-                                    { emptySupervisor && <div style={ { color: 'red', fontSize: '1.5rem' } }>&nbsp;&nbsp;<AiOutlineCloseCircle /> Select a supervisor!</div> }
+                                    <div className="col-5 text-start">
+                                          <div className="dropdown">
+                                                <button className={ `${ styles.inputs }` } type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false" onClick={ getTimes }>
+                                                      { time }
+                                                </button>
+                                                <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton1" style={ { maxHeight: "200px", overflowY: "auto" } } id="timeList">
+                                                </ul>
+                                          </div>
+                                    </div>
+                                    <div className="col d-flex align-items-center">
+                                          { emptyTimetable && <div style={ { color: 'red', fontSize: '1.5rem' } }>&nbsp;&nbsp;<AiOutlineCloseCircle /> Select time!</div> }
+                                    </div>
+                              </div>
+                              <div className='row w-75 my-3'>
+                                    <div className="col-3 d-flex align-items-center">
+                                          <p style={ { fontSize: '1.5rem', marginBottom: '0' } }>Make up for session:</p>
+                                    </div>
+                                    <div className="col-5 text-start">
+                                          <div className="dropdown">
+                                                <button className={ `${ styles.inputs }` } type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                                      { session }
+                                                </button>
+                                                <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton1" style={ { maxHeight: "200px", overflowY: "auto" } } id="sessionList">
+                                                </ul>
+                                          </div>
+                                    </div>
+                                    <div className="col d-flex align-items-center">
+                                          { emptySession && <div style={ { color: 'red', fontSize: '1.5rem' } }>&nbsp;&nbsp;<AiOutlineCloseCircle /> Select a session!</div> }
+                                    </div>
+                              </div>
+                              <div className='row w-75 my-3'>
+                                    <div className="col-3 d-flex align-items-center">
+                                          <p style={ { fontSize: '1.5rem', marginBottom: '0' } }>Teacher:</p>
+                                    </div>
+                                    <div className="col-5 text-start">
+                                          <div className="dropdown">
+                                                <button className={ `${ styles.inputs }` } type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                                      { teacher }
+                                                </button>
+                                                <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton1" style={ { maxHeight: "200px", overflowY: "auto" } } id="teacherList">
+                                                </ul>
+                                          </div>
+                                    </div>
+                                    <div className="col d-flex align-items-center">
+                                          { emptyTeacher && <div style={ { color: 'red', fontSize: '1.5rem' } }>&nbsp;&nbsp;<AiOutlineCloseCircle /> Select a teacher!</div> }
+                                    </div>
+                              </div>
+                              <div className='row w-75 my-3'>
+                                    <div className="col-3 d-flex align-items-center">
+                                          <p style={ { fontSize: '1.5rem', marginBottom: '0' } }>Supervisor:</p>
+                                    </div>
+                                    <div className="col-5 text-start">
+                                          <div className="dropdown">
+                                                <button className={ `${ styles.inputs }` } type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                                      { supervisor }
+                                                </button>
+                                                <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton1" style={ { maxHeight: "200px", overflowY: "auto" } } id="supervisorList">
+                                                </ul>
+                                          </div>
+                                    </div>
+                                    <div className="col d-flex align-items-center">
+                                          { emptySupervisor && <div style={ { color: 'red', fontSize: '1.5rem' } }>&nbsp;&nbsp;<AiOutlineCloseCircle /> Select a supervisor!</div> }
+                                    </div>
                               </div>
                         </div>
                         <div className='mb-5 mt-auto'>
