@@ -1,0 +1,82 @@
+.page {
+      background-color: #9CBFF5;
+      position: absolute;
+      right: 0;
+      width: 82%;
+      height: 100%;
+}
+
+.board {
+      width: 90%;
+      height: 90%;
+      background-color: #EDEDED;
+      border: 1px solid black;
+      border-radius: 20px;
+}
+
+.back {
+      background-color: #BFBFBF;
+      border: none;
+      border-radius: 10px;
+      height: 40px;
+      width: 100px;
+      font-size: 18px;
+}
+
+.back:active {
+      background-color: #a2a1a1;
+}
+
+.confirm {
+      color: white;
+      background-color: #4E7EF8;
+      border: none;
+      border-radius: 10px;
+      height: 40px;
+      width: 100px;
+      font-size: 18px;
+}
+
+.confirm:active {
+      background-color: #84a7ff;
+}
+
+.detail {
+      border: none;
+      border-radius: 10px;
+      background-color: #626262;
+      color: white;
+      width: 70px;
+}
+
+.detail:active {
+      background-color: #9b9b9b;
+}
+
+.detail>* {
+      text-decoration: none;
+      color: white;
+}
+
+.detail>*:hover {
+      color: white;
+}
+
+.empty,
+.invalidDay,
+.complete,
+.teacherMissing,
+.noTeacher,
+.invalidPerson {
+      position: absolute;
+      width: 50%;
+      height: 40%;
+      z-index: 1000;
+      background-color: #D9D9D9;
+      border-radius: 20px;
+      display: none;
+}
+
+.checkbox:hover {
+      cursor: pointer;
+}

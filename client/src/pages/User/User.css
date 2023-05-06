@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css?family=Nunito');
 
-.ssn-container{
+.ssn-container {
     background: rgba(243, 246, 254, 0.89);
     border-radius: 32.58px;
     font-size: 35px;
@@ -11,7 +11,7 @@
     width: 20%;
 }
 
-.img-container{
+.img-container {
     position: absolute;
     top: 5px;
     width: 400px;
@@ -21,7 +21,7 @@
     background: #D6E4FF;
 }
 
-.img-container img{
+.img-container img {
     position: absolute;
 
     top: 10%;
@@ -31,7 +31,7 @@
     height: 80%;
 }
 
-.name-container{
+.name-container {
     position: absolute;
     font-weight: 700;
     font-size: 30px;

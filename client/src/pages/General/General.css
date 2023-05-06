@@ -11,6 +11,7 @@
     display: flex;
     align-items: center;
     flex-direction: column;
+
 }
 
 .nav-slide{
@@ -28,6 +29,7 @@
 
     background: #EDEDED;
     border-radius: 20px;
+    border: 1px black solid;
 }
 
 .search-container{
@@ -66,14 +68,17 @@
 
 .entity-list-container{
     position: absolute;
-    justify-content: center;
-
     top: 10%;
     left: 2%;
     width: 96%;
     height: 77%;
 
     overflow: scroll;
+    background: #EDEDED;
+}
+
+.class-box .entity-list-container{
+    background: #D9D9D9;
 }
 
 .entity-list-container::-webkit-scrollbar {
@@ -110,6 +115,16 @@
     border: 1px solid #000000;
     margin-bottom: 7px;
 }
+
+input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input:invalid {
+    border: 3px solid red;
+}
+
 
 .entity-container p{
     position: relative;
@@ -154,13 +169,18 @@
     left: 25%;
     height: 7%;
     width: 50%;
+
+    
 }
 
 .button-container .cus-btn{
     height: 100%;
+    width: 300px;
     background: #BFBFBF;
     border: none;
     color: black;
+    font-size: 22px;
+    border: 1px black solid;
 }
 
 .noti-container{
@@ -214,6 +234,9 @@
 
 .avatar-container{
     position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     top: 2%;
     left: 40%;
     width: 20%;
@@ -223,10 +246,8 @@
 
 .avatar-container img{
     position: absolute;
-    width: 90%;
-    height: 90%;
-    top: 10%;
-    left: 8%;
+    width: 95%;
+    height: 95%;
 }
 
 .info-container{

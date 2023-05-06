@@ -1,21 +1,12 @@
 import './General.css';
+import Noti from './Noti.jsx';
 import ChangeEntity from './ChangeEntity.jsx';
 import {useState} from 'react';
-import axios from 'axios';
-
 
 export default function ShowInfo(props){
     const [changeEntity, setChangeEntity] = useState(false);
-    const [classOfStudent, setClassOfStudent] = useState([]);
     var entity = props.entity;
-    var  url = "http://localhost:3030/admin/"+ entity.ID +"/classes"
-    axios.get(url)
-    .then(
-        res =>{
-            setClassOfStudent(res.data);
-        }
-    )
-    .catch(error => console.log(error))
+    var birthday = new Date(entity.birthday).toLocaleDateString('en-GB');
 
     return (
         <>
@@ -31,11 +22,11 @@ export default function ShowInfo(props){
                     }}
                 > 
                     <Detail field = "Name" value = {entity.name}/>
-                    <Detail field = "ID" value = {entity.ID}/>
+                    <Detail field = "SSN" value = {entity.ssn}/>
                     <Detail field = "Phone" value = {entity.phone}/>
                     <Detail field = "Email" value = {entity.email}/>
                     <Detail field = "Address" value = {entity.address}/>
-                    <Detail field = "BirthDate" value = {entity.birthday}/>
+                    <Detail field = "BirthDate" value = {birthday}/>
                     <Detail field = "BirthPlace" value = {entity.birthplace}/>
                 </div>
 
@@ -46,9 +37,11 @@ export default function ShowInfo(props){
                 <div className = 'entity-list-container'
                     style = {{position: 'absolute', top:'40%', height: '45%'}}
                 >
-                    {
-                        classOfStudent.map((sClass)=>(<ClassOfStudent sClass = {sClass}/>))
-                    }
+                        <ClassOfStudent/>
+                        <ClassOfStudent/>
+                        <ClassOfStudent/>
+                        <ClassOfStudent/>
+                        <ClassOfStudent/>
                 </div>
 
                 <div className = 'button-container'>
@@ -57,18 +50,18 @@ export default function ShowInfo(props){
                 </div>
             </div>
             {
-                changeEntity && <ChangeEntity entity = {entity} offChange = {()=>setChangeEntity(false)}/>
+                changeEntity && <ChangeEntity offChange = {()=>setChangeEntity(false)}/>
             }
         </>
     )
 }
 
-function ClassOfStudent({sClass}){
+function ClassOfStudent(){
     return (
         <div className = 'entity-container' style = {{height: '25%'}}>
-            <p>{sClass.Class_name}</p>
-            <p style = {{top: 0}}>{sClass.Start_date} {sClass.End_date}</p>
-            <p>{sClass.Status === 1 ? "Active" : "Disactive"}</p>
+            <p>Class</p>
+            <p>Period</p>
+            <p>Status</p>
             <button class = "btn btn-primary">Details</button>
         </div>
     )

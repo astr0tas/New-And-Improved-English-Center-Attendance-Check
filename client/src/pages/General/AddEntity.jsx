@@ -4,14 +4,6 @@ import Noti from './Noti.jsx';
 import React, {useState} from 'react';
 import axios from 'axios';
 
-var id = "";
-axios.get("http://localhost:3030/admin/newID")
-.then(res=>{
-    id = res.data[0]["newID()"];
-})
-.catch(error => console.log(error));
-
-
 export default function AddEntity(props){
     const [studentClasses, setClasses] = useState("");
     const [showListClass, setShowListClass] = useState(false);
@@ -25,14 +17,10 @@ export default function AddEntity(props){
     function handleBack(){
         props.offAdd();
     }
-    
-    
-
-    console.log(id);
 
     function handleConfirm() {
         if (document.getElementById('name') === null
-            || document.getElementById('id') === null
+            || document.getElementById('ssn') === null
             || document.getElementById('phone') === null
             || document.getElementById('email') === null
             || document.getElementById('birthday') === null
@@ -46,16 +34,13 @@ export default function AddEntity(props){
             }
 
         const name = document.getElementById('name').value;
-        const id = document.getElementById('id').value;
+        const ssn = document.getElementById('ssn').value;
         const phone = document.getElementById('phone').value;
         const email = document.getElementById('email').value;
         const birthday = document.getElementById('birthday').value;
         const birthplace = document.getElementById('birthplace').value;
         const address = document.getElementById('address').value;
-        
 
-        
-        
         
         
         setCurr("add");
@@ -91,8 +76,8 @@ export default function AddEntity(props){
 
                 <div class="info-container" background = 'none'>
                     <div class="input-group">
-                        <span class="input-group-text" id="basic-addon1" >ID</span>
-                        <p style = {{position: 'absolute', left: '9.3%', height: '60%', top: '24%', width: '150px', alignItems: 'center'}}>{id}</p>
+                        <span class="input-group-text" id="basic-addon1" >SSN</span>
+                        <input is = 'ssn' type="text" class="form-control" aria-describedby="basic-addon1"/>
                     </div>
                 </div>
 
@@ -151,7 +136,7 @@ export default function AddEntity(props){
 
 var classList = [];
 
-axios.get('http://localhost:3030/admin/classes')
+axios.get('http://localhost:3030/api/classes')
 .then((res) =>{
     classList = res.data;
 }
@@ -213,13 +198,11 @@ function ClassList(props){
     )
 }
 
-
-
 function ClassDetails(props){
     const [isActive, setActive] = useState(false);
     var lclass =  props.class;
     function handleActive(){
-        if (lclass.Current_stu !== lclass.Max_number_of_students) {
+        if (lclass.Current_stu !== lclass.Max_stu) {
             if(!isActive) props.add(lclass.Name);
             else props.remove();
             
@@ -230,7 +213,7 @@ function ClassDetails(props){
         <div className = 'entity-container'>
             <p>{lclass.Name}</p> 
             <p>{lclass.Current_stu}</p>
-            <p>{lclass.Max_number_of_students}</p>
+            <p>{lclass.Max_stu}</p>
             <button class = "btn btn-primary" style = {{marginRight: '100px'}}>Details</button>
             <button class={"btn btn-primary" + (isActive ? " active" : "")} onClick = {handleActive}>Add</button>
         </div>

@@ -1,0 +1,58 @@
+.page {
+      background-color: #9CBFF5;
+      position: absolute;
+      right: 0;
+      width: 82%;
+      height: 100%;
+}
+
+.page_button {
+      background-color: white;
+      border-radius: 5px;
+      width: 40px;
+      height: 40px;
+}
+
+.page_button:hover {
+      cursor: pointer;
+}
+
+.page_button:active {
+      background-color: rgb(216, 216, 216);
+}
+
+.page_button:last-child {
+      margin-left: 15px;
+}
+
+.detail {
+      text-decoration: none;
+      color: white;
+      background-color: #4E7EF8;
+      font-size: 25px;
+      width: 150px;
+      height: 40px;
+      border-radius: 10px;
+}
+
+.detail:hover {
+      color: white;
+}
+
+.detail:active {
+      background-color: #8bacff;
+}
+
+/* @media only screen and (max-width:1400px) {
+      .page {
+            margin-left: 250px;
+            width: calc(100% - 250px);
+      }
+} */
+
+@media only screen and (max-width:1200px) {
+      .page {
+            margin-left: 200px;
+            width: calc(100% - 200px);
+      }
+}
