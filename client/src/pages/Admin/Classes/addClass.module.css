@@ -67,16 +67,20 @@
       padding-left: 10px;
 }
 
-.box {
-      width: 400px;
-}
-
 .box:hover {
       cursor: pointer;
 }
 
 .timeTable,
-.teachers,
-.room {
+.teachers {
       display: none;
+}
+
+.inputs {
+      font-size: 1.5rem;
+      border-radius: 10px;
+      background-color: #BFBFBF;
+      border: 1px solid black;
+      height: 50px;
+      width: 100%;
 }

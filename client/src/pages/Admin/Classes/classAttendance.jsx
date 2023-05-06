@@ -167,6 +167,54 @@ const Supervisor = (props) =>
                                     root.render(<>{ temp }</>);
                               })
                               .catch(error => console.log(error));
+                        axios.post('http://localhost:3030/admin/getClassTeachers', { params: { name: props.className } }).then(res =>
+                        {
+                              for (let i = 0; i < res.data.length; i++)
+                              {
+                                    $('#teacherList').append(
+                                          $("<li>").addClass("dropdown-item").text(res.data[i].name).on("click", function ()
+                                          {
+                                                setTeacher({ name: res.data[i].name, id: res.data[i].Teacher_ID });
+                                                axios.post("http://localhost:3030/admin/replaceTeacher", {
+                                                      params: {
+                                                            session: props.sessionNumber,
+                                                            name: props.className,
+                                                            id: res.data[i].Teacher_ID
+                                                      }
+                                                })
+                                                      .then(res =>
+                                                      {
+                                                            console.log(res);
+                                                      })
+                                                      .catch(err => { console.log(err); })
+                                          })
+                                    );
+                              }
+                        }).catch(err => { console.log(err); })
+                        axios.get('http://localhost:3030/admin/supervisor').then(res =>
+                        {
+                              for (let i = 0; i < res.data.length; i++)
+                              {
+                                    $('#supervisorList').append(
+                                          $("<li>").addClass("dropdown-item").text(res.data[i].name).on("click", function ()
+                                          {
+                                                setSupervisor({ id: res.data[i].ID, name: res.data[i].name });
+                                                axios.post("http://localhost:3030/admin/replaceSupervisor", {
+                                                      params: {
+                                                            session: props.sessionNumber,
+                                                            name: props.className,
+                                                            id: res.data[i].ID
+                                                      }
+                                                })
+                                                      .then(res =>
+                                                      {
+                                                            console.log(res);
+                                                      })
+                                                      .catch(err => { console.log(err); })
+                                          })
+                                    );
+                              }
+                        }).catch(err => { console.log(err); })
                   }
                   Foo();
                   render.current = true;
@@ -198,95 +246,125 @@ const Supervisor = (props) =>
       }
 
       return (
-            <>
-                  <form className="w-100 h-100 d-flex flex-column">
-                        <div className={ `w-100 d-flex` } style={ { height: '40%' } }>
-                              <div className="h-100 d-flex flex-column justify-content-center align-items-center" style={ { width: '25%' } }>
-                                    <h1>Session { props.sessionNumber }</h1>
-                                    <p className="d-flex align-items-center"><AiOutlineClockCircle />{ time.date }: { time.start } - { time.end }</p>
-                                    <p>Room: { room }</p>
-                                    <div className="d-flex align-items-center">
-                                          <p style={ {
-                                                marginBottom: '0'
-                                          } }>Status: <span style={ { color: status.color } }>{ status.status }</span></p>
-                                          { status.status === "On going" && <button className="ms-3" style={ {
-                                                border: "1px solid black",
-                                                borderRadius: "10px",
-                                                color: "white",
-                                                backgroundColor: "red"
-                                          } } onClick={ cancelSession }>Cancel</button> }
-                                          { status.status === "Cancelled" && <button className="ms-3" style={ {
-                                                border: "1px solid black",
-                                                borderRadius: "10px",
-                                                color: "white",
-                                                backgroundColor: "#4E7EF8"
-                                          } } onClick={ activateSession }>Activate</button> }
-                                    </div>
-                                    { makeup && <p>Make up for session { makeup }</p> }
+            <div className="w-100 h-100 d-flex flex-column align-items-center justify-content-center">
+                  <div className={ `w-100 d-flex` } style={ { height: '40%' } }>
+                        <div className="h-100 d-flex flex-column justify-content-center align-items-center" style={ { width: '25%' } }>
+                              <h1>Session { props.sessionNumber }</h1>
+                              <p className="d-flex align-items-center"><AiOutlineClockCircle />{ time.date }: { time.start } - { time.end }</p>
+                              <p>Room: { room }</p>
+                              <div className="d-flex align-items-center" style={ {
+                                    marginBottom: '16px'
+                              } }>
+                                    <p style={ {
+                                          marginBottom: '0'
+                                    } }>Status: <span style={ { color: status.color } }>{ status.status }</span></p>
+                                    { status.status === "On going" && <button className="ms-3" style={ {
+                                          border: "1px solid black",
+                                          borderRadius: "10px",
+                                          color: "white",
+                                          backgroundColor: "red"
+                                    } } onClick={ cancelSession }>Cancel</button> }
+                                    { status.status === "Cancelled" && <button className="ms-3" style={ {
+                                          border: "1px solid black",
+                                          borderRadius: "10px",
+                                          color: "white",
+                                          backgroundColor: "#4E7EF8"
+                                    } } onClick={ activateSession }>Activate</button> }
                               </div>
-                              <div className="h-100 d-flex flex-column justify-content-center align-items-center" style={ { width: '27.5%' } }>
-                                    <h3 className="mb-3">Teacher: { teacher.name }</h3>
-                                    <img alt="avatar" src="https://cdn3.iconfinder.com/data/icons/avatar-91/130/avatar__girl__teacher__female__women-512.png" style={ { height: '70%', width: '70%' } }></img>
-                                    <button className={ `mt-3 ${ styles.detail }` }>Detail</button>
-                              </div >
-                              <div className="h-100 d-flex flex-column justify-content-center align-items-center" style={ { width: '20%' } }>
-                                    <div className="d-flex justify-content-around align-items-center w-100">
-                                          <div>
-                                                <h4>On class</h4>
-                                                <input disabled type="checkbox" style={ { width: "30px", height: "30px" } } value="2" className={ `teacher_attendace_check ${ styles.checkbox }` }></input>
-                                          </div>
-                                          <div>
-                                                <h4>Late</h4>
-                                                <input disabled type="checkbox" style={ { width: "30px", height: "30px" } } value="1" className={ `teacher_attendace_check ${ styles.checkbox }` }></input>
-                                          </div>
-                                          <div>
-                                                <h4>Absent</h4>
-                                                <input disabled type="checkbox" style={ { width: "30px", height: "30px" } } value="0" className={ `teacher_attendace_check ${ styles.checkbox }` }></input>
+                              { makeup && <p>Make up for session { makeup }</p> }
+                              {
+                                    status.status === "On going" &&
+                                    <div className="d-flex align-items-center" style={ {
+                                          marginBottom: '16px'
+                                    } }>
+                                          <p style={ { marginBottom: '0' } }>Change teacher?</p>
+                                          <div className="dropdown ms-3">
+                                                <button className={ `${ styles.inputs }` } type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                                      { teacher.name }
+                                                </button>
+                                                <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton1" style={ { maxHeight: "100px", overflowY: "auto" } } id="teacherList">
+                                                </ul>
                                           </div>
                                     </div>
-                                    <div className="d-flex justify-content-center align-items-center mt-5">
-                                          <div className="d-flex flex-column justify-content-center align-items-center">
-                                                <h4>Note</h4>
-                                                <textarea disabled style={ { width: '250px', minHeight: '60px', resize: 'none' } } className="teacher_attendace_note"></textarea>
+                              }
+                              {
+                                    status.status === "On going" &&
+                                    <div className="d-flex align-items-center" style={ {
+                                          marginBottom: '16px'
+                                    } }>
+                                          <p style={ { marginBottom: '0' } }>Change supervisor?</p>
+                                          <div className="dropdown ms-3">
+                                                <button className={ `${ styles.inputs }` } type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                                      { supervisor.name }
+                                                </button>
+                                                <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton1" style={ { maxHeight: "200px", overflowY: "auto" } } id="supervisorList">
+                                                </ul>
                                           </div>
                                     </div>
-                              </div >
-                              <div className="h-100 d-flex flex-column justify-content-center align-items-center" style={ { width: '27.5%' } }>
-                                    <h3 className="mb-3">Supervisor: { supervisor.name }</h3>
-                                    <img alt="avatar" src="https://www.shareicon.net/data/512x512/2016/07/26/801997_user_512x512.png" style={ { height: '70%', width: '70%' } }></img>
-                                    <button className={ `mt-3 ${ styles.detail }` }>Detail</button>
-                              </div>
+                              }
                         </div>
-                        <div className={ `w-100` } style={ { height: '50%' } } >
+                        <div className="h-100 d-flex flex-column justify-content-center align-items-center" style={ { width: '27.5%' } }>
+                              <h3 className="mb-3">Teacher: { teacher.name }</h3>
+                              <img alt="avatar" src="https://cdn3.iconfinder.com/data/icons/avatar-91/130/avatar__girl__teacher__female__women-512.png" style={ { height: '70%', width: '70%' } }></img>
+                              <button className={ `mt-3 ${ styles.detail }` }>Detail</button>
+                        </div >
+                        <div className="h-100 d-flex flex-column justify-content-center align-items-center" style={ { width: '20%' } }>
+                              <div className="d-flex justify-content-around align-items-center w-100">
+                                    <div>
+                                          <h4>On class</h4>
+                                          <input disabled type="checkbox" style={ { width: "30px", height: "30px" } } value="2" className={ `teacher_attendace_check ${ styles.checkbox }` }></input>
+                                    </div>
+                                    <div>
+                                          <h4>Late</h4>
+                                          <input disabled type="checkbox" style={ { width: "30px", height: "30px" } } value="1" className={ `teacher_attendace_check ${ styles.checkbox }` }></input>
+                                    </div>
+                                    <div>
+                                          <h4>Absent</h4>
+                                          <input disabled type="checkbox" style={ { width: "30px", height: "30px" } } value="0" className={ `teacher_attendace_check ${ styles.checkbox }` }></input>
+                                    </div>
+                              </div>
+                              <div className="d-flex justify-content-center align-items-center mt-5">
+                                    <div className="d-flex flex-column justify-content-center align-items-center">
+                                          <h4>Note</h4>
+                                          <textarea disabled style={ { width: '250px', minHeight: '60px', resize: 'none' } } className="teacher_attendace_note"></textarea>
+                                    </div>
+                              </div>
+                        </div >
+                        <div className="h-100 d-flex flex-column justify-content-center align-items-center" style={ { width: '27.5%' } }>
+                              <h3 className="mb-3">Supervisor: { supervisor.name }</h3>
+                              <img alt="avatar" src="https://www.shareicon.net/data/512x512/2016/07/26/801997_user_512x512.png" style={ { height: '70%', width: '70%' } }></img>
+                              <button className={ `mt-3 ${ styles.detail }` }>Detail</button>
+                        </div>
+                  </div>
+                  <div className={ `w-100` } style={ { height: '50%' } } >
+                        <table className="table table-hover m-0 w-100">
+                              <thead style={ { borderBottom: "2px solid black" } }>
+                                    <tr>
+                                          <th scope="col" className='col-1'>#</th>
+                                          <th scope="col" className='col-3'>Name</th>
+                                          <th scope="col" className='col-1'></th>
+                                          <th scope="col" className='col-1'>On class</th>
+                                          <th scope="col" className='col-1'>Late</th>
+                                          <th scope="col" className='col-1'>Absent</th>
+                                          <th scope="col" className='col-3'>Note</th>
+                                    </tr>
+                              </thead>
+                        </table>
+                        <div className="overflow-auto w-100" style={ { height: '75%', boxSizing: "border-box" } }>
                               <table className="table table-hover m-0 w-100">
-                                    <thead style={ { borderBottom: "2px solid black" } }>
-                                          <tr>
-                                                <th scope="col" className='col-1'>#</th>
-                                                <th scope="col" className='col-3'>Name</th>
-                                                <th scope="col" className='col-1'></th>
-                                                <th scope="col" className='col-1'>On class</th>
-                                                <th scope="col" className='col-1'>Late</th>
-                                                <th scope="col" className='col-1'>Absent</th>
-                                                <th scope="col" className='col-3'>Note</th>
-                                          </tr>
-                                    </thead>
+                                    <tbody id="student_list">
+                                    </tbody>
                               </table>
-                              <div className="overflow-auto w-100" style={ { height: '80%', boxSizing: "border-box" } }>
-                                    <table className="table table-hover m-0 w-100">
-                                          <tbody id="student_list">
-                                          </tbody>
-                                    </table>
-                              </div>
-                              <div className="d-flex align-items-center justify-content-center mt-4">
-                                    <p className="m-0">Class note:</p>
-                                    <textarea disabled className={ `mx-3 note_for_class` } style={ { width: '400px', minHeight: '60px', resize: 'none' } }></textarea>
-                              </div>
                         </div>
-                        <div className="d-flex justify-content-center align-items-center mt-auto mb-4">
-                              <button type="button" className={ `${ styles.back } mx-3` } onClick={ () => { window.location.href = "/Classes/" + props.className; } }>Back</button>
+                        <div className="d-flex align-items-center justify-content-center mt-4">
+                              <p className="m-0">Class note:</p>
+                              <textarea disabled className={ `mx-3 note_for_class` } style={ { width: '400px', minHeight: '50px', resize: 'none' } }></textarea>
                         </div>
-                  </form>
-            </>
+                  </div>
+                  <div className="d-flex justify-content-center align-items-center mt-auto mb-3">
+                        <button type="button" className={ `${ styles.back } mx-3` } onClick={ () => { window.location.href = "/Classes/" + props.className; } }>Back</button>
+                  </div>
+            </div>
       );
 }
 

@@ -162,33 +162,16 @@ CREATE PROCEDURE createClass(
 	className VARCHAR(100),
     start_date DATE,
 	end_date DATE,
-    roomID varchar(15)
+    roomID varchar(15),
+    session int
 )
 BEGIN
 	declare seats int;
     select Max_of_seat into seats from CLASSROOM where ID=roomID;
-    insert into CLASS values(start_date,end_date,className,1,seats,24);
+    insert into CLASS values(start_date,end_date,className,1,seats,session);
 END $$
 DELIMITER ;
 
-
--- SELECT Timetable_ID from SESSION where Session_number_make_up_for is null and
---             ((Session_date>='2023-05-02' and Session_date<='2023-06-07') or (Session_date<='2023-05-02' and Session_date>='2023-06-07') or (Session_date>='2023-05-02' and Session_date>='2023-06-07') or (Session_date<='2023-05-02' and Session_date<='2023-06-07'))
---             and DAYOFWEEK(Session_date)=3 and Classroom_ID='ROOM01';
-            
--- insert into TEACH values('TEACHER02','test'); 
--- insert into TEACH values('TEACHER01','test');
--- call createClass('test','2023-05-07','2023-05-31','ROOM01');
--- call GenSession('test','2023-05-07','2023-05-31','Monday','3','ROOM01',0,2); call GenSession('test','2023-05-07','2023-05-31','Wednesday','3','ROOM01',1,2);
--- select *,DAYOFWEEK(Session_date) from session where class_name='test';
--- select * from class;
--- select * from TEACHER_RESPONSIBLE where class_name='test';
--- select * from TEACH where class_name='test';
--- -- delete from class where name='test';
-
--- call AssignSessionForTeacher(1,'test','TEACHER01'); call AssignSessionForTeacher(2,'test','TEACHER02'); call AssignSessionForTeacher(3,'test','TEACHER01'); call AssignSessionForTeacher(4,'test','TEACHER02'); call AssignSessionForTeacher(5,'test','TEACHER01'); call AssignSessionForTeacher(6,'test','TEACHER02'); call AssignSessionForTeacher(7,'test','TEACHER01'); call AssignSessionForTeacher(8,'test','TEACHER02'); 
--- call AssignSessionForTeacher(9,'test','TEACHER01'); call AssignSessionForTeacher(10,'test','TEACHER02'); call AssignSessionForTeacher(11,'test','TEACHER01'); call AssignSessionForTeacher(12,'test','TEACHER02'); call AssignSessionForTeacher(13,'test','TEACHER01'); call AssignSessionForTeacher(14,'test','TEACHER02'); call AssignSessionForTeacher(15,'test','TEACHER01'); call AssignSessionForTeacher(16,'test','TEACHER02'); 
--- call AssignSessionForTeacher(17,'test','TEACHER01'); call AssignSessionForTeacher(18,'test','TEACHER02'); call AssignSessionForTeacher(19,'test','TEACHER01'); call AssignSessionForTeacher(20,'test','TEACHER02'); call AssignSessionForTeacher(21,'test','TEACHER01'); call AssignSessionForTeacher(22,'test','TEACHER02'); call AssignSessionForTeacher(23,'test','TEACHER01'); call AssignSessionForTeacher(24,'test','TEACHER02');
-
-select * from session where Class_name='TOEIC03';
-delete from session where Class_name='TOEIC03' and Session_number=26;
+-- select * from session where Class_name='TOEIC03';
+-- delete from session where Class_name='TOEIC03' and Session_number=26;
+delete from CLASS where Name='TESTING';

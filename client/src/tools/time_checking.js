@@ -41,3 +41,18 @@ export function isInWeekPeriod(date)
 
       return currentDate >= date && currentDate <= oneWeekAfter;
 }
+
+export function getDate100DaysLater(date)
+{
+      // Convert the input date string to a Date object
+      const inputDate = new Date(date);
+
+      // Calculate the timestamp of the input date plus 100 days (in milliseconds)
+      const timestamp100DaysLater = inputDate.getTime() + (100 * 24 * 60 * 60 * 1000);
+
+      // Create a new Date object from the timestamp
+      const date100DaysLater = new Date(timestamp100DaysLater);
+
+      // Return the date string in the format "YYYY-MM-DD"
+      return date100DaysLater.toISOString().slice(0, 10);
+}

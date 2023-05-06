@@ -5,60 +5,69 @@ import styles from './addClass.module.css';
 import { AiOutlineClockCircle } from 'react-icons/ai';
 import ReactDOM from 'react-dom/client';
 import { AiOutlineCloseCircle } from 'react-icons/ai';
+import { getDate100DaysLater } from "../../../tools/time_checking";
 
-const chosenTimetable = [{ dow: null, periodID: null }, { dow: null, periodID: null }];
+const chosenTimetable = [{ dow: 2, periodID: null, start: null, end: null },
+{ dow: 3, periodID: null, start: null, end: null },
+{ dow: 4, periodID: null, start: null, end: null },
+{ dow: 5, periodID: null, start: null, end: null },
+{ dow: 6, periodID: null, start: null, end: null },
+{ dow: 7, periodID: null, start: null, end: null }];
 
+let teachers = [];
 const TimeTable = (props) =>
 {
 
       const handleChange = (e) =>
       {
-            e.preventDefault();
             const state = e.target.checked;
             const checkboxes = document.getElementsByClassName("timetablecheckbox");
             for (let i = 0; i < checkboxes.length; i++)
                   checkboxes[i].checked = false;
             e.target.checked = state;
+            const index = chosenTimetable.findIndex(elem => elem.dow === props.dow);
             if (state)
             {
-                  if (chosenTimetable[0].dow === props.dow)
-                        chosenTimetable[0].periodID = props.id;
-                  else
-                        chosenTimetable[1].periodID = props.id;
+                  chosenTimetable[index].periodID = props.id;
+                  chosenTimetable[index].start = props.start;
+                  chosenTimetable[index].end = props.end;
             }
             else
             {
-                  if (chosenTimetable[0].dow === props.dow)
-                        chosenTimetable[0].periodID = null;
-                  else
-                        chosenTimetable[1].periodID = null;
+                  chosenTimetable[index].periodID = null;
+                  chosenTimetable[index].start = null;
+                  chosenTimetable[index].end = null;
             }
       }
 
       useEffect(() =>
       {
-            if (chosenTimetable[0].dow === props.dow)
+            if (chosenTimetable[props.dow - 2].periodID !== null)
             {
-                  if (chosenTimetable[0].periodID === null)
-                  {
-                        const checkboxes = document.getElementsByClassName("timetablecheckbox");
-                        for (let i = 0; i < checkboxes.length; i++)
-                              checkboxes[i].checked = false;
-                  }
-                  else
-                        $("input[type='checkbox'][value='" + chosenTimetable[0].periodID + "']").prop("checked", true);
+                  $("input[type='checkbox'][value='" + chosenTimetable[props.dow - 2].periodID + "']").prop("checked", true);
             }
-            else if (chosenTimetable[1].dow === props.dow)
-            {
-                  if (chosenTimetable[1].periodID === null)
-                  {
-                        const checkboxes = document.getElementsByClassName("timetablecheckbox");
-                        for (let i = 0; i < checkboxes.length; i++)
-                              checkboxes[i].checked = false;
-                  }
-                  else
-                        $("input[type='checkbox'][value='" + chosenTimetable[1].periodID + "']").prop("checked", true);
-            }
+            // if (chosenTimetable[0].dow === props.dow)
+            // {
+            //       if (chosenTimetable[0].periodID === null)
+            //       {
+            //             const checkboxes = document.getElementsByClassName("timetablecheckbox");
+            //             for (let i = 0; i < checkboxes.length; i++)
+            //                   checkboxes[i].checked = false;
+            //       }
+            //       else
+            //             $("input[type='checkbox'][value='" + chosenTimetable[0].periodID + "']").prop("checked", true);
+            // }
+            // else if (chosenTimetable[1].dow === props.dow)
+            // {
+            //       if (chosenTimetable[1].periodID === null)
+            //       {
+            //             const checkboxes = document.getElementsByClassName("timetablecheckbox");
+            //             for (let i = 0; i < checkboxes.length; i++)
+            //                   checkboxes[i].checked = false;
+            //       }
+            //       else
+            //             $("input[type='checkbox'][value='" + chosenTimetable[1].periodID + "']").prop("checked", true);
+            // }
       })
 
       return (
@@ -76,9 +85,11 @@ const Teacher = (props) =>
       const handleChange = (e) =>
       {
             if (e.target.checked)
-                  props.setTeachers(prev => [...prev, e.target.value]);
+                  teachers.push({ id: e.target.value, name: props.name });
             else
-                  props.setTeachers(props.teachers.filter((item) => item !== e.target.value));
+            {
+                  teachers = teachers.filter(item => item.id !== e.target.value);
+            }
 
       }
 
@@ -91,80 +102,111 @@ const Teacher = (props) =>
       );
 }
 
-const Room = (props) =>
-{
-      const handleChange = (e) =>
-      {
-            const state = e.target.checked;
-            const checkboxes = document.getElementsByClassName("roomcheckbox");
-            for (let i = 0; i < checkboxes.length; i++)
-                  checkboxes[i].checked = false;
-            e.target.checked = state;
-            if (state)
-                  props.setRoom(e.target.value);
-            else
-                  props.setRoom(null);
-      }
-
-      return (
-            <tr>
-                  <th scope="row" className="col-1">{ props.i + 1 }</th>
-                  <td className="col-6">{ props.id }</td>
-                  <td>{ props.seats }</td>
-                  <td><input type="checkbox" value={ props.id } style={ { width: '1.5rem', height: '1.5rem' } } onChange={ handleChange } className="roomcheckbox"></input></td>
-            </tr>
-      );
-}
-
 const AddClass = () =>
 {
+      const render = useRef(false);
+
       const [room, setRoom] = useState(null);
-      const [teachers, setTeachers] = useState([]);
       const [startDate, setStartDate] = useState(null);
       const [endDate, setEndDate] = useState(null);
+      const [supervisor, setSupervisor] = useState(null);
+      const [className, setClassName] = useState(null);
 
       const [emptyRoom, setEmptyRoom] = useState(false);
       const [emptyTeacher, setEmptyTeacher] = useState(false);
       const [incompleteTimeTable, setImcompleteTimeTable] = useState(false);
+      const [emptyName, setEmptyName] = useState(false);
+      const [emptyStart, setEmptyStart] = useState(false);
+      const [emptySupervisor, setEmptySupervisor] = useState(false);
 
       useEffect(() =>
       {
-            axios.get("http://localhost:3030/admin/teachers").then(res =>
+            if (!render.current)
             {
-                  let temp = [];
-                  var teacher = ReactDOM.createRoot(document.getElementById("teacherlist"));
-                  for (let i = 0; i < res.data.length; i++)
-                        temp.push(<Teacher name={ res.data[i].name } key={ i } id={ res.data[i].ID } i={ i } setTeachers={ setTeachers } teachers={ teachers } />);
-                  teacher.render(<>{ temp }</>)
-            }).catch(error => { console.log(error); })
-            axios.get("http://localhost:3030/admin/rooms").then(res =>
-            {
-                  let temp = [];
-                  var room = ReactDOM.createRoot(document.getElementById("roomlist"));
-                  for (let i = 0; i < res.data.length; i++)
-                        temp.push(<Room id={ res.data[i].ID } key={ i } seats={ res.data[i].Max_of_seat } i={ i } setRoom={ setRoom } />);
-                  room.render(<>{ temp }</>)
-            }).catch(error => { console.log(error); })
-      }, []);
+                  axios.get("http://localhost:3030/admin/teachers").then(res =>
+                  {
+                        let temp = [];
+                        var teacher = ReactDOM.createRoot(document.getElementById("teacherlist"));
+                        for (let i = 0; i < res.data.length; i++)
+                              temp.push(<Teacher name={ res.data[i].name } key={ i } id={ res.data[i].ID } i={ i } />);
+                        teacher.render(<>{ temp }</>)
+                  }).catch(error => { console.log(error); });
+                  axios.get("http://localhost:3030/admin/rooms").then(res =>
+                  {
+                        for (let i = 0; i < res.data.length; i++)
+                        {
+                              $('#roomList').append(
+                                    $("<li>").addClass("dropdown-item").text(`${ res.data[i].ID } - ${ res.data[i].Max_of_seat }`).on("click", function ()
+                                    {
+                                          setRoom(res.data[i].ID);
+                                          setEmptyRoom(false);
+                                    })
+                              );
+                        }
+                  }).catch(error => { console.log(error); });
+                  axios.get('http://localhost:3030/admin/supervisor').then(res =>
+                  {
+                        for (let i = 0; i < res.data.length; i++)
+                        {
+                              $('#supervisorList').append(
+                                    $("<li>").addClass("dropdown-item").text(res.data[i].name).on("click", function ()
+                                    {
+                                          setSupervisor({
+                                                name: res.data[i].name, id: res.data[i].ID
+                                          });
+                                    })
+                              );
+                        }
+                  }).catch(err => { console.log(err); });
+                  render.current = true;
+            }
+      });
 
       const addClass = (e) =>
       {
             e.preventDefault();
-            if (room === null)
-                  setEmptyRoom(true);
-            else
-                  setEmptyRoom(false);
-            if (teachers.length === 0)
-                  setEmptyTeacher(true);
-            else
-                  setEmptyTeacher(false);
-            if (chosenTimetable[0].periodID === null || chosenTimetable[1].periodID === null)
-                  setImcompleteTimeTable(true);
-            else
-                  setImcompleteTimeTable(false);
-            if (!emptyRoom && !emptyTeacher && !incompleteTimeTable)
+            let flag = true;
+            if (supervisor === null)
             {
-                  axios.post('http://localhost:3030/admin/addClass', { params: { name: $('#class_name').val(), startDate: startDate, endDate: endDate, timeTable: chosenTimetable, room: room, teachers: teachers } }).then(res =>
+                  setEmptySupervisor(true);
+                  flag = false;
+            }
+            if (startDate === null)
+            {
+                  setEmptyStart(true);
+                  flag = false;
+            }
+            if (className === null)
+            {
+                  setEmptyName(true);
+                  flag = false;
+            }
+            if (room === null)
+            {
+                  setEmptyRoom(true);
+                  flag = false;
+            }
+            if (teachers.length === 0)
+            {
+                  setEmptyTeacher(true);
+                  flag = false;
+            }
+            let counter = 0;
+            for (let i = 0; i < 6; i++)
+            {
+                  if (chosenTimetable[i].periodID === null)
+                  {
+                        counter++;
+                  }
+            }
+            if (counter >= 5)
+            {
+                  flag = false;
+                  setImcompleteTimeTable(true);
+            }
+            if (flag)
+            {
+                  axios.post('http://localhost:3030/admin/addClass', { params: { name: className, startDate: startDate, endDate: endDate, timeTable: chosenTimetable, room: room, teachers: teachers.map(item => item.id), supervisor: supervisor.id } }).then(res =>
                   {
                         console.log(res);
                   }).catch(err => { console.log(err); })
@@ -187,11 +229,24 @@ const AddClass = () =>
       {
             $(`.${ styles.dow }`).css('background-color', '#dbdbdbc0').css('color', 'black');
             $(e.target).css('background-color', '#4274F4').css('color', 'white');
-            if (chosenTimetable[0].dow === null || chosenTimetable[0].periodID === null)
-                  chosenTimetable[0].dow = dow;
-            else if (chosenTimetable[1].dow === null || chosenTimetable[1].periodID === null)
-                  chosenTimetable[1].dow = dow;
             getPeriod(dow);
+      }
+
+      const displayTimeTable = () =>
+      {
+            let flag = true;
+            if (startDate === null)
+            {
+                  setEmptyStart(true);
+                  flag = false;
+            }
+            if (room === null)
+            {
+                  setEmptyRoom(true);
+                  flag = false;
+            }
+            if (flag)
+                  $(`.${ styles.timeTable }`).css("display", "flex");
       }
 
       return (
@@ -205,37 +260,115 @@ const AddClass = () =>
                               <div className='w-100 h-100 d-flex flex-column'>
                                     <h1 className='mt-2'>Add a new class</h1>
                                     <div className="flex-grow-1 mt-5 d-flex flex-column">
-                                          <div className='d-flex flex-column'>
-                                                <span className={ `${ styles.input } my-3` }>Name: &nbsp; <input type="text" required id="class_name"></input></span>
-                                                <span className={ `${ styles.input } my-3` }>Period: &nbsp; Form: &nbsp;<input type="date" required onChange={ (e) =>
-                                                {
-                                                      setStartDate(e.target.value);
-                                                } }></input> To: &nbsp;<input type="date" required onChange={ (e) =>
-                                                {
-                                                      setEndDate(e.target.value);
-                                                } }></input></span>
-                                                <span className={ `${ styles.input } my-3 d-flex align-items-center align-self-center` }>
-                                                      Room: &nbsp;
-                                                      <div className={ `${ styles.box } d-flex align-items-center overflow-auto` } onClick={ () => { $(`.${ styles.room }`).css("display", "flex"); } }>
-                                                            <span id="chosenRoom"></span>
+                                          <div className='d-flex flex-column align-items-center'>
+                                                <div className='row my-3 w-75'>
+                                                      <div className="col-2 d-flex align-items-center">
+                                                            <p style={ { fontSize: '1.5rem', marginBottom: '0' } }>Name:</p>
                                                       </div>
-                                                      { emptyRoom && <div style={ { color: 'red', fontSize: '1.5rem' } }>&nbsp;&nbsp;<AiOutlineCloseCircle /> Select a class room!</div> }
-                                                </span>
-                                                <span className={ `${ styles.input } my-3 d-flex align-items-center align-self-center` }>
-                                                      Timetable: &nbsp;
-                                                      <div className={ `${ styles.box } d-flex align-items-center overflow-auto` } onClick={ () => { $(`.${ styles.timeTable }`).css("display", "flex"); } }>
-                                                            <span></span>
-                                                            <AiOutlineClockCircle className="ms-auto me-1" />
+                                                      <div className="col-7 text-start">
+                                                            <input type="text" className={ `${ styles.inputs } ps-3` } onChange={ (e) =>
+                                                            {
+                                                                  if (e.target.value === "")
+                                                                        setClassName(null);
+                                                                  else
+                                                                        setClassName(e.target.value);
+                                                            } }></input>
                                                       </div>
-                                                      { incompleteTimeTable && <div style={ { color: 'red', fontSize: '1.5rem' } }>&nbsp;&nbsp;<AiOutlineCloseCircle /> Incomplete timetable!</div> }
-                                                </span>
-                                                <span className={ `${ styles.input } my-3 d-flex align-items-center align-self-center` }>
-                                                      Teachers: &nbsp;
-                                                      <div className={ `${ styles.box } d-flex align-items-center overflow-auto` } onClick={ () => { $(`.${ styles.teachers }`).css("display", "flex"); } }>
-                                                            <span id="chosenTeachers"></span>
+                                                      <div className="col-3 d-flex align-items-center">
+                                                            { emptyName && <div style={ { color: 'red', fontSize: '1.3rem' } }><AiOutlineCloseCircle /> Enter class's name!</div> }
                                                       </div>
-                                                      { emptyTeacher && <div style={ { color: 'red', fontSize: '1.5rem' } }>&nbsp;&nbsp;<AiOutlineCloseCircle /> Select at least one teacher!</div> }
-                                                </span>
+                                                </div>
+                                                <div className='row my-3 w-75'>
+                                                      <div className="col-2 d-flex align-items-center">
+                                                            <p style={ { fontSize: '1.5rem', marginBottom: '0' } }>Start date:</p>
+                                                      </div>
+                                                      <div className="col-2 text-start">
+                                                            <input type="date" className={ `${ styles.inputs } ps-3` } onChange={ (e) =>
+                                                            {
+                                                                  if (e.target.value === "")
+                                                                  {
+                                                                        setStartDate(null);
+                                                                        setEndDate(null);
+                                                                  }
+                                                                  else
+                                                                  {
+                                                                        setStartDate(e.target.value);
+                                                                        setEndDate(getDate100DaysLater(e.target.value));
+                                                                        setEmptyStart(false);
+                                                                  }
+                                                            } }></input>
+                                                      </div>
+                                                      <div className="col-3 d-flex align-items-center justify-content-end">
+                                                            <p style={ { fontSize: '1.5rem', marginBottom: '0' } }>End date:</p>
+                                                      </div>
+                                                      <div className="col-2 text-start">
+                                                            <input type="date" className={ `${ styles.inputs } ps-3` } disabled value={ endDate === null ? "" : endDate }></input>
+                                                      </div>
+                                                      <div className="col-3 d-flex align-items-center">
+                                                            { emptyStart && <div style={ { color: 'red', fontSize: '1.3rem' } }><AiOutlineCloseCircle /> Enter start date!</div> }
+                                                      </div>
+                                                </div>
+                                                <div className='row my-3 w-75'>
+                                                      <div className="col-2 d-flex align-items-center">
+                                                            <p style={ { fontSize: '1.5rem', marginBottom: '0' } }>Room:</p>
+                                                      </div>
+                                                      <div className="col-7 text-start">
+                                                            <div className="dropdown">
+                                                                  <button className={ `${ styles.inputs } text-start` } type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                                                        { room }
+                                                                  </button>
+                                                                  <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton1" style={ { maxHeight: "200px", overflowY: "auto" } } id="roomList">
+                                                                  </ul>
+                                                            </div>
+                                                      </div>
+                                                      <div className="col-3 d-flex align-items-center">
+                                                            { emptyRoom && <div style={ { color: 'red', fontSize: '1.3rem' } }><AiOutlineCloseCircle /> Select a class room!</div> }
+                                                      </div>
+                                                </div>
+                                                <div className='row my-3 w-75'>
+                                                      <div className="col-2 d-flex align-items-center">
+                                                            <p style={ { fontSize: '1.5rem', marginBottom: '0' } }>Timetable:</p>
+                                                      </div>
+                                                      <div className="col-7 text-start">
+                                                            <div className={ `${ styles.box } d-flex align-items-center overflow-auto w-100` } onClick={ displayTimeTable }>
+                                                                  <span id="chosenTimeTable" style={ { whiteSpace: 'nowrap' } }></span>
+                                                                  <AiOutlineClockCircle className="ms-auto me-1" />
+                                                            </div>
+                                                      </div>
+                                                      <div className="col-3 d-flex align-items-center">
+                                                            { incompleteTimeTable && <div style={ { color: 'red', fontSize: '1.3rem' } }><AiOutlineCloseCircle /> Incomplete timetable!</div> }
+                                                      </div>
+                                                </div>
+                                                <div className='row my-3 w-75'>
+                                                      <div className="col-2 d-flex align-items-center">
+                                                            <p style={ { fontSize: '1.5rem', marginBottom: '0' } }>Teachers:</p>
+                                                      </div>
+                                                      <div className="col-7 text-start">
+                                                            <div className={ `${ styles.box } d-flex align-items-center overflow-auto w-100` } onClick={ () => { $(`.${ styles.teachers }`).css("display", "flex"); } }>
+                                                                  <span id="chosenTeachers" style={ { whiteSpace: 'nowrap' } }></span>
+                                                            </div>
+                                                      </div>
+                                                      <div className="col-3 d-flex align-items-center">
+                                                            { emptyTeacher && <div style={ { color: 'red', fontSize: '1.3rem' } }><AiOutlineCloseCircle /> Need at least one teacher!</div> }
+                                                      </div>
+                                                </div>
+                                                <div className='row my-3 w-75'>
+                                                      <div className="col-2 d-flex align-items-center">
+                                                            <p style={ { fontSize: '1.5rem', marginBottom: '0' } }>Supervisor:</p>
+                                                      </div>
+                                                      <div className="col-7 text-start">
+                                                            <div className="dropdown">
+                                                                  <button className={ `${ styles.inputs } text-start` } type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
+                                                                        { supervisor !== null && supervisor.name }
+                                                                  </button>
+                                                                  <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton2" style={ { maxHeight: "200px", overflowY: "auto" } } id="supervisorList">
+                                                                  </ul>
+                                                            </div>
+                                                      </div>
+                                                      <div className="col-3 d-flex align-items-center">
+                                                            { emptySupervisor && <div style={ { color: 'red', fontSize: '1.3rem' } }><AiOutlineCloseCircle /> Select a supervisor!</div> }
+                                                      </div>
+                                                </div>
                                           </div>
                                           <div className="mt-auto mb-4">
                                                 <button className={ `me-5 ${ styles.back }` } type="button">Back</button>
@@ -289,8 +422,51 @@ const AddClass = () =>
                                     </table>
                               </div>
                               <div className="mt-auto mb-3">
-                                    <button className={ `${ styles.backTime } me-5` } onClick={ () => { $(`.${ styles.timeTable }`).css("display", "none"); chosenTimetable[0] = { dow: null, periodID: null }; chosenTimetable[1] = { dow: null, periodID: null } } }>Cancel</button>
-                                    <button className={ `${ styles.add } ms-5` } onClick={ () => { $(`.${ styles.timeTable }`).css("display", "none"); } }>Confirm</button>
+                                    <button className={ `${ styles.backTime } me-5` } onClick={ () =>
+                                    {
+                                          $(`.${ styles.timeTable }`).css("display", "none");
+                                          $(`.${ styles.dow }`).css('background-color', '#dbdbdbc0').css('color', 'black');
+                                          $(`#timeTable`).empty();
+                                          for (let i = 0; i < 6; i++)
+                                                chosenTimetable[i].periodID = null;
+
+                                    } }>Cancel</button>
+                                    <button className={ `${ styles.add } ms-5` } onClick={ () =>
+                                    {
+                                          $(`.${ styles.timeTable }`).css("display", "none");
+                                          let str = "";
+                                          for (let i = 0; i < 6; i++)
+                                          {
+                                                if (chosenTimetable[i].periodID !== null)
+                                                {
+                                                      let dow;
+                                                      switch (chosenTimetable[i].dow)
+                                                      {
+                                                            case 2:
+                                                                  dow = "Monday";
+                                                                  break;
+                                                            case 3:
+                                                                  dow = "Tuesday";
+                                                                  break;
+                                                            case 4:
+                                                                  dow = "Wednesday";
+                                                                  break;
+                                                            case 5:
+                                                                  dow = "Thursday";
+                                                                  break;
+                                                            case 6:
+                                                                  dow = "Friday";
+                                                                  break;
+                                                            case 7:
+                                                                  dow = "Saturday";
+                                                                  break;
+                                                      }
+                                                      str += `${ dow }: ${ chosenTimetable[i].start } - ${ chosenTimetable[i].end }, `;
+                                                }
+                                          }
+                                          str = str.substring(0, str.length - 2);
+                                          $('#chosenTimeTable').text(str);
+                                    } }>Confirm</button>
                               </div>
                         </div>
                         <div className={ `w-75 position-absolute ${ styles.teachers } flex-column` } style={ { backgroundColor: '#BFBFBF', height: '80%', border: '2px solid black', borderRadius: '20px' } }>
@@ -314,7 +490,7 @@ const AddClass = () =>
                                     <button className={ `${ styles.backTime } me-5` } onClick={ () =>
                                     {
                                           $(`.${ styles.teachers }`).css("display", "none");
-                                          setTeachers([]);
+                                          teachers.length = 0;
                                           const checkboxes = document.getElementsByClassName("teachercheckbox");
                                           for (let i = 0; i < checkboxes.length; i++)
                                           {
@@ -324,41 +500,11 @@ const AddClass = () =>
                                     <button className={ `${ styles.add } ms-5` } onClick={ () =>
                                     {
                                           $(`.${ styles.teachers }`).css("display", "none");
-                                    } }>Confirm</button>
-                              </div>
-                        </div>
-                        <div className={ `w-75 position-absolute ${ styles.room } flex-column` } style={ { backgroundColor: '#BFBFBF', height: '80%', border: '2px solid black', borderRadius: '20px' } }>
-                              <div className='d-flex align-items-center justify-content-center'>
-                                    <h2 className='mt-2'>Choose a room</h2>
-                              </div>
-                              <div className="flex-grow-1 mt-4 overflow-auto">
-                                    <table className="table table-hover">
-                                          <thead style={ { borderBottom: '2px solid black' } }>
-                                                <tr>
-                                                      <th scope="col">#</th>
-                                                      <th scope="col" className="col-6">ID</th>
-                                                      <th scope="col">Max seats</th>
-                                                      <th scope="col">Add?</th>
-                                                </tr>
-                                          </thead>
-                                          <tbody id="roomlist">
-                                          </tbody>
-                                    </table>
-                              </div>
-                              <div className="mt-auto mb-3">
-                                    <button className={ `${ styles.backTime } me-5` } onClick={ () =>
-                                    {
-                                          $(`.${ styles.room }`).css("display", "none");
-                                          setRoom(null);
-                                          const checkboxes = document.getElementsByClassName("roomcheckbox");
-                                          for (let i = 0; i < checkboxes.length; i++)
-                                          {
-                                                checkboxes[i].checked = false;
-                                          }
-                                    } }>Cancel</button>
-                                    <button className={ `${ styles.add } ms-5` } onClick={ () =>
-                                    {
-                                          $(`.${ styles.room }`).css("display", "none");
+                                          let str = "";
+                                          for (let i = 0; i < teachers.length; i++)
+                                                str += teachers[i].name + ', ';
+                                          str = str.substring(0, str.length - 2);
+                                          $('#chosenTeachers').text(str);
                                     } }>Confirm</button>
                               </div>
                         </div>

@@ -525,7 +525,7 @@ const Supervisor = (props) =>
                                           </tr>
                                     </thead>
                               </table>
-                              <div className="overflow-auto w-100" style={ { height: '80%', boxSizing: "border-box" } }>
+                              <div className="overflow-auto w-100" style={ { height: '75%', boxSizing: "border-box" } }>
                                     <table className="table table-hover m-0 w-100">
                                           <tbody id="student_list">
                                           </tbody>
@@ -533,7 +533,7 @@ const Supervisor = (props) =>
                               </div>
                               <div className="d-flex align-items-center justify-content-center mt-4">
                                     <p className="m-0">Class note:</p>
-                                    <textarea className={ `mx-3 note_for_class` } style={ { width: '400px', minHeight: '60px', resize: 'none' } }></textarea>
+                                    <textarea className={ `mx-3 note_for_class` } style={ { width: '400px', minHeight: '50px', resize: 'none' } }></textarea>
                               </div>
                         </div>
                         <div className="d-flex justify-content-center align-items-center mt-auto mb-3">

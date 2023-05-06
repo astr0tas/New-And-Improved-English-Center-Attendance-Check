@@ -78,3 +78,13 @@
 .checkbox:hover {
       cursor: pointer;
 }
+
+.inputs {
+      border: 1px solid black;
+      border-radius: 5px;
+      width: 150px;
+      height: 30px;
+      background-color: #BFBFBF;
+      white-space: nowrap;
+      overflow: auto;
+}

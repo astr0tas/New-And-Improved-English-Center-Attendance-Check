@@ -1,0 +1,38 @@
+.ouput-container{
+    background: rgba(243, 246, 254, 0.89);
+    border-radius: 32.58px;
+    border: 1px black solid;
+    font-size: 35px;
+
+    width: 80%;
+    left: 10%;
+    margin-top: 20px;
+    font-family: 'Nunito';
+
+    height: 35%;
+}
+
+.ouput-container .chart{
+    height: 100%;
+    width: 30%;
+    margin-left: 10px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.chart p{
+    position: relative;
+    bottom: -15px;
+}
+
+#stats p{
+    margin-top: 10px;
+    position: relative;
+    right: 70%;
+    text-align: right;
+
+    font-weight: 600;
+}

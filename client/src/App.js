@@ -34,6 +34,7 @@ function App()
             <Route path='/Classes/:name/addSession' element={ <AddSession /> } />
             <Route path='/Classes/:name/addStudent' element={ <AddStudent /> } />
             <Route path='/Classes/:name/:session' element={ <AdminAttendance /> } />
+            <Route path='/Classes/AddClass' element={ <AddClass /> } />
             <Route path={ '/Staffs' } element={ <Staffs /> } />
             <Route path="/Home" />
             <Route>
@@ -41,7 +42,6 @@ function App()
               <Route path={ `/MyClasses/:name` } element={ <ClassDetail name="" /> } />
               <Route path={ `/MyClasses/:name/:session` } element={ <Attendance /> } />
             </Route>
-            <Route path='AddClass' element={ <AddClass /> } />
           </Route>
         </Routes>
       </BrowserRouter>
