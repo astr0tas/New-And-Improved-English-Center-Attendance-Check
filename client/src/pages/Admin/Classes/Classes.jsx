@@ -1,5 +1,6 @@
 import '../../General/General.css';
 import AddClass from './addClass.jsx';
+import ClassDetail from './ClassDetail.jsx';
 
 import React, {useState, useContext} from 'react';
 import {Link} from 'react-router-dom';
@@ -79,20 +80,22 @@ export default function Classes(){
             {
                 newClass && <AddClass offAdd = {()=> setNewClass(false)}/>
             }
-            {}
+            {
+                showInfo && <ClassDetail offShow = {()=>setShowInfo(false)} className={curr_class.Name}/>
+            }
         </>
     )
 }
 
 
-function ClassDetails({iclass}){
+function ClassDetails({iclass, onInfo}){
     return (
         <div className = 'entity-container'>
             <p>{iclass.Name}</p>
             <p style = {{top: 0}}>{iclass.Start_date} {iclass.End_date}</p>
             <p>{iclass.Current_number_of_student}</p>
             <p>{iclass.Status === 1 ? "Active" : "Disactive"}</p>
-            <button class = "btn btn-primary">Details</button>
+            <button class = "btn btn-primary" onClick = {() => onInfo()}>Details</button>
         </div>
     )
 }
