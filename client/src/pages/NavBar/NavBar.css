@@ -1,0 +1,145 @@
+@import url('https://fonts.googleapis.com/css?family=Nunito');
+
+/* .navBar {
+    background-color: #EDEDED;
+    width: 300px;
+}
+
+.icon {
+    width: 80px;
+    height: 80px;
+}
+
+.tab {
+    font-size: 30px;
+    text-decoration: none;
+    color: black;
+}
+
+.link {
+    height: 150px;
+}
+
+.link.active .tab{
+    color: red;
+    height: 150px;
+    
+    background-color: #c7edff;
+    color: #0083FD;
+    fill: #0083FD;
+}
+
+.link:hover {
+    cursor: pointer;
+}
+
+.link:not(:last-child):hover {
+    background-color: #c7edff;
+}
+
+.link:not(:last-child):hover>* {
+    color: #0083FD;
+    fill: #0083FD;
+}
+
+.link:last-child>* {
+    color: red;
+    fill: red;
+} */
+
+/* @media only screen and (max-width:1400px) {
+    .navBar {
+        width: 250px;
+    }
+
+    .tab {
+        font-size: 20px;
+    }
+} */
+
+@media only screen and (max-width:1200px) {
+    .pageName-container {
+        width: 200px;
+    }
+
+    a {
+        font-size: 18px;
+    }
+}
+
+
+.pageName-container{
+    width: 100%;
+    height: 10%;
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.pageName-container:hover{
+    width: 100%;
+    background-color: #EFE9FF;
+    cursor: pointer;
+}
+
+.pageName-container a{
+    position: absolute;
+    width: 50%;
+    height: 100%;
+    left: 45%;
+    font-family: 'Nunito';
+    font-size: 40px;
+    color: #84828A;
+    text-decoration: none;    
+    text-align: left;
+    display: flex;
+    align-items: center;
+}
+
+.pageName-container:hover a{
+    color: #0083FD;
+    font-weight: bold;
+}
+
+.icon{
+    position: absolute;
+    left: 20%;
+    width: 80px;
+    height: 80px;
+}
+
+.icon-line{
+    stroke-width:1;
+    stroke-linecap:round;
+    stroke-linejoin:round;
+}
+
+.pageName-container.active .icon-line{
+    fill: #0083FD;
+    stroke: #0083FD;
+}
+
+.pageName-container:hover .icon-line{
+    fill: #0083FD;
+    stroke: #0083FD;
+}
+
+.pageName-container.active{
+    width: 100%;
+
+    font-weight: bold;
+    background-color: #E6F7FF;
+    color: #0083FD;
+}
+
+.pageName-container.active a{
+    color: #0083FD;
+}
+
+sgv{
+    position: absolute;
+    left: 10%;
+    background-color: red;
+}

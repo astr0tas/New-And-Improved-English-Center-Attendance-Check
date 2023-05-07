@@ -265,7 +265,6 @@ const AdminClassDetail = () =>
                               <button className={ ` ${ styles.back } mx-3` } onClick={ () => { Navigate("/Classes"); } }>Back</button>
                               { flag && <button className={ ` ${ styles.back } mx-3` } id="addAStudent" onClick={ addStudent }>Add a student</button> }
                               { !flag && <button className={ ` ${ styles.back } mx-3` } id="addASession" onClick={ () => { window.location.href = `./${ className }/addSession`; } }>Add a session</button> }
-                              <button className={ ` ${ styles.back } mx-3` } id="changeClassInfo">Change info</button>
                         </div>
                   </div>
                   <div className={ `${ styles.addStudent } flex-column align-items-center` }>

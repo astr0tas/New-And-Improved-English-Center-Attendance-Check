@@ -184,7 +184,7 @@ const AddSession = () =>
                         <div className="d-flex flex-column mt-5 justify-content-around h-75 w-100 align-items-center">
                               <div className='row w-75 my-3'>
                                     <div className="col-3 d-flex align-items-center">
-                                          <p style={ { fontSize: '1.5rem', marginBottom: '0' } }>Session number:</p>
+                                          <p style={ { fontSize: '1.5rem', marginBottom: '0' } }>Session:</p>
                                     </div>
                                     <div className="col-5 text-start">
                                           <input disabled className={ `${ styles.inputs } ps-3` } value={ newSession }></input>
@@ -196,7 +196,7 @@ const AddSession = () =>
                                     </div>
                                     <div className="col-5 text-start">
                                           <div className="dropdown">
-                                                <button className={ `${ styles.inputs } ` } type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <button className={ `${ styles.inputs } text-start` } type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false" style={ { paddingLeft: '15px' } }>
                                                       { room }
                                                 </button>
                                                 <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton1" style={ { maxHeight: "200px", overflowY: "auto" } } id="roomList">
@@ -224,7 +224,7 @@ const AddSession = () =>
                                     </div>
                                     <div className="col-5 text-start">
                                           <div className="dropdown">
-                                                <button className={ `${ styles.inputs }` } type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false" onClick={ getTimes }>
+                                                <button className={ `${ styles.inputs } text-start` } type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false" onClick={ getTimes } style={ { paddingLeft: '15px' } }>
                                                       { time }
                                                 </button>
                                                 <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton1" style={ { maxHeight: "200px", overflowY: "auto" } } id="timeList">
@@ -241,7 +241,7 @@ const AddSession = () =>
                                     </div>
                                     <div className="col-5 text-start">
                                           <div className="dropdown">
-                                                <button className={ `${ styles.inputs }` } type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <button className={ `${ styles.inputs } text-start` } type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false" style={ { paddingLeft: '15px' } }>
                                                       { session }
                                                 </button>
                                                 <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton1" style={ { maxHeight: "200px", overflowY: "auto" } } id="sessionList">
@@ -258,7 +258,7 @@ const AddSession = () =>
                                     </div>
                                     <div className="col-5 text-start">
                                           <div className="dropdown">
-                                                <button className={ `${ styles.inputs }` } type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <button className={ `${ styles.inputs } text-start` } type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false" style={ { paddingLeft: '15px' } }>
                                                       { teacher }
                                                 </button>
                                                 <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton1" style={ { maxHeight: "200px", overflowY: "auto" } } id="teacherList">
@@ -275,7 +275,7 @@ const AddSession = () =>
                                     </div>
                                     <div className="col-5 text-start">
                                           <div className="dropdown">
-                                                <button className={ `${ styles.inputs }` } type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <button className={ `${ styles.inputs } text-start` } type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false" style={ { paddingLeft: '15px' } }>
                                                       { supervisor }
                                                 </button>
                                                 <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton1" style={ { maxHeight: "200px", overflowY: "auto" } } id="supervisorList">

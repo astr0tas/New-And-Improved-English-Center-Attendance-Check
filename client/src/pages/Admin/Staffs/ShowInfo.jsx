@@ -1,5 +1,6 @@
 import '../../General/General.css';
 import ChangeStaff from './ChangeStaff.jsx';
+import NewClassForStaff from './NewClassForStaff.jsx';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import image from './img.png';
@@ -8,17 +9,9 @@ import image from './img.png';
 export default function ShowInfo(props)
 {
       const [changeStaff, setChangeStaff] = useState(false);
+      const [newClass, setNewClass] = useState(false);
       const [classOfStaff, setClassOfStaff] = useState([]);
       var entity = props.entity;
-      // var url = "http://localhost:3030/admin/" + entity.ID + "/classes"
-      // axios.get(url)
-      // .then(
-      //       res =>
-      //       {
-      //             setClassOfStaff(res.data);
-      //       }
-      // )
-      // .catch(error => console.log(error))
 
       useEffect(() =>{
             axios.get('http://localhost:3030/TS/myClasses', {
@@ -76,14 +69,18 @@ export default function ShowInfo(props)
                               }
                         </div>
 
-                        <div className='button-container' style = {{width: "70%", left: "15%"}}>
+                        <div className='button-container'>
+                        {/* <div className='button-container' style = {{width: "70%", left: "15%"}}> */}
                               <button class="cus-btn btn btn-primary cus-btn" type="button" style={ { fontSize: 20 } } onClick={ () => props.offShow() }>BACK</button>
                               <button class="cus-btn btn btn-primary cus-btn" type="button" style={ { fontSize: 20 } } onClick={ () => setChangeStaff(true) }>CHANGE INFO</button>
-                              <button class="cus-btn btn btn-primary cus-btn" type="button" style={ { fontSize: 20 } } >INSERT TO NEW CLASS</button>
+                              {/* <button class="cus-btn btn btn-primary cus-btn" type="button" style={ { fontSize: 20 } } onClick={() => setNewClass(true)}>INSERT TO NEW CLASS</button> */}
                         </div>
                   </div>
                   {
                         changeStaff && <ChangeStaff entity={ entity } offChange={ () => setChangeStaff(false) } />
+                  }
+                  {
+                        newClass && <NewClassForStaff entity={ entity } offNewClass ={ () => setNewClass(false) } />
                   }
             </>
       )
@@ -94,9 +91,11 @@ function ClassOfStaff({ sClass })
       return (
             <div className='entity-container' style={ { height: '25%' } }>
                   <p>{ sClass.Name }</p>
-                  <p style={ { top: 0 } }>{ sClass.Start_date } { sClass.End_date }</p>
+                  <p>{ sClass.Current_number_of_student}/{sClass.Max_number_of_students}</p>
+                  <p>{ sClass.Start_date }</p>
+                  <p>{ sClass.End_date }</p>
                   <p>{ sClass.Status === 1 ? "Active" : "Disactive" }</p>
-                  <button class="btn btn-primary">Details</button>
+                  {/* <button class="btn btn-primary">Details</button> */}
             </div>
       )
 }

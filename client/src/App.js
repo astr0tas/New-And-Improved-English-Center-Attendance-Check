@@ -7,6 +7,7 @@ import AdminClassDetail from './pages/Admin/Classes/detail';
 import AdminAttendance from './pages/Admin/Classes/classAttendance';
 import AddSession from './pages/Admin/Classes/addSession';
 import AddStudent from './pages/Admin/Classes/addStudent';
+import StaffHome from './pages/T_S/Home/home';
 
 import { SignInAs, SignIn } from './pages/SignIn/SignIn.jsx';
 import { NavBar } from './pages/NavBar/NavBar.jsx';
