@@ -211,19 +211,19 @@ CREATE PROCEDURE availableClassForStaff(
 )
 BEGIN
 	if role = "teacher" then
-		select Class_name, Current_number_of_student, Max_number_of_students
-		from (SELECT count(*) as count, Class_name, Initial_number_of_sessions, Current_number_of_student, Max_number_of_students
-		from teacher_responsible join class
-		on Class_name = Name
-		group by Class_name) temp
-		where count < Initial_number_of_sessions;
+		select c.Name, Current_number_of_student, Max_number_of_students
+		from class c left join (select distinct(Class_name) as Class_name
+									from session 
+									where (Session_number, Class_name) not in (select Session_number, Class_name from teacher_responsible) 
+								) tmp
+		on c.Name = tmp.Class_name;
 	else
-		select Class_name, Current_number_of_student, Max_number_of_students
-		from (SELECT count(*) as count, Class_name, Initial_number_of_sessions, Current_number_of_student, Max_number_of_students
-		from supervisor_responsible join class
-		on Class_name = Name
-		group by Class_name) temp
-		where count < Initial_number_of_sessions;
+		select c.Name, Current_number_of_student, Max_number_of_students
+		from class c left join (select distinct(Class_name) as Class_name
+							from session 
+							where (Session_number, Class_name) not in (select Session_number, Class_name from supervisor_responsible) 
+						  ) tmp
+		on c.Name = tmp.Class_name;
 	end if;
 END $$
 DELIMITER ;
@@ -236,16 +236,12 @@ CREATE PROCEDURE availableSessionForStaff(
 BEGIN
 	if role = "teacher" then
 		select *
-		from session
-		where Class_name = className and (Session_number not in (select s.Session_number
-		from session s join teacher_responsible t
-		on s.Class_name = className and s.Session_number = t.Session_number and s.Class_name = t.Class_name));
+		from session 
+		where Class_name = className and ((Session_number, Class_name) not in (select Session_number, Class_name from teacher_responsible));
 	else
 		select *
-		from session
-		where Class_name = className and (Session_number not in (select s.Session_number
-		from session s join supervisor_responsible t
-		on s.Class_name = className and s.Session_number = t.Session_number and s.Class_name = t.Class_name));
+		from session 
+		where Class_name = className and ((Session_number, Class_name) not in (select Session_number, Class_name from supervisor_responsible));
 	end if;
 END $$
 DELIMITER ;

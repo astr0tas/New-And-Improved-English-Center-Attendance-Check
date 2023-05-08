@@ -6,7 +6,7 @@
 
     width: 80%;
     left: 10%;
-    margin-top: 20px;
+    margin-top: 10px;
     font-family: 'Nunito';
 
     height: 35%;
@@ -28,11 +28,62 @@
     bottom: -15px;
 }
 
-#stats p{
-    margin-top: 10px;
+#stats{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.p-container{
     position: relative;
-    right: 70%;
-    text-align: right;
+    display: flex;
+    flex-direction: row;
 
     font-weight: 600;
+
+}
+.p-container p{
+    width: 450px;
+}
+
+#field{
+    text-align: right;
+    width: 550px;
+}
+
+#value{
+    text-align: left;
+}
+
+#lineChart{
+    width: 96%;
+    left: 2%;
+}
+
+.frequent_container{
+    display: flex;
+    flex-direction: row;
+
+    width: 300px;
+    height: 40px;
+
+    position: relative;
+    top: -8%;
+    left: -35%;
+}
+
+.frequent_container button{
+    text-align: center;
+    margin-left: 15px;
+    border-radius: 11px;
+    border: 2px solid black;
+}
+
+.chart_name{
+    cursor: pointer;
+}
+
+.chart_name.active{
+    font-weight: 900;
 }

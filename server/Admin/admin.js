@@ -1,8 +1,45 @@
 import express from "express";
 
-import { getUser, updateInfo, getNewID, getRooms, getPeriod } from "./query.js";
+import { getUser, updateInfo, getNewID, getRooms, getPeriod, pieChartDaily, pieChartWeekly, pieChartMonthly, lineChartDaily, lineChartWeekly, lineChartMonthly, statsClass, late10Student, absent5Student} from "./query.js";
 
 const adminRoutes = express.Router();
+
+adminRoutes.get('/pieChart', async (req, res) => {
+    const daily =  await pieChartDaily();
+    const weekly = await pieChartWeekly();
+    const monthly = await pieChartMonthly();
+    res.json({
+        daily: daily,
+        weekly: weekly,
+        monthly: monthly
+    });
+})
+
+adminRoutes.get('/barChart', async (req, res) => {
+    const daily =  await lineChartDaily();
+    const weekly = await lineChartWeekly();
+    const monthly = await lineChartMonthly();
+    res.json({
+        daily: daily,
+        weekly: weekly,
+        monthly: monthly
+    });
+})
+
+
+adminRoutes.get('/stats', async (req, res) => {
+    const worstClass = await statsClass(0), lateClass = await statsClass(1), bestClass = await statsClass(2);
+    const absentStudent = await absent5Student(), lateStudent = await late10Student();
+
+    res.json({
+        bestClass: bestClass.map(obj => obj.Class_name).join(', '),
+        worstClass: worstClass.map(obj => obj.Class_name).join(', '),
+        lateClass: lateClass.map(obj => obj.Class_name).join(', '),
+        absentStudent: absentStudent.map(obj => obj.Student_ID).join(', '),
+        lateStudent: lateStudent.map(obj => obj.Student_ID).join(', ')
+    }
+    );
+})
 
 adminRoutes.get('/user/:account', async (req, res) =>
 {
@@ -20,7 +57,7 @@ adminRoutes.get('/newID/:id', async (req, res) =>
 adminRoutes.post('/user/:account', async (req, res) =>
 {
     let data = req.body;
-    await updateInfo(data.ssn, data.address, data.birthday, data.birthplace, data.email, data.phone);
+    await updateInfo(data.id, data.address, data.birthday, data.birthplace, data.email, data.phone);
     res.send("update user information successfully");
 })
 

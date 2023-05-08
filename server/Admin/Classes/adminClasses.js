@@ -1,5 +1,5 @@
 import express from "express";
-import {getClassesForStudent, getClasses, getClassesOfStudent, getNotClassesOfStudent, getClassInfo, changeClass, newClassForID} from "./query.js";
+import {getClassesForStudent, getClasses, getClassesOfStudent, getNotClassesOfStudent, getNotClassesOfStaff, getClassInfo, changeClass, newClassForID} from "./query.js";
 
 const adminClasses = express.Router();
 
@@ -22,8 +22,14 @@ adminClasses.get('/:id/classes', async (req, res) =>
 
 adminClasses.get('/:id/notclasses', async (req, res) =>
 {
-    const sClasses = await getNotClassesOfStudent(req.params.id);
-    res.json(sClasses);
+    if (req.params.id.includes('STUDENT')){
+        const sClasses = await getNotClassesOfStudent(req.params.id);
+        res.json(sClasses);
+    }
+    else{
+        const sClasses = await getNotClassesOfStaff(req.params.id);
+        res.json(sClasses);
+    }
 })
 
 adminClasses.get('/class/:name', async (req, res) =>

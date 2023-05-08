@@ -1,5 +1,5 @@
 import express from "express";
-import { getSupervisors, getTeachers, newStaff, availableClassForStaff, availableSessionForStaff} from './query.js';
+import { getSupervisors, getTeachers, newStaff, availableClassForStaff, availableSessionForStaff, updateInfo} from './query.js';
 
 const adminStaffs = express.Router();
 
@@ -28,10 +28,16 @@ adminStaffs.get('/availableSessionForStaff', async (req, res) =>{
 adminStaffs.post('/new/staff', async (req, res) =>
 {
     let data = req.body;
-    await newStaff(data.name, data.phone, data.birthday, data.birthplace, data.email, data.address, data.classes, data.role);
+    await newStaff(data.name, data.ssn, data.phone, data.birthday, data.birthplace, data.email, data.address, data.classes, data.role);
     res.send("add new " +  data.role +  " successfully");
 });
 
+adminStaffs.post('/staff/updateInfo/:id', async (req, res) =>
+{
+    let data = req.body;
+    await updateInfo(data.id, data.name, data.address, data.birthday, data.birthplace, data.email, data.phone);
+    res.send("update staff information successfully");
+})
 
 
 export default adminStaffs;

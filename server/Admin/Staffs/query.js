@@ -44,10 +44,10 @@ export async function getTeachers()
     return teachers;
 }
 
-export async function newStaff(name, phone, birthday, birthplace, email, address, classes, role){
+export async function newStaff(name, ssn, phone, birthday, birthplace, email, address, classes, role){
     const id = (await pool.query(`SELECT newID('${ role }')`))[0][0]["newID('" + role + "')"];
 
-    await pool.query(`CALL newStaff('${ name }','${ phone }','${ birthday }','${ birthplace }','${ email }','${ address }','${ role }')`);
+    await pool.query(`CALL newStaff('${ name }','${ ssn }','${ phone }','${ birthday }','${ birthplace }','${ email }','${ address }','${ role }')`);
 
     
     const classQueries = classes.map((obj) =>
@@ -75,4 +75,15 @@ export async function availableSessionForStaff(role, className){
     const [[sessions]] = await pool.query(`CALL availableSessionForStaff('${ className }','${ role }')`);
     sessions.map(session => session.Session_date = new Date(session.Session_date).toLocaleDateString('en-GB'))
     return sessions;
+}
+
+export async function updateInfo(id, name, address, birthday, birthplace, email, phone)
+{
+    if (name !== "") pool.query(`UPDATE employee SET name = ? WHERE ID = ?`, [name, id]);
+    if (address !== "") pool.query(`UPDATE employee SET address = ? WHERE ID = ?`, [address, id]);
+    if (birthday !== "") pool.query(`UPDATE employee SET birthday = ? WHERE ID = ?`, [birthday, id]);
+    if (birthplace !== "") pool.query(`UPDATE  employee  SET birthplace = ? WHERE ID = ?`, [birthplace, id]);
+    if (email !== "") pool.query(`UPDATE employee SET email = ? WHERE ID = ?`, [email, id]);
+    if (phone !== "") pool.query(`UPDATE employee SET phone = ? WHERE ID = ?`, [phone, id]);
+    return;
 }

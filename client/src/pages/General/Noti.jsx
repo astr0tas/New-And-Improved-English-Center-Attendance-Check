@@ -1,8 +1,8 @@
 import './General.css';
 
 export default function Noti(props){
-    var changeNoti = "Student info successfully changed"
-        , addNoti = "Student successfully added", noti = ""
+    var changeNoti = props.role + " info successfully changed"
+        , addNoti = props.role + " successfully added", noti = ""
         , missingData = "Missing data"
         , wrongValue = "Wrong value";
 

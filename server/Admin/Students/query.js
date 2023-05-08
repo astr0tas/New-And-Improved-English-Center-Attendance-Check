@@ -26,10 +26,10 @@ export async function getStudent(id)
     return student;
 }
 
-export async function newStudent(name, phone, birthday, birthplace, email, address, classes)
+export async function newStudent(name, ssn, phone, birthday, birthplace, email, address, classes)
 {
     var id = (await pool.query(`SELECT newID('student')`))[0][0]["newID('student')"];
-    const query = `CALL newStudent('${ name }','${ phone }','${ birthday }','${ birthplace }','${ email }','${ address }')`;
+    const query = `CALL newStudent('${ name }', '${ ssn }','${ phone }','${ birthday }','${ birthplace }','${ email }','${ address }')`;
     await pool.query(query);
 
     const classQueries = classes.split(",").map((className) =>
@@ -38,5 +38,17 @@ export async function newStudent(name, phone, birthday, birthplace, email, addre
     });
 
     await Promise.all(classQueries);
+    return;
+}
+
+export async function updateInfo(id, name, address, birthday, birthplace, email, phone)
+{
+    //console.log(ssn);
+    if (name !== "") pool.query(`UPDATE student SET name = ? WHERE ID = ?`, [name, id]);
+    if (address !== "") pool.query(`UPDATE student SET address = ? WHERE ID = ?`, [address, id]);
+    if (birthday !== "") pool.query(`UPDATE student SET birthday = ? WHERE ID = ?`, [birthday, id]);
+    if (birthplace !== "") pool.query(`UPDATE student SET birthplace = ? WHERE ID = ?`, [birthplace, id]);
+    if (email !== "") pool.query(`UPDATE student SET email = ? WHERE ID = ?`, [email, id]);
+    if (phone !== "") pool.query(`UPDATE student SET phone = ? WHERE ID = ?`, [phone, id]);
     return;
 }

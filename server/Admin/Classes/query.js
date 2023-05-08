@@ -50,6 +50,20 @@ export async function getNotClassesOfStudent(id)
     return classOfStudent;
 }
 
+export async function getNotClassesOfStaff(id)
+{
+    var role = id.includes("TEACHER") ? "teacher" : "supervisor";
+    var [[classOfStaff]]= await pool.query(`call availableClassForStaff(?,?)`, [role, id])
+    classOfStaff.map(
+        sClass =>
+        {
+            sClass.Start_date = new Date(sClass.Start_date).toLocaleDateString('en-GB')
+            sClass.End_date = new Date(sClass.End_date).toLocaleDateString('en-GB')
+        }
+    )
+    return classOfStaff;
+}
+
 export async function getClassInfo(className)
 {
     var [sClass] = await pool.query(`SELECT * FROM class WHERE Name = '${ className }'`);
@@ -58,18 +72,41 @@ export async function getClassInfo(className)
 
 export async function changeClass(id, oldClass, newClass)   
 {
-    await pool.query(`CALL changeClass('${ id }','${ oldClass }', '${ newClass }')`);
+    var role;
+    if (id.includes("STUDENT"))
+        role = "student";
+    else 
+        if (id.includes("TEACHER"))
+            role = "teacher";
+        else
+            role = "supervisor";
+
+    await pool.query(`CALL changeClass('${ role }','${ id }','${ oldClass }', '${ newClass }')`);
     return;
 }
 
 export async function newClassForID(id, classes){
     
-    const classQueries = classes.split(',').map((className) =>
-    {
-        return pool.query('CALL addStudent(?, ?)', [id, className]);
-    });
+    if (id.includes("STUDENT")){
+        const classQueries = classes.split(',').map((className) =>
+        {
+            return pool.query('CALL addStudent(?, ?)', [id, className]);
+        });
 
-    await Promise.all(classQueries);
+        await Promise.all(classQueries);
+    }
+    else{
+        if (id.includes("TEACHER")){
+            const classQueries = classes.split(',').map((className) =>
+            {
+                return pool.query('CALL addTeacherToClass(?, ?)', [id, className]);
+            });
+            await Promise.all(classQueries);
+        }
+        else{
+            console.log(classes);
+        }
+    }
     return;
 }
 

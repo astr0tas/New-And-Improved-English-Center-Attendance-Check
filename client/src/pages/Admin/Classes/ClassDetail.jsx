@@ -218,7 +218,7 @@ const ClassDetail = (props) =>
                               <table className="table table-hover w-100">
                                     <tbody id="table_body">
                                     </tbody>
-                              </table>
+                              </table>``
                         </div>
                         <div className = 'button-container' 
                               style = {{
