@@ -21,7 +21,7 @@ export async function getStudents()
 
 export async function getStudent(id)
 {
-    const [student] = await pool.query(`SELECT * FROM student WHERE id = '${ id }'`);
+    const [[student]] = await pool.query(`SELECT * FROM student WHERE id = '${ id }'`);
     student.birthday = new Date(student.birthday).toLocaleDateString('en-GB');
     return student;
 }

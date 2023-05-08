@@ -9,6 +9,12 @@ adminStudents.get('/students', async (req, res) =>
     res.json(students);
 });
 
+adminStudents.get('/student/:id', async (req, res) =>
+{
+    const student = await getStudent(req.params.id);
+    res.json(student);
+});
+
 adminStudents.post('/new/student', async (req, res) =>
 {
     let data = req.body;

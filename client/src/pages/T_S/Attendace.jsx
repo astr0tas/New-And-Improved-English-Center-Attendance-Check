@@ -7,6 +7,7 @@ import { AiOutlineClockCircle } from 'react-icons/ai';
 import { detailFormat } from "../../tools/date_formatting";
 import $ from 'jquery';
 import { isCurrentTimeInRange, isInWeekPeriod } from "../../tools/time_checking";
+import ShowInfo from '../Admin/Students/ShowInfo.jsx'; 
 
 const students = [];
 const StudentList = (props) =>
@@ -251,9 +252,9 @@ const Teacher = (props) =>
                                     </table>
                               </div>
                         </div>
-                        <div className="d-flex justify-content-center align-items-center mt-auto mb-3">
-                              <button className={ `${ styles.back } mx-3` } onClick={ () => { window.location.href = "/MyClasses/" + props.className; } }>Back</button>
-                              <button onClick={ handleSubmit } className={ `${ styles.confirm } mx-3` } id="checkAttendanceTeacher">Confirm</button>
+                        <div className = 'button-container' >
+                              <button className= "btn btn-primary cus-btn" onClick={ () => { window.location.href = "/MyClasses/" + props.className; } }>BACK</button>
+                              <button onClick={ handleSubmit } className= "btn btn-primary cus-btn" id="checkAttendanceTeacher">CONFIRM</button>
                         </div>
                   </div>
             </>
@@ -536,9 +537,18 @@ const Supervisor = (props) =>
                                     <textarea className={ `mx-3 note_for_class` } style={ { width: '400px', minHeight: '50px', resize: 'none' } }></textarea>
                               </div>
                         </div>
-                        <div className="d-flex justify-content-center align-items-center mt-auto mb-3">
-                              <button className={ `${ styles.back } mx-3` } onClick={ () => { window.location.href = "/MyClasses/" + props.className; } }>Back</button>
-                              <button onClick={ handleSubmit } className={ `${ styles.confirm } mx-3` } id="supervisorAttendanceCheck">Confirm</button>
+                        <div className='button-container' 
+                              style = {{
+                                    position: 'absolute',
+                                    height: '5%',
+                                    width: '40%',
+                                    top: '88%',
+                                    left: '30%',
+                                    fontSize: '22px'
+                              }}
+                        >
+                              <button className= "btn btn-primary cus-btn" onClick={ () => { window.location.href = "/MyClasses/" + props.className; } }>BACK</button>
+                              <button onClick={ handleSubmit } className= "btn btn-primary cus-btn" id="supervisorAttendanceCheck">CONFIRM</button>
                         </div>
                   </div>
             </>

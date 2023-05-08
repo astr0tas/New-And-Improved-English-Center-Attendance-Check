@@ -228,7 +228,24 @@ const ClassDetail = () =>
                                     </tbody>
                               </table>
                         </div>
-                        <button className={ `mt-auto mb-3 ${ styles.back }` } onClick={ () => { Navigate("/MyClasses"); } }>Back</button>
+                        <div className = 'button-container' 
+                              style = {{
+                                    position: 'absolute',
+                                    height: '5%',
+                                    width: '20%',
+                                    top: '88%',
+                                    left: '40%',
+                                    fontSize: '22px'
+                              }}
+                        >
+                              <button className= "btn btn-primary cus-btn" onClick={ () => { Navigate("/MyClasses"); } }
+                                          style = {{
+                                                position:'relative',
+                                                height: '100%',
+                                                width: '100%'
+                                          }}
+                              >BACK</button>
+                        </div>
                   </div>
             </div>
       );
