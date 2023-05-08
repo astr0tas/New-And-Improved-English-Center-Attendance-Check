@@ -102,7 +102,7 @@ const Teacher = (props) =>
       );
 }
 
-const AddClass = () =>
+const AddClass = (props) =>
 {
       const render = useRef(false);
 
@@ -252,20 +252,22 @@ const AddClass = () =>
       return (
             <div className="h-100 d-flex justify-content-center align-items-center" style={ {
                   backgroundColor: '#9CBFF5',
-                  marginLeft: '250px',
-                  width: 'calc(100% - 250px)'
+                  position: 'absolute',
+                  right: '0',
+                  width: '82%',
+                  height: '100%'
             } }>
-                  <div className="d-flex align-items-center justify-content-center" style={ { width: '95%', height: '95%', backgroundColor: '#EDEDED', border: '2px solid black', borderRadius: '20px' } }>
+                  <div className="d-flex align-items-center justify-content-center entity-box" >
                         <form onSubmit={ addClass } className='w-100 h-100 d-flex flex-column'>
                               <div className='w-100 h-100 d-flex flex-column'>
                                     <h1 className='mt-2'>Add a new class</h1>
                                     <div className="flex-grow-1 mt-5 d-flex flex-column">
                                           <div className='d-flex flex-column align-items-center'>
-                                                <div className='row my-3 w-75'>
+                                                <div className='row my-3 w-75' >
                                                       <div className="col-2 d-flex align-items-center">
                                                             <p style={ { fontSize: '1.5rem', marginBottom: '0' } }>Name:</p>
                                                       </div>
-                                                      <div className="col-7 text-start">
+                                                      <div className="col-7 text-start" >
                                                             <input type="text" className={ `${ styles.inputs } ps-3` } onChange={ (e) =>
                                                             {
                                                                   if (e.target.value === "")
@@ -370,9 +372,9 @@ const AddClass = () =>
                                                       </div>
                                                 </div>
                                           </div>
-                                          <div className="mt-auto mb-4">
-                                                <button className={ `me-5 ${ styles.back }` } type="button">Back</button>
-                                                <button className={ `ms-5 ${ styles.add }` } type='submit'>Add</button>
+                                          <div className="button-container" style = {{top: '87%', width: "50%", left: "25%"}}>
+                                                <button class="cus-btn btn btn-primary cus-btn" type="button" onClick = {() => props.offAdd()}>BACK</button>
+                                                <button class="cus-btn btn btn-primary cus-btn" type='submit'>ADD</button>
                                           </div>
                                     </div>
                               </div>
@@ -430,7 +432,7 @@ const AddClass = () =>
                                           for (let i = 0; i < 6; i++)
                                                 chosenTimetable[i].periodID = null;
 
-                                    } }>Cancel</button>
+                                    } }>CANCEL</button>
                                     <button className={ `${ styles.add } ms-5` } onClick={ () =>
                                     {
                                           $(`.${ styles.timeTable }`).css("display", "none");
@@ -466,7 +468,7 @@ const AddClass = () =>
                                           }
                                           str = str.substring(0, str.length - 2);
                                           $('#chosenTimeTable').text(str);
-                                    } }>Confirm</button>
+                                    } }>CONFIRM</button>
                               </div>
                         </div>
                         <div className={ `w-75 position-absolute ${ styles.teachers } flex-column` } style={ { backgroundColor: '#BFBFBF', height: '80%', border: '2px solid black', borderRadius: '20px' } }>
@@ -496,7 +498,7 @@ const AddClass = () =>
                                           {
                                                 checkboxes[i].checked = false;
                                           }
-                                    } }>Cancel</button>
+                                    } }>CANCEL</button>
                                     <button className={ `${ styles.add } ms-5` } onClick={ () =>
                                     {
                                           $(`.${ styles.teachers }`).css("display", "none");
@@ -505,10 +507,10 @@ const AddClass = () =>
                                                 str += teachers[i].name + ', ';
                                           str = str.substring(0, str.length - 2);
                                           $('#chosenTeachers').text(str);
-                                    } }>Confirm</button>
+                                    } }>CONFIRM</button>
                               </div>
                         </div>
-                  </div >
+                  </div>
             </div >
       );
 }

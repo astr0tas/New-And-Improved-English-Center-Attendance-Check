@@ -2,10 +2,7 @@ import express from "express";
 import { getEmployees } from './query.js';
 import
 {
-    newStudent, getStudents, getStudent,
-    getClasses, getNewID, getClassesOfStudent,
-    getNotClassesOfStudent, getClassInfo, changeClass,
-    getTeachers, getRooms, getPeriod,
+    getRooms, getPeriod,
     addClass, deleteStudent, deactivateClass,
     activateClass, cancelSession, activateSession,
     getClassTeachers, countSession, getSessions,
@@ -14,16 +11,9 @@ import
     replaceTeacher, replaceSupervisor
 } from "./query.js";
 
-import { getUser, updateInfo, getNewID, getRooms, getPeriod, pieChartDaily, pieChartWeekly, pieChartMonthly, lineChartDaily, lineChartWeekly, lineChartMonthly, statsClass, late10Student, absent5Student} from "./query.js";
+import { getUser, updateInfo, getNewID, pieChartDaily, pieChartWeekly, pieChartMonthly, lineChartDaily, lineChartWeekly, lineChartMonthly, statsClass, late10Student, absent5Student} from "./query.js";
 
 const adminRoutes = express.Router();
-
-
-adminRoutes.get('/students', async (req, res) =>
-{
-    const students = await getStudents();
-    res.json(students);
-});
 
 adminRoutes.get('/pieChart', async (req, res) => {
     const daily =  await pieChartDaily();
@@ -81,31 +71,6 @@ adminRoutes.get('/newID', async (req, res) =>
     // res.json(id);
 });
 
-adminRoutes.get('/class/:name', async (req, res) =>
-{
-    const classInfo = await getClassInfo(req.params.name);
-    res.json(classInfo);
-})
-
-adminRoutes.get('/:id/classes', async (req, res) =>
-{
-    const sClasses = await getClassesOfStudent(req.params.id);
-    res.json(sClasses);
-})
-
-adminRoutes.get('/:id/notclasses', async (req, res) =>
-{
-    const sClasses = await getNotClassesOfStudent(req.params.id);
-    res.json(sClasses);
-})
-
-adminRoutes.post('/:id/classes', async (req, res) =>
-{
-    let data = req.body;
-    await changeClass(data.id, data.old, data.new);
-    res.send("update sucessfully");
-})
-
 adminRoutes.post('/user/:account', async (req, res) =>
 {
     let data = req.body;
@@ -142,12 +107,6 @@ adminRoutes.get('/rooms', async (req, res) =>
 {
     const rooms = await getRooms();
     res.json(rooms);
-});
-
-adminRoutes.get('/teachers', async (req, res) =>
-{
-    const teachers = await getTeachers();
-    res.json(teachers);
 });
 
 adminRoutes.post('/getPeriod', async (req, res) =>

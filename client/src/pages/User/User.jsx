@@ -18,7 +18,7 @@ export default function User()
             console.log(res.data);
         })
         .catch(error => console.log(error));
-    }, []);
+    }, [username]);
     
     var fbirthday = new Date(user?.birthday).toLocaleDateString('en-GB');
 

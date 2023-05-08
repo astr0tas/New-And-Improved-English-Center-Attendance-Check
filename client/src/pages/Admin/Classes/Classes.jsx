@@ -33,7 +33,7 @@ export default function Classes(){
     return(
         <>
             <div className = 'main-container'>
-                <div className = 'entity-box'>
+                <div className = 'entity-box' display = "none">
                     <div className = 'search-container'>
                         <input id = 'search' type = 'text' onChange={handleSearch} value={searchInput}/>
                         <svg style = {{position: 'absolute', left: '83%', cursor: 'pointer' }} width="25" height="25" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -75,13 +75,12 @@ export default function Classes(){
                         <button class="cus-btn btn btn-primary cus-btn" type="button" style = {{fontSize: 20}} onClick = {()=>setNewClass(true)}>ADD A CLASS</button>
                     </div>
                 </div>
-                
             </div>
             {
-                newClass && <AddClass offAdd = {()=> setNewClass(false)}/>
+                showInfo && <ClassDetail offShow = {()=>setShowInfo(false)} className={curr_class.Name}/>
             }
             {
-                showInfo && <ClassDetail offShow = {()=>setShowInfo(false)} className={curr_class.Name}/>
+                newClass && <AddClass offAdd = {()=> setNewClass(false)}/>
             }
         </>
     )

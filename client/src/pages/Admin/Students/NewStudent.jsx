@@ -2,16 +2,17 @@ import '../../General/General.css';
 import Noti from '../../General/Noti.jsx';
 import image from './img.png';
 
-import React, { useState, useEffect } from 'react';
+// import React, { useState, useEffect } from 'react';
+import React, { useState} from 'react'
 import axios from 'axios';
 
-var id = "";
-axios.get("http://localhost:3030/admin/newID/student")
-.then(res =>
-{
-      id = res.data["newID('student')"];
-})
-.catch(error => console.log(error));
+// var id = "";
+// axios.get("http://localhost:3030/admin/newID/student")
+// .then(res =>
+// {
+//       id = res.data["newID('student')"];
+// })
+// .catch(error => console.log(error));
 
 
 export default function NewStudent(props)
@@ -98,12 +99,12 @@ export default function NewStudent(props)
                         setAddress("");
                         setClasses("");
 
-                        axios.get("http://localhost:3030/admin/newID/student")
-                        .then(res =>
-                        {
-                              id = res.data["newID('student')"];
-                        })
-                        .catch(error => console.log(error));
+                        // axios.get("http://localhost:3030/admin/newID/student")
+                        // .then(res =>
+                        // {
+                        //       id = res.data["newID('student')"];
+                        // })
+                        // .catch(error => console.log(error));
                   }
             )
             .catch(

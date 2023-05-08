@@ -184,6 +184,11 @@ input:invalid {
     border: 1px black solid;
 }
 
+.cus-btn:hover{
+    background: #006FE5;
+    color: white;
+}
+
 .noti-container{
     display: flex;
     flex-direction: column;

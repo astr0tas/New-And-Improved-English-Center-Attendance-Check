@@ -297,10 +297,208 @@ export async function getRooms(callback)
     return rooms[0];
 }
 
+export async function getTeachers()
+{
+    // pool.query(`select EMPLOYEE.ID,EMPLOYEE.name from TEACHER join EMPLOYEE on TEACHER.ID=EMPLOYEE.ID`, (err, res) =>
+    // {
+    //     if (err)
+    //         callback(err, null);
+    //     else
+    //         callback(null, res);
+    // });
+    const teachers = await pool.query(`select EMPLOYEE.ID,EMPLOYEE.name from TEACHER join EMPLOYEE on TEACHER.ID=EMPLOYEE.ID`);
+    return teachers[0];
+}
+
 export async function getPeriod(dow, room, startDate, endDate)
 {
     const periods = await pool.query(`
-        SELECT Start_hour,End_hour from TIMETABLE where ID not in (SELECT Timetable_ID from SESSION where Session_number_make_up_for=null and Session_date>=${ startDate } and Session_date<=${ endDate } and DAYOFWEEK(Session_date)=${ dow } and Classroom_ID='${ room }')
+        SELECT ID,Start_hour,End_hour from TIMETABLE where ID not in (SELECT Timetable_ID from SESSION where Session_number_make_up_for is null and
+            ((Session_date>='${ startDate }' and Session_date<='${ endDate }') or (Session_date<='${ startDate }' and Session_date>='${ endDate }') or (Session_date>='${ startDate }' and Session_date>='${ endDate }') or (Session_date<='${ startDate }' and Session_date<='${ endDate }'))
+            and DAYOFWEEK(Session_date)=${ dow } and Classroom_ID='${ room }')
     `);
     return periods[0];
+}
+
+// function getWeeksBetween(start, end)
+// {
+//     start = new Date(start);
+//     end = new Date(end);
+//     // Calculate the difference in milliseconds between the two dates
+//     const diffInMs = Math.abs(end - start);
+
+//     // Calculate the number of milliseconds in a week
+//     const msPerWeek = 1000 * 60 * 60 * 24 * 7;
+
+//     // Divide the difference by the number of milliseconds in a week and round down to the nearest integer
+//     const weeks = Math.ceil(diffInMs / msPerWeek);
+
+//     // Return the number of weeks
+//     return weeks;
+// }
+
+export async function addClass(name, start, end, timetable, room, teachers, supervisor)
+{
+    let counter = 0;
+    for (let i = 0; i < timetable.length; i++)
+        if (timetable[i].periodID !== null) counter++;
+    let sql = `call createClass('${ name }','${ start }','${ end }','${ room }',${ counter * 12 }); `;
+    for (let i = 0, j = 0; i < timetable.length; i++)
+    {
+        if (timetable[i].periodID !== null)
+        {
+            let dow;
+            switch (timetable[i].dow)
+            {
+                case 2:
+                    dow = "Monday";
+                    break;
+                case 3:
+                    dow = "Tuesday";
+                    break;
+                case 4:
+                    dow = "Wednesday";
+                    break;
+                case 5:
+                    dow = "Thursday";
+                    break;
+                case 6:
+                    dow = "Friday";
+                    break;
+                case 7:
+                    dow = "Saturday";
+                    break;
+            }
+            sql += `call GenSession('${ name }','${ start }','${ end }','${ dow }','${ timetable[i].periodID }','${ room }',${ j },${ counter }); `;
+            j++;
+        }
+    }
+    for (let i = 0; i < teachers.length; i++)
+        sql += `insert into TEACH values('${ teachers[i] }','${ name }'); `;
+    for (let i = 1; i <= counter * 12; i++)
+    {
+        sql += `call AssignSessionForTeacher(${ i },'${ name }','${ teachers[(i - 1) % teachers.length] }'); `;
+        sql += `insert into SUPERVISOR_RESPONSIBLE values(${ i },'${ name }','${ supervisor }',null); `;
+    }
+    const periods = await pool.query(sql);
+    return periods;
+}
+
+export async function deleteStudent(id, className)
+{
+    const periods = await pool.query(`delete from STUDENT_ATTENDANCE where Class_name='${ className }' and Student_ID='${ id }'; delete from IN_CLASS where Student_ID='${ id }' and Class_name='${ className }'`);
+    return periods;
+}
+
+export async function deactivateClass(name)
+{
+    const periods = await pool.query(`update CLASS set Status=false where Name='${ name }'`);
+    return periods;
+}
+
+export async function activateClass(name)
+{
+    const periods = await pool.query(`update CLASS set Status=true where Name='${ name }'`);
+    return periods;
+}
+
+export async function cancelSession(name, number)
+{
+    const periods = await pool.query(`update SESSION set Status=0 where Class_name='${ name }' and Session_number='${ number }'`);
+    return periods;
+}
+
+export async function activateSession(name, number)
+{
+    const periods = await pool.query(`update SESSION set Status=2 where Class_name='${ name }' and Session_number='${ number }'`);
+    return periods;
+}
+
+export async function getClassTeachers(name)
+{
+    const result = await pool.query(`select Teacher_ID,name from TEACH join EMPLOYEE on Teacher_ID=ID where Class_name='${ name }'`);
+    return result[0];
+}
+
+export async function countSession(name)
+{
+    const result = await pool.query(`select count(*) as count from SESSION where Class_name='${ name }'`);
+    return result[0];
+}
+
+export async function getSessions(name)
+{
+    const result = await pool.query(`select Session_number from SESSION where Class_name='${ name }' and Status=0 and Session_number_make_up_for is null`);
+    return result[0];
+}
+
+export async function supervisor()
+{
+    const result = await pool.query(`select SUPERVISOR.ID,name from SUPERVISOR join EMPLOYEE on EMPLOYEE.ID=SUPERVISOR.ID`);
+    return result[0];
+}
+
+export async function times(room, date)
+{
+    const result = await pool.query(`select * from TIMETABLE where ID not in (select Timetable_ID from SESSION where Classroom_ID='${ room }' and Session_date='${ date }')`);
+    return result[0];
+}
+
+export async function getSuitableRoom(name)
+{
+    const result = await pool.query(`select * from CLASSROOM where Max_of_seat>=(select Max_number_of_students from CLASS where Name='${ name }')`);
+    return result[0];
+}
+
+export async function createNewSession(name, newSession, room, date, time, session, teacher, supervisor)
+{
+    const result = await pool.query(`
+    insert into SESSION values('${ newSession }','${ name }','${ time }','${ room }','${ date }',2,null,'${ session }','${ name }');
+    insert into TEACHER_RESPONSIBLE values('${ newSession }','${ name }','${ teacher }',null,null);
+    insert into SUPERVISOR_RESPONSIBLE values('${ newSession }','${ name }','${ supervisor }',null);
+    `);
+    return result;
+}
+
+export async function searchByName(name)
+{
+    const result = await pool.query(`select * from STUDENT where name like '%${ name }%'`);
+    return result[0];
+}
+
+export async function searchBySSN(ssn)
+{
+    const result = await pool.query(`select * from STUDENT where SSN like '%${ ssn }%'`);
+    return result[0];
+}
+
+export async function addStudentToClass(id, name)
+{
+    const result = await pool.query(`insert into IN_CLASS values('${ id }','${ name }')`);
+    return result;
+}
+
+export async function replaceTeacher(session, name, id)
+{
+    const result = await pool.query(`update TEACHER_RESPONSIBLE set Teacher_ID='${ id }',Note=null,Status=null where Session_number='${ session }' and Class_name='${ name }'`);
+    return result;
+}
+
+export async function replaceSupervisor(session, name, id)
+{
+    const result = await pool.query(`update SUPERVISOR_RESPONSIBLE set Supervisor_ID='${ id }',Note_for_class=null where Session_number='${ session }' and Class_name='${ name }'`);
+    return result;
+}
+
+export async function getClassesOfStudent(id)
+{
+    var [classOfStudent] = await pool.query(`SELECT * FROM in_class JOIN class WHERE Student_ID = '${ id }' AND Class_name = Name`);
+    classOfStudent.map(
+        sClass =>
+        {
+            sClass.Start_date = new Date(sClass.Start_date).toLocaleDateString('en-GB')
+            sClass.End_date = new Date(sClass.End_date).toLocaleDateString('en-GB')
+        }
+    )
+    return classOfStudent;
 }

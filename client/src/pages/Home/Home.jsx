@@ -3,7 +3,7 @@ import './Home.css';
 
 import { useState, useEffect } from 'react';
 import Chart from 'react-apexcharts'
-import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, BarChart, Bar } from 'recharts';
+import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer} from 'recharts';
 import axios from 'axios';
 
 

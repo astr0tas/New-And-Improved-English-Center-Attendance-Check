@@ -167,7 +167,7 @@ export function SignIn({setUser})
                 >
                     Sign in
                 </button>
-                <p style={ { top: '30%', left: '30%', position: 'relative', fontSize: 30, cursor: 'pointer', width: '40%' } }>Forgot password?</p>
+                {/* <p style={ { top: '30%', left: '30%', position: 'relative', fontSize: 30, cursor: 'pointer', width: '40%' } }>Forgot password?</p> */}
             </div>
         </div>
     )
