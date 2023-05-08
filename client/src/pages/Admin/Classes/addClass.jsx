@@ -372,7 +372,7 @@ const AddClass = (props) =>
                                                       </div>
                                                 </div>
                                           </div>
-                                          <div className="button-container" style = {{top: '87%', width: "50%", left: "25%"}}>
+                                          <div className="button-container">
                                                 <button class="cus-btn btn btn-primary cus-btn" type="button" onClick = {() => props.offAdd()}>BACK</button>
                                                 <button class="cus-btn btn btn-primary cus-btn" type='submit'>ADD</button>
                                           </div>
@@ -423,8 +423,8 @@ const AddClass = (props) =>
                                           </tbody>
                                     </table>
                               </div>
-                              <div className="mt-auto mb-3">
-                                    <button className={ `${ styles.backTime } me-5` } onClick={ () =>
+                              <div className="button-container">
+                                    <button className="cus-btn btn btn-primary cus-btn" onClick={ () =>
                                     {
                                           $(`.${ styles.timeTable }`).css("display", "none");
                                           $(`.${ styles.dow }`).css('background-color', '#dbdbdbc0').css('color', 'black');
@@ -433,7 +433,7 @@ const AddClass = (props) =>
                                                 chosenTimetable[i].periodID = null;
 
                                     } }>CANCEL</button>
-                                    <button className={ `${ styles.add } ms-5` } onClick={ () =>
+                                    <button className="btn btn-primary cus-btn" onClick={ () =>
                                     {
                                           $(`.${ styles.timeTable }`).css("display", "none");
                                           let str = "";
@@ -488,8 +488,8 @@ const AddClass = (props) =>
                                           </tbody>
                                     </table>
                               </div>
-                              <div className="mt-auto mb-3">
-                                    <button className={ `${ styles.backTime } me-5` } onClick={ () =>
+                              <div className="button-container">
+                                    <button className="cus-btn btn btn-primary cus-btn" onClick={ () =>
                                     {
                                           $(`.${ styles.teachers }`).css("display", "none");
                                           teachers.length = 0;
@@ -499,7 +499,7 @@ const AddClass = (props) =>
                                                 checkboxes[i].checked = false;
                                           }
                                     } }>CANCEL</button>
-                                    <button className={ `${ styles.add } ms-5` } onClick={ () =>
+                                    <button className="cus-btn btn btn-primary cus-btn" onClick={ () =>
                                     {
                                           $(`.${ styles.teachers }`).css("display", "none");
                                           let str = "";
