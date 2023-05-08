@@ -59,6 +59,7 @@ CREATE TABLE CLASS (
   Status boolean,
   Max_number_of_students INT,
   Initial_number_of_sessions INT,
+  Current_number_of_student int DEFAULT '0',
   PRIMARY KEY (Name)
 );
 

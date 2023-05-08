@@ -1,5 +1,8 @@
+USE ENGLISH_CENTER;
+
 SET GLOBAL log_bin_trust_function_creators = 1;
 
+DROP FUNCTION IF EXISTS newID;
 DELIMITER $$
 CREATE FUNCTION newID(
     role varchar(20)

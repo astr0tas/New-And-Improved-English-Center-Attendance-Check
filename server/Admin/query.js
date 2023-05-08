@@ -4,7 +4,8 @@ const pool = mysql.createPool({
     host: `127.0.0.1`,
     user: 'englishcenter',
     password: 'englishcenter123',
-    database: 'english_center'
+    database: 'english_center',
+    multipleStatements: true
 }).promise();
 
 export async function getEmployees()
@@ -380,6 +381,7 @@ export async function addClass(name, start, end, timetable, room, teachers, supe
         sql += `call AssignSessionForTeacher(${ i },'${ name }','${ teachers[(i - 1) % teachers.length] }'); `;
         sql += `insert into SUPERVISOR_RESPONSIBLE values(${ i },'${ name }','${ supervisor }',null); `;
     }
+    //console.log(sql);
     const periods = await pool.query(sql);
     return periods;
 }

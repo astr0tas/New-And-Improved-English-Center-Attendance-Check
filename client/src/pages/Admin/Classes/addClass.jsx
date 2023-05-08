@@ -6,6 +6,7 @@ import { AiOutlineClockCircle } from 'react-icons/ai';
 import ReactDOM from 'react-dom/client';
 import { AiOutlineCloseCircle } from 'react-icons/ai';
 import { getDate100DaysLater } from "../../../tools/time_checking";
+import Noti from '../../General/Noti.jsx';
 
 const chosenTimetable = [{ dow: 2, periodID: null, start: null, end: null },
 { dow: 3, periodID: null, start: null, end: null },
@@ -119,6 +120,8 @@ const AddClass = (props) =>
       const [emptyStart, setEmptyStart] = useState(false);
       const [emptySupervisor, setEmptySupervisor] = useState(false);
 
+      const [showNoti, setShowNoti] = useState(false);
+
       useEffect(() =>
       {
             if (!render.current)
@@ -209,6 +212,14 @@ const AddClass = (props) =>
                   axios.post('http://localhost:3030/admin/addClass', { params: { name: className, startDate: startDate, endDate: endDate, timeTable: chosenTimetable, room: room, teachers: teachers.map(item => item.id), supervisor: supervisor.id } }).then(res =>
                   {
                         console.log(res);
+                        setShowNoti(true);
+
+                        setClassName(null);
+                        setStartDate(null);
+                        setEndDate(null);
+                        setRoom(null);
+                        teachers = [];
+                        setSupervisor(null);
                   }).catch(err => { console.log(err); })
             }
       }
@@ -257,12 +268,15 @@ const AddClass = (props) =>
                   width: '82%',
                   height: '100%'
             } }>
+                  {
+                        showNoti &&  <Noti role = "Class" option = "add" offNoti = {() => setShowNoti(false)}/>
+                  }
                   <div className="d-flex align-items-center justify-content-center entity-box" >
                         <form onSubmit={ addClass } className='w-100 h-100 d-flex flex-column'>
                               <div className='w-100 h-100 d-flex flex-column'>
-                                    <h1 className='mt-2'>Add a new class</h1>
-                                    <div className="flex-grow-1 mt-5 d-flex flex-column">
-                                          <div className='d-flex flex-column align-items-center'>
+                                    <h1 className='mt-2'>ADD A NEW CLASS</h1>
+                                    <div className="flex-grow-1 mt-5 d-flex flex-column" >
+                                          <div className='d-flex flex-column align-items-center'style = {{width: '100%', left: '8%', position: "absolute"}}>
                                                 <div className='row my-3 w-75' >
                                                       <div className="col-2 d-flex align-items-center">
                                                             <p style={ { fontSize: '1.5rem', marginBottom: '0' } }>Name:</p>

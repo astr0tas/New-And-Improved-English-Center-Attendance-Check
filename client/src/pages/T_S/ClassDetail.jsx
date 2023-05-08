@@ -18,7 +18,7 @@ const ListStudentHeader = () =>
                   <th scope="col" className='col-3'>Name</th>
                   <th scope="col" className='col-2'>Phone number</th>
                   <th scope="col" className='col-2'>Email</th>
-                  <th scope="col" className='col-2'>Action</th>
+                  {/* <th scope="col" className='col-2'>Action</th> */}
             </tr>
       );
 }
@@ -36,7 +36,7 @@ const ListStudent = (props) =>
                   <td className='col-3'>{ props.name }</td>
                   <td className='col-2'>{ props.phone }</td>
                   <td className='col-2'>{ props.email }</td>
-                  <td className='col-2'><button className={ `${ styles.action }` } onClick={ handleClick }>Detail</button></td>
+                  {/* <td className='col-2'><button className={ `${ styles.action }` } onClick={ handleClick }>Detail</button></td> */}
             </tr>
       );
 }

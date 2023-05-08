@@ -93,7 +93,7 @@ function ClassDetails({iclass, onInfo}){
             <p>{iclass.Name}</p>
             <p>{iclass.Start_date}</p>
             <p>{iclass.End_date}</p>
-            <p>{iclass.Current_number_of_student}</p>
+            <p>{iclass.Current_number_of_student}/{iclass.Max_number_of_students}</p>
             <p>{iclass.Status === 1 ? "Active" : "Disactive"}</p>
             <button class = "btn btn-primary" onClick = {() => onInfo()}>Details</button>
         </div>
