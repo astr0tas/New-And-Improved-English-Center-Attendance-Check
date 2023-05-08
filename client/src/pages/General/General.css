@@ -11,6 +11,7 @@
     display: flex;
     align-items: center;
     flex-direction: column;
+
 }
 
 .nav-slide{
@@ -22,12 +23,14 @@
     position: absolute;
     display: flex;
     flex-direction: column;
+    
     width: 95%;
     height: 95%;
     top: 2.5%;
 
     background: #EDEDED;
     border-radius: 20px;
+    border: 1px black solid;
 }
 
 .search-container{
@@ -72,6 +75,11 @@
     height: 77%;
 
     overflow: scroll;
+    background: #EDEDED;
+}
+
+.class-box .entity-list-container{
+    background: #D9D9D9;
 }
 
 .entity-list-container::-webkit-scrollbar {
@@ -87,6 +95,7 @@
 .entity-list-container::-webkit-scrollbar-thumb {
     background: #888;
     border-radius: 30px;
+    height: 250px;
 }
 
 .entity-list-container::-webkit-scrollbar-thumb:hover {
@@ -107,6 +116,16 @@
     border: 1px solid #000000;
     margin-bottom: 7px;
 }
+
+input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input:invalid {
+    border: 3px solid red;
+}
+
 
 .entity-container p{
     position: relative;
@@ -151,13 +170,18 @@
     left: 25%;
     height: 7%;
     width: 50%;
+
+    
 }
 
 .button-container .cus-btn{
     height: 100%;
+    width: 300px;
     background: #BFBFBF;
     border: none;
     color: black;
+    font-size: 22px;
+    border: 1px black solid;
 }
 
 .noti-container{
@@ -211,11 +235,20 @@
 
 .avatar-container{
     position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     top: 2%;
     left: 40%;
     width: 20%;
     height: 28%;
     background: #BFBFBF;
+}
+
+.avatar-container img{
+    position: absolute;
+    width: 95%;
+    height: 95%;
 }
 
 .info-container{

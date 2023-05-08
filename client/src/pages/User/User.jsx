@@ -1,17 +1,26 @@
 import '../General/General.css';
 import './User.css';
-import UserContext from '../General/UserContext.jsx';
 import userImage from './image/image.png';
 
-import { useContext, useState } from 'react';
+import {useState, useEffect } from 'react';
 import axios from 'axios';
 
 export default function User()
 {
-    const { user, setUser } = useContext(UserContext);
+    const [user, setUser] = useState(null);
+    const username = localStorage.getItem('id');
 
-    var f_user = user.user;
-    var fbirthday = new Date(f_user.birthday).toLocaleDateString('en-GB');
+    useEffect(() => {
+        axios.get('http://localhost:3030/admin/user/' + username)
+        .then(res =>
+        {
+            setUser(res.data);
+            console.log(res.data);
+        })
+        .catch(error => console.log(error));
+    }, []);
+    
+    var fbirthday = new Date(user?.birthday).toLocaleDateString('en-GB');
 
     const [isEdit, setEdit] = useState(false);
     const [isSuccess, setSuccess] = useState(false);
@@ -24,8 +33,8 @@ export default function User()
 
     function handelYes()
     {
-        axios.post("http://localhost:3030/" + user.position.toLowerCase() + "/user/" + f_user.ID, {
-            ssn: f_user.SSN,
+        axios.post("http://localhost:3030/" + localStorage.getItem("userType").toLowerCase() + "/user/" + user.ID, {
+            ssn: user.SSN,
             address: address,
             birthday: birthday,
             birthplace: birthplace,
@@ -33,46 +42,46 @@ export default function User()
             phone: phone
 
         })
-            .then(
-                (res) =>
+        .then(
+            (res) =>
                 {
                     console.log(res);
-                    if (address !== "") f_user.address = address;
+                    if (address !== "") user.address = address;
                     if (birthday !== null)
                     {
                         fbirthday = new Date(birthday).toLocaleDateString('en-GB');
-                        f_user.birthday = birthday;
+                        user.birthday = birthday;
                     }
-                    if (birthplace !== "") f_user.birthplace = birthplace;
-                    if (email !== "") f_user.email = email;
-                    if (phone !== "") f_user.phone = phone;
+                    if (birthplace !== "") user.birthplace = birthplace;
+                    if (email !== "") user.email = email;
+                    if (phone !== "") user.phone = phone;
 
-                    var position = user.position
-                    axios.get('http://localhost:3030/' + position + '/user/' + f_user.ID)
-                        .then(res =>
-                        {
-                            var user = res.data;
-                            setUser({ user, position: position });
-                        })
-                        .catch(error => console.log(error));
+                    // var position = user.position
+                    // axios.get('http://localhost:3030/' + position + '/user/' + user.ID)
+                    //     .then(res =>
+                    //     {
+                    //         var user = res.data;
+                    //         setUser({ user, position: position });
+                    //     })
+                    //     .catch(error => console.log(error));
                     setSuccess(true);
                 }
-            )
-            .catch(
-                error => console.log(error)
-            );
+        )
+        .catch(
+            error => console.log(error)
+        );
     }
 
     return (
         <div className='main-container'>
             <div className='ssn-container'>
-                { f_user.SSN }
+                { user?.SSN }
             </div>
             <div className='img-container'>
                 <img src={ userImage } alt="" />
             </div>
             <div className='name-container'>
-                { f_user.name }
+                { user?.name }
             </div>
             { isSuccess && <Successfull notEdit={ () => setEdit(false) } notSuccess={ () => setSuccess(false) } /> }
             <div className='details-container'>
@@ -113,11 +122,11 @@ export default function User()
                             </svg>
                         </div>
                 }
-                <Detail field="Address" value={ f_user.address } edit={ isEdit } notEdit={ () => setEdit(false) } setValue={ (value) => setAddress(value) } />
+                <Detail field="Address" value={ user?.address } edit={ isEdit } notEdit={ () => setEdit(false) } setValue={ (value) => setAddress(value) } />
                 <Detail field="BirthDate" value={ fbirthday } edit={ isEdit } notEdit={ () => setEdit(false) } setValue={ (value) => setBirthday(value) } />
-                <Detail field="BirthPlace" value={ f_user.birthplace } edit={ isEdit } notEdit={ () => setEdit(false) } setValue={ (value) => setBirthplace(value) } />
-                <Detail field="Email" value={ f_user.email } edit={ isEdit } notEdit={ () => setEdit(false) } setValue={ (value) => setEmail(value) } />
-                <Detail field="Phone" value={ f_user.phone } edit={ isEdit } notEdit={ () => setEdit(false) } setValue={ (value) => setPhone(value) } />
+                <Detail field="BirthPlace" value={ user?.birthplace } edit={ isEdit } notEdit={ () => setEdit(false) } setValue={ (value) => setBirthplace(value) } />
+                <Detail field="Email" value={ user?.email } edit={ isEdit } notEdit={ () => setEdit(false) } setValue={ (value) => setEmail(value) } />
+                <Detail field="Phone" value={ user?.phone } edit={ isEdit } notEdit={ () => setEdit(false) } setValue={ (value) => setPhone(value) } />
             </div>
         </div>
     )

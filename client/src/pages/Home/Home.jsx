@@ -1,9 +1,10 @@
 import '../../pages/General/General.css';
 import './Home.css';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Chart from 'react-apexcharts'
-import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, BarChart, Bar } from 'recharts';
+import axios from 'axios';
 
 
 export default function Home(){
@@ -23,12 +24,6 @@ export default function Home(){
 
 
 function AdminHome(){
-    const [missignList, setMissing] = useState([]);
-
-    const [daily, setDaily] = useState([44, 55, 13]);
-    const [weekly, setWeekly] = useState([44, 55, 13]);
-    const [monthly, setMonthly] = useState([44, 55, 13]);
-
     var options = {
         chart: {
         width: 350,
@@ -37,8 +32,8 @@ function AdminHome(){
         legend: {
         show: false
         },
-        colors: [ '#00ff00', '#0000FF', '#ff0000'],
-        labels: ['On class', 'Late', 'Absent'],
+        colors: [ '#8884d8', '#ffc658', '#82ca9d'],
+        labels: ['Absent', 'Late', 'On class'],
         responsive: [{
         breakpoint: 480,
         options: {
@@ -51,17 +46,75 @@ function AdminHome(){
         }
         }]
     };
+
+    const [daily, setDaily] = useState([]);
+    const [weekly, setWeekly] = useState([]);
+    const [monthly, setMonthly] = useState([]);
+
+    useEffect( () =>{
+        axios.get("http://localhost:3030/admin/pieChart")
+        .then(
+            res => {
+                setDaily(res.data["daily"]);
+                setWeekly(res.data["weekly"]);
+                setMonthly(res.data["monthly"]);
+            }
+        )
+        .catch(
+            error => console.log(error)
+        )
+    }
+    , [])
     
-    const [lineDaiy, setLineDaiy] = useState([]);
-    const [lineWeekly, setLineWeekly] = useState([]);
-    const [lineMonthly, setLineMonthly] = useState([]);
-    const [frequencyCountChart, setFrequencyCountChart] = useState('Daily');
     const [lineData, setData] = useState([]);
+    
+    const [frequencyCountChart, setFrequencyCountChart] = useState('Daily');
+    useEffect(()=>{
+        axios.get("http://localhost:3030/admin/barChart")
+        .then(
+            res => {
+                if (frequencyCountChart === "Daily")
+                    setData(res.data["daily"]);
+                else if (frequencyCountChart === "Weekly")
+                    setData(res.data["weekly"]);
+                else
+                    setData(res.data["monthly"]);
+            }
+        )
+        .catch(
+            error => console.log(error)
+        )
+    }
+    , [frequencyCountChart])
 
     function handleFrequency(event){
-        setFrequencyCountChart(event.target.innerHTML)
+        var frequent = event.target.innerHTML
+        setFrequencyCountChart(frequent)
         return;
     }
+
+
+    const [best, setBest] = useState([]);
+    const [worst, setWorst] = useState([]);
+    const [late, setLate] = useState([]);
+    const [absentS, setAbsentS] = useState([]);
+    const [lateS, setLateS] = useState([]);
+
+    useEffect(()=>{
+        axios.get("http://localhost:3030/admin/stats")
+        .then(
+            res => {
+                setBest(res.data["bestClass"]);
+                setWorst(res.data["worstClass"]);
+                setLate(res.data["lateClass"]);
+                setAbsentS(res.data["absentStudent"]);
+                setLateS(res.data["lateStudent"]);
+            }
+        )
+        .catch(
+            error => console.log(error)
+        )
+    },[])
 
     return(
         <>
@@ -100,39 +153,93 @@ function AdminHome(){
                     fontSize: "20px"
                  }}
             >
-                <div id = "lineChart"className = 'chart'>
+                <div id = "lineChart" className = 'chart'>
                     <div className = 'frequent_container'>
                         <button 
                             className={frequencyCountChart === 'Daily' ? 'chart_name active' : 'chart_name'}
-                            onClick={handleFrequency}
+                            onClick={(event) => handleFrequency(event)}
                         >
                             Daily
                         </button>
                         <button 
                             className={frequencyCountChart === 'Weekly' ? 'chart_name active' : 'chart_name'}
-                            onClick={handleFrequency}
+                            onClick={(event) => handleFrequency(event)}
                         >
                             Weekly
                         </button>
                         <button 
                             className={frequencyCountChart === 'Monthly' ? 'chart_name active' : 'chart_name'}
-                            onClick={handleFrequency}
+                            onClick={(event) => handleFrequency(event)}
                         >
                             Monthly
                         </button>
                     </div>
 
-                    <ResponsiveContainer width= "97%" height="90%">
+                    <div className='chart'
+                        style = {{
+                            height: "71%",
+                            width: "98%",
+                            left: '-1%',
+                            position: "relative",
+                            marginTop: "0"
+                        }}
+                    >
+                        <ResponsiveContainer width="100%" height="100%">
+                            <LineChart
+                                width={500}
+                                height={300}
+                                data={lineData}
+                                margin={{
+                                    top: 5,
+                                    right: 30,
+                                    left: 20,
+                                    bottom: 5,
+                                  }}
+                            >
+                                <CartesianGrid strokeDasharray="3 3" />
+                                <XAxis dataKey="Name" interval={0} angle={0} textAnchor="end"/>
+                                <YAxis />
+                                <Tooltip />
+                                <Legend />
+                                <Line type="monotone" dataKey="Absent" strokeWidth={2} stroke="#8884d8" activeDot={{ r: 8 }} />
+                                <Line type="monotone" dataKey="Late" strokeWidth={2} stroke="#ffc658" />
+                                <Line type="monotone" dataKey="On class" strokeWidth={2} stroke="#82ca9d" />
+                            </LineChart>
+                        </ResponsiveContainer>
+                        {/* <ResponsiveContainer width="100%" height="100%">
+                            <BarChart
+                            width={500}
+                            height={300}
+                            data={lineData}
+                            margin={{
+                                top: 20,
+                                right: 30,
+                                left: 20,
+                                bottom: 5,
+                            }}
+                            >
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis dataKey="Name" />
+                            <YAxis />
+                            <Tooltip />
+                            <Legend />
+                            <Bar dataKey="Absent" stackId="a" fill="#8884d8" />
+                            <Bar dataKey="Late" stackId="a" fill="#ffc658" />
+                            <Bar dataKey="On class" stackId="a" fill="#82ca9d" />
+                            </BarChart>
+                        </ResponsiveContainer> */}
+                    </div>
+                    {/* <ResponsiveContainer width= "97%" height="80%">
                         <LineChart data={lineData} margin={{top: 5, right: 24, bottom: 2 }}>
                         <Legend verticalAlign="top" height={36}/>
-                        <XAxis dataKey="name" />
+                        <XAxis dataKey="Class_name" />
                         <YAxis />
-                        <Line name = "Previous" type="monotone" dataKey="prev" stroke="#A8C5DA" strokeWidth={3} activeDot={{ r: 8 }} />
-                        <Line name = "Current" type="monotone" dataKey="curr" stroke="#1C1C1C"  strokeWidth={3} />
+                        <Line name = "Previous" type="monotone" dataKey="Class_name" stroke="#A8C5DA" strokeWidth={3} activeDot={{ r: 8 }} />
+                        <Line name = "Current" type="monotone" dataKey="count" stroke="#1C1C1C"  strokeWidth={3} />
                         <CartesianGrid strokeDasharray="1 1" />
                         <Tooltip />
                         </LineChart>
-                    </ResponsiveContainer>
+                    </ResponsiveContainer> */}
                 </div>
             </div>
 
@@ -146,11 +253,32 @@ function AdminHome(){
                     fontSize: "20px"
                  }}
             >
-                <p>Lớp chuyên cần nhất:</p>
-                <p>Lớp nhiều học sinh vắng nhất:</p>
-                <p>Lớp nhiều học sinh trễ nhất:</p>
-                <p>Học sinh trễ nhiều nhất:</p>
-                <p>Học sinh vắng nhiều nhất:</p>
+
+                <div className = "p-container">
+                    <p id = "field">The class with the most students coming to school on time: </p>
+                    <p>{best}</p>
+                </div>
+
+                <div className = "p-container">
+                    <p id = "field">The class with the most students absent: </p>
+                    <p>{worst}</p>
+                </div>
+                
+                <div className = "p-container">
+                    <p id = "field">The class with the most students late: </p>
+                    <p>{late === "" ? "No class with late students" : late}</p>
+                </div>
+
+                <div className = "p-container">
+                    <p id = "field">Students are late for more than 10 sessions: </p>
+                    <p>{absentS === "" ? "No students" : absentS}</p>
+                </div>
+                
+                <div className = "p-container">
+                    <p id = "field">Students are absent for more than 5 sessions: </p>
+                    <p>{lateS === "" ? "No students" : lateS}</p>
+                </div>
+                
             </div>
 
             {/* <div className='ouput-container'

@@ -57,6 +57,7 @@ export default function NewStaff(props)
     }
 
     const [name, setName] = useState("");
+    const [ssn, setSSN] = useState("");
     const [phone, setPhone] = useState("");
     const [email, setEmail] = useState("");
     const [birthday, setBirthday] = useState("");
@@ -66,6 +67,7 @@ export default function NewStaff(props)
     function handleConfirm()
     {
         if (name === ""
+            || ssn === ""
             || phone === ""
             || email === ""
             || birthday === ""
@@ -83,6 +85,13 @@ export default function NewStaff(props)
             setShow(true);
             return;
         }
+
+        if (!(/^[0-9]+$/.test(ssn))){
+            setCurr({type: "wrong value", value: "ssn"});
+            setShow(true);
+            return;
+        }
+
         if (!(/^[0-9]+$/.test(phone))){
             setCurr({type: "wrong value", value: "phone"});
             setShow(true);
@@ -91,6 +100,7 @@ export default function NewStaff(props)
 
         axios.post("http://localhost:3030/admin/new/staff", {
                 name: name,
+                ssn: ssn,
                 phone: phone,
                 email: email,
                 birthday: birthday,
@@ -101,6 +111,7 @@ export default function NewStaff(props)
         })
         .then(()=>{
             setName("");
+            setSSN("");
             setPhone("");
             setEmail("");
             setBirthday("");
@@ -145,8 +156,8 @@ export default function NewStaff(props)
 
                 <div class="info-container" background='none'>
                         <div class="input-group">
-                            <span class="input-group-text" id="basic-addon1" >ID</span>
-                            <p style={ { position: 'absolute', left: '9.3%', height: '60%', top: '24%', width: '150px', alignItems: 'center' } }>{ id }</p>
+                            <span class="input-group-text" id="basic-addon1" >SSN</span>
+                            <input id='address' type="text" class="form-control" aria-describedby="basic-addon1" maxlength="12" value={ ssn } onChange={ (event) => setSSN(event.target.value) } />
                         </div>
                 </div>
 
@@ -181,7 +192,9 @@ export default function NewStaff(props)
                         </div>
                 </div>
 
-                <div class="info-container" style={ { background: '#BFBFBF' } }>
+                {
+                    props.role === 'teacher' && 
+                    <div class="info-container" style={ { background: '#BFBFBF' } }>
                         <div class="input-group">
                             <span class="input-group-text" id="basic-addon1" style={ { borderTopRightRadius: '0px', borderBottomRightRadius: '0px' } }>Class</span>
                         </div>
@@ -190,7 +203,9 @@ export default function NewStaff(props)
                         </div>
 
                         <button className="btn btn-primary add-btn" onClick={ handleAdd }>Add</button>
-                </div>
+                    </div>
+                }
+                
 
                 <div className='button-container' style = {{width: "50%", left: "25%"}}>
                         <button class="btn btn-primary cus-btn" type="button" style={ { fontSize: 20 } } onClick={ handleBack }>BACK</button>

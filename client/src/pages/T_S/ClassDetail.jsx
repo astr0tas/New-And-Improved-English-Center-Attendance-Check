@@ -7,6 +7,8 @@ import { format, detailFormat } from "../../tools/date_formatting";
 import $ from 'jquery';
 import { AiOutlineClockCircle } from 'react-icons/ai';
 
+import '../General/General.css';
+
 
 const ListStudentHeader = () =>
 {

@@ -46,7 +46,7 @@ export function SignInAs()
     );
 }
 
-export function SignIn()
+export function SignIn({setUser})
 {
     const [isWrong, setWrong] = useState(false);
     const navigate = useNavigate();
@@ -71,6 +71,7 @@ export function SignIn()
             setWrong(true);
             return;
         }
+        
 
         if (localStorage.getItem('userType') === "Admin")
         {
@@ -78,9 +79,6 @@ export function SignIn()
                 .then(res =>
                 {
                     var user = res.data;
-
-                    console.log(user);
-
                     if (!user || user.password !== password)
                     {
                         setWrong(true);
@@ -88,7 +86,7 @@ export function SignIn()
                     }
                     else
                     {
-                        localStorage.setItem("id", user.id);
+                        localStorage.setItem("id", user.ID);
                         navigate('/Home');
                     }
                 })
@@ -109,6 +107,8 @@ export function SignIn()
                 })
                 .catch(error => console.log(error));
         }
+
+        
     }
 
     return (

@@ -59,6 +59,8 @@
       background-color: #4E7EF8;
       border: none;
       border-radius: 10px;
+      position: relative;
+      left: 18px;
 }
 
 /* @media only screen and (max-width:1400px) {

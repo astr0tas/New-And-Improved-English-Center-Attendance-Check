@@ -1,12 +1,15 @@
 import './General.css';
 
 export default function Noti(props){
-    var changeNoti = "Student info successfully changed"
-        , addNoti = "Student successfully added", noti = ""
-        , missingData = "Missing data";
+    var changeNoti = props.role + " info successfully changed"
+        , addNoti = props.role + " successfully added", noti = ""
+        , missingData = "Missing data"
+        , wrongValue = "Wrong value";
+
     if (props.option === 'change') noti = changeNoti;
     if (props.option === 'add') noti = addNoti;
     if (props.option === 'missing data') noti = missingData;
+    if (props.option.type === 'wrong value') noti = wrongValue + " at " + props.option.value;
 
     return(
         <div className = "noti-container">

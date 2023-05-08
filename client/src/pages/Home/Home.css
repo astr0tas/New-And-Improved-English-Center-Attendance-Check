@@ -28,13 +28,32 @@
     bottom: -15px;
 }
 
-#stats p{
-    margin-top: 10px;
+#stats{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.p-container{
     position: relative;
-    right: 70%;
-    text-align: right;
+    display: flex;
+    flex-direction: row;
 
     font-weight: 600;
+
+}
+.p-container p{
+    width: 450px;
+}
+
+#field{
+    text-align: right;
+    width: 550px;
+}
+
+#value{
+    text-align: left;
 }
 
 #lineChart{
@@ -50,7 +69,7 @@
     height: 40px;
 
     position: relative;
-    top : 2%;
+    top: -8%;
     left: -35%;
 }
 

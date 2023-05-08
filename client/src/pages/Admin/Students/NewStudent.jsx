@@ -2,16 +2,17 @@ import '../../General/General.css';
 import Noti from '../../General/Noti.jsx';
 import image from './img.png';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 var id = "";
-axios.get("http://localhost:3030/admin/newID")
-      .then(res =>
-      {
-            id = res.data["newID()"];
-      })
-      .catch(error => console.log(error));
+axios.get("http://localhost:3030/admin/newID/student")
+.then(res =>
+{
+      id = res.data["newID('student')"];
+})
+.catch(error => console.log(error));
+
 
 export default function NewStudent(props)
 {
@@ -34,6 +35,7 @@ export default function NewStudent(props)
 
 
       const [name, setName] = useState("");
+      const [ssn, setSSN] = useState("");
       const [phone, setPhone] = useState("");
       const [email, setEmail] = useState("");
       const [birthday, setBirthday] = useState("");
@@ -42,7 +44,8 @@ export default function NewStudent(props)
 
       function handleConfirm()
       {
-            if (name === ""
+            if (  name === ""
+                  || ssn === ""
                   || phone === ""
                   || email === ""
                   || birthday === ""
@@ -56,8 +59,27 @@ export default function NewStudent(props)
                   return;
             }
 
+            if (/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?0-9]+/.test(name)){
+                  setCurr({type: "wrong value", value: "name"});
+                  setShow(true);
+                  return;
+            }
+
+            if (!(/^[0-9]+$/.test(ssn))){
+                  setCurr({type: "wrong value", value: "ssn"});
+                  setShow(true);
+                  return;
+            }
+
+            if (!(/^[0-9]+$/.test(phone))){
+                  setCurr({type: "wrong value", value: "phone"});
+                  setShow(true);
+                  return;
+            }
+
             axios.post("http://localhost:3030/admin/new/student", {
                   name: name,
+                  ssn: ssn,
                   phone: phone,
                   email: email,
                   birthday: birthday,
@@ -65,10 +87,28 @@ export default function NewStudent(props)
                   address: address,
                   classes: studentClasses
             })
-                  .then()
-                  .catch(
-                        error => console.log(error)
-                  )
+            .then(
+                  () =>{
+                        setName("");
+                        setSSN("");
+                        setPhone("");
+                        setEmail("");
+                        setBirthday("");
+                        setBirthplace("");
+                        setAddress("");
+                        setClasses("");
+
+                        axios.get("http://localhost:3030/admin/newID/student")
+                        .then(res =>
+                        {
+                              id = res.data["newID('student')"];
+                        })
+                        .catch(error => console.log(error));
+                  }
+            )
+            .catch(
+                  error => console.log(error)
+            )
 
             setCurr("add");
             setShow(true);
@@ -97,26 +137,26 @@ export default function NewStudent(props)
                         <div class="info-container">
                               <div class="input-group">
                                     <span class="input-group-text" id="basic-addon1" >Name</span>
-                                    <input id='name' type="text" class="form-control" aria-describedby="basic-addon1" maxlength="100" value={ name } onChange={ (event) => setName(event.target.value) } />
+                                    <input id='name' type="text" pattern = "[a-zA-ZÀ-ỹ ]+" class="form-control" aria-describedby="basic-addon1" maxlength="100" value={ name } onChange={ (event) => setName(event.target.value) } />
                               </div>
                         </div>
 
                         <div class="info-container" background='none'>
                               <div class="input-group">
-                                    <span class="input-group-text" id="basic-addon1" >ID</span>
-                                    <p style={ { position: 'absolute', left: '9.3%', height: '60%', top: '24%', width: '150px', alignItems: 'center' } }>{ id }</p>
+                                    <span class="input-group-text" id="basic-addon1" >SSN</span>
+                                    <input id='address' type="text" class="form-control" aria-describedby="basic-addon1" maxlength="12" value={ ssn } onChange={ (event) => setSSN(event.target.value) } />
                               </div>
                         </div>
 
                         <div className='info-container'>
                               <div class="input-group" style={ { width: '40%' } }>
                                     <span class="input-group-text" id="basic-addon1" >Phone</span>
-                                    <input id='phone' type="text" class="form-control" aria-describedby="basic-addon1" maxlength="10" value={ phone } onChange={ (event) => setPhone(event.target.value) } />
+                                    <input id='phone' type="text" pattern="[0-9]+" class="form-control" aria-describedby="basic-addon1" maxlength = "10" value={ phone } onChange={ (event) => setPhone(event.target.value) } />
                               </div>
 
                               <div class="input-group" style={ { width: '55%' } }>
                                     <span class="input-group-text" id="basic-addon1" >Email</span>
-                                    <input id='email' type="text" class="form-control" aria-describedby="basic-addon1" maxlength="50" value={ email } onChange={ (event) => setEmail(event.target.value) } />
+                                    <input id='email' type="email" class="form-control" aria-describedby="basic-addon1" maxlength="50" value={ email } onChange={ (event) => setEmail(event.target.value) } />
                               </div>
                         </div>
 
@@ -150,7 +190,7 @@ export default function NewStudent(props)
                               <button className="btn btn-primary add-btn" onClick={ handleAdd }>Add</button>
                         </div>
 
-                        <div className='button-container' >
+                        <div className='button-container' style = {{width: "50%", left: "25%"}}>
                               <button class="btn btn-primary cus-btn" type="button" style={ { fontSize: 20 } } onClick={ handleBack }>BACK</button>
                               <button class="btn btn-primary cus-btn" type="button" style={ { fontSize: 20 } } onClick={ handleConfirm }>CONFIRM</button>
                         </div>
@@ -163,13 +203,12 @@ export default function NewStudent(props)
 
 var classList = [];
 
-axios.get('http://localhost:3030/admin/classes')
-      .then((res) =>
-      {
-            classList = res.data;
-      }
-      )
-      .catch(error => console.log(error));
+axios.get('http://localhost:3030/admin/classesForStudent')
+.then((res) =>{
+    classList = res.data;
+}
+)
+.catch(error => console.log(error));
 
 var classAdd = "";
 function ClassList(props)
@@ -212,7 +251,7 @@ function ClassList(props)
                         </svg>
                   </div>
 
-                  <div className='entity-list-container'>
+                  <div className='entity-list-container' style = {{}}>
                         {
                               classList.map((_class) => (
                                     <ClassDetails class={ _class } add={ () => handleAdd(_class.Name) } remove={ handleDelete } />
@@ -220,7 +259,7 @@ function ClassList(props)
                         }
                   </div>
 
-                  <div className='button-container' >
+                  <div className='button-container' style = {{width: "50%", left: "25%"}}>
                         <button class="btn btn-primary cus-btn" type="button" style={ { fontSize: 20 } } onClick={ () => props.offClassList() }>BACK</button>
                         <button class="btn btn-primary cus-btn" type="button" style={ { fontSize: 20 } } onClick={ handleConfirm }>CONFIRM</button>
                   </div>
@@ -248,8 +287,7 @@ function ClassDetails(props)
       return (
             <div className='entity-container'>
                   <p>{ lclass.Name }</p>
-                  <p>{ lclass.Current_stu }</p>
-                  <p>{ lclass.Max_number_of_students }</p>
+                  <p>{ lclass.Current_number_of_student }/{ lclass.Max_number_of_students }</p>
                   <button class="btn btn-primary" style={ { marginRight: '100px' } }>Details</button>
                   <button class={ "btn btn-primary" + (isActive ? " active" : "") } onClick={ handleActive }>Add</button>
             </div>

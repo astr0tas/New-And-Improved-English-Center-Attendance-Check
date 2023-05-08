@@ -14,7 +14,7 @@ import
     replaceTeacher, replaceSupervisor
 } from "./query.js";
 
-import { getUser, updateInfo } from "./query.js";
+import { getUser, updateInfo, getNewID, getRooms, getPeriod, pieChartDaily, pieChartWeekly, pieChartMonthly, lineChartDaily, lineChartWeekly, lineChartMonthly, statsClass, late10Student, absent5Student} from "./query.js";
 
 const adminRoutes = express.Router();
 
@@ -25,6 +25,43 @@ adminRoutes.get('/students', async (req, res) =>
     res.json(students);
 });
 
+adminRoutes.get('/pieChart', async (req, res) => {
+    const daily =  await pieChartDaily();
+    const weekly = await pieChartWeekly();
+    const monthly = await pieChartMonthly();
+    res.json({
+        daily: daily,
+        weekly: weekly,
+        monthly: monthly
+    });
+})
+
+adminRoutes.get('/barChart', async (req, res) => {
+    const daily =  await lineChartDaily();
+    const weekly = await lineChartWeekly();
+    const monthly = await lineChartMonthly();
+    res.json({
+        daily: daily,
+        weekly: weekly,
+        monthly: monthly
+    });
+})
+
+
+adminRoutes.get('/stats', async (req, res) => {
+    const worstClass = await statsClass(0), lateClass = await statsClass(1), bestClass = await statsClass(2);
+    const absentStudent = await absent5Student(), lateStudent = await late10Student();
+
+    res.json({
+        bestClass: bestClass.map(obj => obj.Class_name).join(', '),
+        worstClass: worstClass.map(obj => obj.Class_name).join(', '),
+        lateClass: lateClass.map(obj => obj.Class_name).join(', '),
+        absentStudent: absentStudent.map(obj => obj.Student_ID).join(', '),
+        lateStudent: lateStudent.map(obj => obj.Student_ID).join(', ')
+    }
+    );
+})
+
 adminRoutes.get('/user/:account', async (req, res) =>
 {
     const account = req.params.account
@@ -32,10 +69,10 @@ adminRoutes.get('/user/:account', async (req, res) =>
     res.json(user);
 });
 
-adminRoutes.get('/classes', async (req, res) =>
+adminRoutes.get('/newID/:id', async (req, res) =>
 {
-    const classes = await getClasses();
-    res.json(classes);
+    const [id] = await getNewID(req.params.id);
+    res.json(id);
 });
 
 adminRoutes.get('/newID', async (req, res) =>
@@ -82,6 +119,13 @@ adminRoutes.post('/new/student', async (req, res) =>
     await newStudent(data.name, data.phone, data.birthday, data.birthplace, data.email, data.address, data.classes);
     res.send("add new student successfully");
 })
+adminRoutes.post('/user/:account', async (req, res) =>
+{
+    let data = req.body;
+    await updateInfo(data.id, data.address, data.birthday, data.birthplace, data.email, data.phone);
+    res.send("update user information successfully");
+})
+
 
 // app.post('/', (req, res) => {
 //     let data = req.body;
