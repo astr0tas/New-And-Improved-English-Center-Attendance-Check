@@ -102,7 +102,7 @@ export default function ChangeStaff(props)
                         <div class="info-container">
                               <div class="input-group" style={ { width: '40%' } }>
                                     <span class="input-group-text" id="basic-addon1" >Birthday</span>
-                                    <input id='birthday' type="text" class="form-control" aria-describedby="basic-addon1" style={ { display: 'flex', alignItems: 'center' } } value={ birthday } onChange={ (event) => setBirthday(event.target.value) }  placeholder={ entity.birthday } />
+                                    <input id='birthday' type="date" class="form-control" aria-describedby="basic-addon1" style={ { display: 'flex', alignItems: 'center' } } value={ birthday } onChange={ (event) => setBirthday(event.target.value) }  placeholder={ entity.birthday } />
                               </div>
 
                               <div class="input-group" style={ { width: '55%' } }>
