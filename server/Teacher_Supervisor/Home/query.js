@@ -34,7 +34,7 @@ export function getTodaySession(id, callback)
 
 export function getMissed(callback)
 {
-      con.query(`select SESSION.Session_number,SESSION.Class_name,SESSION.Session_date from SESSION where SESSION.Session_date<curdate() and (SESSION.Session_number,SESSION.Class_name) not in 
+      con.query(`select SESSION.Session_number,SESSION.Class_name,SESSION.Session_date from SESSION where SESSION.Session_date<=curdate() and (SESSION.Session_number,SESSION.Class_name) not in 
 (select SESSION.Session_number,SESSION.Class_name from SESSION 
 join STUDENT_ATTENDANCE on STUDENT_ATTENDANCE.Session_number=SESSION.Session_number and STUDENT_ATTENDANCE.Class_name=SESSION.Class_name) order by SESSION.Session_date desc`, (err, res) =>
       {
