@@ -39,7 +39,10 @@ const ListStudent = (props) =>
                   <td className='col-3'>{ props.name }</td>
                   <td className='col-2'>{ props.phone }</td>
                   <td className='col-2'>{ props.email }</td>
-                  <td className='col-2'><button className={ `${ styles.action }` }><a href="#">Detail</a></button><button className={ `${ styles.delete } ms-3` } onClick={ deleteStudent }>Delete</button></td>
+                  <td className='col-2'>
+                        {/* <button className={ `${ styles.action }` }><a href="#">Detail</a></button> */ }
+                        <button className={ `${ styles.delete } ms-3` } onClick={ deleteStudent }>Delete</button>
+                  </td>
             </tr>
       );
 }
