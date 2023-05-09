@@ -7,7 +7,7 @@ import { AiOutlineClockCircle } from 'react-icons/ai';
 import { detailFormat } from "../../tools/date_formatting";
 import $ from 'jquery';
 import { isCurrentTimeInRange, isInWeekPeriod } from "../../tools/time_checking";
-import ShowInfo from '../Admin/Students/ShowInfo.jsx'; 
+import ShowInfo from '../Admin/Students/ShowInfo.jsx';
 
 const students = [];
 const StudentList = (props) =>
@@ -71,7 +71,7 @@ const StudentList = (props) =>
             <tr>
                   <th scope="row" className='col-1'>{ props.number }</th>
                   <td className='col-3'>{ props.name }</td>
-                  {/* <td className='col-1'><button className={ `${ styles.detail }` }><a href="#">Detail</a></button></td> */}
+                  {/* <td className='col-1'><button className={ `${ styles.detail }` }><a href="#">Detail</a></button></td> */ }
                   <td className='col-1'><input value="2" className={ `attendance_check_${ props.id } ${ styles.checkbox }` } onChange={ handleCheck } type="checkbox" style={ { width: "30px", height: "30px" } }></input></td>
                   <td className='col-1'><input value="1" className={ `attendance_check_${ props.id } ${ styles.checkbox }` } onChange={ handleCheck } type="checkbox" style={ { width: "30px", height: "30px", marginLeft: "20px" } }></input></td>
                   <td className='col-1'><input value="0" className={ `attendance_check_${ props.id } ${ styles.checkbox }` } onChange={ handleCheck } type="checkbox" style={ { width: "30px", height: "30px", marginLeft: "20px" } }></input></td>
@@ -223,12 +223,12 @@ const Teacher = (props) =>
                               <div className="h-100 d-flex flex-column justify-content-center align-items-center" style={ { width: '33%' } }>
                                     <h3 className="mb-3">Teacher: { teacher.name }</h3>
                                     <img alt="avatar" src="https://cdn3.iconfinder.com/data/icons/avatar-91/130/avatar__girl__teacher__female__women-512.png" style={ { height: '70%', width: '70%' } }></img>
-                                    {/* <button className={ `mt-3 ${ styles.detail }` }>Detail</button> */}
+                                    {/* <button className={ `mt-3 ${ styles.detail }` }>Detail</button> */ }
                               </div >
-                              <div className="h-100 d-flex flex-column justify-content-center align-items-center" style={ { width: '33%'} }>
+                              <div className="h-100 d-flex flex-column justify-content-center align-items-center" style={ { width: '33%' } }>
                                     <h3 className="mb-3">Supervisor: { supervisor.name }</h3>
                                     <img alt="avatar" src="https://www.shareicon.net/data/512x512/2016/07/26/801997_user_512x512.png" style={ { height: '70%', width: '60%' } }></img>
-                                    {/* <button className={ `mt-3 ${ styles.detail }` }>Detail</button> */}
+                                    {/* <button className={ `mt-3 ${ styles.detail }` }>Detail</button> */ }
                               </div>
                         </div>
                         <div className={ `w-100` } style={ { height: '50%' } } >
@@ -237,7 +237,7 @@ const Teacher = (props) =>
                                           <tr>
                                                 <th scope="col" className='col-1'>#</th>
                                                 <th scope="col" className='col-3'>Name</th>
-                                                {/* <th scope="col" className='col-1'></th> */}
+                                                {/* <th scope="col" className='col-1'></th> */ }
                                                 <th scope="col" className='col-1'>On class</th>
                                                 <th scope="col" className='col-1'>Late</th>
                                                 <th scope="col" className='col-1'>Absent</th>
@@ -252,16 +252,16 @@ const Teacher = (props) =>
                                     </table>
                               </div>
                         </div>
-                        <div className = 'button-container' 
-                              style = {{
+                        <div className='button-container'
+                              style={ {
                                     height: '5%',
                                     width: '40%',
                                     top: '87%',
                                     left: '30%'
-                              }}
+                              } }
                         >
-                              <button className= "btn btn-primary cus-btn" onClick={ () => { window.location.href = "/MyClasses/" + props.className; } }>BACK</button>
-                              <button onClick={ handleSubmit } className= "btn btn-primary cus-btn" id="checkAttendanceTeacher">CONFIRM</button>
+                              <button className="btn btn-primary cus-btn" onClick={ () => { window.location.href = "/MyClasses/" + props.className; } }>BACK</button>
+                              <button onClick={ handleSubmit } className="btn btn-primary cus-btn" id="checkAttendanceTeacher">CONFIRM</button>
                         </div>
                   </div>
             </>
@@ -489,7 +489,7 @@ const Supervisor = (props) =>
                               <div className="h-100 d-flex flex-column justify-content-center align-items-center" style={ { width: '27.5%' } }>
                                     <h3 className="mb-3">Teacher: { teacher.name }</h3>
                                     <img alt="avatar" src="https://cdn3.iconfinder.com/data/icons/avatar-91/130/avatar__girl__teacher__female__women-512.png" style={ { height: '70%', width: '70%' } }></img>
-                                    {/* <button className={ `mt-3 ${ styles.detail }` }>Detail</button> */}
+                                    {/* <button className={ `mt-3 ${ styles.detail }` }>Detail</button> */ }
                               </div >
                               <div className="h-100 d-flex flex-column justify-content-center align-items-center" style={ { width: '20%' } }>
                                     <div className="d-flex justify-content-around align-items-center w-100">
@@ -516,7 +516,7 @@ const Supervisor = (props) =>
                               <div className="h-100 d-flex flex-column justify-content-center align-items-center" style={ { width: '27.5%' } }>
                                     <h3 className="mb-3">Supervisor: { supervisor.name }</h3>
                                     <img alt="avatar" src="https://www.shareicon.net/data/512x512/2016/07/26/801997_user_512x512.png" style={ { height: '70%', width: '70%' } }></img>
-                                    {/* <button className={ `mt-3 ${ styles.detail }` }>Detail</button> */}
+                                    {/* <button className={ `mt-3 ${ styles.detail }` }>Detail</button> */ }
                               </div>
                         </div>
                         <div className={ `w-100` } style={ { height: '50%' } } >
@@ -544,18 +544,18 @@ const Supervisor = (props) =>
                                     <textarea className={ `mx-3 note_for_class` } style={ { width: '400px', minHeight: '50px', resize: 'none' } }></textarea>
                               </div>
                         </div>
-                        <div className='button-container' 
-                              style = {{
+                        <div className='button-container'
+                              style={ {
                                     position: 'absolute',
                                     height: '5%',
                                     width: '40%',
                                     top: '88%',
                                     left: '30%',
                                     fontSize: '22px'
-                              }}
+                              } }
                         >
-                              <button className= "btn btn-primary cus-btn" onClick={ () => { window.location.href = "/MyClasses/" + props.className; } }>BACK</button>
-                              <button onClick={ handleSubmit } className= "btn btn-primary cus-btn" id="supervisorAttendanceCheck">CONFIRM</button>
+                              <button className="btn btn-primary cus-btn" onClick={ () => { window.location.href = "/MyClasses/" + props.className; } }>BACK</button>
+                              <button onClick={ handleSubmit } className="btn btn-primary cus-btn" id="supervisorAttendanceCheck">CONFIRM</button>
                         </div>
                   </div>
             </>
