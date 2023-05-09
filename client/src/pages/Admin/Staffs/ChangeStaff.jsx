@@ -68,7 +68,7 @@ export default function ChangeStaff(props)
                               showListClass && <ClassList entity={ entity } offClassList={ () => setShowListClass(false) } showNoti={ () => setShow(true) } changeClass={ (value) => setClasses(value) } />
                         }
                         {
-                              showNoti && <Noti offNoti={ () => setShow(false) } option="change" role = {entity.ID.includes("TEACHER")? "Teacher" : "Supervisor"}/>
+                              showNoti && <Noti offNoti={ () => setShow(false) } option={curr_option} role = {entity.ID.includes("TEACHER")? "Teacher" : "Supervisor"}/>
                         }
 
                         <div className='avatar-container'>

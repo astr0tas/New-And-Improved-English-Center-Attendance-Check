@@ -1,5 +1,7 @@
 import '../General/General.css';
 import './User.css';
+import Noti from '../General/Noti.jsx';
+
 import userImage from './image/image.png';
 
 import {useState, useEffect } from 'react';
@@ -15,7 +17,6 @@ export default function User()
         .then(res =>
         {
             setUser(res.data);
-            console.log(res.data);
         })
         .catch(error => console.log(error));
     }, [username]);
@@ -31,10 +32,20 @@ export default function User()
     const [email, setEmail] = useState("");
     const [phone, setPhone] = useState("");
 
+    const [showNoti, setShow] = useState(false);
+    const [curr_option, setCurr] = useState("");
+
     function handelYes()
     {
-        axios.post("http://localhost:3030/" + localStorage.getItem("userType").toLowerCase() + "/user/" + user.ID, {
-            ssn: user.SSN,
+        if (phone !== "" && !(/^[0-9]+$/.test(phone))){
+            setCurr({type: "wrong value", value: "phone"});
+            setShow(true);
+            return;
+        }
+
+        axios.post("http://localhost:3030/admin/updateInfo/" + user.ID, {
+            id: user.ID,
+            name: "",
             address: address,
             birthday: birthday,
             birthplace: birthplace,
@@ -55,6 +66,7 @@ export default function User()
                     if (birthplace !== "") user.birthplace = birthplace;
                     if (email !== "") user.email = email;
                     if (phone !== "") user.phone = phone;
+                    
 
                     // var position = user.position
                     // axios.get('http://localhost:3030/' + position + '/user/' + user.ID)
@@ -83,7 +95,12 @@ export default function User()
             <div className='name-container'>
                 { user?.name }
             </div>
-            { isSuccess && <Successfull notEdit={ () => setEdit(false) } notSuccess={ () => setSuccess(false) } /> }
+            { 
+                isSuccess && <Successfull notEdit={ () => setEdit(false) } notSuccess={ () => setSuccess(false) } /> 
+            }
+            {
+                showNoti && <Noti offNoti={ () => setShow(false) } option={curr_option} role = ""/>
+            }
             <div className='details-container'>
                 <h2 style={ { position: 'absolute', top: '2%', left: '2%' } }>User details</h2>
                 {
@@ -143,9 +160,16 @@ function Detail(props)
                 props.edit ?
                     (
                         props.field !== "BirthDate" ? (
-                            <div class="input-group mb-3" style={ { position: 'absolute', left: '40%', width: '60%', fontFamily: 'Inter' } }>
-                                <input placeholder={ props.value } type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" onChange={ (event) => props.setValue(event.target.value) } />
-                            </div>
+                            props.field !== "Phone" ? (
+                                <div class="input-group mb-3" style={ { position: 'absolute', left: '40%', width: '60%', fontFamily: 'Inter' } }>
+                                    <input placeholder={ props.value } type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" onChange={ (event) => props.setValue(event.target.value) } />
+                                </div>
+                            )
+                                :(
+                                    <div class="input-group mb-3" style={ { position: 'absolute', left: '40%', width: '60%', fontFamily: 'Inter' } }>
+                                        <input placeholder={ props.value } type="text" pattern="[0-9]+" maxlength = "10" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" onChange={ (event) => props.setValue(event.target.value) } />
+                                    </div>
+                                )
                         )
                             :
                             (
