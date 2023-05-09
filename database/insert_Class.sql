@@ -1,4 +1,4 @@
-use english_center
+use english_center;
 
 call createClass('TOEIC01','2023-04-01','2023-07-10','ROOM01',36);
 call GenSession('TOEIC01','2023-04-01','2023-07-10','Monday','1','ROOM01',0,3);
@@ -87,7 +87,7 @@ insert into TEACH values('TEACHER01','TOEIC02');
 insert into TEACH values('TEACHER02','TOEIC02');
 insert into TEACH values('TEACHER04','TOEIC02');
 insert into TEACH values('TEACHER05','TOEIC02');
-insert into TEACH values('TEACHER04','TOEIC02');
+-- insert into TEACH values('TEACHER04','TOEIC02');
 insert into TEACH values('TEACHER07','TOEIC02');
 call AssignSessionForTeacher(1,'TOEIC02','TEACHER01');
 insert into SUPERVISOR_RESPONSIBLE values(1,'TOEIC02','SUPERVISOR04',null);
@@ -246,7 +246,7 @@ call GenSession('TOEIC04','2023-04-01','2023-07-10','Saturday','4','ROOM04',2,3)
 insert into TEACH values('TEACHER03','TOEIC04');
 insert into TEACH values('TEACHER07','TOEIC04');
 insert into TEACH values('TEACHER04','TOEIC04');
-insert into TEACH values('TEACHER07','TOEIC04');
+-- insert into TEACH values('TEACHER07','TOEIC04');
 call AssignSessionForTeacher(1,'TOEIC04','TEACHER03');
 insert into SUPERVISOR_RESPONSIBLE values(1,'TOEIC04','SUPERVISOR03',null);
 call AssignSessionForTeacher(2,'TOEIC04','TEACHER07');
