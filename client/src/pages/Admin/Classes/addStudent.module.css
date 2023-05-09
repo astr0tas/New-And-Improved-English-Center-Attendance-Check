@@ -1,7 +1,9 @@
 .page {
-      background-color: rgba(0, 136, 255, 0.5);
-      margin-left: 250px;
-      width: calc(100% - 250px);
+      background-color: #9CBFF5;
+      position: absolute;
+      right: 0;
+      width: 82%;
+      height: 100%;
 }
 
 .board {

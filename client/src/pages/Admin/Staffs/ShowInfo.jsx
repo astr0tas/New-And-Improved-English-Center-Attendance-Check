@@ -16,26 +16,29 @@ export default function ShowInfo(props)
       const [classDetail, setClassDetail] = useState(false);
       var entity = props.entity;
 
-      useEffect(() =>{
+      useEffect(() =>
+      {
             axios.get('http://localhost:3030/TS/myClasses', {
                   params: {
                         offset: 0,
                         id: entity.ID
                   }
             })
-            .then(
-                  res => {
-                        res.data.map((item) =>{
+                  .then(
+                        res =>
+                        {
+                              res.data.map((item) =>
+                              {
                                     item.Start_date = new Date(item.Start_date).toLocaleDateString('en-GB')
                                     item.End_date = new Date(item.End_date).toLocaleDateString('en-GB')
                               }
-                        )
+                              )
 
-                        setClassOfStaff(res.data);
-                  }
+                              setClassOfStaff(res.data);
+                        }
 
-            )
-            .catch(error => console.log(error))
+                  )
+                  .catch(error => console.log(error))
       }, [])
 
       return (
@@ -69,15 +72,15 @@ export default function ShowInfo(props)
                                     style={ { position: 'absolute', top: '40%', height: '45%' } }
                               >
                                     {
-                                          classOfStaff.map((sClass) => (<ClassOfStaff sClass={ sClass } curClass = {() => setCurr(sClass.Name)} onDetail = {()=>setClassDetail(true)}/>))
+                                          classOfStaff.map((sClass) => (<ClassOfStaff sClass={ sClass } curClass={ () => setCurr(sClass.Name) } onDetail={ () => setClassDetail(true) } />))
                                     }
                               </div>
 
                               <div className='button-container'>
-                              {/* <div className='button-container' style = {{width: "70%", left: "15%"}}> */}
+                                    {/* <div className='button-container' style = {{width: "70%", left: "15%"}}> */ }
                                     <button class="cus-btn btn btn-primary cus-btn" type="button" style={ { fontSize: 20 } } onClick={ () => props.offShow() }>BACK</button>
                                     <button class="cus-btn btn btn-primary cus-btn" type="button" style={ { fontSize: 20 } } onClick={ () => setChangeStaff(true) }>CHANGE INFO</button>
-                                    {/* <button class="cus-btn btn btn-primary cus-btn" type="button" style={ { fontSize: 20 } } onClick={() => setNewClass(true)}>INSERT TO NEW CLASS</button> */}
+                                    {/* <button class="cus-btn btn btn-primary cus-btn" type="button" style={ { fontSize: 20 } } onClick={() => setNewClass(true)}>INSERT TO NEW CLASS</button> */ }
                               </div>
                         </div>
                         {
@@ -85,11 +88,11 @@ export default function ShowInfo(props)
                         }
 
                         {
-                              newClass && <NewClassForStaff entity={ entity } offNewClass ={ () => setNewClass(false) } />
+                              newClass && <NewClassForStaff entity={ entity } offNewClass={ () => setNewClass(false) } />
                         }
                   </div>
                   {
-                        classDetail && <ClassDetail offShow = {()=>setClassDetail(false)} className={curr_class}/>
+                        classDetail && <ClassDetail offShow={ () => setClassDetail(false) } className={ curr_class } />
                   }
             </>
       )
@@ -97,18 +100,19 @@ export default function ShowInfo(props)
 
 function ClassOfStaff(props)
 {
-      function handleClick(className){
+      function handleClick(className)
+      {
             props.curClass(className);
             props.onDetail();
       }
       return (
             <div className='entity-container' style={ { height: '25%' } }>
                   <p>{ props.sClass.Name }</p>
-                  <p>{ props.sClass.Current_number_of_student}/{props.sClass.Max_number_of_students}</p>
+                  <p>{ props.sClass.Current_number_of_student }/{ props.sClass.Max_number_of_students }</p>
                   <p>{ props.sClass.Start_date }</p>
                   <p>{ props.sClass.End_date }</p>
                   <p>{ props.sClass.Status === 1 ? "Active" : "Disactive" }</p>
-                  <button class="btn btn-primary" onClick = {() => handleClick(props.sClass.Name)}>Details</button>
+                  <button class="btn btn-primary" onClick={ () => { window.location.href = `/Classes/${ props.sClass.Name }` } }>Details</button>
             </div>
       )
 }

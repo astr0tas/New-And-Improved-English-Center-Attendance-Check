@@ -5,7 +5,7 @@ import axios from 'axios';
 import NewStudent from './NewStudent';
 import ShowInfo from './ShowInfo';
 
-import { useState} from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 
@@ -16,12 +16,15 @@ export default function Students()
     const [showInfo, setShowInfo] = useState(false);
     const [studentList, setStudentList] = useState([]);
 
-    axios.get(`http://localhost:3030/admin/Students`)
-        .then(res =>
-        {
-            setStudentList(res.data);
-        })
-        .catch(error => console.log(error));
+    useEffect(() =>
+    {
+        axios.get(`http://localhost:3030/admin/Students`)
+            .then(res =>
+            {
+                setStudentList(res.data);
+            })
+            .catch(error => console.log(error));
+    });
 
     const [curr_student, setCurr] = useState(studentList[0]);
     function handleShowInfo(student)
@@ -53,13 +56,13 @@ export default function Students()
                     </div>
 
                     <p
-                        style = {{
+                        style={ {
                             position: "absolute",
                             width: '50%',
                             top: '10%',
                             left: '25%',
                             fontSize: '45px'
-                        }}
+                        } }
                     >There is no student</p>
 
                     <div className='entity-list-container'>
@@ -81,7 +84,7 @@ export default function Students()
 
 
 
-                    <div className='button-container' style = {{width: "50%", left: "25%"}}>
+                    <div className='button-container' style={ { width: "50%", left: "25%" } }>
                         <Link to={ '/Home' } class="cus-btn btn btn-primary cus-btn" type="button" style={ { display: 'flex', fontSize: 20, alignItems: 'center', justifyContent: 'center' } }>
                             BACK
                         </Link>
@@ -106,7 +109,7 @@ function StudentDetails(props)
             <p>{ props.student.ID }</p>
             <p style={ { width: '400px' } }>{ props.student.name }</p>
             <p>{ props.student.email }</p>
-            <p style = {{marginLeft: '50px'}}>{ props.student.phone }</p>
+            <p style={ { marginLeft: '50px' } }>{ props.student.phone }</p>
             <button class="btn btn-primary" onClick={ () => props.onInfo(true) }>Details</button>
         </div>
     )

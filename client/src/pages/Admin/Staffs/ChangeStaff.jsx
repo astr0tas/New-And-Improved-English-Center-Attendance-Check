@@ -118,7 +118,7 @@ export default function ChangeStaff(props)
                               </div>
                         </div>
 
-                        <div class="info-container" style={ { background: '#BFBFBF' } }>
+                        {/* <div class="info-container" style={ { background: '#BFBFBF' } }>
                               <div class="input-group">
                                     <span class="input-group-text" id="basic-addon1" style={ { borderTopRightRadius: '0px', borderBottomRightRadius: '0px' } }>Class</span>
                               </div>
@@ -127,7 +127,7 @@ export default function ChangeStaff(props)
                               </div>
 
                               <button className="btn btn-primary add-btn" onClick={ () => setShowListClass(true) }>Change</button>
-                        </div>
+                        </div> */}
 
                         <div className='button-container' >
                               <button class="btn btn-primary cus-btn" type="button" style={ { fontSize: 20 } } onClick={ handleBack }>BACK</button>

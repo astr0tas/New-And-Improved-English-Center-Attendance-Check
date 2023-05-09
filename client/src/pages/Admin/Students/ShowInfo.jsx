@@ -56,11 +56,11 @@ export default function ShowInfo(props)
                                     style={ { position: 'absolute', top: '40%', height: '45%' } }
                               >
                                     {
-                                          classOfStudent.map((sClass) => (<ClassOfStudent sClass={ sClass } curClass = {() => setCurr(sClass.Name)} onDetail = {()=>setClassDetail(true)}/>))
+                                          classOfStudent.map((sClass) => (<ClassOfStudent sClass={ sClass } curClass={ () => setCurr(sClass.Name) } onDetail={ () => setClassDetail(true) } />))
                                     }
                               </div>
 
-                              <div className='button-container' style = {{width: "70%", left: "15%"}}>
+                              <div className='button-container' style={ { width: "70%", left: "15%" } }>
                                     <button class="cus-btn btn btn-primary cus-btn" type="button" style={ { fontSize: 20 } } onClick={ () => props.offShow() }>BACK</button>
                                     <button class="cus-btn btn btn-primary cus-btn" type="button" style={ { fontSize: 20 } } onClick={ () => setChangeStudent(true) }>CHANGE INFO</button>
                                     <button class="cus-btn btn btn-primary cus-btn" type="button" style={ { fontSize: 20 } } onClick={ () => setNewClass(true) }>INSERT TO NEW CLASS</button>
@@ -73,27 +73,28 @@ export default function ShowInfo(props)
                               newClass && <NewClassForStudent entity={ entity } offNewClass={ () => setNewClass(false) } />
                         }
                   </div>
-                  {
+                  {/* {
                         classDetail && <ClassDetail offShow = {()=>setClassDetail(false)} className={curr_class}/>
-                  }
+                  } */}
             </>
       )
 }
 
 function ClassOfStudent(props)
 {
-      function handleClick(className){
+      function handleClick(className)
+      {
             props.curClass(className);
             props.onDetail();
       }
       return (
             <div className='entity-container' style={ { height: '25%' } }>
                   <p>{ props.sClass.Name }</p>
-                  <p>{ props.sClass.Current_number_of_student}/{props.sClass.Max_number_of_students}</p>
+                  <p>{ props.sClass.Current_number_of_student }/{ props.sClass.Max_number_of_students }</p>
                   <p>{ props.sClass.Start_date }</p>
                   <p>{ props.sClass.End_date }</p>
                   <p>{ props.sClass.Status === 1 ? "Active" : "Disactive" }</p>
-                  <button class="btn btn-primary" onClick = {() => handleClick(props.sClass.Name)}>Details</button>
+                  <button class="btn btn-primary" onClick={ () => { window.location.href = `/Classes/${ props.sClass.Name }`; } }>Details</button>
             </div>
       )
 }

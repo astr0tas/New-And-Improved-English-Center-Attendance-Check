@@ -44,7 +44,7 @@ const StudentList = (props) =>
             <tr>
                   <th scope="row" className='col-1'>{ props.number }</th>
                   <td className='col-3'>{ props.name }</td>
-                  <td className='col-1'><button className={ `${ styles.detail }` }><a href="#">Detail</a></button></td>
+                  <td className='col-1'></td>
                   <td className='col-1'><input disabled value="2" className={ `attendance_check_${ props.id } ${ styles.checkbox }` } type="checkbox" style={ { width: "30px", height: "30px" } }></input></td>
                   <td className='col-1'><input disabled value="1" className={ `attendance_check_${ props.id } ${ styles.checkbox }` } type="checkbox" style={ { width: "30px", height: "30px", marginLeft: "20px" } }></input></td>
                   <td className='col-1'><input disabled value="0" className={ `attendance_check_${ props.id } ${ styles.checkbox }` } type="checkbox" style={ { width: "30px", height: "30px", marginLeft: "20px" } }></input></td>

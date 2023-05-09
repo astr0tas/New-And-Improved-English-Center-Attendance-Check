@@ -29,5 +29,5 @@ DELIMITER ;
 -- join TEACHER_RESPONSIBLE on TEACHER_RESPONSIBLE.Session_number=SESSION.Session_number and TEACHER_RESPONSIBLE.Class_name=SESSION.Class_name 
 -- where Session_date=CURDATE() and Teacher_ID='TEACHER07' order by TIMETABLE.Start_hour;
 
--- select * from session where session_date=curdate();
--- select * from teacher_responsible;
+--  select * from session where session_date=curdate();
+--  select * from teacher_responsible;
