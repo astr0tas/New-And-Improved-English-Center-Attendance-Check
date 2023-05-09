@@ -75,6 +75,11 @@ export function SignIn({setUser})
 
         if (localStorage.getItem('userType') === "Admin")
         {
+            if (username.includes("TEACHER") || username.includes("SUPERVISOR")){
+                setWrong(true);
+                return;
+            }
+
             axios.get('http://localhost:3030/admin/user/' + username)
                 .then(res =>
                 {
@@ -94,6 +99,11 @@ export function SignIn({setUser})
         }
         else
         {
+            if (username.includes("ADMIN")){
+                setWrong(true);
+                return;
+            }
+
             axios.post('http://localhost:3030/TS/login', { params: { account: username, password: password } })
                 .then(res =>
                 {
