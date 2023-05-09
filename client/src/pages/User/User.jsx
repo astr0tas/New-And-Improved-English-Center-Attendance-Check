@@ -87,7 +87,7 @@ export default function User()
     return (
         <div className='main-container'>
             <div className='ssn-container'>
-                { user?.SSN }
+                { user?.ID }
             </div>
             <div className='img-container'>
                 <img src={ userImage } alt="" />
@@ -206,11 +206,13 @@ function Successfull(props)
                 backgroundColor: '#D9D9D9',
                 display: 'flex',
                 alignItems: 'center',
-                borderRadius: '30px',
-                fontSize: '30px',
+                borderRadius: '35px',
+                border: '1px solid black',
+                fontSize: '35px',
                 paddingTop: '100px',
                 fontWeight: 'bold',
-                color: '#1CDC24'
+                color: '#1CDC24',
+                fontFamily: 'Nunito'
             } }
         >
             Successful update
@@ -218,8 +220,8 @@ function Successfull(props)
                 style={ {
                     position: 'absolute',
                     width: '30%',
-                    height: '25%',
-                    top: '67%',
+                    height: '22%',
+                    top: '69%',
                     fontSize: '25px',
                     marginTop: '5px'
                 } }

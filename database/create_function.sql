@@ -1,13 +1,22 @@
 SET GLOBAL log_bin_trust_function_creators = 1;
 
+DROP FUNCTION IF EXISTS newID;
 DELIMITER $$
-CREATE FUNCTION newID()
-RETURNS varchar(12)
-BEGIN
+CREATE FUNCTION newID(
+    role varchar(20)
+)
+RETURNS varchar(15)
+begin
 	DECLARE numStu DEC(10,0) DEFAULT 0;
-    SELECT COUNT(*) INTO numStu FROM student;
+    IF role = 'student' THEN 
+		SELECT COUNT(*) INTO numStu FROM student;
+	ELSEIF role = 'teacher' THEN
+		SELECT COUNT(*) INTO numStu FROM teacher;
+	ELSE
+		SELECT COUNT(*) INTO numStu FROM supervisor;
+	END IF;
     
-    RETURN CONCAT('STUDENT', CAST(numStu + 1 AS CHAR));
+    RETURN CONCAT(UPPER(role), CAST(numStu + 1 AS CHAR));
 END $$
 DELIMITER ;
 
