@@ -1,8 +1,7 @@
 import '../../General/General.css';
 import ChangeStudent from './ChangeStudent.jsx';
 import NewClassForStudent from './NewClassForStudent.jsx';
-import ClassDetail from '../Classes/ClassDetail.jsx';
-import { useState } from 'react';
+import { useState, useEffect} from 'react';
 import axios from 'axios';
 import image from './img.png';
 
@@ -16,7 +15,8 @@ export default function ShowInfo(props)
       const [classDetail, setClassDetail] = useState(false);
       var entity = props.entity;
       var url = "http://localhost:3030/admin/" + entity.ID + "/classes"
-      axios.get(url)
+      useEffect(() => {
+            axios.get(url)
             .then(
                   res =>
                   {
@@ -24,6 +24,8 @@ export default function ShowInfo(props)
                   }
             )
             .catch(error => console.log(error))
+      },[])
+      
 
       return (
             <>
@@ -56,7 +58,7 @@ export default function ShowInfo(props)
                                     style={ { position: 'absolute', top: '40%', height: '45%' } }
                               >
                                     {
-                                          classOfStudent.map((sClass) => (<ClassOfStudent sClass={ sClass } curClass={ () => setCurr(sClass.Name) } onDetail={ () => setClassDetail(true) } />))
+                                          classOfStudent.map((sClass) => (<ClassOfStudent ID = {entity.ID} sClass={ sClass } curClass={ () => setCurr(sClass.Name) } onDetail={ () => setClassDetail(true) } />))
                                     }
                               </div>
 
@@ -82,18 +84,52 @@ export default function ShowInfo(props)
 
 function ClassOfStudent(props)
 {
-      function handleClick(className)
-      {
-            props.curClass(className);
-            props.onDetail();
-      }
+      // function handleClick(className)
+      // {
+      //       props.curClass(className);
+      //       props.onDetail();
+      // }
+      const [value, setValue] = useState({absent: 0, late: 0, onClass: 0});
+
+      useEffect(()=>{
+            axios.get('http://localhost:3030/admin/student/stats/' + props.ID + '/' + props.sClass.Name)
+            .then(
+                  res =>{
+                        setValue({
+                              absent: res.data[0]["count"],
+                              late: res.data[1]["count"],
+                              onClass: res.data[2]["count"]
+                            });                            
+                  }
+            )
+            .catch(
+                  error => console.log(error)
+            )
+      },[])
+
       return (
             <div className='entity-container' style={ { height: '25%' } }>
                   <p>{ props.sClass.Name }</p>
                   <p>{ props.sClass.Current_number_of_student }/{ props.sClass.Max_number_of_students }</p>
                   <p>{ props.sClass.Start_date }</p>
                   <p>{ props.sClass.End_date }</p>
-                  <p>{ props.sClass.Status === 1 ? "Active" : "Disactive" }</p>
+                  <div
+                        style = {{
+                              position: 'absolute',
+                              top: "-10%",
+                              left: "68%",
+                              height: "85%",
+                              width: "10%",
+                              display: "flex",
+                              flexDirection: "column",
+                              alignItems: "left",
+                              zIndex: "100px"
+                        }}
+                  >
+                        <p style = {{fontSize: '16px', fontWeight: "700", color: 'red', width: '100%', textAlign: "left"}}>Absent: { value.absent}</p>
+                        <p style = {{fontSize: '16px', fontWeight: "700", width: '100%', textAlign: "left"}}>Late: { value.late }</p>
+                        <p style = {{fontSize: '16px', fontWeight: "700", width: '100%', textAlign: "left"}}>On Class: { value.onClass }</p>
+                  </div>
                   <button class="btn btn-primary" onClick={ () => { window.location.href = `/Classes/${ props.sClass.Name }`; } }>Details</button>
             </div>
       )

@@ -1,5 +1,5 @@
 import express from "express";
-import { newStudent, getStudents, getStudent, updateInfo} from "./query.js"
+import { newStudent, getStudents, getStudent, updateInfo, statsStudent} from "./query.js"
 
 const adminStudents = express.Router();
 
@@ -12,6 +12,12 @@ adminStudents.get('/students', async (req, res) =>
 adminStudents.get('/student/:id', async (req, res) =>
 {
     const student = await getStudent(req.params.id);
+    res.json(student);
+});
+
+adminStudents.get('/student/stats/:id/:classname', async (req, res) =>
+{
+    const student = await statsStudent(req.params.id, req.params.classname);
     res.json(student);
 });
 

@@ -1,6 +1,6 @@
 import '../../General/General.css';
 
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 import axios from 'axios';
 
 export default function NewClassForStudent(props){
@@ -12,13 +12,16 @@ export default function NewClassForStudent(props){
     };
 
     const [notClasses, setNotClasses] = useState([]);
-    axios.get("http://localhost:3030/admin/" + props.entity.ID + "/notclasses")
-    .then(
-        res => setNotClasses(res.data)
-    )
-    .catch(
-        error => console.log(error)
-    )
+    useEffect(() => {
+        axios.get("http://localhost:3030/admin/" + props.entity.ID + "/notclasses")
+        .then(
+            res => setNotClasses(res.data)
+        )
+        .catch(
+            error => console.log(error)
+        )
+    },[])
+    
 
     function handleBack(){
         props.offNewClass();    

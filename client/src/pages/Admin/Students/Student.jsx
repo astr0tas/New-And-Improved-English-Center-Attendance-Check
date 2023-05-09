@@ -110,7 +110,7 @@ function StudentDetails(props)
             <p style={ { width: '400px' } }>{ props.student.name }</p>
             <p>{ props.student.email }</p>
             <p style={ { marginLeft: '50px' } }>{ props.student.phone }</p>
-            <button class="btn btn-primary" onClick={ () => props.onInfo(true) }>Details</button>
+            <button class="btn btn-primary" onClick={ () => props.onInfo() }>Details</button>
         </div>
     )
 }

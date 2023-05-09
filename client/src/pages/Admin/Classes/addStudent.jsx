@@ -109,7 +109,7 @@ const AddStudent = () =>
                   </div>
                   <div className={ `d-flex flex-column align-items-center ${ styles.board }` }>
                         <h1 className='mt-4'>Add a new student to class</h1>
-                        <div className='flex-grow-1 w-100 d-flex flex-column align-items-center' style = {{width: '100%', left: '8%', position: "absolute"}}>
+                        <div className='flex-grow-1 w-100 d-flex flex-column align-items-center'>
                               <div className='row w-75 my-5'>
                                     <div className="col-2 d-flex align-items-center">
                                           <p style={ { fontSize: '1.5rem', marginBottom: '0' } }>Name:</p>

@@ -10,12 +10,15 @@ var classAdd = [];
 
 export default function NewStaff(props)
 {   
-    axios.get("http://localhost:3030/admin/newID/" + props.role)
-    .then(res =>
-    {
-        id = res.data["newID('" + props.role + "')"];
-    })
-    .catch(error => console.log(error));
+    useEffect(()=>{
+        axios.get("http://localhost:3030/admin/newID/" + props.role)
+        .then(res =>
+        {
+            id = res.data["newID('" + props.role + "')"];
+        })
+        .catch(error => console.log(error));
+    },[])
+    
     
     const [staffClasses, setClasses] = useState("");
     const [showListClass, setShowListClass] = useState(false);

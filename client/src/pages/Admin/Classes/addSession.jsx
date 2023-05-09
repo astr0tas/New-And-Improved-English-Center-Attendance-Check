@@ -181,7 +181,7 @@ const AddSession = () =>
             <div className={ `h-100 ${ styles.page } d-flex align-items-center justify-content-center` }>
                   <div className={ `d-flex flex-column align-items-center ${ styles.board }` }>
                         <h1 className="mt-3">Add a new session</h1>
-                        <div className="d-flex flex-column mt-5 justify-content-around h-75 w-100 align-items-center" style = {{width: '100%', left: '8%', position: "absolute"}}>
+                        <div className="d-flex flex-column mt-5 justify-content-around h-75 w-100 align-items-center" style = {{top: '7%', position: 'absolute',left: '8%'}}>
                               <div className='row w-75 my-3'>
                                     <div className="col-3 d-flex align-items-center">
                                           <p style={ { fontSize: '1.5rem', marginBottom: '0' } }>Session:</p>

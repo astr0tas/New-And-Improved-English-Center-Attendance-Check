@@ -321,3 +321,17 @@ BEGIN
     insert into CLASS values(start_date,end_date,className,1,seats,session,0);
 END $$
 DELIMITER ;
+
+DROP PROCEDURE IF EXISTS statsStudent;
+DELIMITER $$
+CREATE PROCEDURE statsStudent(
+	IN p_id varchar(15),
+    IN p_classname varchar(100)
+)
+BEGIN
+	select count(*) as count, st.Status
+	from student_attendance st join session se
+	where st.Student_ID = p_id and st.Class_name = p_classname and se.Class_name = st.Class_name and se.Session_number = st.Session_number and se.Session_date <= curdate()
+	group by st.Status;
+END $$
+DELIMITER ;

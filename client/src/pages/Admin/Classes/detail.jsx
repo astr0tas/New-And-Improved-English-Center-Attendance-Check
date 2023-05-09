@@ -39,7 +39,7 @@ const ListStudent = (props) =>
                   <td className='col-3'>{ props.name }</td>
                   <td className='col-2'>{ props.phone }</td>
                   <td className='col-2'>{ props.email }</td>
-                  <td className='col-2'><button className={ `${ styles.action }` }><a href="#">Detail</a></button><button className={ `${ styles.delete } ms-3` } onClick={ deleteStudent }>Delete</button></td>
+                  <td className='col-2'><button className={ `${ styles.delete } ms-3` } onClick={ deleteStudent }>Delete</button></td>
             </tr>
       );
 }
@@ -51,7 +51,7 @@ const ListSessionHeader = () =>
                   <th scope="col" className='col-1'>Sessions</th>
                   <th scope="col" className='col-3'>Time</th>
                   <th scope="col" className='col-2'>Room</th>
-                  <th scope="col" className='col-2'>Action</th>
+                  {/* <th scope="col" className='col-2'>Action</th> */}
             </tr>
       );
 }
@@ -65,7 +65,7 @@ const ListSession = (props) =>
                   <th scope="row" className='col-1'>Session { props.session }</th>
                   <td className='col-3'><AiOutlineClockCircle /> { date }: { props.start } - { props.end }</td>
                   <td className='col-2'>Room { props.room }</td>
-                  <td className='col-2'><button className={ `${ styles.action }` }><a href={ `./${ props.name }/${ props.session }` }>Detail</a></button></td>
+                  {/* <td className='col-2'><button className={ `${ styles.action }` }><a href={ `./${ props.name }/${ props.session }` }>Detail</a></button></td> */}
             </tr>
       );
 }
