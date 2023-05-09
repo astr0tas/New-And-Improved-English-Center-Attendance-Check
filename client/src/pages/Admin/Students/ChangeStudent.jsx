@@ -16,7 +16,7 @@ export default function ChangeStudent(props)
       const [name, setName] = useState("");
       const [phone, setPhone] = useState("");
       const [email, setEmail] = useState("");
-      const [birthday, setBirthday] = useState("");
+      const [birthday, setBirthday] = useState(null);
       const [birthplace, setBirthplace] = useState("");
       const [address, setAddress] = useState("");
 
@@ -34,7 +34,7 @@ export default function ChangeStudent(props)
                   return;
             }
 
-            axios.post("http://localhost:3030/admin/staff   /updateInfo/" + entity.ID, {
+            axios.post("http://localhost:3030/admin/student/updateInfo/" + entity.ID, {
                   id: entity.ID,
                   name: name,
                   phone: phone,

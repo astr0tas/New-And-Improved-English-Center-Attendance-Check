@@ -43,7 +43,7 @@ export default function User()
             return;
         }
 
-        axios.post("http://localhost:3030/admin/updateInfo/" + user.ID, {
+        axios.post("http://localhost:3030/admin/staff/updateInfo/" + user.ID, {
             id: user.ID,
             name: "",
             address: address,

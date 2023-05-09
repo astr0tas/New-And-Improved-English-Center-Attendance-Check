@@ -32,7 +32,7 @@ adminStaffs.post('/new/staff', async (req, res) =>
     res.send("add new " +  data.role +  " successfully");
 });
 
-adminStaffs.post('/updateInfo/:id', async (req, res) =>
+adminStaffs.post('/staff/updateInfo/:id', async (req, res) =>
 {
     let data = req.body;
     await updateInfo(data.id, data.name, data.address, data.birthday, data.birthplace, data.email, data.phone);

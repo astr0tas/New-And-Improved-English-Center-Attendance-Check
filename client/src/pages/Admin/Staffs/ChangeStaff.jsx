@@ -15,7 +15,7 @@ export default function ChangeStaff(props)
       const [name, setName] = useState("");
       const [phone, setPhone] = useState("");
       const [email, setEmail] = useState("");
-      const [birthday, setBirthday] = useState("");
+      const [birthday, setBirthday] = useState(null);
       const [birthplace, setBirthplace] = useState("");
       const [address, setAddress] = useState("");
 

@@ -321,8 +321,8 @@ function AdminHome()
 
 function StaffHome()
 {
-    const [attendanceList, setAttendance] = useState([1, 2]);
-    const [missignList, setMissing] = useState([1, 2]);
+    // const [attendanceList, setAttendance] = useState([1, 2]);
+    // const [missignList, setMissing] = useState([1, 2]);
 
     const Navigate = useNavigate();
 

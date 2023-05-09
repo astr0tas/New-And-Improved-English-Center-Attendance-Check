@@ -47,7 +47,7 @@ export async function updateInfo(id, name, address, birthday, birthplace, email,
     if (name !== "") pool.query(`UPDATE student SET name = ? WHERE ID = ?`, [name, id]);
     if (address !== "") pool.query(`UPDATE student SET address = ? WHERE ID = ?`, [address, id]);
     if (birthday !== "") pool.query(`UPDATE student SET birthday = ? WHERE ID = ?`, [birthday, id]);
-    if (birthplace !== "") pool.query(`UPDATE student SET birthplace = ? WHERE ID = ?`, [birthplace, id]);
+    if (birthplace !== null) pool.query(`UPDATE student SET birthplace = ? WHERE ID = ?`, [birthplace, id]);
     if (email !== "") pool.query(`UPDATE student SET email = ? WHERE ID = ?`, [email, id]);
     if (phone !== "") pool.query(`UPDATE student SET phone = ? WHERE ID = ?`, [phone, id]);
     return;
