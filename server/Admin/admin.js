@@ -52,11 +52,18 @@ adminRoutes.get('/stats', async (req, res) => {
     );
 })
 
-adminRoutes.get('/user/:account', async (req, res) =>
+adminRoutes.post('/user', async (req, res) =>
 {
-    const account = req.params.account
-    const user = await getUser(account);
-    res.json(user);
+    const username = req.body.username;
+    const password = req.body.password;
+    const user = await getUser(username);
+    
+    if (!user || password !== user["password"]){
+        res.json("False");
+        return;
+    }
+
+    res.json("True");
 });
 
 adminRoutes.get('/newID/:id', async (req, res) =>
@@ -71,12 +78,12 @@ adminRoutes.get('/newID', async (req, res) =>
     // res.json(id);
 });
 
-adminRoutes.post('/user/:account', async (req, res) =>
-{
-    let data = req.body;
-    await updateInfo(data.ssn, data.address, data.birthday, data.birthplace, data.email, data.phone);
-    res.send("update user information successfully");
-})
+// adminRoutes.post('/user/:account', async (req, res) =>
+// {
+//     let data = req.body;
+//     await updateInfo(data.ssn, data.address, data.birthday, data.birthplace, data.email, data.phone);
+//     res.send("update user information successfully");
+// })
 
 adminRoutes.post('/new/student', async (req, res) =>
 {

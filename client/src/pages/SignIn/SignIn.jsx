@@ -80,18 +80,19 @@ export function SignIn({setUser})
                 return;
             }
 
-            axios.get('http://localhost:3030/admin/user/' + username)
+            axios.post('http://localhost:3030/admin/user',{
+                username : username,
+                password : password
+            })
                 .then(res =>
                 {
-                    var user = res.data;
-                    if (!user || user.password !== password)
+                    if (res.data === "False")
                     {
                         setWrong(true);
-                        return;
                     }
                     else
                     {
-                        localStorage.setItem("id", user.ID);
+                        localStorage.setItem("id", username);
                         navigate('/Home');
                     }
                 })
