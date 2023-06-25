@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2023-06-25T15:39:21.945Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36" etag="qVD1km56OZcZ5QuIrLPM" version="21.3.8" type="github" pages="3">
+<mxfile host="app.diagrams.net" modified="2023-06-25T15:39:38.994Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36" etag="XVFVi2_v6YJy2GzPfkES" version="21.3.8" type="github" pages="3">
   <diagram name="Official" id="VOQePEP4rb1BS9EbYT5j">
     <mxGraphModel dx="3185" dy="2437" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
@@ -375,7 +375,7 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="ZhwHeU2DW-AlFwMiwrjJ-90" value="Need to check if the student belongs to the session&#39;s class in this table" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="ZhwHeU2DW-AlFwMiwrjJ-1" vertex="1">
-          <mxGeometry x="507.63" y="-460" width="122.61" height="45" as="geometry" />
+          <mxGeometry x="509.75" y="-462.5" width="122.61" height="45" as="geometry" />
         </mxCell>
         <mxCell id="ZhwHeU2DW-AlFwMiwrjJ-91" value="Need to check if `Date` is in the class&#39;s period time" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="ZhwHeU2DW-AlFwMiwrjJ-1" vertex="1">
           <mxGeometry x="-326.25" y="-155" width="120" height="40" as="geometry" />
