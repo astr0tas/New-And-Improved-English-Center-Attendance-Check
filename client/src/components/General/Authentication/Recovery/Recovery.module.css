@@ -1,0 +1,44 @@
+.background {
+      background-image: url("../../../../images/SignInFrame.jpg");
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: cover;
+      z-index: -5;
+      opacity: 0.5;
+      position: fixed;
+      height: 100%;
+      width: 100%;
+}
+
+.form {
+      border: 2px solid black;
+      border-radius: 20px;
+}
+
+.p {
+      font-size: 1rem;
+      color: red;
+}
+
+.newPassword {
+      display: none;
+}
+
+.checkUsername {
+      display: flex;
+}
+
+@media only screen and (max-width:330px) {
+      .p {
+            font-size: 0.8rem;
+            color: red;
+      }
+
+      .font {
+            font-size: 0.8rem;
+      }
+
+      .title {
+            font-size: 1.1rem;
+      }
+}

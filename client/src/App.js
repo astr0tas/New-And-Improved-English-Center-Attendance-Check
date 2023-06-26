@@ -1,25 +1,44 @@
-import logo from './logo.svg';
 import './App.css';
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { useState } from 'react';
+import Login from './components/General/Authentication/Login/Login';
+import Recovery from './components/General/Authentication/Recovery/Recovery';
 
-function App() {
+
+const NotFound = () =>
+{
+  document.title = "Page not found";
+  return (
+    <div className='w-100 h-100 d-flex flex-column'>
+      <p className='text-center' style={ { fontSize: '10rem' } }>404</p>
+      <h1 className='text-center' style={ { fontSize: '2rem' } }>Ooops, page not found</h1>
+      <p className='mb-0 text-center'>The page you are looking for does not exist on the server or an error has occurred.</p>
+      <p className='text-center'>Go back or choose a new direction!</p>
+    </div>
+  )
+}
+
+function App()
+{
+  const [isPaid, setIsPaid] = useState(false);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+      <BrowserRouter>
+        <Routes>
+          {/* Authentication */ }
+          <Route>
+            <Route path='/' element={ <Login /> } />
+            <Route path='/recovery' element={ <Recovery /> } />
+          </Route>
+          {/* Not found */ }
+          <Route path='*' element={ <NotFound /> } />
+        </Routes>
+      </BrowserRouter>
+    </div >
   );
 }
 
 export default App;
+
+
