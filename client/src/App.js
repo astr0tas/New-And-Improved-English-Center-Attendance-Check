@@ -1,6 +1,5 @@
 import './App.css';
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { useState } from 'react';
 import Login from './components/General/Authentication/Login/Login';
 import Recovery from './components/General/Authentication/Recovery/Recovery';
 
@@ -20,18 +19,16 @@ const NotFound = () =>
 
 function App()
 {
-  const [isPaid, setIsPaid] = useState(false);
-
   return (
     <div className="App">
       <BrowserRouter>
         <Routes>
-          {/* Authentication */ }
+          Authentication
           <Route>
             <Route path='/' element={ <Login /> } />
             <Route path='/recovery' element={ <Recovery /> } />
           </Route>
-          {/* Not found */ }
+          Not found
           <Route path='*' element={ <NotFound /> } />
         </Routes>
       </BrowserRouter>
