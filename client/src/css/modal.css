@@ -1,0 +1,16 @@
+.reAdjustModel {
+      max-width: 400px;
+      left: initial !important;
+      height: 98vh;
+      height: 98dvh;
+      position: absolute !important;
+      padding-top: 20vh !important;
+      padding-top: 20dvh !important;
+}
+
+@media only screen and (min-width:768px) {
+      .reAdjustModel {
+            padding-top: 15vh !important;
+            padding-top: 15dvh !important;
+      }
+}

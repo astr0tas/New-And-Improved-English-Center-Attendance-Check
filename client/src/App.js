@@ -2,6 +2,7 @@ import './App.css';
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Login from './components/General/Authentication/Login/Login';
 import Recovery from './components/General/Authentication/Recovery/Recovery';
+import { ContextProvider } from './context';
 
 
 const NotFound = () =>
@@ -17,20 +18,23 @@ const NotFound = () =>
   )
 }
 
+
 function App()
 {
   return (
     <div className="App">
       <BrowserRouter>
-        <Routes>
-          Authentication
-          <Route>
-            <Route path='/' element={ <Login /> } />
-            <Route path='/recovery' element={ <Recovery /> } />
-          </Route>
-          Not found
-          <Route path='*' element={ <NotFound /> } />
-        </Routes>
+        <ContextProvider>
+          <Routes>
+            Authentication
+            <Route>
+              <Route path='/' element={ <Login /> } />
+              <Route path='/recovery' element={ <Recovery /> } />
+            </Route>
+            Not found
+            <Route path='*' element={ <NotFound /> } />
+          </Routes>
+        </ContextProvider>
       </BrowserRouter>
     </div >
   );

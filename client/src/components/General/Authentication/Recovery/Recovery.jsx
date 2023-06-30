@@ -1,10 +1,13 @@
 import styles from './Recovery.module.css';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useRef, useState } from 'react';
 import { AiOutlineCloseCircle } from 'react-icons/ai';
 import { domain } from '../../../../tools/domain';
 import { isRefValid } from '../../../../tools/refChecker';
+import '../../../../../src/css/modal.css';
+import '../../../../../src/css/scroll.css';
+import { Modal } from 'react-bootstrap';
 
 function Recovery()
 {
@@ -31,26 +34,24 @@ function Recovery()
             else
             {
                   setIsMissing(false);
-                  // const formData = new FormData();
-                  // formData.append("username", username);
 
-                  // axios.post(`http://${ domain }/admin/recovery`, formData)
-                  //       .then(res =>
-                  //       {
-                  //             if (res.data)
-                  //             {
-                  //                   setIsWrong(false);
-                  //                   if (isRefValid(checkUsername))
-                  //                         checkUsername.current.style.display = "none";
-                  //                   if (isRefValid(changingPassword))
-                  //                         changingPassword.current.style.display = "flex";
-                  //             }
-                  //             else
-                  //             {
-                  //                   setIsWrong(true);
-                  //             }
-                  //       })
-                  //       .catch(error => console.log(error));
+                  axios.post(`http://${ domain }/validateUser`, { params: { username: username } })
+                        .then(res =>
+                        {
+                              if (res.data)
+                              {
+                                    setIsWrong(false);
+                                    if (isRefValid(checkUsername))
+                                          checkUsername.current.style.display = "none";
+                                    if (isRefValid(changingPassword))
+                                          changingPassword.current.style.display = "flex";
+                              }
+                              else
+                              {
+                                    setIsWrong(true);
+                              }
+                        })
+                        .catch(error => console.log(error));
             }
       }
 
@@ -58,6 +59,7 @@ function Recovery()
       const [password, setPassword] = useState();
       const [repassword, setRepassword] = useState();
       const [isMatch, setIsMatch] = useState(true);
+      const [showPopUp, setShowPopUp] = useState(false);
 
       const changePassword = (e) =>
       {
@@ -69,16 +71,13 @@ function Recovery()
             else
             {
                   setIsMatch(true);
-                  // const formData = new FormData();
-                  // formData.append("username", username);
-                  // formData.append("password", password);
-                  // axios.post(`http://${ domain }/admin/newPassword`, formData)
-                  //       .then(res =>
-                  //       {
-                  //             console.log(res);
-                  //             Navigate("/admin");
-                  //       })
-                  //       .catch(error => console.log(error));
+                  axios.post(`http://${ domain }/recovery`, { params: { username: username, password: password } })
+                        .then(res =>
+                        {
+                              console.log(res);
+                              setShowPopUp(true);
+                        })
+                        .catch(error => console.log(error));
             }
       }
 
@@ -130,13 +129,13 @@ function Recovery()
                               <input type="submit" className={ `btn btn-primary btn-block mb-4 ${ styles.font }` } value="Continue" />
                               <div className="row mb-4">
                                     <div className="col">
-                                          <span className={ `${ styles.font }` }>Go back to <a href="/" className={ `text-decoration-none` }>login</a></span>
+                                          <span className={ `${ styles.font }` }>Go back to <Link to="/" className={ `text-decoration-none` }>login</Link></span>
                                     </div>
                               </div>
                         </form>
                   </div>
                   {/* Changing password */ }
-                  <div className={ `container-fluid h-100 ${ styles.newPassword }` } ref={ changingPassword }>
+                  <div className={ `container-fluid h-100 ${ styles.newPassword } flex-column align-items-center` } ref={ changingPassword }>
                         <form onSubmit={ changePassword } className={ `${ styles.form } bg-light d-flex flex-column align-items-center justify-content-around fs-5 mx-auto my-auto` }>
                               <div className="border-bottom border-dark w-100 d-flex flex-column align-items-center mb-5">
                                     <h1 className={ `my-3 mx-5 ${ styles.title }` }>Password recovery</h1>
@@ -174,11 +173,24 @@ function Recovery()
                               <input type="submit" className={ `btn btn-primary btn-block mb-4 ${ styles.font }` } value="Finish" />
                               <div className="row mb-4">
                                     <div className="col">
-                                          <span className={ `${ styles.font }` }>Go back to <a href="/" className={ `text-decoration-none` }>login</a></span>
+                                          <span className={ `${ styles.font }` }>Go back to <Link to="/" className={ `text-decoration-none` }>login</Link></span>
                                     </div>
                               </div>
                         </form>
-                  </div>
+                        <Modal show={ showPopUp } className={ `reAdjustModel hideBrowserScrollbar` } container={ changingPassword.current }>
+                              <Modal.Header className='border border-0'>
+                              </Modal.Header>
+                              <Modal.Body className='border border-0 d-flex justify-content-center'>
+                                    <h4 className='text-center'>Password changed successfully!</h4>
+                              </Modal.Body>
+                              <Modal.Footer className='justify-content-center border border-0'>
+                                    <button className='btn btn-primary ms-2 ms-md-4' onClick={ () =>
+                                    {
+                                          Navigate("/");
+                                    } }>Okay</button>
+                              </Modal.Footer>
+                        </Modal>
+                  </div >
             </>
       );
 }
