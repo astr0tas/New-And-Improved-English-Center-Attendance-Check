@@ -34,11 +34,11 @@ function App()
               <Route path='/' element={ <Login /> } />
               <Route path='/recovery' element={ <Recovery /> } />
             </Route>
-            <Route path='home' element={ <Menu /> }>
+            <Route element={ <Menu /> }>
 
             </Route>
             {/* Not found */ }
-            <Route path='*' element={ <NotFound /> } />
+            {/* <Route path='*' element={ <NotFound /> } /> */}
           </Routes>
         </ContextProvider>
       </BrowserRouter>
