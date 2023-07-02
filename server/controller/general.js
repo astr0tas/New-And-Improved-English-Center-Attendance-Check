@@ -1,5 +1,8 @@
 import express from "express";
 import { Authentication } from "../model/authentication.js";
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 const model = new Authentication();
 
@@ -22,13 +25,13 @@ generalRoutes.post('/', (req, res) =>
                         res.status(200).send(false);
                   else
                   {
-                        res.cookie('userType', type === 1 ? 'admin' : (type === 2 ? 'teacher' : 'supervisor'), {
-                              httpOnly: false,
-                              secure: false,
-                              maxAge: 3600000 * 24 * 3,
-                        });
                         req.session.userID = result[0].ID;
-                        res.status(200).send(true);
+                        req.session.userType = type;
+                        req.session.save(() =>
+                        {
+                              // Session saved
+                              res.status(200).send(true);
+                        });
                   }
             }
       })
@@ -36,6 +39,23 @@ generalRoutes.post('/', (req, res) =>
 
 generalRoutes.get('/logout', (req, res) =>
 {
+      // Get the current file path
+      const currentFilePath = fileURLToPath(import.meta.url);
+
+      // Get the current directory by resolving the file path
+      const currentDirectory = path.dirname(currentFilePath);
+
+      // Get the parrent directory
+      const parentDirectory = path.resolve(currentDirectory, '..');
+
+      // Specify the session file directory
+      const sessionDir = path.join(parentDirectory, 'model', 'sessions');
+
+      // Define the session ID or session file name for which you want to delete its additional files
+      const sessionID = req.sessionID;
+
+      // Regular expression pattern for matching the additional session files
+      const additionalFilesPattern = new RegExp(`^${ sessionID }\.json\.\\d+$`);
       req.session.destroy((err) =>
       {
             if (err)
@@ -43,10 +63,47 @@ generalRoutes.get('/logout', (req, res) =>
             else
             {
                   res.clearCookie('userID');
-                  res.clearCookie('userType');
                   res.status(200).send('Logged out successfully!');
+
+                  // Get a list of files in the session directory
+                  fs.readdir(sessionDir, (err, files) =>
+                  {
+                        if (err)
+                        {
+                              console.error('Error reading session directory:', err);
+                              return;
+                        }
+
+                        // Filter the list to include only the additional session files for the specified session
+                        const additionalFiles = files.filter((file) => additionalFilesPattern.test(file));
+
+                        // Delete each additional session file
+                        additionalFiles.forEach((file) =>
+                        {
+                              const filePath = `${ sessionDir }/${ file }`;
+                              fs.unlink(filePath, (err) =>
+                              {
+                                    if (err)
+                                    {
+                                          console.error('Error deleting additional session file:', filePath, err);
+                                    } else
+                                    {
+                                          console.log('Additional session file deleted:', filePath);
+                                    }
+                              });
+                        });
+                  });
             }
       });
+});
+
+generalRoutes.get('/isLoggedIn', (req, res) =>
+{
+      const idOK = req.session.userID !== undefined && req.session.userID !== null;
+      if (idOK)
+            res.status(200).send([true, req.session.userType]);
+      else
+            res.status(200).send([false]);
 });
 
 generalRoutes.post('/recovery', (req, res) =>

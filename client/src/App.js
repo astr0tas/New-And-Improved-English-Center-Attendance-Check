@@ -1,7 +1,10 @@
 import './App.css';
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+
 import Login from './components/General/Authentication/Login/Login';
 import Recovery from './components/General/Authentication/Recovery/Recovery';
+import Menu from './components/General/Menu/Menu';
+
 import { ContextProvider } from './context';
 
 
@@ -26,12 +29,15 @@ function App()
       <BrowserRouter>
         <ContextProvider>
           <Routes>
-            Authentication
+            {/* Authentication */ }
             <Route>
               <Route path='/' element={ <Login /> } />
               <Route path='/recovery' element={ <Recovery /> } />
             </Route>
-            Not found
+            <Route path='home' element={ <Menu /> }>
+
+            </Route>
+            {/* Not found */ }
             <Route path='*' element={ <NotFound /> } />
           </Routes>
         </ContextProvider>

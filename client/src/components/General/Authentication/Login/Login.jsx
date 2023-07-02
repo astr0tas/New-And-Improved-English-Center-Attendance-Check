@@ -5,7 +5,6 @@ import { useNavigate, Link } from 'react-router-dom';
 import { AiOutlineCloseCircle } from 'react-icons/ai';
 import React from 'react';
 import { domain } from '../../../../tools/domain';
-import { checkCookie } from '../../../../tools/cookieCheck';
 import { context } from '../../../../context';
 
 const Login = () =>
@@ -55,16 +54,21 @@ const Login = () =>
 
       useEffect(() =>
       {
-            if (checkCookie('userID'))
-                  Navigate('./home');
-      })
+            axios.get(`http://${ domain }/isLoggedIn`, { withCredentials: true })
+                  .then(res =>
+                  {
+                        if (res.data[0])
+                              Navigate('./home');
+                  })
+                  .catch(error => console.log(error));
+      }, [Navigate])
 
       return (
             <>
                   <div className={ `${ styles.background }` }></div>
                   <div className={ `container-fluid d-flex h-100 flex-column` }>
                         {
-                              !chosenRole &&
+                              chosenRole === 0 &&
                               <form onSubmit={ formSubmit } className={ `${ styles.form } bg-light d-flex flex-column align-items-center justify-content-around fs-5 align-self-start mx-auto my-auto` }>
                                     <div className="border-bottom border-dark w-100 d-flex flex-column align-items-center mb-5">
                                           <h1 className={ `my-3 mx-5 ${ styles.title }` }>Who are you?</h1>
@@ -75,7 +79,7 @@ const Login = () =>
                               </form>
                         }
                         {
-                              chosenRole &&
+                              chosenRole !== 0 &&
                               <form onSubmit={ formSubmit } className={ `${ styles.form } bg-light d-flex flex-column align-items-center justify-content-around fs-5 align-self-start mx-auto my-auto` }>
                                     <div className="border-bottom border-dark w-100 d-flex flex-column align-items-center mb-5">
                                           <h1 className={ `my-3 mx-5 ${ styles.title }` }>Welcome!</h1>

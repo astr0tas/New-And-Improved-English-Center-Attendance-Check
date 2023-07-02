@@ -1,0 +1,64 @@
+.hover {
+      min-height: 60px;
+      border-radius: 10px;
+      width: 100%;
+}
+
+.hover:hover {
+      background-color: #c8c8c8;
+      cursor: pointer;
+}
+
+.hover:active {
+      background-color: rgb(150, 150, 150);
+}
+
+.navbar {
+      transition: width 0.3s ease;
+      width: 160px;
+      z-index: 2000;
+}
+
+.tabs {
+      opacity: 1;
+      transition: opacity 0.5s ease;
+}
+
+.page {
+      height: 100%;
+      width: 100%;
+}
+
+.navToggler {
+      border: none;
+      border-radius: 5px;
+      background-color: #E6E6E6;
+      z-index: 3000;
+      opacity: 0.5;
+      top: 3px;
+      left: 5px;
+}
+
+.navToggler:hover {
+      background-color: #dadada;
+}
+
+.navToggler:active {
+      background-color: #a0a0a0;
+}
+
+@media only screen and (min-width:768px) {
+      .page {
+            height: 100%;
+            width: calc(100% - 160px);
+            margin-left: 160px;
+      }
+
+      .navToggler {
+            display: none;
+      }
+
+      .dummy {
+            display: none;
+      }
+}

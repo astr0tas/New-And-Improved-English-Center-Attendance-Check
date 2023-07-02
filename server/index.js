@@ -10,7 +10,7 @@ import staffRoutes from "./controller/staff.js";
 import adminRoutes from "./controller/admin.js";
 import generalRoutes from "./controller/general.js";
 
-const FileStore = FileStoreFactory(session);
+export const FileStore = FileStoreFactory(session);
 
 const app = express();
 app.use(cors({
@@ -28,10 +28,10 @@ app.use(session({
       }),
       secret: 'englishcenter123',
       resave: false,
-      saveUninitialized: true,
+      saveUninitialized: false,
       cookie: {
             secure: false,
-            httpOnly: false,
+            httpOnly: true,
             maxAge: 3600000 * 24 * 3,
       },
       name: 'userID'
