@@ -104,56 +104,60 @@ const Menu = () =>
 
       return (
             <div className='w-100 h-100' style={ { backgroundColor: '#A8C5DA' } }>
-                  <button className={ `${ styles.navToggler } position-fixed` } onClick={ handleToggleSidebar } ref={ navToggler }><FontAwesomeIcon icon={ faBars } style={ { color: "#000000", fontSize: '1.5rem' } } /></button>
-                  <div className={ `h-100 d-flex flex-column position-fixed ${ styles.navbar }` } style={ { backgroundColor: '#E6E6E6' } } ref={ navbar }>
-                        <div className={ `w-100 ${ styles.dummy }` } style={ { minHeight: '50px' } }></div>
-                        <div className={ `flex-grow-1 d-flex flex-column overflow-auto ${ styles.tabs } mt-md-3 hideBrowserScrollbar` } ref={ tabs }>
-                              <div className={ `${ styles.hover } mb-3 d-flex align-items-center justify-content-center` } onClick={ () => { Navigate("/profile"); } }>
-                                    <span className={ `d-flex align-items-center justify-content-center p-0` } style={ { fontSize: '3.5rem', whiteSpace: 'nowrap', color: '#1c60c7' } }><VscAccount /></span>
-                              </div>
-                              <div className={ `${ styles.hover } mb-3 d-flex align-items-center` } onClick={ () => { Navigate("/home"); } }>
-                                    <span className={ `d-flex align-items-center p-0 ms-2` } style={ { fontSize: '1.5rem', whiteSpace: 'nowrap', color: '#1c60c7' } }><AiOutlineHome className={ `me-1` } />Home</span>
-                              </div>
-                              {
-                                    userType !== 1 &&
-                                    <div className={ `${ styles.hover } mb-3 d-flex align-items-center` } onClick={ () => { Navigate("/my-class-list"); } }>
-                                          <span className={ `d-flex align-items-center p-0 ms-2` } style={ { fontSize: '1.5rem', whiteSpace: 'nowrap', color: '#1c60c7' } }><MdOutlineClass className={ `me-1` } />My classes</span>
+                  { userType !== 0 &&
+                        <>
+                              <button className={ `${ styles.navToggler } position-fixed` } onClick={ handleToggleSidebar } ref={ navToggler }><FontAwesomeIcon icon={ faBars } style={ { color: "#000000", fontSize: '1.5rem' } } /></button>
+                              <div className={ `h-100 d-flex flex-column position-fixed ${ styles.navbar }` } style={ { backgroundColor: '#E6E6E6' } } ref={ navbar }>
+                                    <div className={ `w-100 ${ styles.dummy }` } style={ { minHeight: '50px' } }></div>
+                                    <div className={ `flex-grow-1 d-flex flex-column overflow-auto ${ styles.tabs } mt-md-3 hideBrowserScrollbar` } ref={ tabs }>
+                                          <div className={ `${ styles.hover } mb-3 d-flex align-items-center justify-content-center` } onClick={ () => { Navigate("/profile"); } }>
+                                                <span className={ `d-flex align-items-center justify-content-center p-0` } style={ { fontSize: '3.5rem', whiteSpace: 'nowrap', color: '#1c60c7' } }><VscAccount /></span>
+                                          </div>
+                                          <div className={ `${ styles.hover } mb-3 d-flex align-items-center` } onClick={ () => { Navigate("/home"); } }>
+                                                <span className={ `d-flex align-items-center p-0 ms-2` } style={ { fontSize: '1.5rem', whiteSpace: 'nowrap', color: '#1c60c7' } }><AiOutlineHome className={ `me-1` } />Home</span>
+                                          </div>
+                                          {
+                                                userType !== 1 &&
+                                                <div className={ `${ styles.hover } mb-3 d-flex align-items-center` } onClick={ () => { Navigate("/my-class-list"); } }>
+                                                      <span className={ `d-flex align-items-center p-0 ms-2` } style={ { fontSize: '1.5rem', whiteSpace: 'nowrap', color: '#1c60c7' } }><MdOutlineClass className={ `me-1` } />My classes</span>
+                                                </div>
+                                          }
+                                          {
+                                                userType === 1 &&
+                                                <>
+                                                      <div className={ `${ styles.hover } mb-3 d-flex align-items-center` } onClick={ () => { Navigate("/class-list"); } }>
+                                                            <span className={ `d-flex align-items-center p-0 ms-2` } style={ { fontSize: '1.5rem', whiteSpace: 'nowrap', color: '#1c60c7' } }><BsListColumnsReverse className={ `me-1` } />Classes</span>
+                                                      </div>
+                                                      <div className={ `${ styles.hover } mb-3 d-flex align-items-center` } onClick={ () => { Navigate("/staff-list"); } }>
+                                                            <span className={ `d-flex align-items-center p-0 ms-2` } style={ { fontSize: '1.5rem', whiteSpace: 'nowrap', color: '#1c60c7' } }><BsListColumnsReverse className={ `me-1` } />Staffs</span>
+                                                      </div>
+                                                      <div className={ `${ styles.hover } mb-3 d-flex align-items-center` } onClick={ () => { Navigate("/student-list"); } }>
+                                                            <span className={ `d-flex align-items-center p-0 ms-2` } style={ { fontSize: '1.5rem', whiteSpace: 'nowrap', color: '#1c60c7' } }><BsListColumnsReverse className={ `me-1` } />Students</span>
+                                                      </div>
+                                                </>
+                                          }
+                                          <div className={ `${ styles.hover } mt-auto d-flex align-items-center` } onClick={ () =>
+                                          {
+                                                logOut();
+                                          } } >
+                                                <span className={ `d-flex align-items-center p-0 ms-2` } style={ { fontSize: '1.5rem', whiteSpace: 'nowrap', color: 'red' } }><AiOutlinePoweroff className={ `me-1` } />Log out</span>
+                                          </div>
                                     </div>
-                              }
-                              {
-                                    userType === 1 &&
-                                    <>
-                                          <div className={ `${ styles.hover } mb-3 d-flex align-items-center` } onClick={ () => { Navigate("/class-list"); } }>
-                                                <span className={ `d-flex align-items-center p-0 ms-2` } style={ { fontSize: '1.5rem', whiteSpace: 'nowrap', color: '#1c60c7' } }><BsListColumnsReverse className={ `me-1` } />Classes</span>
-                                          </div>
-                                          <div className={ `${ styles.hover } mb-3 d-flex align-items-center` } onClick={ () => { Navigate("/staff-list"); } }>
-                                                <span className={ `d-flex align-items-center p-0 ms-2` } style={ { fontSize: '1.5rem', whiteSpace: 'nowrap', color: '#1c60c7' } }><BsListColumnsReverse className={ `me-1` } />Staffs</span>
-                                          </div>
-                                          <div className={ `${ styles.hover } mb-3 d-flex align-items-center` } onClick={ () => { Navigate("/student-list"); } }>
-                                                <span className={ `d-flex align-items-center p-0 ms-2` } style={ { fontSize: '1.5rem', whiteSpace: 'nowrap', color: '#1c60c7' } }><BsListColumnsReverse className={ `me-1` } />Students</span>
-                                          </div>
-                                    </>
-                              }
-                              <div className={ `${ styles.hover } mt-auto d-flex align-items-center` } onClick={ () =>
-                              {
-                                    logOut();
-                              } } >
-                                    <span className={ `d-flex align-items-center p-0 ms-2` } style={ { fontSize: '1.5rem', whiteSpace: 'nowrap', color: 'red' } }><AiOutlinePoweroff className={ `me-1` } />Log out</span>
                               </div>
-                        </div>
-                  </div>
 
-                  <div className={ `${ styles.page } d-flex align-items-center justify-content-center` }>
-                        <div style={ {
-                              height: '98%',
-                              width: '98%',
-                              backgroundColor: '#E6E6E6',
-                              border: '2px solid black',
-                              borderRadius: '20px'
-                        } }>
-                              <Outlet userType={ userType } />
-                        </div>
-                  </div>
+                              <div className={ `${ styles.page } d-flex align-items-center justify-content-center` }>
+                                    <div style={ {
+                                          height: '98%',
+                                          width: '98%',
+                                          backgroundColor: '#E6E6E6',
+                                          border: '2px solid black',
+                                          borderRadius: '20px'
+                                    } }>
+                                          <Outlet userType={ userType } />
+                                    </div>
+                              </div>
+                        </>
+                  }
             </div >
       );
 }

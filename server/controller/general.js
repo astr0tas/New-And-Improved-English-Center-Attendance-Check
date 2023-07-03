@@ -1,19 +1,22 @@
 import express from "express";
 import { Authentication } from "../model/authentication.js";
+import { Profile } from "../model/profile.js";
+import { AdminHome } from "../model/admin/home.js";
+import { StaffHome } from '../model/staff/home.js';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-const model = new Authentication();
-
 const generalRoutes = express.Router();
+
+const authenticateModel = new Authentication();
 
 generalRoutes.post('/', (req, res) =>
 {
       const username = req.body.params.username;
       const password = req.body.params.password;
       const type = req.body.params.type;
-      model.login(username, password, (result, err) =>
+      authenticateauthenticateModel.login(username, password, (result, err) =>
       {
             if (err)
                   res.status(500).send('Server internal error!');
@@ -110,7 +113,7 @@ generalRoutes.post('/recovery', (req, res) =>
 {
       const username = req.body.params.username;
       const password = req.body.params.password;
-      model.recovery(username, password, (result, err) =>
+      authenticateModel.recovery(username, password, (result, err) =>
       {
             if (err)
                   res.status(500).send('Server internal error!');
@@ -122,7 +125,7 @@ generalRoutes.post('/recovery', (req, res) =>
 generalRoutes.post('/validateUser', (req, res) =>
 {
       const username = req.body.params.username;
-      model.validateUser(username, (result, err) =>
+      authenticateModel.validateUser(username, (result, err) =>
       {
             if (err)
                   res.status(500).send('Server internal error!');
@@ -135,5 +138,11 @@ generalRoutes.post('/validateUser', (req, res) =>
             }
       })
 });
+
+const profileModel = new Profile();
+
+const adminHomeModel = new AdminHome();
+
+const staffHomeModel = new StaffHome();
 
 export default generalRoutes;
