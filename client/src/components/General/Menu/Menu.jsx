@@ -11,6 +11,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars } from '@fortawesome/free-solid-svg-icons';
 import { BsListColumnsReverse } from 'react-icons/bs';
 import '../../../css/scroll.css';
+import { context } from '../../../context';
+import { useContext } from 'react';
 
 
 const Menu = () =>
@@ -23,6 +25,10 @@ const Menu = () =>
       const [showSidebar, setShowSidebar] = useState(true);
 
       const [userType, setUserType] = useState(0);
+
+      const [activeTab, setActiveTab] = useState("");
+
+      const [chosenRole, setChosenRole] = useContext(context);
 
       const handleToggleSidebar = () =>
       {
@@ -46,6 +52,7 @@ const Menu = () =>
 
       const logOut = () =>
       {
+            setChosenRole(chosenRole - chosenRole); // this is dumb but it it used for getting rid of the warning of not using `chosenRole`
             axios.get(`http://${ domain }/logout`, { withCredentials: true })
                   .then(res =>
                   {
@@ -77,6 +84,8 @@ const Menu = () =>
                               setUserType(res.data[1]);
                   })
                   .catch(error => console.log(error));
+
+            setActiveTab(window.location.pathname.substring(1));
 
             trackWidth();
 
@@ -110,29 +119,29 @@ const Menu = () =>
                               <div className={ `h-100 d-flex flex-column position-fixed ${ styles.navbar }` } style={ { backgroundColor: '#E6E6E6' } } ref={ navbar }>
                                     <div className={ `w-100 ${ styles.dummy }` } style={ { minHeight: '50px' } }></div>
                                     <div className={ `flex-grow-1 d-flex flex-column overflow-auto ${ styles.tabs } mt-md-3 hideBrowserScrollbar` } ref={ tabs }>
-                                          <div className={ `${ styles.hover } mb-3 d-flex align-items-center justify-content-center` } onClick={ () => { Navigate("/profile"); } }>
-                                                <span className={ `d-flex align-items-center justify-content-center p-0` } style={ { fontSize: '3.5rem', whiteSpace: 'nowrap', color: '#1c60c7' } }><VscAccount /></span>
+                                          <div className={ `${ activeTab === 'profile' ? styles.activeTab : styles.hover } mb-3 d-flex align-items-center justify-content-center` } onClick={ () => { Navigate("/profile"); } }>
+                                                <span className={ `d-flex align-items-center justify-content-center p-0` } style={ { fontSize: '3.5rem', whiteSpace: 'nowrap', color: 'black' } }><VscAccount /></span>
                                           </div>
-                                          <div className={ `${ styles.hover } mb-3 d-flex align-items-center` } onClick={ () => { Navigate("/home"); } }>
-                                                <span className={ `d-flex align-items-center p-0 ms-2` } style={ { fontSize: '1.5rem', whiteSpace: 'nowrap', color: '#1c60c7' } }><AiOutlineHome className={ `me-1` } />Home</span>
+                                          <div className={ `${ activeTab === 'home' ? styles.activeTab : styles.hover } mb-3 d-flex align-items-center` } onClick={ () => { Navigate("/home"); } }>
+                                                <span className={ `d-flex align-items-center p-0 ms-2` } style={ { fontSize: '1.5rem', whiteSpace: 'nowrap', color: 'black' } }><AiOutlineHome className={ `me-1` } />Home</span>
                                           </div>
                                           {
                                                 userType !== 1 &&
-                                                <div className={ `${ styles.hover } mb-3 d-flex align-items-center` } onClick={ () => { Navigate("/my-class-list"); } }>
-                                                      <span className={ `d-flex align-items-center p-0 ms-2` } style={ { fontSize: '1.5rem', whiteSpace: 'nowrap', color: '#1c60c7' } }><MdOutlineClass className={ `me-1` } />My classes</span>
+                                                <div className={ `${ activeTab === 'my-class-list' ? styles.activeTab : styles.hover } mb-3 d-flex align-items-center` } onClick={ () => { Navigate("/my-class-list"); } }>
+                                                      <span className={ `d-flex align-items-center p-0 ms-2` } style={ { fontSize: '1.5rem', whiteSpace: 'nowrap', color: 'black' } }><MdOutlineClass className={ `me-1` } />My classes</span>
                                                 </div>
                                           }
                                           {
                                                 userType === 1 &&
                                                 <>
-                                                      <div className={ `${ styles.hover } mb-3 d-flex align-items-center` } onClick={ () => { Navigate("/class-list"); } }>
-                                                            <span className={ `d-flex align-items-center p-0 ms-2` } style={ { fontSize: '1.5rem', whiteSpace: 'nowrap', color: '#1c60c7' } }><BsListColumnsReverse className={ `me-1` } />Classes</span>
+                                                      <div className={ `${ activeTab === 'class-list' ? styles.activeTab : styles.hover } mb-3 d-flex align-items-center` } onClick={ () => { Navigate("/class-list"); } }>
+                                                            <span className={ `d-flex align-items-center p-0 ms-2` } style={ { fontSize: '1.5rem', whiteSpace: 'nowrap', color: 'black' } }><BsListColumnsReverse className={ `me-1` } />Classes</span>
                                                       </div>
-                                                      <div className={ `${ styles.hover } mb-3 d-flex align-items-center` } onClick={ () => { Navigate("/staff-list"); } }>
-                                                            <span className={ `d-flex align-items-center p-0 ms-2` } style={ { fontSize: '1.5rem', whiteSpace: 'nowrap', color: '#1c60c7' } }><BsListColumnsReverse className={ `me-1` } />Staffs</span>
+                                                      <div className={ `${ activeTab === 'staff-list' ? styles.activeTab : styles.hover } mb-3 d-flex align-items-center` } onClick={ () => { Navigate("/staff-list"); } }>
+                                                            <span className={ `d-flex align-items-center p-0 ms-2` } style={ { fontSize: '1.5rem', whiteSpace: 'nowrap', color: 'black' } }><BsListColumnsReverse className={ `me-1` } />Staffs</span>
                                                       </div>
-                                                      <div className={ `${ styles.hover } mb-3 d-flex align-items-center` } onClick={ () => { Navigate("/student-list"); } }>
-                                                            <span className={ `d-flex align-items-center p-0 ms-2` } style={ { fontSize: '1.5rem', whiteSpace: 'nowrap', color: '#1c60c7' } }><BsListColumnsReverse className={ `me-1` } />Students</span>
+                                                      <div className={ `${ activeTab === 'student-list' ? styles.activeTab : styles.hover } mb-3 d-flex align-items-center` } onClick={ () => { Navigate("/student-list"); } }>
+                                                            <span className={ `d-flex align-items-center p-0 ms-2` } style={ { fontSize: '1.5rem', whiteSpace: 'nowrap', color: 'black' } }><BsListColumnsReverse className={ `me-1` } />Students</span>
                                                       </div>
                                                 </>
                                           }

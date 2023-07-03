@@ -29,15 +29,32 @@ export class Authentication
             }
       }
 
-      login(username, password, callback)
+      login(username, password, type, callback)
       {
-            this.conn.query(`select ID from employee where username='${ username }' and password='${ password }'`, (err, res) =>
-            {
-                  if (err)
-                        callback(null, err);
-                  else
-                        callback(res, null);
-            });
+            if (type === 1)
+                  this.conn.query(`select employee.ID from employee join admin on admin.id=employee.id where username='${ username }' and password='${ password }'`, (err, res) =>
+                  {
+                        if (err)
+                              callback(null, err);
+                        else
+                              callback(res, null);
+                  });
+            else if (type === 2)
+                  this.conn.query(`select employee.ID from employee join teacher where teacher.id=employee.id where username='${ username }' and password='${ password }'`, (err, res) =>
+                  {
+                        if (err)
+                              callback(null, err);
+                        else
+                              callback(res, null);
+                  });
+            else if (type === 3)
+                  this.conn.query(`select employee.ID from employee join supervisor on supervisor.id=employee.id where username='${ username }' and password='${ password }'`, (err, res) =>
+                  {
+                        if (err)
+                              callback(null, err);
+                        else
+                              callback(res, null);
+                  });
       }
 
       recovery(username, password, callback)

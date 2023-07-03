@@ -1,0 +1,59 @@
+.img {
+      max-width: 200px;
+      width: 80%;
+      padding: 5px;
+      border-radius: 50px;
+      border: 2px solid black;
+      background-color: white;
+}
+
+.container {
+      background-color: white;
+      width: 90%;
+      max-width: 600px;
+      border-radius: 10px;
+      border: 1px solid gray;
+      max-height: 250px;
+}
+
+.pencil:hover {
+      cursor: pointer;
+}
+
+.pencil {
+      width: 25px;
+      height: 25px;
+}
+
+.pencil:active {
+      color: rgb(100, 100, 100);
+}
+
+.confirm {
+      color: rgb(0, 255, 0);
+}
+
+.confirm:active {
+      color: green;
+}
+
+.cancel {
+      color: red;
+}
+
+.cancel:active {
+      color: rgb(255, 80, 80);
+
+}
+
+.inputs {
+      width: 80%;
+      max-width: 300px;
+}
+
+@media only screen and (min-width: 768px) {
+      .img {
+            max-width: 300px;
+            width: 40%;
+      }
+}

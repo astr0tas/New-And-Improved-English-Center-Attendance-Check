@@ -1,6 +1,6 @@
 .hover {
       min-height: 60px;
-      border-radius: 10px;
+      border-radius: 5px;
       width: 100%;
 }
 
@@ -11,6 +11,21 @@
 
 .hover:active {
       background-color: rgb(150, 150, 150);
+}
+
+.activeTab {
+      min-height: 60px;
+      border-radius: 5px;
+      width: 100%;
+      background-color: #E6F7FF;
+}
+
+.activeTab:hover {
+      cursor: pointer;
+}
+
+.activeTab>* {
+      color: #0083FD !important;
 }
 
 .navbar {

@@ -16,7 +16,7 @@ generalRoutes.post('/', (req, res) =>
       const username = req.body.params.username;
       const password = req.body.params.password;
       const type = req.body.params.type;
-      authenticateauthenticateModel.login(username, password, (result, err) =>
+      authenticateModel.login(username, password, type, (result, err) =>
       {
             if (err)
                   res.status(500).send('Server internal error!');
