@@ -40,7 +40,7 @@ export class Authentication
                               callback(res, null);
                   });
             else if (type === 2)
-                  this.conn.query(`select employee.ID from employee join teacher where teacher.id=employee.id where username='${ username }' and password='${ password }'`, (err, res) =>
+                  this.conn.query(`select employee.ID from employee join teacher on teacher.id=employee.id where username='${ username }' and password='${ password }'`, (err, res) =>
                   {
                         if (err)
                               callback(null, err);

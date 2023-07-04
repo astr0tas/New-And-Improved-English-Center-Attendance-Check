@@ -8,7 +8,8 @@ export class Profile
                   host: "localhost",
                   user: "englishcenter",
                   password: "englishcenter123",
-                  database: "english_center"
+                  database: "english_center",
+                  multipleStatements: true
             });
       }
 
@@ -27,5 +28,27 @@ export class Profile
                         }
                   });
             }
+      }
+
+      getInfo(id, callback)
+      {
+            this.conn.query(`select ssn,name,phone,username,birthday,birthplace,email,address,image from employee where employee.id='${ id }'`, (err, res) =>
+            {
+                  if (err)
+                        callback(null, err);
+                  else
+                        callback(res, null);
+            });
+      }
+
+      udpateInfo(id, callback)
+      {
+            this.conn.query(``, (err, res) =>
+            {
+                  if (err)
+                        callback(null, err);
+                  else
+                        callback(res, null);
+            });
       }
 }

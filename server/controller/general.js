@@ -19,7 +19,10 @@ generalRoutes.post('/', (req, res) =>
       authenticateModel.login(username, password, type, (result, err) =>
       {
             if (err)
+            {
+                  console.log(err);
                   res.status(500).send('Server internal error!');
+            }
             else
             {
                   if (result.length > 1)
@@ -62,7 +65,10 @@ generalRoutes.get('/logout', (req, res) =>
       req.session.destroy((err) =>
       {
             if (err)
+            {
+                  console.log(err);
                   console.error('Error destroying session:', err);
+            }
             else
             {
                   res.clearCookie('userID');
@@ -116,7 +122,10 @@ generalRoutes.post('/recovery', (req, res) =>
       authenticateModel.recovery(username, password, (result, err) =>
       {
             if (err)
+            {
+                  console.log(err);
                   res.status(500).send('Server internal error!');
+            }
             else
                   res.status(200).send('Success');
       })
@@ -128,7 +137,10 @@ generalRoutes.post('/validateUser', (req, res) =>
       authenticateModel.validateUser(username, (result, err) =>
       {
             if (err)
+            {
+                  console.log(err);
                   res.status(500).send('Server internal error!');
+            }
             else
             {
                   if (result.length)
@@ -140,6 +152,37 @@ generalRoutes.post('/validateUser', (req, res) =>
 });
 
 const profileModel = new Profile();
+
+generalRoutes.get('/profile', (req, res) =>
+{
+      const id = req.session.userID;
+      profileModel.getInfo(id, (result, err) =>
+      {
+            if (err)
+            {
+                  console.log(err);
+                  res.status(500).send('Server internal error!');
+            }
+            else
+                  res.status(200).send(result[0]);
+      });
+});
+
+generalRoutes.post('/updateProfile', (req, res) =>
+{
+      const id = req.session.userID;
+      console.log(req, id);
+      // profileModel.updateInfo(id, (result, err) =>
+      // {
+      //       if (err)
+      //       {
+      //             console.log(err);
+      //             res.status(500).send('Server internal error!');
+      //       }
+      //       else
+      //             res.status(200).send(result[0]);
+      // });
+});
 
 const adminHomeModel = new AdminHome();
 

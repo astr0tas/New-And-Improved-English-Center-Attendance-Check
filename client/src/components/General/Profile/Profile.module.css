@@ -1,5 +1,6 @@
 .img {
       max-width: 200px;
+      min-width: 200px;
       width: 80%;
       padding: 5px;
       border-radius: 50px;
@@ -13,7 +14,7 @@
       max-width: 600px;
       border-radius: 10px;
       border: 1px solid gray;
-      max-height: 250px;
+      max-height: 400px;
 }
 
 .pencil:hover {
@@ -51,9 +52,22 @@
       max-width: 300px;
 }
 
+.p {
+      font-size: 1rem;
+      color: red;
+}
+
 @media only screen and (min-width: 768px) {
       .img {
+            min-width: 300px;
             max-width: 300px;
             width: 40%;
+      }
+}
+
+@media only screen and (max-width:330px) {
+      .p {
+            font-size: 0.8rem;
+            color: red;
       }
 }

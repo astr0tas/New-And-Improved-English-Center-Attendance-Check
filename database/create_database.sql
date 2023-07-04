@@ -10,9 +10,10 @@ CREATE TABLE EMPLOYEE (
   username VARCHAR(50) UNIQUE NOT NULL,
   password VARCHAR(50) NOT NULL,
   birthday DATE not null,
-  birthplace text,
+  birthplace text not null,
   email VARCHAR(100) UNIQUE NOT NULL,
   address TEXT not null,
+  image text,
   PRIMARY KEY (ID)
 );
 
@@ -49,6 +50,7 @@ CREATE TABLE STUDENT (
   email VARCHAR(50) UNIQUE NOT NULL,
   address text,
   SSN varchar(12) unique not null,
+  image text,
   PRIMARY KEY (ID)
 );
 
