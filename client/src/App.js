@@ -11,6 +11,7 @@ import Profile from './components/General/Profile/Profile';
 // Admin routes
 import ClassList from './components/Admin/Class/List/ClassList';
 import ClassDetail from './components/Admin/Class/Detail/ClassDetail';
+import AdminClassSession from './components/Admin/Class/Session/Session';
 import StaffList from './components/Admin/Staff/List/StaffList';
 import StaffDetail from './components/Admin/Staff/Detail/StaffDetail'
 import StudentList from './components/Admin/Student/List/StudentList';
@@ -19,8 +20,10 @@ import StudentDetail from './components/Admin/Student/Detail/StudentDetail'
 // Staff routes
 import MyClassList from './components/Staff/MyClass/List/MyClassList';
 import MyClassDetail from './components/Staff/MyClass/Detail/MyClassDetail';
+import MyclassSession from './components/Staff/MyClass/Session/Session';
 
 import { ContextProvider } from './context';
+import MyClassSession from './components/Staff/MyClass/Session/Session';
 
 
 const NotFound = () =>
@@ -57,7 +60,9 @@ function App()
               <Route path='home' element={ <Home /> } />
               {/* Admin routes */ }
               <Route path='class-list' element={ <ClassList /> }>
-                <Route path=':name' element={ <ClassDetail /> } />
+                <Route path=':name' element={ <ClassDetail /> }>
+                  <Route path=':number' element={ <AdminClassSession /> } />
+                </Route>
               </Route>
               <Route path='staff-list' element={ <StaffList /> }>
                 <Route path=':id' element={ <StaffDetail /> } />
@@ -67,7 +72,9 @@ function App()
               </Route>
               {/* Staff routes */ }
               <Route path='my-class-list' element={ <MyClassList /> }>
-                <Route path=':name' element={ <MyClassDetail /> } />
+                <Route path=':name' element={ <MyClassDetail /> }>
+                  <Route path=':number' element={ <MyClassSession /> } />
+                </Route>
               </Route>
             </Route>
             {/* Not found */ }
