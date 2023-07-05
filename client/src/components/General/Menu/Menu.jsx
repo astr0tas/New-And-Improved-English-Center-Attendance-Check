@@ -162,7 +162,7 @@ const Menu = () =>
                                           border: '2px solid black',
                                           borderRadius: '20px'
                                     } }>
-                                          <Outlet userType={ userType } />
+                                          <Outlet context={ userType } />
                                     </div>
                               </div>
                         </>

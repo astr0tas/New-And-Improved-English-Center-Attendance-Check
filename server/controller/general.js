@@ -6,6 +6,7 @@ import { StaffHome } from '../model/staff/home.js';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import multer from "multer";
 
 const generalRoutes = express.Router();
 
@@ -168,20 +169,50 @@ generalRoutes.get('/profile', (req, res) =>
       });
 });
 
-generalRoutes.post('/updateProfile', (req, res) =>
+generalRoutes.post('/updateProfile', multer().fields([
+      { name: 'ssn' },
+      { name: 'name' },
+      { name: 'address' },
+      { name: 'birthday' },
+      { name: 'birthplace' },
+      { name: 'email' },
+      { name: 'phone' },
+      { name: 'password' },
+      { name: 'userType' },
+      { name: 'image', maxCount: 1 },
+]), (req, res) =>
 {
       const id = req.session.userID;
-      console.log(req, id);
-      // profileModel.updateInfo(id, (result, err) =>
-      // {
-      //       if (err)
-      //       {
-      //             console.log(err);
-      //             res.status(500).send('Server internal error!');
-      //       }
-      //       else
-      //             res.status(200).send(result[0]);
-      // });
+      const { ssn, name, address, birthday, birthplace, email, phone, password, userType } = req.body;
+      let imagePath = null;
+      if (req.files['image'] !== null && req.files['image'] !== undefined)
+      {
+            const imageFile = req.files['image'][0];
+            // Get the target directory to store the image
+            const directory = path.join(path.dirname(path.dirname(fileURLToPath(import.meta.url))), 'model', 'image', 'employee', userType === '1' ? 'admin' : 'staff', id);
+            // Create the uploads folder if it doesn't exist
+            if (!fs.existsSync(directory))
+                  fs.mkdirSync(directory, { recursive: true });
+            // Generate a unique filename
+            const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+            const extname = path.extname(imageFile.originalname);
+            const filename = 'image-' + uniqueSuffix + extname;
+            // Move the uploaded file to the destination folder
+            const filePath = path.join(directory, filename);
+            fs.writeFileSync(filePath, imageFile.buffer);
+
+            imagePath = (userType === '1' ? 'admin' : 'staff') + '/' + id + '/' + filename;
+      }
+      profileModel.updateInfo(id, ssn, name, address, birthday, birthplace, email, phone, password, imagePath, (result, err) =>
+      {
+            if (err)
+            {
+                  console.log(err);
+                  res.status(500).send('Server internal error!');
+            }
+            else
+                  res.status(200).send(result);
+      });
 });
 
 const adminHomeModel = new AdminHome();

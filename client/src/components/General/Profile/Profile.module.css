@@ -1,9 +1,9 @@
 .img {
-      max-width: 200px;
+      max-width: 300px;
       min-width: 200px;
-      width: 80%;
-      padding: 5px;
-      border-radius: 50px;
+      width: 95%;
+      padding: 3px;
+      border-radius: 10px;
       border: 2px solid black;
       background-color: white;
 }
@@ -59,8 +59,8 @@
 
 @media only screen and (min-width: 768px) {
       .img {
-            min-width: 300px;
-            max-width: 300px;
+            min-width: 400px;
+            max-width: 500px;
             width: 40%;
       }
 }

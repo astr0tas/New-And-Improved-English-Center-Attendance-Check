@@ -4,7 +4,6 @@ import cors from 'cors';
 import bodyParser from "body-parser";
 import FileStoreFactory from 'session-file-store';
 import path from 'path';
-import multer from "multer";
 import { fileURLToPath } from 'url';
 
 import { domain } from "./domain.js";

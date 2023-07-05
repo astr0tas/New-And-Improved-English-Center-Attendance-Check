@@ -9,9 +9,12 @@ import axios from 'axios';
 import { domain } from '../../../tools/domain';
 import { DMY, YMD } from '../../../tools/dateFormat';
 import { AiOutlineCloseCircle } from 'react-icons/ai';
+import { useOutletContext } from 'react-router-dom';
 
 const Profile = () =>
 {
+      document.title = 'Profile';
+
       const [editMode, setEditMode] = useState(false);
 
       const [name, setName] = useState("N/A");
@@ -39,8 +42,14 @@ const Profile = () =>
       const profileImg = useRef(null);
 
       const [isWrong, setIsWrong] = useState(false);
+      const [isFuture, setIsFuture] = useState(false);
 
       const [render, setRender] = useState(false);
+
+      const popUpContainer = useRef(null);
+      const [showpopup, setshowpopup] = useState(false);
+
+      const userType = useOutletContext();
 
       useEffect(() =>
       {
@@ -56,9 +65,9 @@ const Profile = () =>
                         setUsername(res.data.username);
                         setBirthday(DMY(res.data.birthday));
 
-                        setImage(res.data.image === null ? require('../../../images/profile.png') : `http://${ domain }/model/image/employee/${ res.data.image }`);
+                        setImage(res.data.image === null ? require('../../../images/profile.png') : `http://${ domain }/image/employee/${ res.data.image }`);
                         if (isRefValid(profileImg))
-                              profileImg.current.src = res.data.image === null ? require('../../../images/profile.png') : `http://${ domain }/model/image/employee/${ res.data.image }`;
+                              profileImg.current.src = res.data.image === null ? require('../../../images/profile.png') : `http://${ domain }/image/employee/${ res.data.image }`;
                   })
                   .catch(err => console.log(err));
       }, [render]);
@@ -69,8 +78,17 @@ const Profile = () =>
             if (!val)
             {
                   setIsWrong(false);
+                  setIsFuture(false);
                   setPassword("");
                   setRepassword("");
+                  setNewAddress("");
+                  setNewEmail("");
+                  setNewName("");
+                  setNewSSN("");
+                  setNewPhone("");
+                  setNewBirthday("");
+                  setNewBirthplace("");
+                  setNewImage(null);
                   if (isRefValid(profileImg))
                         profileImg.current.src = image;
             }
@@ -79,11 +97,18 @@ const Profile = () =>
       const changeInfo = (e) =>
       {
             e.preventDefault();
+            let isOk = true;
             if (password !== repassword)
             {
                   setIsWrong(true);
+                  isOk = false;
             }
-            else
+            if (new Date(newBirthday) > new Date())
+            {
+                  setIsFuture(true);
+                  isOk = false;
+            }
+            if (isOk)
             {
                   const formdata = new FormData();
                   formdata.append('ssn', newSSN === '' ? null : newSSN);
@@ -94,12 +119,13 @@ const Profile = () =>
                   formdata.append('email', newEmail === '' ? null : newEmail);
                   formdata.append('phone', newPhone === '' ? null : newPhone);
                   formdata.append('password', password === '' ? null : password);
+                  formdata.append('userType', userType);
                   formdata.append('image', newImage);
                   axios.post(`http://${ domain }/updateProfile`, formdata, { withCredentials: true })
                         .then(res =>
                         {
-                              console.log(res);
-                              // setRender(!render);
+                              triggerEdit(false);
+                              setRender(!render);
                         })
                         .catch(err => console.log(err));
             }
@@ -107,7 +133,24 @@ const Profile = () =>
 
       return (
             <div className="w-100 h-100 d-flex overflow-auto">
-                  <form className='my-auto d-flex flex-column align-items-center w-100' onSubmit={ changeInfo }>
+                  <form className='my-auto d-flex flex-column align-items-center w-100' onSubmit={ changeInfo } ref={ popUpContainer }>
+                        <Modal show={ showpopup } className={ `reAdjustModel` } container={ popUpContainer.current }>
+                              <Modal.Header className='border border-0'>
+                              </Modal.Header>
+                              <Modal.Body className='border border-0 d-flex justify-content-center'>
+                                    <h4 className='text-center'>Do you want to update your info?</h4>
+                              </Modal.Body>
+                              <Modal.Footer className='justify-content-center border border-0'>
+                                    <button type='button' className='btn btn-danger ms-2 ms-md-4' onClick={ () =>
+                                    {
+                                          setshowpopup(false);
+                                    } }>No</button>
+                                    <button type='submit' className='btn btn-primary ms-2 ms-md-4' onClick={ () =>
+                                    {
+                                          setshowpopup(false);
+                                    } }>Yes</button>
+                              </Modal.Footer>
+                        </Modal>
                         <img alt='profile' className={ `${ styles.img } mt-2 mt-md-4` } ref={ profileImg }></img>
                         {
                               editMode &&
@@ -156,13 +199,11 @@ const Profile = () =>
                                           editMode &&
                                           <div className={ `align-items-center mt-1 d-flex` }>
                                                 <GiCancel className={ `${ styles.pencil } ${ styles.cancel } me-1` } onClick={ () => triggerEdit(false) } />
-                                                <button type='submit' className={ `border border-0 bg-transparent p-0 ms-1` } style={ { width: '25px' } }>
-                                                      <GiConfirmed className={ `${ styles.pencil } ${ styles.confirm }` } />
-                                                </button>
+                                                <GiConfirmed className={ `${ styles.pencil } ${ styles.confirm } ms-1` } onClick={ () => setshowpopup(true) } />
                                           </div>
                                     }
                               </div>
-                              <div className={ `align-self-center ms-3 overflow-auto hideBrowserScrollbar` } style={ { width: '85%' } }>
+                              <div className={ `align-self-center overflow-auto hideBrowserScrollbar` } style={ { width: '85%' } }>
                                     <div className='d-flex align-items-center mt-2 justify-content-center'>
                                           <strong>SSN:&nbsp;&nbsp;</strong>
                                           {
@@ -185,11 +226,22 @@ const Profile = () =>
                                                       defaultValue={ YMD(birthday) } onChange={ (e) => setNewBirthday(e.target.value) }></input>
                                           }
                                     </div>
+                                    {
+                                          isFuture &&
+                                          <div className='d-flex align-items-center mb-2 justify-content-center'>
+                                                <AiOutlineCloseCircle style={ {
+                                                      marginRight: '5px'
+                                                } } className={ `${ styles.p } mt-2` } />
+                                                <p className={ `${ styles.p } mt-2 mb-0` }>
+                                                      Your birthday must not be the future!
+                                                </p>
+                                          </div>
+                                    }
                                     <div className='d-flex align-items-center mt-2 justify-content-center'>
                                           <strong>Birthplace:&nbsp;&nbsp;</strong>
                                           {
                                                 !editMode &&
-                                                <p className='mb-0'>{ birthplace }</p>
+                                                <p className='mb-0 overflow-auto' style={ { whiteSpace: 'nowrap' } }>{ birthplace }</p>
                                           }
                                           {
                                                 editMode && <input placeholder='Enter your birthplace' className={ `${ styles.inputs }` }
@@ -200,7 +252,7 @@ const Profile = () =>
                                           <strong>Email:&nbsp;&nbsp;</strong>
                                           {
                                                 !editMode &&
-                                                <p className='mb-0'>{ email }</p>
+                                                <p className='mb-0 overflow-auto' style={ { whiteSpace: 'nowrap' } }>{ email }</p>
                                           }
                                           {
                                                 editMode && <input placeholder='Enter your email' className={ `${ styles.inputs }` } type='email'
@@ -222,7 +274,7 @@ const Profile = () =>
                                           <strong>Address:&nbsp;&nbsp;</strong>
                                           {
                                                 !editMode &&
-                                                <p className='mb-0'>{ address }</p>
+                                                <p className='mb-0 overflow-auto' style={ { whiteSpace: 'nowrap' } }>{ address }</p>
                                           }
                                           {
                                                 editMode && <input placeholder='Enter your address' className={ `${ styles.inputs }` } type='text'
@@ -231,7 +283,7 @@ const Profile = () =>
                                     </div>
                                     <div className='d-flex align-items-center mt-2 mb-2 justify-content-center'>
                                           <strong>Username:&nbsp;&nbsp;</strong>
-                                          <p className='mb-0'>{ username }</p>
+                                          <p className='mb-0 overflow-auto' style={ { whiteSpace: 'nowrap' } }>{ username }</p>
                                     </div>
                                     {
                                           editMode &&
