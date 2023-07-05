@@ -197,6 +197,14 @@ generalRoutes.post('/updateProfile', multer().fields([
             const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
             const extname = path.extname(imageFile.originalname);
             const filename = 'image-' + uniqueSuffix + extname;
+            // Retrieve the name of the existing image, if it exists
+            const existingImageName = fs.readdirSync(directory).find(file => /^image-\d+-\d+\.(png|jpg|jpeg)$/.test(file));
+            // Delete the pre-existing image, if it exists
+            if (existingImageName)
+            {
+                  const preExistingImagePath = path.join(directory, existingImageName);
+                  fs.unlinkSync(preExistingImagePath);
+            }
             // Move the uploaded file to the destination folder
             const filePath = path.join(directory, filename);
             fs.writeFileSync(filePath, imageFile.buffer);
