@@ -54,28 +54,34 @@ function App()
             </Route>
             {/* Main routes */ }
             <Route element={ <Menu /> }>
+
               {/* General profile */ }
               <Route path='profile' element={ <Profile /> } />
               {/* General home */ }
               <Route path='home' element={ <Home /> } />
               {/* Admin routes */ }
-              <Route path='class-list' element={ <ClassList /> }>
-                <Route path=':name' element={ <ClassDetail /> }>
-                  <Route path=':number' element={ <AdminClassSession /> } />
-                </Route>
+              <Route>
+                <Route path='class-list' element={ <ClassList /> } />
+                <Route path='class-list/:name' element={ <ClassDetail /> } />
+                <Route path='class-list/:name/:number' element={ <AdminClassSession /> } />
               </Route>
-              <Route path='staff-list' element={ <StaffList /> }>
-                <Route path=':id' element={ <StaffDetail /> } />
+
+              <Route>
+                <Route path='staff-list' element={ <StaffList /> } />
+                <Route path='staff-list/:id' element={ <StaffDetail /> } />
               </Route>
-              <Route path='student-list' element={ <StudentList /> }>
-                <Route path=':id' element={ <StudentDetail /> } />
+
+              <Route>
+                <Route path='student-list' element={ <StudentList /> } />
+                <Route path='student-list/:id' element={ <StudentDetail /> } />
               </Route>
               {/* Staff routes */ }
-              <Route path='my-class-list' element={ <MyClassList /> }>
-                <Route path=':name' element={ <MyClassDetail /> }>
-                  <Route path=':number' element={ <MyClassSession /> } />
-                </Route>
+              <Route>
+                <Route path='my-class-list' element={ <MyClassList /> } />
+                <Route path=':name' element={ <MyClassDetail /> } />
+                <Route path=':number' element={ <MyClassSession /> } />
               </Route>
+
             </Route>
             {/* Not found */ }
             <Route path='*' element={ <NotFound /> } />

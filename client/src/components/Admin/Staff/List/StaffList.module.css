@@ -1,0 +1,46 @@
+.search {
+      font-size: 1.2rem;
+      margin-top: 5px;
+      margin-left: 4px;
+}
+
+.hover:hover {
+      cursor: pointer;
+}
+
+.icon_choose {
+      font-size: 10rem;
+}
+
+.choose {
+      background-color: #FFFFFF;
+      border-radius: 50px;
+      min-width: 250px;
+      min-height: 250px;
+}
+
+.choose:hover {
+      cursor: pointer;
+      color: #0083FD;
+}
+
+.back {
+      font-size: 1.2rem;
+      color: blue;
+}
+
+.back:hover {
+      cursor: pointer;
+}
+
+@media only screen and (min-width:762px) {
+      .icon_choose {
+            font-size: 15rem;
+      }
+}
+
+@media only screen and (min-width:2400px) {
+      .icon_choose {
+            font-size: 25rem;
+      }
+}

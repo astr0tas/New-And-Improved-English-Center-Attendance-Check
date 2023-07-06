@@ -28,4 +28,37 @@ export class Class
                   });
             }
       }
+
+      getList(name, callback)
+      {
+            this.conn.query(`select * from class where name like '${ name }%'`, (err, res) =>
+            {
+                  if (err)
+                        callback(null, err);
+                  else
+                        callback(res, null);
+            })
+      }
+
+      getCurrentStudent(name, callback)
+      {
+            this.conn.query(`select count(in_class.class_name) as currentStudents from class join in_class on in_class.class_name=class.name where name='${ name }'`, (err, res) =>
+            {
+                  if (err)
+                        callback(null, err);
+                  else
+                        callback(res, null);
+            })
+      }
+
+      getCurrentSession(name, callback)
+      {
+            this.conn.query(`select count(session.class_name) as currentSessions from class join session on session.class_name=class.name where name='${ name }'`, (err, res) =>
+            {
+                  if (err)
+                        callback(null, err);
+                  else
+                        callback(res, null);
+            })
+      }
 }
