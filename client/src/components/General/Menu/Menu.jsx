@@ -28,7 +28,8 @@ const Menu = () =>
 
       const [activeTab, setActiveTab] = useState("");
 
-      const [chosenRole, setChosenRole] = useContext(context);
+      const { chosenRole, setChosenRole } = useContext(context);
+      const { setStaffType } = useContext(context);
 
       const handleToggleSidebar = () =>
       {
@@ -85,7 +86,7 @@ const Menu = () =>
                   })
                   .catch(error => console.log(error));
 
-            setActiveTab(window.location.pathname.substring(1));
+            setActiveTab(window.location.pathname);
 
             trackWidth();
 
@@ -108,6 +109,11 @@ const Menu = () =>
 
             window.addEventListener('resize', trackWidth);
 
+            return () =>
+            {
+                  window.removeEventListener('resize', trackWidth);
+            };
+
             // eslint-disable-next-line react-hooks/exhaustive-deps
       }, [Navigate]);
 
@@ -119,28 +125,28 @@ const Menu = () =>
                               <div className={ `h-100 d-flex flex-column position-fixed ${ styles.navbar }` } style={ { backgroundColor: '#E6E6E6' } } ref={ navbar }>
                                     <div className={ `w-100 ${ styles.dummy }` } style={ { minHeight: '50px' } }></div>
                                     <div className={ `flex-grow-1 d-flex flex-column overflow-auto ${ styles.tabs } mt-md-3 hideBrowserScrollbar` } ref={ tabs }>
-                                          <div className={ `${ activeTab === 'profile' ? styles.activeTab : styles.hover } mb-3 d-flex align-items-center justify-content-center` } onClick={ () => { Navigate("/profile"); } }>
+                                          <div className={ `${ activeTab.includes('/profile') ? styles.activeTab : styles.hover } mb-3 d-flex align-items-center justify-content-center` } onClick={ () => { Navigate("/profile"); } }>
                                                 <span className={ `d-flex align-items-center justify-content-center p-0` } style={ { fontSize: '3.5rem', whiteSpace: 'nowrap', color: 'black' } }><VscAccount /></span>
                                           </div>
-                                          <div className={ `${ activeTab === 'home' ? styles.activeTab : styles.hover } mb-3 d-flex align-items-center` } onClick={ () => { Navigate("/home"); } }>
+                                          <div className={ `${ activeTab.includes('/home') ? styles.activeTab : styles.hover } mb-3 d-flex align-items-center` } onClick={ () => { Navigate("/home"); } }>
                                                 <span className={ `d-flex align-items-center p-0 ms-2` } style={ { fontSize: '1.5rem', whiteSpace: 'nowrap', color: 'black' } }><AiOutlineHome className={ `me-1` } />Home</span>
                                           </div>
                                           {
                                                 userType !== 1 &&
-                                                <div className={ `${ activeTab === 'my-class-list' ? styles.activeTab : styles.hover } mb-3 d-flex align-items-center` } onClick={ () => { Navigate("/my-class-list"); } }>
+                                                <div className={ `${ activeTab.includes('/my-class-list') ? styles.activeTab : styles.hover } mb-3 d-flex align-items-center` } onClick={ () => { Navigate("/my-class-list"); } }>
                                                       <span className={ `d-flex align-items-center p-0 ms-2` } style={ { fontSize: '1.5rem', whiteSpace: 'nowrap', color: 'black' } }><MdOutlineClass className={ `me-1` } />My classes</span>
                                                 </div>
                                           }
                                           {
                                                 userType === 1 &&
                                                 <>
-                                                      <div className={ `${ activeTab === 'class-list' ? styles.activeTab : styles.hover } mb-3 d-flex align-items-center` } onClick={ () => { Navigate("/class-list"); } }>
+                                                      <div className={ `${ activeTab.includes('/class-list') ? styles.activeTab : styles.hover } mb-3 d-flex align-items-center` } onClick={ () => { Navigate("/class-list"); } }>
                                                             <span className={ `d-flex align-items-center p-0 ms-2` } style={ { fontSize: '1.5rem', whiteSpace: 'nowrap', color: 'black' } }><BsListColumnsReverse className={ `me-1` } />Classes</span>
                                                       </div>
-                                                      <div className={ `${ activeTab === 'staff-list' ? styles.activeTab : styles.hover } mb-3 d-flex align-items-center` } onClick={ () => { Navigate("/staff-list"); } }>
+                                                      <div className={ `${ activeTab.includes('/staff-list') ? styles.activeTab : styles.hover } mb-3 d-flex align-items-center` } onClick={ () => { setStaffType(0); Navigate("/staff-list"); } }>
                                                             <span className={ `d-flex align-items-center p-0 ms-2` } style={ { fontSize: '1.5rem', whiteSpace: 'nowrap', color: 'black' } }><BsListColumnsReverse className={ `me-1` } />Staffs</span>
                                                       </div>
-                                                      <div className={ `${ activeTab === 'student-list' ? styles.activeTab : styles.hover } mb-3 d-flex align-items-center` } onClick={ () => { Navigate("/student-list"); } }>
+                                                      <div className={ `${ activeTab.includes('/student-list') ? styles.activeTab : styles.hover } mb-3 d-flex align-items-center` } onClick={ () => { Navigate("/student-list"); } }>
                                                             <span className={ `d-flex align-items-center p-0 ms-2` } style={ { fontSize: '1.5rem', whiteSpace: 'nowrap', color: 'black' } }><BsListColumnsReverse className={ `me-1` } />Students</span>
                                                       </div>
                                                 </>

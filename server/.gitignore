@@ -1,2 +1,5 @@
 /node_modules
 /model/sessions
+/model/image/employee/admin
+/model/image/employee/staff
+/model/image/student

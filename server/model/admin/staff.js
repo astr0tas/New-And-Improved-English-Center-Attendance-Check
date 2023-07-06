@@ -28,4 +28,24 @@ export class Staff
                   });
             }
       }
+
+      getList(name, type, callback)
+      {
+            if (type === 1)
+                  this.conn.query(`select employee.id,name,phone,birthday,email,ssn,address from employee join teacher on teacher.id=employee.id where name like '%${ name }%'`, (err, res) =>
+                  {
+                        if (err)
+                              callback(null, err);
+                        else
+                              callback(res, null);
+                  });
+            else
+                  this.conn.query(`select employee.id,name,phone,birthday,email,ssn,address from employee join supervisor on supervisor.id=employee.id where name like '%${ name }%'`, (err, res) =>
+                  {
+                        if (err)
+                              callback(null, err);
+                        else
+                              callback(res, null);
+                  });
+      }
 }
