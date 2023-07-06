@@ -31,7 +31,7 @@ export class Class
 
       getList(name, callback)
       {
-            this.conn.query(`select * from class where name like '${ name }%'`, (err, res) =>
+            this.conn.query(`select * from class where name like '${ name }%' order by status desc, start_date desc, name`, (err, res) =>
             {
                   if (err)
                         callback(null, err);
