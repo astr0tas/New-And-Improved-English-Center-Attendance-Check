@@ -1,1 +1,0 @@
-Run `npm i` to install all the required libraries first, and then run `npm start` to start the react app.

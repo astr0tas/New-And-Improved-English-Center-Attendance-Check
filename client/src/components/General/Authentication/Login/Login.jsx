@@ -15,7 +15,7 @@ const Login = () =>
       const [inputs, setInputs] = useState({});
       const [isWrong, setIsWrong] = useState(false);
       const [isMissing, setIsMissing] = useState(false);
-      const { chosenRole, setChosenRole } = useContext(context);
+      const [chosenRole, setChosenRole] = useContext(context);
 
       const formChange = (event) =>
       {
