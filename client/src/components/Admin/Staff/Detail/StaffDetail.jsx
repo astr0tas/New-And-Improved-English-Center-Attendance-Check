@@ -68,16 +68,16 @@ const StaffDetail = () =>
                         }
                         else
                         {
-                              // axios.post(`http://${ domain }/admin/getSupervisorClass`, { params: { id: id } })
-                              //       .then(res =>
-                              //       {
-                              //             const temp = [];
-                              //             for (let i = 0; i < res.data.length; i++)
-                              //                   temp.push(<Class key={ i } i={ i + 1 } Navigate={ Navigate } name={ res.data[i].name }
-                              //                         start={ res.data[i].start_date } end={ res.data[i].end_date } status={ res.data[i].Status } />);
-                              //             setClasses(temp);
-                              //       })
-                              //       .catch(err => console.log(err));
+                              axios.post(`http://${ domain }/admin/getSupervisorClass`, { params: { id: id } })
+                                    .then(res =>
+                                    {
+                                          const temp = [];
+                                          for (let i = 0; i < res.data.length; i++)
+                                                temp.push(<Class key={ i } i={ i + 1 } Navigate={ Navigate } name={ res.data[i].name }
+                                                      start={ res.data[i].start_date } end={ res.data[i].end_date } status={ res.data[i].Status } />);
+                                          setClasses(temp);
+                                    })
+                                    .catch(err => console.log(err));
                         }
                   })
                   .catch(err => console.log(err));

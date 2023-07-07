@@ -32,7 +32,7 @@ export class Staff
       getList(name, type, callback)
       {
             if (type === 1)
-                  this.conn.query(`select employee.id,name,phone,birthday,email,ssn,address from employee join teacher on teacher.id=employee.id where name like '%${ name }%'`, (err, res) =>
+                  this.conn.query(`select employee.id,name,phone,birthday,email,ssn,address from employee join teacher on teacher.id=employee.id where name like ?`, ['%' + name + '%'], (err, res) =>
                   {
                         if (err)
                               callback(null, err);
@@ -40,7 +40,7 @@ export class Staff
                               callback(res, null);
                   });
             else
-                  this.conn.query(`select employee.id,name,phone,birthday,email,ssn,address from employee join supervisor on supervisor.id=employee.id where name like '%${ name }%'`, (err, res) =>
+                  this.conn.query(`select employee.id,name,phone,birthday,email,ssn,address from employee join supervisor on supervisor.id=employee.id where name like ?`, ['%' + name + '%'], (err, res) =>
                   {
                         if (err)
                               callback(null, err);
@@ -51,13 +51,13 @@ export class Staff
 
       getInfo(id, callback)
       {
-            this.conn.query(`select employee.id,ssn,name,phone,email,address,image,birthday,birthplace from employee join teacher on teacher.id=employee.id where employee.id='${ id }'`, (err1, res1) =>
+            this.conn.query(`select employee.id,ssn,name,phone,email,address,image,birthday,birthplace from employee join teacher on teacher.id=employee.id where employee.id=?`, [id], (err1, res1) =>
             {
-                  if (err1)
+                  if (err1 || !res1.length)
                   {
-                        this.conn.query(`select employee.id,ssn,name,phone,email,address,image,birthday,birthplace from employee join supervisor on supervisor.id=employee.id where employee.id='${ id }'`, (err2, res2) =>
+                        this.conn.query(`select employee.id,ssn,name,phone,email,address,image,birthday,birthplace from employee join supervisor on supervisor.id=employee.id where employee.id=?`, [id], (err2, res2) =>
                         {
-                              if (err2)
+                              if (err2 || !res2.length)
                                     callback(null, "No staff found!");
                               else
                               {
@@ -76,7 +76,7 @@ export class Staff
 
       getTeacherClass(id, callback)
       {
-            this.conn.query(`select class.name,class.status,class.start_date,class.end_date from class join teach on teach.class_name=class.name where teacher_id='${ id }' order by class.status desc, class.start_date desc, class.name`, (err, res) =>
+            this.conn.query(`select class.name,class.status,class.start_date,class.end_date from class join teach on teach.class_name=class.name where teacher_id=? order by class.status desc, class.start_date desc, class.name`, [id], (err, res) =>
             {
                   if (err)
                         callback(null, err);
@@ -87,14 +87,14 @@ export class Staff
 
       getSupervisorClass(id, callback)
       {
-            // this.conn.query(`select class.name,class.status,class.start_date,class.end_date 
-            // from class join teach on teach.class_name=class.name
-            // where teacher_id='${ id }' order by class.status desc, class.start_date desc, class.name`, (err, res) =>
-            // {
-            //       if (err)
-            //             callback(null, err);
-            //       else
-            //             callback(res, null);
-            // });
+            this.conn.query(`select class.name,class.status,class.start_date,class.end_date from class where class.name in (
+                  select distinct SUPERVISOR_RESPONSIBLE.class_name from SUPERVISOR_RESPONSIBLE where SUPERVISOR_RESPONSIBLE.Supervisor_ID=?
+            )`, [id], (err, res) =>
+            {
+                  if (err)
+                        callback(null, err);
+                  else
+                        callback(res, null);
+            });
       }
 }

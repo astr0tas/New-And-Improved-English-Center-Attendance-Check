@@ -32,7 +32,7 @@ export class Authentication
       login(username, password, type, callback)
       {
             if (type === 1)
-                  this.conn.query(`select employee.ID from employee join admin on admin.id=employee.id where username='${ username }' and password='${ password }'`, (err, res) =>
+                  this.conn.query(`select employee.ID from employee join admin on admin.id=employee.id where username=? and password=?`, [username, password], (err, res) =>
                   {
                         if (err)
                               callback(null, err);
@@ -40,7 +40,7 @@ export class Authentication
                               callback(res, null);
                   });
             else if (type === 2)
-                  this.conn.query(`select employee.ID from employee join teacher on teacher.id=employee.id where username='${ username }' and password='${ password }'`, (err, res) =>
+                  this.conn.query(`select employee.ID from employee join teacher on teacher.id=employee.id where username=? and password=?`, [username, password], (err, res) =>
                   {
                         if (err)
                               callback(null, err);
@@ -48,7 +48,7 @@ export class Authentication
                               callback(res, null);
                   });
             else if (type === 3)
-                  this.conn.query(`select employee.ID from employee join supervisor on supervisor.id=employee.id where username='${ username }' and password='${ password }'`, (err, res) =>
+                  this.conn.query(`select employee.ID from employee join supervisor on supervisor.id=employee.id where username=? and password=?`, [username, password], (err, res) =>
                   {
                         if (err)
                               callback(null, err);
@@ -59,7 +59,7 @@ export class Authentication
 
       recovery(username, password, callback)
       {
-            this.conn.query(`update employee set password='${ password }' where username='${ username }'`, (err, res) =>
+            this.conn.query(`update employee set password=? where username=?`, [password, username], (err, res) =>
             {
                   if (err)
                         callback(null, err);
@@ -70,7 +70,7 @@ export class Authentication
 
       validateUser(username, callback)
       {
-            this.conn.query(`select * from employee where username='${ username }'`, (err, res) =>
+            this.conn.query(`select * from employee where username=?`, [username], (err, res) =>
             {
                   if (err)
                         callback(null, err);

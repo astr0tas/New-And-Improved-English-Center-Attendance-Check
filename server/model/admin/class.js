@@ -31,7 +31,7 @@ export class Class
 
       getList(name, status, callback)
       {
-            this.conn.query(`select * from class where name like '${ name }%' and status='${ status }' order by status desc, start_date desc, name`, (err, res) =>
+            this.conn.query(`select * from class where name like ? and status=? order by status desc, start_date desc, name`, [name + '%', status], (err, res) =>
             {
                   if (err)
                         callback(null, err);
@@ -42,7 +42,7 @@ export class Class
 
       getCurrentStudent(name, callback)
       {
-            this.conn.query(`select count(in_class.class_name) as currentStudents from class join in_class on in_class.class_name=class.name where name='${ name }'`, (err, res) =>
+            this.conn.query(`select count(in_class.class_name) as currentStudents from class join in_class on in_class.class_name=class.name where name=?`, [name], (err, res) =>
             {
                   if (err)
                         callback(null, err);
@@ -53,7 +53,7 @@ export class Class
 
       getCurrentSession(name, callback)
       {
-            this.conn.query(`select count(session.class_name) as currentSessions from class join session on session.class_name=class.name where name='${ name }'`, (err, res) =>
+            this.conn.query(`select count(session.class_name) as currentSessions from class join session on session.class_name=class.name where name=?`, [name], (err, res) =>
             {
                   if (err)
                         callback(null, err);

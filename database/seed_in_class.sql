@@ -1,3 +1,5 @@
+-- this is only temporary, used for testing functionalities only
+
 USE ENGLISH_CENTER;
 
 insert into IN_CLASS values('STUDENT01','TOEIC01') ,('STUDENT01','TOEIC02')

@@ -1,3 +1,5 @@
+-- this is only temporary, used for testing functionalities only
+
 use english_center;
 
 insert into teach values('TEACHER01','TOEIC01'),('TEACHER01','TOEIC02')

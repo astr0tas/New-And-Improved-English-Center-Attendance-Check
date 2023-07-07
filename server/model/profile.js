@@ -32,7 +32,7 @@ export class Profile
 
       getInfo(id, callback)
       {
-            this.conn.query(`select ssn,name,phone,username,birthday,birthplace,email,address,image from employee where employee.id='${ id }'`, (err, res) =>
+            this.conn.query(`select ssn,name,phone,username,birthday,birthplace,email,address,image from employee where employee.id=?`, [id], (err, res) =>
             {
                   if (err)
                         callback(null, err);
@@ -44,26 +44,54 @@ export class Profile
       updateInfo(id, ssn, name, address, birthday, birthplace, email, phone, password, imagePath, callback)
       {
             let queryStmts = "";
+            const queryParams = [];
             if (ssn !== 'null')
-                  queryStmts += `update employee set ssn='${ ssn }' where id='${ id }';`;
+            {
+                  queryStmts += `update employee set ssn=? where id=?;`;
+                  queryParams.push(ssn, id);
+            }
             if (name !== 'null')
-                  queryStmts += `update employee set name='${ name }' where id='${ id }';`;
+            {
+                  queryStmts += `update employee set name=? where id=?;`;
+                  queryParams.push(name, id);
+            }
             if (address !== 'null')
-                  queryStmts += `update employee set address='${ address }' where id='${ id }';`;
+            {
+                  queryStmts += `update employee set address=? where id=?;`;
+                  queryParams.push(address, id);
+            }
             if (birthday !== 'null')
-                  queryStmts += `update employee set birthday='${ birthday }' where id='${ id }';`;
+            {
+                  queryStmts += `update employee set birthday=? where id=?;`;
+                  queryParams.push(birthday, id);
+            }
             if (birthplace !== 'null')
-                  queryStmts += `update employee set birthplace='${ birthplace }' where id='${ id }';`;
+            {
+                  queryStmts += `update employee set birthplace=? where id=?;`;
+                  queryParams.push(birthplace, id);
+            }
             if (email !== 'null')
-                  queryStmts += `update employee set email='${ email }' where id='${ id }';`;
+            {
+                  queryStmts += `update employee set email=? where id=?;`;
+                  queryParams.push(email, id);
+            }
             if (phone !== 'null')
-                  queryStmts += `update employee set phone='${ phone }' where id='${ id }';`;
+            {
+                  queryStmts += `update employee set phone=? where id=?;`;
+                  queryParams.push(phone, id);
+            }
             if (password !== 'null')
-                  queryStmts += `update employee set password='${ password }' where id='${ id }';`;
+            {
+                  queryStmts += `update employee set password=? where id=?;`;
+                  queryParams.push(password, id);
+            }
             if (imagePath !== null)
-                  queryStmts += `update employee set image='${ imagePath }' where id='${ id }';`;
+            {
+                  queryStmts += `update employee set image=? where id=?;`;
+                  queryParams.push(imagePath, id);
+            }
             if (queryStmts !== "")
-                  this.conn.query(queryStmts, (err, res) =>
+                  this.conn.query(queryStmts, queryParams, (err, res) =>
                   {
                         if (err)
                               callback(null, err);
