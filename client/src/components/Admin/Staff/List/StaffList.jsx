@@ -1,7 +1,6 @@
 import styles from './StaffList.module.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
-import '../../../../css/scroll.css';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -123,7 +122,7 @@ const StaffList = () =>
                                           <input type='text' placeholder='Find staff' className={ `ps-4` } onChange={ findStaff }></input>
                                     </div>
                               </div>
-                              <div className={ `flex-grow-1 w-100 overflow-auto mt-3 px-md-2 hideBrowserScrollbar mb-3` }>
+                              <div className={ `flex-grow-1 w-100 overflow-auto mt-3 px-md-2 mb-3` }>
                                     <table className="table table-hover table-info" style={ { borderCollapse: 'separate' } }>
                                           <thead style={ { position: "sticky", top: "0" } }>
                                                 <tr>

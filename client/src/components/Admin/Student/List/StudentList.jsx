@@ -1,7 +1,6 @@
 import styles from './StudentList.module.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
-import '../../../../css/scroll.css';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -65,7 +64,7 @@ const StudentList = () =>
                         <FontAwesomeIcon icon={ faMagnifyingGlass } className={ `position-absolute ${ styles.search }` } />
                         <input type='text' placeholder='Find student' className={ `ps-4` } onChange={ findStudent }></input>
                   </div>
-                  <div className={ `flex-grow-1 w-100 overflow-auto mt-3 px-md-2 hideBrowserScrollbar mb-3` }>
+                  <div className={ `flex-grow-1 w-100 overflow-auto mt-3 px-md-2 mb-3` }>
                         <table className="table table-hover table-info" style={ { borderCollapse: 'separate' } }>
                               <thead style={ { position: "sticky", top: "0" } }>
                                     <tr>

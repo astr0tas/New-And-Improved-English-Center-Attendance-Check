@@ -14,8 +14,10 @@ import ClassDetail from './components/Admin/Class/Detail/ClassDetail';
 import AdminClassSession from './components/Admin/Class/Session/Session';
 import StaffList from './components/Admin/Staff/List/StaffList';
 import StaffDetail from './components/Admin/Staff/Detail/StaffDetail'
+import StaffEdit from './components/Admin/Staff/Edit/StaffEdit';
 import StudentList from './components/Admin/Student/List/StudentList';
 import StudentDetail from './components/Admin/Student/Detail/StudentDetail'
+import StudentEdit from './components/Admin/Student/Edit/StudentEdit';
 
 // Staff routes
 import MyClassList from './components/Staff/MyClass/List/MyClassList';
@@ -69,11 +71,13 @@ function App()
               <Route>
                 <Route path='staff-list' element={ <StaffList /> } />
                 <Route path='staff-list/:id' element={ <StaffDetail /> } />
+                <Route path='staff-list/:id/edit' element={ <StaffEdit /> } />
               </Route>
 
               <Route>
                 <Route path='student-list' element={ <StudentList /> } />
                 <Route path='student-list/:id' element={ <StudentDetail /> } />
+                <Route path='student-list/:id/edit' element={ <StudentEdit /> } />
               </Route>
               {/* Staff routes */ }
               <Route>

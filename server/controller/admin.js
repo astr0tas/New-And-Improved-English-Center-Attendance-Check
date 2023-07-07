@@ -11,7 +11,8 @@ const classModel = new Class();
 adminRoutes.post('/classList', (req, res) =>
 {
       const name = req.body.params.name;
-      classModel.getList(name, (result, err) =>
+      const status = req.body.params.status;
+      classModel.getList(name, status, (result, err) =>
       {
             if (err)
             {
@@ -59,6 +60,7 @@ adminRoutes.post('/getCurrentSession', (req, res) =>
 });
 
 const staffModel = new Staff();
+
 adminRoutes.post('/staffList', (req, res) =>
 {
       const name = req.body.params.name;
@@ -79,6 +81,52 @@ adminRoutes.post('/staffList', (req, res) =>
             }
       })
 });
+
+adminRoutes.post('/staffInfo', (req, res) =>
+{
+      const id = req.body.params.id;
+      staffModel.getInfo(id, (result, err) =>
+      {
+            if (err)
+            {
+                  console.log(err);
+                  res.status(500).send('Server internal error!');
+            }
+            else
+                  res.status(200).send(result[0]);
+      })
+});
+
+adminRoutes.post('/getTeacherClass', (req, res) =>
+{
+      const id = req.body.params.id;
+      staffModel.getTeacherClass(id, (result, err) =>
+      {
+            if (err)
+            {
+                  console.log(err);
+                  res.status(500).send('Server internal error!');
+            }
+            else
+                  res.status(200).send(result);
+      })
+});
+
+adminRoutes.post('/getSupervisorClass', (req, res) =>
+{
+      const id = req.body.params.id;
+      staffModel.getSupervisorClass(id, (result, err) =>
+      {
+            if (err)
+            {
+                  console.log(err);
+                  res.status(500).send('Server internal error!');
+            }
+            else
+                  res.status(200).send(result);
+      })
+});
+
 
 const studentModel = new Student();
 
@@ -102,5 +150,34 @@ adminRoutes.post('/studentList', (req, res) =>
       })
 });
 
+adminRoutes.post('/studentInfo', (req, res) =>
+{
+      const id = req.body.params.id;
+      studentModel.studentInfo(id, (result, err) =>
+      {
+            if (err)
+            {
+                  console.log(err);
+                  res.status(500).send('Server internal error!');
+            }
+            else
+                  res.status(200).send(result[0]);
+      })
+});
+
+adminRoutes.post('/getStudentClass', (req, res) =>
+{
+      const id = req.body.params.id;
+      studentModel.getStudentClass(id, (result, err) =>
+      {
+            if (err)
+            {
+                  console.log(err);
+                  res.status(500).send('Server internal error!');
+            }
+            else
+                  res.status(200).send(result);
+      })
+});
 
 export default adminRoutes;
