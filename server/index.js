@@ -40,6 +40,17 @@ app.use(session({
       name: 'userID'
 }));
 
+app.use((req, res, next) =>
+{
+      const contentType = req.get('Content-Type');
+      const authorization = req.header('Authorization');
+
+      console.log('Content-Type:', contentType);
+      console.log('Authorization:', authorization);
+
+      next();
+});
+
 app.use('/admin', adminRoutes);
 app.use('/', generalRoutes);
 app.use('/staff', staffRoutes);

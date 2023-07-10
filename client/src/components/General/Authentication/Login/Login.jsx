@@ -35,7 +35,12 @@ const Login = () =>
             else
             {
                   setIsMissing(false);
-                  axios.post(`http://${ domain }/`, { params: { username: inputs.username, password: inputs.password, type: chosenRole } }, { withCredentials: true })
+                  axios.post(`http://${ domain }/`, { params: { username: inputs.username, password: inputs.password, type: chosenRole } }, {
+                        withCredentials: true,
+                        headers: {
+                              'Content-Type': 'application/json'
+                        }
+                  })
                         .then(res =>
                         {
                               if (res.data)
@@ -54,7 +59,12 @@ const Login = () =>
 
       useEffect(() =>
       {
-            axios.get(`http://${ domain }/isLoggedIn`, { withCredentials: true })
+            axios.get(`http://${ domain }/isLoggedIn`, {
+                  withCredentials: true,
+                  headers: {
+                        'Content-Type': 'application/json'
+                  }
+            })
                   .then(res =>
                   {
                         if (res.data[0])

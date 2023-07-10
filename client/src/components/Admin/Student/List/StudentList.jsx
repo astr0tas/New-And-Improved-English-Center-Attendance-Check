@@ -45,7 +45,7 @@ const StudentList = () =>
 
       useEffect(() =>
       {
-            axios.post(`http://${ domain }/admin/studentList`, { params: { name: name } })
+            axios.post(`http://${ domain }/admin/studentList`, { params: { name: name } },{headers: { 'Content-Type': 'application/json'}})
                   .then(res =>
                   {
                         const temp = [];

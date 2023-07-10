@@ -53,7 +53,12 @@ const Profile = () =>
 
       useEffect(() =>
       {
-            axios.get(`http://${ domain }/profile`, { withCredentials: true })
+            axios.get(`http://${ domain }/profile`, {
+                  withCredentials: true,
+                  headers: {
+                        'Content-Type': 'application/json'
+                  }
+            })
                   .then(res =>
                   {
                         setName(res.data.name);
@@ -121,7 +126,12 @@ const Profile = () =>
                   formdata.append('password', password === '' ? null : password);
                   formdata.append('userType', userType);
                   formdata.append('image', newImage);
-                  axios.post(`http://${ domain }/updateProfile`, formdata, { withCredentials: true })
+                  axios.post(`http://${ domain }/updateProfile`, formdata, {
+                        withCredentials: true,
+                        headers: {
+                              'Content-Type': 'application/json'
+                        }
+                  })
                         .then(res =>
                         {
                               triggerEdit(false);

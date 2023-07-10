@@ -42,7 +42,7 @@ const StudentDetail = () =>
 
       useEffect(() =>
       {
-            axios.post(`http://${ domain }/admin/studentInfo`, { params: { id: id } })
+            axios.post(`http://${ domain }/admin/studentInfo`, { params: { id: id } },{headers:{'Content-Type': 'application/json'}})
                   .then(res =>
                   {
                         document.title = `Student ${ res.data.name }`;
@@ -58,7 +58,7 @@ const StudentDetail = () =>
                   })
                   .catch(err => console.log(err));
 
-            axios.post(`http://${ domain }/admin/getStudentClass`, { params: { id: id } })
+            axios.post(`http://${ domain }/admin/getStudentClass`, { params: { id: id } },{headers: { 'Content-Type': 'application/json'}})
                   .then(res =>
                   {
                         const temp = [];

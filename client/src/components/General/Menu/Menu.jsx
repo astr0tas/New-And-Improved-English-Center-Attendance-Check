@@ -54,7 +54,12 @@ const Menu = () =>
       const logOut = () =>
       {
             setChosenRole(chosenRole - chosenRole); // this is dumb but it it used for getting rid of the warning of not using `chosenRole`
-            axios.get(`http://${ domain }/logout`, { withCredentials: true })
+            axios.get(`http://${ domain }/logout`, {
+                  withCredentials: true,
+                  headers: {
+                        'Content-Type': 'application/json'
+                  }
+            })
                   .then(res =>
                   {
                         Navigate("/");
@@ -76,7 +81,10 @@ const Menu = () =>
 
       useEffect(() =>
       {
-            axios.get(`http://${ domain }/isLoggedIn`, { withCredentials: true })
+            axios.get(`http://${ domain }/isLoggedIn`, {
+                  withCredentials: true,
+                  headers: { 'Content-Type': 'application/json' }
+            })
                   .then(res =>
                   {
                         if (!res.data[0])

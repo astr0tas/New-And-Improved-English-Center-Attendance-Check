@@ -76,7 +76,7 @@ const StaffList = () =>
             }
 
             if (staffType !== 0)
-                  axios.post(`http://${ domain }/admin/staffList`, { params: { name: name, type: staffType } })
+                  axios.post(`http://${ domain }/admin/staffList`, { params: { name: name, type: staffType } },{headers: { 'Content-Type': 'application/json'}})
                         .then(res =>
                         {
                               const temp = [];

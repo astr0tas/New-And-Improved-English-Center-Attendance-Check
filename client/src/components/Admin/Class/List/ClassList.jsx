@@ -14,14 +14,14 @@ const Class = (props) =>
 
       useEffect(() =>
       {
-            axios.post(`http://${ domain }/admin/getCurrentStudent`, { params: { name: props.name } })
+            axios.post(`http://${ domain }/admin/getCurrentStudent`, { params: { name: props.name } }, { headers: { 'Content-Type': 'application/json' } })
                   .then(res =>
                   {
                         setCurrentStudents(res.data.currentStudents);
                   })
                   .catch(err => console.error(err));
 
-            axios.post(`http://${ domain }/admin/getCurrentSession`, { params: { name: props.name } })
+            axios.post(`http://${ domain }/admin/getCurrentSession`, { params: { name: props.name } }, { headers: { 'Content-Type': 'application/json' } })
                   .then(res =>
                   {
                         setCurrentSessions(res.data.currentSessions);
@@ -55,7 +55,10 @@ const ClassList = () =>
 
       useEffect(() =>
       {
-            axios.post(`http://${ domain }/admin/classList`, { params: { name: name, status: status } })
+            axios.post(`http://${ domain }/admin/classList`, { params: { name: name, status: status } },
+                  {
+                        headers: { 'Content-Type': 'application/json' }
+                  })
                   .then(res =>
                   {
                         const temp = [];

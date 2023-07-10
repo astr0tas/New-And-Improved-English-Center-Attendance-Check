@@ -35,7 +35,9 @@ function Recovery()
             {
                   setIsMissing(false);
 
-                  axios.post(`http://${ domain }/validateUser`, { params: { username: username } })
+                  axios.post(`http://${ domain }/validateUser`, { params: { username: username } }, {
+                        headers: { 'Content-Type': 'application/json' }
+                  })
                         .then(res =>
                         {
                               if (res.data)
@@ -71,7 +73,9 @@ function Recovery()
             else
             {
                   setIsMatch(true);
-                  axios.post(`http://${ domain }/recovery`, { params: { username: username, password: password } })
+                  axios.post(`http://${ domain }/recovery`, { params: { username: username, password: password } }, {
+                        headers: { 'Content-Type': 'application/json'}
+                  })
                         .then(res =>
                         {
                               console.log(res);

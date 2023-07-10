@@ -41,7 +41,7 @@ const StaffDetail = () =>
 
       useEffect(() =>
       {
-            axios.post(`http://${ domain }/admin/staffInfo`, { params: { id: id } })
+            axios.post(`http://${ domain }/admin/staffInfo`, { params: { id: id } }, { headers: { 'Content-Type': 'application/json' } })
                   .then(res =>
                   {
                         setName(res.data.name);
@@ -55,7 +55,7 @@ const StaffDetail = () =>
 
                         if (res.data.type === 1)
                         {
-                              axios.post(`http://${ domain }/admin/getTeacherClass`, { params: { id: id } })
+                              axios.post(`http://${ domain }/admin/getTeacherClass`, { params: { id: id } }, { headers: { 'Content-Type': 'application/json' } })
                                     .then(res =>
                                     {
                                           const temp = [];
@@ -68,7 +68,7 @@ const StaffDetail = () =>
                         }
                         else
                         {
-                              axios.post(`http://${ domain }/admin/getSupervisorClass`, { params: { id: id } })
+                              axios.post(`http://${ domain }/admin/getSupervisorClass`, { params: { id: id } }, { headers: { 'Content-Type': 'application/json' } })
                                     .then(res =>
                                     {
                                           const temp = [];
