@@ -8,7 +8,8 @@ export class Class
                   host: "localhost",
                   user: "englishcenter",
                   password: "englishcenter123",
-                  database: "english_center"
+                  database: "english_center",
+                  multipleStatements: true
             });
       }
 
@@ -123,6 +124,24 @@ export class Class
             this.conn.query(`select name,phone,id,email,ssn from student S1 where S1.name like ? and S1.id not in (
                   select id from student S2 join in_class on in_class.student_id=S2.id where in_class.class_name=?
             )`, ['%' + studentName + '%', className], (err, res) =>
+            {
+                  if (err)
+                        callback(null, err);
+                  else
+                        callback(res, null);
+            });
+      }
+
+      addStudentToClass(name, students, callback)
+      {
+            let sql = "";
+            const params = [];
+            for (let i = 0; i < students.length; i++)
+            {
+                  sql += "insert into in_class values(?,?);";
+                  params.push(students[i], name);
+            }
+            this.conn.query(sql, params, (err, res) =>
             {
                   if (err)
                         callback(null, err);

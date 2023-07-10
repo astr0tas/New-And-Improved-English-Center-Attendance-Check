@@ -1,0 +1,48 @@
+.customModal,
+.confirmModal {
+      max-width: 95% !important;
+}
+
+.confirmModal {
+      padding-top: 30vh !important;
+      padding-top: 30dvh !important;
+}
+
+.dialog {
+      max-width: 100% !important;
+      max-height: 75% !important;
+}
+
+.p {
+      font-size: 1rem;
+      color: red;
+}
+
+@media only screen and (min-width: 768px) {
+
+      .customModal,
+      .confirmModal {
+            max-width: 75% !important;
+      }
+}
+
+@media only screen and (max-width:330px) {
+      .p {
+            font-size: 0.8rem;
+            color: red;
+      }
+}
+
+@media only screen and (max-height:450px) {
+
+      .confirmModal,
+      .customModal {
+            padding-top: 10vh !important;
+            padding-top: 10dvh !important;
+      }
+
+      .dialog {
+            min-height: 110% !important;
+            max-height: 110% !important;
+      }
+}

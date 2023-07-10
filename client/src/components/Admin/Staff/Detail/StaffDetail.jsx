@@ -123,7 +123,7 @@ const StaffDetail = () =>
                         </div>
                   </div>
                   <div className='flex-grow-1 mb-3 mt-2 overflow-auto' style={ { minHeight: classes.length !== 0 ? '200px' : 'unset' } }>
-                        <table className="table table-hover table-info mx-auto" style={ { borderCollapse: 'separate', width: '95%' } }>
+                        <table className="table table-hover table-info mx-auto" style={ { width: '95%' } }>
                               <thead style={ { position: "sticky", top: "0" } }>
                                     <tr>
                                           <th scope="col" className='col-1 text-center'>#</th>

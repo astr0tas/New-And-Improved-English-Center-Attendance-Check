@@ -9,101 +9,9 @@ import '../../../../css/modal.css';
 import { context } from '../../../../context';
 import { AiOutlineClockCircle } from 'react-icons/ai';
 import { DMDY } from '../../../../tools/dateFormat';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import '../../../../css/scroll.css';
-
-const AddStudent = (props) =>
-{
-      const [studentListContent, setStudentListContent] = useState([]);
-      const [searchStudent, setSearchStudent] = useState("");
-      const [studentAdded, setStudentAdded] = useState([]);
-
-      let timer;
-
-      const configList = (e, id) =>
-      {
-            if (e.target.checked)
-                  setStudentAdded(prevState => [...prevState, id]);
-            else
-                  setStudentAdded(prevState => prevState.filter(item => item !== id));
-      }
-
-      useEffect(() =>
-      {
-            axios.post(`http://${ domain }/admin/getStudentNotFromClass`, { params: { className: props.name, studentName: searchStudent } }, { headers: { 'Content-Type': 'application/json' } })
-                  .then(res =>
-                  {
-                        const temp = [];
-                        for (let i = 0; i < res.data.length; i++)
-                              temp.push(
-                                    <tr key={ i }>
-                                          <td className='text-center'>{ i + 1 }</td>
-                                          <td className='text-center'>{ res.data[i].name }</td>
-                                          <td className='text-center'>{ res.data[i].ssn }</td>
-                                          <td className='text-center'>{ res.data[i].phone }</td>
-                                          <td className='text-center'>{ res.data[i].email }</td>
-                                          <td className='text-center'>
-                                                <input type='checkbox' onChange={ e => configList(e, res.data[i].id) } style={ { width: '1.2rem', height: '1.2rem' } } className={ `${ styles.hover }` }></input>
-                                          </td>
-                                    </tr >
-                              );
-                        setStudentListContent(temp);
-                  })
-                  .catch(err => console.error(err));
-      }, [searchStudent])
-
-      return (
-            <Modal show={ true } onHide={ () => { props.setAddPopUp(null); } }
-                  dialogClassName={ `${ styles.dialog }` } contentClassName={ `${ styles.content }` }
-                  className={ `reAdjustModel ${ styles.customModal }` } container={ props.containerRef.current }>
-                  <Modal.Header closeButton>
-                        <div>
-                              <FontAwesomeIcon icon={ faMagnifyingGlass } className={ `position-absolute ${ styles.search }` } />
-                              <input type='text' style={ { fontSize: '1rem', paddingLeft: '30px', maxWidth: '200px' } } onChange={ e =>
-                              {
-                                    clearTimeout(timer);
-
-                                    timer = setTimeout(() =>
-                                    {
-                                          setSearchStudent(e.target.value);
-                                    }, 1000);
-                              } }></input>
-                        </div>
-                  </Modal.Header>
-                  <Modal.Body>
-                        <div className={ `h-100 w-100 overflow-auto mt-3 mb-3` }>
-                              <table className="table table-hover table-info" style={ { borderCollapse: 'separate' } }>
-                                    <thead style={ { position: "sticky", top: "0" } }>
-                                          <tr>
-                                                <th scope="col" className='col-1 text-center'>#</th>
-                                                <th scope="col" className='col-4 text-center'>Name</th>
-                                                <th scope="col" className='col-2 text-center'>SSN</th>
-                                                <th scope="col" className='col-2 text-center'>Phone number</th>
-                                                <th scope="col" className='col-2 text-center'>Email</th>
-                                                <th scope="col" className='col-1 text-center'>Action</th>
-                                          </tr>
-                                    </thead>
-                                    <tbody>
-                                          { studentListContent }
-                                    </tbody>
-                              </table>
-                        </div >
-                  </Modal.Body>
-                  <Modal.Footer className='justify-content-center'>
-                        <button className={ `btn btn-danger ms-2 ms-md-4` } onClick={ () =>
-                        {
-                              props.setAddPopUp(null);
-                        } }>Cancel</button>
-                        <button className={ `btn btn-primary ms-2 ms-md-4` } onClick={ () =>
-                        {
-                              console.log(studentAdded);
-                              props.setAddPopUp(null);
-                        } }>Confirm</button>
-                  </Modal.Footer>
-            </Modal>
-      )
-}
+import AddStudent from './AddStudent/AddStudent';
+import AddSession from './AddSession/AddSession';
 
 const Student = (props) =>
 {
@@ -163,19 +71,23 @@ const ClassDetail = () =>
       const [removePopUp, setRemovePopUp] = useState(false);
       const [removeTarget, setRemoveTarget] = useState(null);
       const [maxPopUp, setMaxPopUp] = useState(false);
-
-      const [addPopUp, setAddPopUp] = useState(null);
+      const [addPopUp, setAddPopUp] = useState(false);
 
       const Navigate = useNavigate();
 
       document.title = `Class ${ name }`;
 
-      const addAStudent = () =>
+      const addStudent = () =>
       {
             if (currentStudent === maxStudent)
                   setMaxPopUp(true);
             else
-                  setAddPopUp(<AddStudent containerRef={ containerRef } setAddPopUp={ setAddPopUp } name={ name } />);
+                  setAddPopUp(true);
+      }
+
+      const addASession = () =>
+      {
+            
       }
 
       useEffect(() =>
@@ -232,11 +144,11 @@ const ClassDetail = () =>
                         })
                         .catch(err => console.error(err));
             }
-      }, [name, render, studentList]);
+      }, [name, render, studentList, Navigate]);
 
       return (
             <div className="w-100 h-100 d-flex flex-column align-items-center" ref={ containerRef }>
-                  <div className="w-100 h-100 d-flex flex-column overflow-auto">
+                  <div className="w-100 h-100 d-flex flex-column overflow-auto hideBrowserScrollbar">
                         <strong className={ `ms-md-3 mb-0 me-md-0 mx-auto mt-2 ${ styles.back }` } onClick={ () => Navigate(-1) }>Back</strong>
                         <div className='mx-auto'>
                               <h2 className='mt-4 text-center'>{ name }</h2>
@@ -263,8 +175,8 @@ const ClassDetail = () =>
                               <button className={ `mx-3 btn ${ studentList ? 'btn-primary' : 'btn-secondary' }` } onClick={ () => setStudentList(true) }>Student</button>
                               <button className={ `mx-3 btn ${ studentList ? 'btn-secondary' : 'btn-primary' }` } onClick={ () => setStudentList(false) }>Session</button>
                         </div>
-                        <div className={ `flex-grow-1 w-100 overflow-auto mt-3 px-md-2 mb-3` }>
-                              <table className="table table-hover table-info" style={ { borderCollapse: 'separate' } }>
+                        <div className={ `flex-grow-1 w-100 overflow-auto mt-3 px-md-2 mb-3` } style={ { minHeight: content.length ? '250px' : '40px' } }>
+                              <table className="table table-hover table-info">
                                     <thead style={ { position: "sticky", top: "0" } }>
                                           <tr>
                                                 {
@@ -294,7 +206,14 @@ const ClassDetail = () =>
                               </table>
                         </div >
                         <div className="d-flex align-items-center mx-auto mb-3">
-                              <button className='btn btn-primary me-md-3 me-2' onClick={ addAStudent }>Add student</button>
+                              {
+                                    studentList &&
+                                    <button className='btn btn-primary me-md-3 me-2' onClick={ addStudent }>Add student</button>
+                              }
+                              {
+                                    !studentList &&
+                                    <button className='btn btn-primary me-md-3 me-2' onClick={ addASession }>Add session</button>
+                              }
                               <button className='btn btn-secondary ms-md-3 ms-2' onClick={ () => Navigate('./edit') }>Edit class</button>
                         </div>
                   </div>
@@ -358,7 +277,9 @@ const ClassDetail = () =>
                               } }>OKAY</button>
                         </Modal.Footer>
                   </Modal>
-                  { addPopUp }
+                  <AddStudent containerRef={ containerRef } setAddPopUp={ setAddPopUp } name={ name }
+                        addPopUp={ addPopUp } currentStudent={ currentStudent } maxStudent={ maxStudent }
+                        render={ render } setRender={ setRender } />
             </div >
       )
 }

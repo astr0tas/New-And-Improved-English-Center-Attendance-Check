@@ -12,7 +12,7 @@ import Profile from './components/General/Profile/Profile';
 import ClassList from './components/Admin/Class/List/ClassList';
 import ClassDetail from './components/Admin/Class/Detail/ClassDetail';
 import ClassEdit from './components/Admin/Class/Edit/ClassEdit';
-import AdminClassSession from './components/Admin/Class/Session/Session';
+import AdminClassSession from './components/Admin/Class/Session/SessionDetail';
 import StaffList from './components/Admin/Staff/List/StaffList';
 import StaffDetail from './components/Admin/Staff/Detail/StaffDetail'
 import StaffEdit from './components/Admin/Staff/Edit/StaffEdit';
@@ -23,11 +23,9 @@ import StudentEdit from './components/Admin/Student/Edit/StudentEdit';
 // Staff routes
 import MyClassList from './components/Staff/MyClass/List/MyClassList';
 import MyClassDetail from './components/Staff/MyClass/Detail/MyClassDetail';
-import MyclassSession from './components/Staff/MyClass/Session/Session';
-
-import { ContextProvider } from './context';
 import MyClassSession from './components/Staff/MyClass/Session/Session';
 
+import { ContextProvider } from './context';
 
 const NotFound = () =>
 {

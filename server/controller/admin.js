@@ -152,6 +152,22 @@ adminRoutes.post('/getStudentNotFromClass', (req, res) =>
       })
 });
 
+adminRoutes.post('/addStudentToClass', (req, res) =>
+{
+      const name = req.body.params.name;
+      const students = req.body.params.students;
+      classModel.addStudentToClass(name, students, (result, err) =>
+      {
+            if (err)
+            {
+                  console.log(err);
+                  res.status(500).send('Server internal error!');
+            }
+            else
+                  res.status(200).send('Student(s) added successfully!');
+      })
+});
+
 const staffModel = new Staff();
 
 adminRoutes.post('/staffList', (req, res) =>

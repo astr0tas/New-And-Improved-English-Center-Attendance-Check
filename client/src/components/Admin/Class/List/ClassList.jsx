@@ -110,7 +110,7 @@ const ClassList = () =>
                         </div>
                   </div>
                   <div className={ `flex-grow-1 w-100 overflow-auto mt-3 px-md-2 mb-3` }>
-                        <table className="table table-hover table-info" style={ { borderCollapse: 'separate' } }>
+                        <table className="table table-hover table-info">
                               <thead style={ { position: "sticky", top: "0" } }>
                                     <tr>
                                           <th scope="col" className='col-1 text-center'>#</th>
