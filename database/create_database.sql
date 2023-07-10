@@ -58,9 +58,9 @@ CREATE TABLE CLASS (
   Start_date DATE,
   End_date DATE,
   Name VARCHAR(100),
-  Status boolean,
-  Max_students INT,
-  Initial_sessions INT,
+  Status boolean default false,
+  Max_students INT default 0,
+  Initial_sessions INT default 0,
   PRIMARY KEY (Name)
 );
 

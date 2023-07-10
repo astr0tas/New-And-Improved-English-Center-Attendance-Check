@@ -30,6 +30,7 @@ const Menu = () =>
 
       const { chosenRole, setChosenRole } = useContext(context);
       const { setStaffType } = useContext(context);
+      const { setClassState } = useContext(context);
 
       const handleToggleSidebar = () =>
       {
@@ -55,10 +56,7 @@ const Menu = () =>
       {
             setChosenRole(chosenRole - chosenRole); // this is dumb but it it used for getting rid of the warning of not using `chosenRole`
             axios.get(`http://${ domain }/logout`, {
-                  withCredentials: true,
-                  headers: {
-                        'Content-Type': 'application/json'
-                  }
+                  withCredentials: true
             })
                   .then(res =>
                   {
@@ -82,8 +80,7 @@ const Menu = () =>
       useEffect(() =>
       {
             axios.get(`http://${ domain }/isLoggedIn`, {
-                  withCredentials: true,
-                  headers: { 'Content-Type': 'application/json' }
+                  withCredentials: true
             })
                   .then(res =>
                   {
@@ -148,7 +145,7 @@ const Menu = () =>
                                           {
                                                 userType === 1 &&
                                                 <>
-                                                      <div className={ `${ activeTab.includes('/class-list') ? styles.activeTab : styles.hover } mb-3 d-flex align-items-center` } onClick={ () => { Navigate("/class-list"); } }>
+                                                      <div className={ `${ activeTab.includes('/class-list') ? styles.activeTab : styles.hover } mb-3 d-flex align-items-center` } onClick={ () => { Navigate("/class-list"); setClassState(1); } }>
                                                             <span className={ `d-flex align-items-center p-0 ms-2` } style={ { fontSize: '1.5rem', whiteSpace: 'nowrap', color: 'black' } }><BsListColumnsReverse className={ `me-1` } />Classes</span>
                                                       </div>
                                                       <div className={ `${ activeTab.includes('/staff-list') ? styles.activeTab : styles.hover } mb-3 d-flex align-items-center` } onClick={ () => { setStaffType(0); Navigate("/staff-list"); } }>

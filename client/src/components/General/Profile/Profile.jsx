@@ -54,10 +54,7 @@ const Profile = () =>
       useEffect(() =>
       {
             axios.get(`http://${ domain }/profile`, {
-                  withCredentials: true,
-                  headers: {
-                        'Content-Type': 'application/json'
-                  }
+                  withCredentials: true
             })
                   .then(res =>
                   {
@@ -129,7 +126,7 @@ const Profile = () =>
                   axios.post(`http://${ domain }/updateProfile`, formdata, {
                         withCredentials: true,
                         headers: {
-                              'Content-Type': 'application/json'
+                              'Content-Type': 'multipart/form-data'
                         }
                   })
                         .then(res =>

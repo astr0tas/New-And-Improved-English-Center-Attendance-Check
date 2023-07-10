@@ -116,7 +116,7 @@ const StaffList = () =>
                   { staffType !== 0 &&
                         <>
                               <div className='d-flex align-items-center justify-content-center justify-content-md-between mt-2'>
-                                    <p className={ `ms-md-3 mb-0 ${ styles.back } me-3 me-md-0` } onClick={ () => setStaffType(0) }>Back</p>
+                              <strong className={ `ms-md-3 mb-0 ${ styles.back } me-3 me-md-0 mt-2` } onClick={ () => setStaffType(0) }>Back</strong>
                                     <div className='me-md-3'>
                                           <FontAwesomeIcon icon={ faMagnifyingGlass } className={ `position-absolute ${ styles.search }` } />
                                           <input type='text' placeholder='Find staff' className={ `ps-4` } onChange={ findStaff }></input>

@@ -1,0 +1,38 @@
+.back {
+      font-size: 1.2rem;
+      color: blue;
+}
+
+.back:hover {
+      cursor: pointer;
+}
+
+.hover:hover {
+      cursor: pointer;
+}
+
+.search {
+      font-size: 1.2rem;
+      margin-top: 5px;
+      margin-left: 4px;
+}
+
+.customModal {
+      max-width: 85% !important;
+}
+
+.dialog {
+      max-width: 100% !important;
+      max-height: 75% !important;
+}
+
+.content {
+      height: 100% !important;
+      width: 100% !important;
+}
+
+@media only screen and (min-width: 768px) {
+      .customModal {
+            max-width: 75% !important;
+      }
+}

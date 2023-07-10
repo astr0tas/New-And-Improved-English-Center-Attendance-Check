@@ -59,6 +59,99 @@ adminRoutes.post('/getCurrentSession', (req, res) =>
       })
 });
 
+adminRoutes.post('/classInfo', (req, res) =>
+{
+      const name = req.body.params.name;
+      classModel.getInfo(name, (result, err) =>
+      {
+            if (err)
+            {
+                  console.log(err);
+                  res.status(500).send('Server internal error!');
+            }
+            else
+                  res.status(200).send(result[0]);
+      })
+});
+
+adminRoutes.post('/classStudent', (req, res) =>
+{
+      const name = req.body.params.name;
+      classModel.classStudent(name, (result, err) =>
+      {
+            if (err)
+            {
+                  console.log(err);
+                  res.status(500).send('Server internal error!');
+            }
+            else
+                  res.status(200).send(result);
+      })
+});
+
+adminRoutes.post('/classSession', (req, res) =>
+{
+      const name = req.body.params.name;
+      classModel.classSession(name, (result, err) =>
+      {
+            if (err)
+            {
+                  console.log(err);
+                  res.status(500).send('Server internal error!');
+            }
+            else
+                  res.status(200).send(result);
+      })
+});
+
+adminRoutes.post('/toggleStatus', (req, res) =>
+{
+      const name = req.body.params.name;
+      const status = req.body.params.status;
+      classModel.toggleStatus(name, status, (result, err) =>
+      {
+            if (err)
+            {
+                  console.log(err);
+                  res.status(500).send('Server internal error!');
+            }
+            else
+                  res.status(200).send('Class status update successfully!');
+      })
+});
+
+adminRoutes.post('/removeStudentFromClass', (req, res) =>
+{
+      const name = req.body.params.name;
+      const id = req.body.params.id;
+      classModel.removeStudentFromClass(name, id, (result, err) =>
+      {
+            if (err)
+            {
+                  console.log(err);
+                  res.status(500).send('Server internal error!');
+            }
+            else
+                  res.status(200).send('Student removed successfully!');
+      })
+});
+
+adminRoutes.post('/getStudentNotFromClass', (req, res) =>
+{
+      const className = req.body.params.className;
+      const studentName = req.body.params.studentName;
+      classModel.getStudentNotFromClass(className, studentName, (result, err) =>
+      {
+            if (err)
+            {
+                  console.log(err);
+                  res.status(500).send('Server internal error!');
+            }
+            else
+                  res.status(200).send(result);
+      })
+});
+
 const staffModel = new Staff();
 
 adminRoutes.post('/staffList', (req, res) =>

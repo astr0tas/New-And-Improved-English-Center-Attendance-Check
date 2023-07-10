@@ -11,6 +11,7 @@ import Profile from './components/General/Profile/Profile';
 // Admin routes
 import ClassList from './components/Admin/Class/List/ClassList';
 import ClassDetail from './components/Admin/Class/Detail/ClassDetail';
+import ClassEdit from './components/Admin/Class/Edit/ClassEdit';
 import AdminClassSession from './components/Admin/Class/Session/Session';
 import StaffList from './components/Admin/Staff/List/StaffList';
 import StaffDetail from './components/Admin/Staff/Detail/StaffDetail'
@@ -65,6 +66,7 @@ function App()
               <Route>
                 <Route path='class-list' element={ <ClassList /> } />
                 <Route path='class-list/:name' element={ <ClassDetail /> } />
+                <Route path='class-list/:name/edit' element={ <ClassEdit /> } />
                 <Route path='class-list/:name/:number' element={ <AdminClassSession /> } />
               </Route>
 

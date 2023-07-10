@@ -44,6 +44,8 @@ const StaffDetail = () =>
             axios.post(`http://${ domain }/admin/staffInfo`, { params: { id: id } }, { headers: { 'Content-Type': 'application/json' } })
                   .then(res =>
                   {
+                        document.title = `${ res.data.type === 1 ? 'Teacher' : 'Supervisor' } ${ res.data.name }`;
+
                         setName(res.data.name);
                         setSSN(res.data.ssn);
                         setPhone(res.data.phone);
