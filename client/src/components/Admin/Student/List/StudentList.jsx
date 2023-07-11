@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { domain } from '../../../../tools/domain';
 import { DMY } from '../../../../tools/dateFormat';
+import '../../../../css/scroll.css';
 
 const Student = (props) =>
 {
@@ -45,7 +46,7 @@ const StudentList = () =>
 
       useEffect(() =>
       {
-            axios.post(`http://${ domain }/admin/studentList`, { params: { name: name } },{headers: { 'Content-Type': 'application/json'}})
+            axios.post(`http://${ domain }/admin/studentList`, { params: { name: name } }, { headers: { 'Content-Type': 'application/json' } })
                   .then(res =>
                   {
                         const temp = [];
@@ -59,12 +60,12 @@ const StudentList = () =>
       }, [render, name, Navigate])
 
       return (
-            <div className='w-100 h-100 d-flex flex-column'>
-                  <div className='mt-2 ms-md-auto me-md-3 mx-auto'>
+            <div className='w-100 d-flex flex-column overflow-auto flex-grow-1 mt-2 mb-2 hideBrowserScrollbar'>
+                  <div className='mt-2 ms-md-auto me-md-3 mx-auto position-relative'>
                         <FontAwesomeIcon icon={ faMagnifyingGlass } className={ `position-absolute ${ styles.search }` } />
                         <input type='text' placeholder='Find student' className={ `ps-4` } onChange={ findStudent }></input>
                   </div>
-                  <div className={ `flex-grow-1 w-100 overflow-auto mt-3 px-md-2 mb-3` }>
+                  <div className={ `flex-grow-1 w-100 overflow-auto mt-3 px-md-2 mb-3` } style={ { minHeight: tableContent.length ? '200px' : '40px' } }>
                         <table className="table table-hover table-info">
                               <thead style={ { position: "sticky", top: "0" } }>
                                     <tr>

@@ -4,7 +4,6 @@ import axios from 'axios';
 import { domain } from '../../../../tools/domain';
 import { useNavigate, useParams } from 'react-router-dom';
 import { DMY } from '../../../../tools/dateFormat';
-import '../../../../css/scroll.css';
 
 const Class = (props) =>
 {
@@ -71,7 +70,7 @@ const StudentDetail = () =>
       }, [Navigate, id]);
 
       return (
-            <div className="w-100 h-100 d-flex flex-column overflow-auto hideBrowserScrollbar">
+            <div className="w-100 d-flex flex-column overflow-auto flex-grow-1 mt-2 mb-2">
                   <div className="d-flex justify-content-md-around flex-column flex-md-row mt-3 align-items-center">
                         <div className="d-flex flex-column mb-3 mt-2">
                               <img src={ image } alt='' className={ `${ styles.image }` }></img>
@@ -107,7 +106,7 @@ const StudentDetail = () =>
                               </div>
                         </div>
                   </div>
-                  <div className='flex-grow-1 mb-3 mt-2 overflow-auto' style={ { minHeight: classes.length !== 0 ? '200px' : 'unset' } }>
+                  <div className='flex-grow-1 mb-3 mt-2 overflow-auto' style={ { minHeight: classes.length !== 0 ? '200px' : '40px' } }>
                         <table className="table table-hover table-info mx-auto" style={ { width: '95%' } }>
                               <thead style={ { position: "sticky", top: "0" } }>
                                     <tr>

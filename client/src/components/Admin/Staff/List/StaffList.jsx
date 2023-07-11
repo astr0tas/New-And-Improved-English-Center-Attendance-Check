@@ -9,6 +9,7 @@ import { DMY } from '../../../../tools/dateFormat';
 import { AiOutlineUser } from 'react-icons/ai';
 import { isRefValid } from '../../../../tools/refChecker';
 import { context } from '../../../../context';
+import '../../../../css/scroll.css';
 
 const Staff = (props) =>
 {
@@ -76,7 +77,7 @@ const StaffList = () =>
             }
 
             if (staffType !== 0)
-                  axios.post(`http://${ domain }/admin/staffList`, { params: { name: name, type: staffType } },{headers: { 'Content-Type': 'application/json'}})
+                  axios.post(`http://${ domain }/admin/staffList`, { params: { name: name, type: staffType } }, { headers: { 'Content-Type': 'application/json' } })
                         .then(res =>
                         {
                               const temp = [];
@@ -100,7 +101,7 @@ const StaffList = () =>
       }, [render, name, Navigate, staffType, setStaffType])
 
       return (
-            <div className='w-100 h-100 d-flex flex-column'>
+            <div className='w-100 d-flex flex-column overflow-auto flex-grow-1 mt-2 mb-2 hideBrowserScrollbar'>
                   { staffType === 0 &&
                         <div className='w-100 h-100 d-flex flex-column flex-md-row overflow-auto align-items-center justify-content-md-around'>
                               <div className={ `d-flex flex-column my-auto align-items-center ${ styles.choose } justify-content-center mb-4 mb-md-0 mt-4 mt-md-0` } ref={ opt1 }>
@@ -116,13 +117,13 @@ const StaffList = () =>
                   { staffType !== 0 &&
                         <>
                               <div className='d-flex align-items-center justify-content-center justify-content-md-between mt-2'>
-                              <strong className={ `ms-md-3 mb-0 ${ styles.back } me-3 me-md-0 mt-2` } onClick={ () => setStaffType(0) }>Back</strong>
-                                    <div className='me-md-3'>
+                                    <strong className={ `ms-md-3 mb-0 ${ styles.back } me-3 me-md-0 mt-2` } onClick={ () => setStaffType(0) }>Back</strong>
+                                    <div className='me-md-3 position-relative'>
                                           <FontAwesomeIcon icon={ faMagnifyingGlass } className={ `position-absolute ${ styles.search }` } />
                                           <input type='text' placeholder='Find staff' className={ `ps-4` } onChange={ findStaff }></input>
                                     </div>
                               </div>
-                              <div className={ `flex-grow-1 w-100 overflow-auto mt-3 px-md-2 mb-3` }>
+                              <div className={ `flex-grow-1 w-100 overflow-auto mt-3 px-md-2 mb-3` } style={ { minHeight: tableContent.length ? '200px' : '40px' } }>
                                     <table className="table table-hover table-info">
                                           <thead style={ { position: "sticky", top: "0" } }>
                                                 <tr>
@@ -135,7 +136,7 @@ const StaffList = () =>
                                                       <th scope="col" className='col-3 text-center'>Address</th>
                                                 </tr>
                                           </thead>
-                                    <tbody>
+                                          <tbody>
                                                 { tableContent }
                                           </tbody>
                                     </table>

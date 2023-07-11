@@ -1,6 +1,6 @@
 import styles from './Menu.module.css';
 import { VscAccount } from "react-icons/vsc";
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useContext } from 'react';
 import axios from 'axios';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { MdOutlineClass } from 'react-icons/md';
@@ -12,7 +12,6 @@ import { faBars } from '@fortawesome/free-solid-svg-icons';
 import { BsListColumnsReverse } from 'react-icons/bs';
 import '../../../css/scroll.css';
 import { context } from '../../../context';
-import { useContext } from 'react';
 
 
 const Menu = () =>
@@ -172,7 +171,7 @@ const Menu = () =>
                                           backgroundColor: '#E6E6E6',
                                           border: '2px solid black',
                                           borderRadius: '20px'
-                                    } }>
+                                    } } className='d-flex flex-column'>
                                           <Outlet context={ userType } />
                                     </div>
                               </div>

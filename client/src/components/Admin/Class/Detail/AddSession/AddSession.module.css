@@ -1,0 +1,60 @@
+.customModal,
+.confirmModal {
+      max-width: 80% !important;
+}
+
+.confirmModal {
+      padding-top: 30vh !important;
+      padding-top: 30dvh !important;
+}
+
+.dialog {
+      max-width: 100% !important;
+      max-height: 75% !important;
+}
+
+.inputs {
+      border: 2px solid gray;
+      border-radius: 10px;
+      max-width: 250px;
+      height: 30px;
+}
+
+.hover:hover {
+      cursor: pointer;
+}
+
+@media only screen and (min-width: 768px) {
+
+      .customModal,
+      .confirmModal {
+            max-width: 40% !important;
+      }
+
+      .inputs {
+            font-size: 1.2rem;
+            height: 40px;
+      }
+}
+
+@media only screen and (max-height:450px) {
+
+      .confirmModal,
+      .customModal {
+            padding-top: 10vh !important;
+            padding-top: 10dvh !important;
+      }
+
+      .dialog {
+            min-height: 110% !important;
+            max-height: 110% !important;
+      }
+}
+
+@media only screen and (min-width: 2400px) {
+
+      .customModal,
+      .confirmModal {
+            max-width: 25% !important;
+      }
+}

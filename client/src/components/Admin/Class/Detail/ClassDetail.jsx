@@ -72,6 +72,7 @@ const ClassDetail = () =>
       const [removeTarget, setRemoveTarget] = useState(null);
       const [maxPopUp, setMaxPopUp] = useState(false);
       const [addPopUp, setAddPopUp] = useState(false);
+      const [sessionPopUp, setSessionPopUp] = useState(false);
 
       const Navigate = useNavigate();
 
@@ -83,11 +84,6 @@ const ClassDetail = () =>
                   setMaxPopUp(true);
             else
                   setAddPopUp(true);
-      }
-
-      const addASession = () =>
-      {
-            
       }
 
       useEffect(() =>
@@ -148,7 +144,7 @@ const ClassDetail = () =>
 
       return (
             <div className="w-100 h-100 d-flex flex-column align-items-center" ref={ containerRef }>
-                  <div className="w-100 h-100 d-flex flex-column overflow-auto hideBrowserScrollbar">
+                  <div className="w-100 d-flex flex-column overflow-auto hideBrowserScrollbar mt-2 mb-2 flex-grow-1">
                         <strong className={ `ms-md-3 mb-0 me-md-0 mx-auto mt-2 ${ styles.back }` } onClick={ () => Navigate(-1) }>Back</strong>
                         <div className='mx-auto'>
                               <h2 className='mt-4 text-center'>{ name }</h2>
@@ -212,12 +208,12 @@ const ClassDetail = () =>
                               }
                               {
                                     !studentList &&
-                                    <button className='btn btn-primary me-md-3 me-2' onClick={ addASession }>Add session</button>
+                                    <button className='btn btn-primary me-md-3 me-2' onClick={ () => setSessionPopUp(true) }>Add session</button>
                               }
                               <button className='btn btn-secondary ms-md-3 ms-2' onClick={ () => Navigate('./edit') }>Edit class</button>
                         </div>
                   </div>
-                  <Modal show={ statusPopUp } onHide={ () => setStatusPopUp(false) } className={ `reAdjustModel` } container={ containerRef.current }>
+                  <Modal show={ statusPopUp } onHide={ () => setStatusPopUp(false) } className={ `reAdjustModel hideBrowserScrollbar` } container={ containerRef.current }>
                         <Modal.Header className='border border-0' closeButton>
                         </Modal.Header>
                         <Modal.Body className='border border-0 d-flex justify-content-center'>
@@ -240,7 +236,7 @@ const ClassDetail = () =>
                               } }>Yes</button>
                         </Modal.Footer>
                   </Modal>
-                  <Modal show={ removePopUp } onHide={ () => { setRemoveTarget(null); setRemovePopUp(false); } } className={ `reAdjustModel` } container={ containerRef.current }>
+                  <Modal show={ removePopUp } onHide={ () => { setRemoveTarget(null); setRemovePopUp(false); } } className={ `reAdjustModel hideBrowserScrollbar` } container={ containerRef.current }>
                         <Modal.Header className='border border-0' closeButton>
                         </Modal.Header>
                         <Modal.Body className='border border-0 d-flex justify-content-center'>
@@ -264,7 +260,7 @@ const ClassDetail = () =>
                               } }>Yes</button>
                         </Modal.Footer>
                   </Modal>
-                  <Modal show={ maxPopUp } onHide={ () => { setMaxPopUp(false); } } className={ `reAdjustModel` } container={ containerRef.current }>
+                  <Modal show={ maxPopUp } onHide={ () => { setMaxPopUp(false); } } className={ `reAdjustModel hideBrowserScrollbar` } container={ containerRef.current }>
                         <Modal.Header className='border border-0' closeButton>
                         </Modal.Header>
                         <Modal.Body className='border border-0 d-flex justify-content-center'>
@@ -280,6 +276,8 @@ const ClassDetail = () =>
                   <AddStudent containerRef={ containerRef } setAddPopUp={ setAddPopUp } name={ name }
                         addPopUp={ addPopUp } currentStudent={ currentStudent } maxStudent={ maxStudent }
                         render={ render } setRender={ setRender } />
+                  <AddSession containerRef={ containerRef } setSessionPopUp={ setSessionPopUp } name={ name } currentSession={ currentSession }
+                        sessionPopUp={ sessionPopUp } render={ render } setRender={ setRender } />
             </div >
       )
 }
