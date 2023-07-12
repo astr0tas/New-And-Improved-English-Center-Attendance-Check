@@ -12,6 +12,7 @@ import { DMDY } from '../../../../tools/dateFormat';
 import '../../../../css/scroll.css';
 import AddStudent from './AddStudent/AddStudent';
 import AddSession from './AddSession/AddSession';
+import AddTeacher from './AddTeacher/AddTeacher';
 
 const Student = (props) =>
 {
@@ -30,7 +31,7 @@ const Student = (props) =>
                   <td className='text-center'>{ props.email }</td>
                   <td>
                         <div className="d-flex align-items-center justify-content-center">
-                              <button className='btn btn-primary btn-sm me-2' onClick={ () => props.Navigate(`/student-list/${ props.id }`) }>Detail</button>
+                              <button className='btn btn-primary btn-sm me-2' onClick={ () => props.Navigate(`/student-list/detail/${ props.id }`) }>Detail</button>
                               <button className='btn btn-danger btn-sm ms-2' onClick={ removeStudent }>Remove</button>
                         </div>
                   </td>
@@ -40,11 +41,58 @@ const Student = (props) =>
 
 const Session = (props) =>
 {
+      const [teacherName, setTeacherName] = useState("N/A");
+      const [teacherID, setTeacherID] = useState(null);
+      const [supervisorName, setSupervisorName] = useState("N/A");
+      const [supervisorID, setSupervisorID] = useState(null);
+
+      useEffect(() =>
+      {
+            axios.post(`http://${ domain }/admin/getSessionTeacher`, { params: { name: props.name, number: props.number } }, { headers: { 'Content-Type': 'application/json' } })
+                  .then(res =>
+                  {
+                        if (res.data !== "")
+                        {
+                              setTeacherName(res.data.name);
+                              setTeacherID(res.data.id);
+                        }
+                  })
+                  .catch(err => console.error(err));
+
+            axios.post(`http://${ domain }/admin/getSessionSupervisor`, { params: { name: props.name, number: props.number } }, { headers: { 'Content-Type': 'application/json' } })
+                  .then(res =>
+                  {
+                        if (res.data !== "")
+                        {
+                              setSupervisorName(res.data.name);
+                              setSupervisorID(res.data.id);
+                        }
+                  })
+                  .catch(err => console.error(err));
+      }, [props.name, props.number])
+
       return (
             <tr>
                   <td className='text-center'>Session { props.number }</td>
                   <td className='text-center'><AiOutlineClockCircle className='me-2' style={ { marginBottom: '1px' } } />{ DMDY(props.session_date) }&nbsp;:&nbsp;{ props.start }&nbsp;-&nbsp;{ props.end }</td>
                   <td className='text-center'><button className='btn btn-primary btn-sm' onClick={ () => props.Navigate(`./Session ${ props.number }`) }>Detail</button></td>
+                  <td className='text-center'>{ teacherName }</td>
+                  <td className='text-center'><button className='btn btn-primary btn-sm' onClick={ () => props.Navigate(`/staff-list/detail/${ teacherID }`) }>Detail</button></td>
+                  <td className='text-center'>{ supervisorName }</td>
+                  <td className='text-center'><button className='btn btn-primary btn-sm' onClick={ () => props.Navigate(`/staff-list/detail/${ supervisorID }`) }>Detail</button></td>
+            </tr>
+      )
+}
+
+const Teacher = (props) =>
+{
+      return (
+            <tr>
+                  <td className="text-center">{ props.i }</td>
+                  <td className="text-center">{ props.name }</td>
+                  <td className="text-center">{ props.phone }</td>
+                  <td className="text-center">{ props.email }</td>
+                  <td className="text-center"><button className="btn btn-sm btn-primary" onClick={ () => props.Navigate(`/staff-list/detail/${ props.id }`) }>Detail</button></td>
             </tr>
       )
 }
@@ -64,7 +112,7 @@ const ClassDetail = () =>
 
       const [content, setContent] = useState([]);
 
-      const { studentList, setStudentList } = useContext(context);
+      const { listType, setListType } = useContext(context);
 
       const containerRef = useRef(null);
       const [statusPopUp, setStatusPopUp] = useState(false);
@@ -73,6 +121,7 @@ const ClassDetail = () =>
       const [maxPopUp, setMaxPopUp] = useState(false);
       const [addPopUp, setAddPopUp] = useState(false);
       const [sessionPopUp, setSessionPopUp] = useState(false);
+      const [teacherPopUp, setTeacherPopUp] = useState(false)
 
       const Navigate = useNavigate();
 
@@ -113,7 +162,7 @@ const ClassDetail = () =>
                   })
                   .catch(err => console.error(err));
 
-            if (studentList)
+            if (listType === 0)
             {
                   axios.post(`http://${ domain }/admin/classStudent`, { params: { name: name } }, { headers: { 'Content-Type': 'application/json' } })
                         .then(res =>
@@ -127,20 +176,33 @@ const ClassDetail = () =>
                         })
                         .catch(err => console.error(err));
             }
-            else
+            else if (listType === 1)
+            {
+                  axios.post(`http://${ domain }/admin/classTeacher`, { params: { name: name } }, { headers: { 'Content-Type': 'application/json' } })
+                        .then(res =>
+                        {
+                              const temp = [];
+                              for (let i = 0; i < res.data.length; i++)
+                                    temp.push(<Teacher key={ i } Navigate={ Navigate } i={ i + 1 }
+                                          name={ res.data[i].name } phone={ res.data[i].phone } email={ res.data[i].email } id={ res.data[i].id } />);
+                              setContent(temp);
+                        })
+                        .catch(err => console.error(err));
+            }
+            else if (listType === 2)
             {
                   axios.post(`http://${ domain }/admin/classSession`, { params: { name: name } }, { headers: { 'Content-Type': 'application/json' } })
                         .then(res =>
                         {
                               const temp = [];
                               for (let i = 0; i < res.data.length; i++)
-                                    temp.push(<Session key={ i } number={ res.data[i].number } Navigate={ Navigate }
+                                    temp.push(<Session key={ i } number={ res.data[i].number } Navigate={ Navigate } name={ name }
                                           start={ res.data[i].start_hour } end={ res.data[i].end_hour } session_date={ res.data[i].session_date } />);
                               setContent(temp);
                         })
                         .catch(err => console.error(err));
             }
-      }, [name, render, studentList, Navigate]);
+      }, [name, render, listType, Navigate]);
 
       return (
             <div className="w-100 h-100 d-flex flex-column align-items-center" ref={ containerRef }>
@@ -167,16 +229,17 @@ const ClassDetail = () =>
                               </div>
                         </div>
                         <br></br>
-                        <div className='d-flex mx-auto'>
-                              <button className={ `mx-3 btn ${ studentList ? 'btn-primary' : 'btn-secondary' }` } onClick={ () => setStudentList(true) }>Student</button>
-                              <button className={ `mx-3 btn ${ studentList ? 'btn-secondary' : 'btn-primary' }` } onClick={ () => setStudentList(false) }>Session</button>
+                        <div className='d-flex mx-auto flex-column flex-sm-row'>
+                              <button className={ `mx-sm-3 my-1 btn ${ listType === 0 ? 'btn-primary' : 'btn-secondary' }` } onClick={ () => setListType(0) }>Student</button>
+                              <button className={ `mx-sm-3 my-1 btn ${ listType === 1 ? 'btn-primary' : 'btn-secondary' }` } onClick={ () => setListType(1) }>Teacher</button>
+                              <button className={ `mx-sm-3 my-1 btn ${ listType === 2 ? 'btn-primary' : 'btn-secondary' }` } onClick={ () => setListType(2) }>Session</button>
                         </div>
-                        <div className={ `flex-grow-1 w-100 overflow-auto mt-3 px-md-2 mb-3` } style={ { minHeight: content.length ? '250px' : '40px' } }>
+                        <div className={ `flex-grow-1 w-100 overflow-auto mt-3 px-1 mb-3` } style={ { minHeight: content.length ? '250px' : '65px' } }>
                               <table className="table table-hover table-info">
                                     <thead style={ { position: "sticky", top: "0" } }>
                                           <tr>
                                                 {
-                                                      studentList &&
+                                                      listType === 0 &&
                                                       <>
                                                             <th scope="col" className='col-1 text-center'>#</th>
                                                             <th scope="col" className='col-4 text-center'>Name</th>
@@ -187,11 +250,25 @@ const ClassDetail = () =>
                                                       </>
                                                 }
                                                 {
-                                                      !studentList &&
+                                                      listType === 1 &&
                                                       <>
-                                                            <th scope="col" className='col-3 text-center'>Session number</th>
-                                                            <th scope="col" className='col-7 text-center'>Time</th>
+                                                            <th scope="col" className='col-1 text-center'>#</th>
+                                                            <th scope="col" className='col-4 text-center'>Name</th>
+                                                            <th scope="col" className='col-2 text-center'>Phone</th>
+                                                            <th scope="col" className='col-3 text-center'>Email</th>
                                                             <th scope="col" className='col-2 text-center'>Action</th>
+                                                      </>
+                                                }
+                                                {
+                                                      listType === 2 &&
+                                                      <>
+                                                            <th scope="col" className='col-1 text-center'>Session number</th>
+                                                            <th scope="col" className='col-4 text-center'>Time</th>
+                                                            <th scope="col" className='col-1 text-center'>Action</th>
+                                                            <th scope="col" className='col-2 text-center'>Teacher</th>
+                                                            <th scope="col" className='col-1 text-center'>Action</th>
+                                                            <th scope="col" className='col-2 text-center'>Supervisor</th>
+                                                            <th scope="col" className='col-1 text-center'>Action</th>
                                                       </>
                                                 }
                                           </tr>
@@ -203,11 +280,15 @@ const ClassDetail = () =>
                         </div >
                         <div className="d-flex align-items-center mx-auto mb-3">
                               {
-                                    studentList &&
+                                    listType === 0 &&
                                     <button className='btn btn-primary me-md-3 me-2' onClick={ addStudent }>Add student</button>
                               }
                               {
-                                    !studentList &&
+                                    listType === 1 &&
+                                    <button className='btn btn-primary me-md-3 me-2' onClick={ () => setTeacherPopUp(true) }>Add teacher</button>
+                              }
+                              {
+                                    listType === 2 &&
                                     <button className='btn btn-primary me-md-3 me-2' onClick={ () => setSessionPopUp(true) }>Add session</button>
                               }
                               <button className='btn btn-secondary ms-md-3 ms-2' onClick={ () => Navigate('./edit') }>Edit class</button>
@@ -278,6 +359,8 @@ const ClassDetail = () =>
                         render={ render } setRender={ setRender } />
                   <AddSession containerRef={ containerRef } setSessionPopUp={ setSessionPopUp } name={ name } currentSession={ currentSession }
                         sessionPopUp={ sessionPopUp } render={ render } setRender={ setRender } />
+                  <AddTeacher containerRef={ containerRef } setTeacherPopUp={ setTeacherPopUp } name={ name }
+                        teacherPopUp={ teacherPopUp } render={ render } setRender={ setRender } />
             </div >
       )
 }

@@ -13,11 +13,6 @@
       max-height: 75% !important;
 }
 
-.p {
-      font-size: 1rem;
-      color: red;
-}
-
 .search {
       font-size: 1.2rem;
       margin-top: 5px;
@@ -29,13 +24,6 @@
       .customModal,
       .confirmModal {
             max-width: 75% !important;
-      }
-}
-
-@media only screen and (max-width:330px) {
-      .p {
-            font-size: 0.8rem;
-            color: red;
       }
 }
 

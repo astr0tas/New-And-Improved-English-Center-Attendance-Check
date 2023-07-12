@@ -32,7 +32,7 @@ const Class = (props) =>
       }, [props.name])
 
       return (
-            <tr className={ `${ styles.hover }` } onClick={ () => { props.setStudentList(true); props.Navigate(`./${ props.name }`); } }>
+            <tr className={ `${ styles.hover }` } onClick={ () => { props.setListType(0); props.Navigate(`./detail/${ props.name }`); } }>
                   <td className='text-center'>{ props.i }</td>
                   <td className='text-center'>{ props.name }</td>
                   <td className='text-center'>{ currentStudents }/{ props.initialStudents }</td>
@@ -51,7 +51,7 @@ const ClassList = () =>
       const [tableContent, setTableContent] = useState([]);
       const [name, setName] = useState("");
       const { classState, setClassState } = useContext(context);
-      const { setStudentList } = useContext(context);
+      const { setListType } = useContext(context);
       const Navigate = useNavigate();
 
       let timer1;
@@ -66,7 +66,7 @@ const ClassList = () =>
                   {
                         const temp = [];
                         for (let i = 0; i < res.data.length; i++)
-                              temp.push(<Class key={ i } i={ i + 1 } Navigate={ Navigate } setStudentList={ setStudentList }
+                              temp.push(<Class key={ i } i={ i + 1 } Navigate={ Navigate } setListType={ setListType }
                                     initialStudents={ res.data[i].Max_students } initialSessions={ res.data[i].Initial_sessions } name={ res.data[i].Name }
                                     start={ res.data[i].Start_date } end={ res.data[i].End_date } status={ res.data[i].Status } />);
                         setTableContent(temp);
@@ -110,7 +110,7 @@ const ClassList = () =>
                               </div>
                         </div>
                   </div>
-                  <div className={ `flex-grow-1 w-100 overflow-auto mt-3 px-md-2 mb-3` } style={ { minHeight: tableContent.length ? '200px' : '40px' } }>
+                  <div className={ `flex-grow-1 w-100 overflow-auto mt-3 px-1 mb-3` } style={ { minHeight: tableContent.length ? '200px' : '40px' } }>
                         <table className="table table-hover table-info">
                               <thead style={ { position: "sticky", top: "0" } }>
                                     <tr>
@@ -127,6 +127,9 @@ const ClassList = () =>
                                     { tableContent }
                               </tbody>
                         </table>
+                  </div>
+                  <div className="w-100 d-flex align-items-center mb-3 justify-content-center">
+                        <button className="btn btn-primary" onClick={ () => Navigate('./create') }>Add a class</button>
                   </div>
             </div>
       )

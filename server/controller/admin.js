@@ -104,6 +104,23 @@ adminRoutes.post('/classSession', (req, res) =>
       })
 });
 
+adminRoutes.post('/classTeacher', (req, res) =>
+{
+      const name = req.body.params.name;
+      const teacherName = req.body.params.teacherName;
+      console.log(teacherName);
+      classModel.classTeacher(name, (teacherName === undefined || teacherName === null) ? '' : teacherName, (result, err) =>
+      {
+            if (err)
+            {
+                  console.log(err);
+                  res.status(500).send('Server internal error!');
+            }
+            else
+                  res.status(200).send(result);
+      })
+});
+
 adminRoutes.post('/toggleStatus', (req, res) =>
 {
       const name = req.body.params.name;
@@ -165,6 +182,106 @@ adminRoutes.post('/addStudentToClass', (req, res) =>
             }
             else
                   res.status(200).send('Student(s) added successfully!');
+      })
+});
+
+adminRoutes.post('/getRoom', (req, res) =>
+{
+      const name = req.body.params.name;
+      classModel.getRoom(name, (result, err) =>
+      {
+            if (err)
+            {
+                  console.log(err);
+                  res.status(500).send('Server internal error!');
+            }
+            else
+                  res.status(200).send(result);
+      })
+});
+
+adminRoutes.post('/getTimetable', (req, res) =>
+{
+      const room = req.body.params.room;
+      const date = req.body.params.date;
+      classModel.getTimetable(room, date, (result, err) =>
+      {
+            if (err)
+            {
+                  console.log(err);
+                  res.status(500).send('Server internal error!');
+            }
+            else
+                  res.status(200).send(result);
+      })
+});
+
+adminRoutes.post('/getClassCanceledSession', (req, res) =>
+{
+      const name = req.body.params.name;
+      classModel.getClassCanceledSession(name, (result, err) =>
+      {
+            if (err)
+            {
+                  console.log(err);
+                  res.status(500).send('Server internal error!');
+            }
+            else
+                  res.status(200).send(result);
+      })
+});
+
+adminRoutes.post('/addSessionToClass', (req, res) =>
+{
+      const name = req.body.params.name;
+      const room = req.body.params.room;
+      const session = req.body.params.session;
+      const date = req.body.params.date;
+      const timetable = req.body.params.timetable;
+      const makeUpFor = req.body.params.makeUpFor;
+      const teacher = req.body.params.teacher;
+      const supervisor = req.body.params.supervisor;
+      classModel.addSessionToClass(name, room, session, date, timetable, makeUpFor, supervisor, teacher, (result, err) =>
+      {
+            if (err)
+            {
+                  console.log(err);
+                  res.status(500).send('Server internal error!');
+            }
+            else
+                  res.status(200).send('Session added successfully!');
+      })
+});
+
+adminRoutes.post('/getSessionTeacher', (req, res) =>
+{
+      const name = req.body.params.name;
+      const number = req.body.params.number;
+      classModel.getSessionTeacher(name,number, (result, err) =>
+      {
+            if (err)
+            {
+                  console.log(err);
+                  res.status(500).send('Server internal error!');
+            }
+            else
+                  res.status(200).send(result[0]);
+      })
+});
+
+adminRoutes.post('/getSessionSupervisor', (req, res) =>
+{
+      const name = req.body.params.name;
+      const number = req.body.params.number;
+      classModel.getSessionSupervisor(name, number, (result, err) =>
+      {
+            if (err)
+            {
+                  console.log(err);
+                  res.status(500).send('Server internal error!');
+            }
+            else
+                  res.status(200).send(result[0]);
       })
 });
 

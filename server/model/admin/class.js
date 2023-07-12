@@ -77,7 +77,8 @@ export class Class
       classSession(name, callback)
       {
             this.conn.query(`select session.number,session.session_date,timetable.start_hour,timetable.end_hour from session 
-            join timetable on timetable.id=session.timetable_id where session.class_name=?`, [name], (err, res) =>
+            join timetable on timetable.id=session.timetable_id
+            where session.class_name=? order by session.number`, [name], (err, res) =>
             {
                   if (err)
                         callback(null, err);
@@ -88,7 +89,22 @@ export class Class
 
       classStudent(name, callback)
       {
-            this.conn.query(`select student.name,student.phone,student.id,student.email,student.ssn from student join in_class on in_class.student_id=student.id where in_class.class_name=?`, [name], (err, res) =>
+            this.conn.query(`select student.name,student.phone,student.id,student.email,student.ssn from student join in_class on in_class.student_id=student.id 
+            where in_class.class_name=? order by TRIM(SUBSTRING_INDEX(student.name, ' ', -1))`, [name], (err, res) =>
+            {
+                  if (err)
+                        callback(null, err);
+                  else
+                        callback(res, null);
+            });
+      }
+
+      classTeacher(name, teacherName, callback)
+      {
+            this.conn.query(`select employee.id,employee.name,employee.name,employee.phone,employee.email from employee
+            join teacher on teacher.id=employee.id
+            join teach on teach.teacher_id=employee.id
+            where teach.class_name=? and employee.name like ? order by TRIM(SUBSTRING_INDEX(employee.name, ' ', -1))`, [name, '%' + teacherName + '%'], (err, res) =>
             {
                   if (err)
                         callback(null, err);
@@ -142,6 +158,85 @@ export class Class
                   params.push(students[i], name);
             }
             this.conn.query(sql, params, (err, res) =>
+            {
+                  if (err)
+                        callback(null, err);
+                  else
+                        callback(res, null);
+            });
+      }
+
+      getRoom(name, callback)
+      {
+            this.conn.query(`select classroom.id,classroom.max_seats from classroom where classroom.max_seats >= (select class.Max_students from class where class.name=?)`, [name], (err, res) =>
+            {
+                  if (err)
+                        callback(null, err);
+                  else
+                        callback(res, null);
+            });
+      }
+
+      getTimetable(room, date, callback)
+      {
+            this.conn.query(`select id,start_hour,end_hour from timetable where id not in (
+                  select distinct timetable_id from session where classroom_id=? and session_date=?
+            )`, [room, date], (err, res) =>
+            {
+                  if (err)
+                        callback(null, err);
+                  else
+                        callback(res, null);
+            });
+      }
+
+      getClassCanceledSession(name, callback)
+      {
+            this.conn.query(`select number from session where class_name=? and status=3`, [name], (err, res) =>
+            {
+                  if (err)
+                        callback(null, err);
+                  else
+                        callback(res, null);
+            });
+      }
+
+      addSessionToClass(name, room, session, date, timetable, makeUpFor, supervisor, teacher, callback)
+      {
+            this.conn.query(`insert into session values(?,?,?,?,?,4,?,?);
+            insert into teacher_responsible values(?,?,?);
+            insert into supervisor_responsible values(?,?,?,null,null,-1);
+            `, [session, name, timetable, room, date, makeUpFor, makeUpFor === null ? null : name,
+                  session, name, teacher,
+                  session, name, supervisor], (err, res) =>
+            {
+                  if (err)
+                        callback(null, err);
+                  else
+                        callback(res, null);
+            });
+      }
+
+      getSessionTeacher(name, number, callback)
+      {
+            this.conn.query(`select employee.id,employee.name from employee
+            join teacher on teacher.id=employee.id
+            join teacher_responsible on teacher_responsible.teacher_id=teacher.id
+            where teacher_responsible.session_number=? and teacher_responsible.class_name=?`, [number,name], (err, res) =>
+            {
+                  if (err)
+                        callback(null, err);
+                  else
+                        callback(res, null);
+            });
+      }
+
+      getSessionSupervisor(name, number, callback)
+      {
+            this.conn.query(`select employee.id,employee.name from employee
+            join supervisor on supervisor.id=employee.id
+            join supervisor_responsible on supervisor_responsible.supervisor_id=supervisor.id
+            where supervisor_responsible.session_number=? and supervisor_responsible.class_name=?`, [number, name], (err, res) =>
             {
                   if (err)
                         callback(null, err);

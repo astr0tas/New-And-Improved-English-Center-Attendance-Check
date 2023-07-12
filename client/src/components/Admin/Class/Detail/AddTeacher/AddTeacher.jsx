@@ -1,72 +1,12 @@
-import { useState, useEffect } from "react";
-import axios from 'axios';
-import { domain } from "../../../../../tools/domain";
-import { Modal } from 'react-bootstrap';
-import styles from './AddStudent.module.css';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
+import styles from './AddTeacher.module.css';
 
-const AddStudent = (props) =>
+const AddTeacher = (props) =>
 {
-      const [studentListContent, setStudentListContent] = useState([]);
-      const [searchStudent, setSearchStudent] = useState("");
-      const [studentAdded, setStudentAdded] = useState([]);
+      const [teacherListContent, setTeacherListContent] = useState([]);
+      const [searchTeacher, setSearcherTeacher] = useState("");
       const [confirmPopUp, setConfirmPopUp] = useState(false);
 
       let timer;
-
-      const configList = (e, id) =>
-      {
-            if (e.target.checked)
-            {
-                  if (props.currentStudent + studentAdded.length < props.maxStudent)
-                  {
-                        setStudentAdded(prevStudentAdded =>
-                        {
-                              if (props.currentStudent + prevStudentAdded.length < props.maxStudent)
-                                    return [...prevStudentAdded, id];
-                              else
-                              {
-                                    e.target.checked = false;
-                                    return prevStudentAdded;
-                              }
-                        });
-                  }
-                  else
-                        e.target.checked = false;
-            }
-            else
-                  setStudentAdded(prevState => prevState.filter(item => item !== id));
-      }
-
-      useEffect(() =>
-      {
-            if (props.addPopUp)
-            {
-                  axios.post(`http://${ domain }/admin/getStudentNotFromClass`, { params: { className: props.name, studentName: searchStudent } }, { headers: { 'Content-Type': 'application/json' } })
-                        .then(res =>
-                        {
-                              const temp = [];
-                              for (let i = 0; i < res.data.length; i++)
-                                    temp.push(
-                                          <tr key={ i }>
-                                                <td className='text-center'>{ i + 1 }</td>
-                                                <td className='text-center'>{ res.data[i].name }</td>
-                                                <td className='text-center'>{ res.data[i].ssn }</td>
-                                                <td className='text-center'>{ res.data[i].phone }</td>
-                                                <td className='text-center'>{ res.data[i].email }</td>
-                                                <td className='text-center'>
-                                                      <input type='checkbox' onChange={ e => configList(e, res.data[i].id) } style={ { width: '1.2rem', height: '1.2rem' } } className={ `${ styles.hover }` }></input>
-                                                </td>
-                                          </tr >
-                                    );
-                              setStudentListContent(temp);
-                        })
-                        .catch(err => console.error(err));
-            }
-
-            // eslint-disable-next-line
-      }, [searchStudent, props.name, props.addPopUp])
 
       return (
             <>
@@ -82,7 +22,7 @@ const AddStudent = (props) =>
 
                                           timer = setTimeout(() =>
                                           {
-                                                setSearchStudent(e.target.value);
+                                                setSearcherTeacher(e.target.value);
                                           }, 1000);
                                     } }></input>
                               </div>
@@ -101,7 +41,7 @@ const AddStudent = (props) =>
                                                 </tr>
                                           </thead>
                                           <tbody>
-                                                { studentListContent }
+                                                { teacherListContent }
                                           </tbody>
                                     </table>
                               </div >
@@ -164,4 +104,4 @@ const AddStudent = (props) =>
       )
 }
 
-export default AddStudent;
+export default AddTeacher;

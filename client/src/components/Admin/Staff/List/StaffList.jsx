@@ -14,7 +14,7 @@ import '../../../../css/scroll.css';
 const Staff = (props) =>
 {
       return (
-            <tr className={ `${ styles.hover }` } onClick={ () => { props.Navigate(`./${ props.id }`); } }>
+            <tr className={ `${ styles.hover }` } onClick={ () => { props.Navigate(`./detail/${ props.id }`); } }>
                   <td className='text-center'>{ props.i }</td>
                   <td className='text-center'>{ props.name }</td>
                   <td className='text-center'>{ props.ssn }</td>
@@ -123,7 +123,7 @@ const StaffList = () =>
                                           <input type='text' placeholder='Find staff' className={ `ps-4` } onChange={ findStaff }></input>
                                     </div>
                               </div>
-                              <div className={ `flex-grow-1 w-100 overflow-auto mt-3 px-md-2 mb-3` } style={ { minHeight: tableContent.length ? '200px' : '40px' } }>
+                              <div className={ `flex-grow-1 w-100 overflow-auto mt-3 px-1 mb-3` } style={ { minHeight: tableContent.length ? '200px' : '40px' } }>
                                     <table className="table table-hover table-info">
                                           <thead style={ { position: "sticky", top: "0" } }>
                                                 <tr>
@@ -140,6 +140,9 @@ const StaffList = () =>
                                                 { tableContent }
                                           </tbody>
                                     </table>
+                              </div>
+                              <div className="w-100 d-flex align-items-center justify-content-center mb-3">
+                                    <button className='btn btn-primary' onClick={ () => Navigate('./create') }>Add a { staffType === 1 ? 'teacher' : 'supervisor' }</button>
                               </div>
                         </>
                   }

@@ -1,6 +1,10 @@
-.customModal,
+.customModal1,
 .confirmModal {
       max-width: 80% !important;
+}
+
+.customModal2 {
+      max-width: 95% !important;
 }
 
 .confirmModal {
@@ -24,9 +28,27 @@
       cursor: pointer;
 }
 
+.p {
+      font-size: 1rem;
+      color: red;
+}
+
+.search {
+      font-size: 1.2rem;
+      margin-top: 5px;
+      margin-left: 4px;
+}
+
+@media only screen and (max-width:330px) {
+      .p {
+            font-size: 0.8rem;
+            color: red;
+      }
+}
+
 @media only screen and (min-width: 768px) {
 
-      .customModal,
+      .customModal1,
       .confirmModal {
             max-width: 40% !important;
       }
@@ -35,25 +57,31 @@
             font-size: 1.2rem;
             height: 40px;
       }
+
+      .customModal2 {
+            max-width: 75% !important;
+      }
 }
 
 @media only screen and (max-height:450px) {
 
-      .confirmModal,
+      .confirmModal1,
+      .customModal2,
       .customModal {
-            padding-top: 10vh !important;
-            padding-top: 10dvh !important;
+            padding-top: 0vh !important;
+            padding-top: 0dvh !important;
       }
 
       .dialog {
-            min-height: 110% !important;
-            max-height: 110% !important;
+            min-height: 100% !important;
+            max-height: 100% !important;
       }
 }
 
 @media only screen and (min-width: 2400px) {
 
-      .customModal,
+      .customModal1,
+      .customModal2,
       .confirmModal {
             max-width: 25% !important;
       }

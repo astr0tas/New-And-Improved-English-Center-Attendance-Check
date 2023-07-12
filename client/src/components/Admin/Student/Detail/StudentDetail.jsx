@@ -1,12 +1,15 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import styles from './StudentDetail.module.css';
 import axios from 'axios';
 import { domain } from '../../../../tools/domain';
 import { useNavigate, useParams } from 'react-router-dom';
 import { DMY } from '../../../../tools/dateFormat';
+import { context } from '../../../../context';
 
 const Class = (props) =>
 {
+      const { setListType } = useContext(context);
+
       return (
             <tr>
                   <td className='text-center'>{ props.i }</td>
@@ -15,7 +18,11 @@ const Class = (props) =>
                   <td className='text-center'>{ DMY(props.end) }</td>
                   <td className='text-center' style={ { color: props.status === 0 ? 'red' : '#128400' } }>{ props.status === 0 ? 'Deactivated' : 'Active' }</td>
                   <td className='d-flex align-items-center justify-content-center flex-column flex-sm-row'>
-                        <button className='btn btn-sm btn-secondary mx-sm-2 my-2 my-sm-0' onClick={ () => props.Navigate(`/class-list/${ props.name }`) }>Detail</button>
+                        <button className='btn btn-sm btn-secondary mx-sm-2 my-2 my-sm-0' onClick={ () =>
+                        {
+                              setListType(0);
+                              props.Navigate(`/class-list/detail/${ props.name }`);
+                        } }>Detail</button>
                         <button className='btn btn-sm btn-primary mx-sm-2 my-2 my-sm-0'>Stats</button>
                   </td>
             </tr>
@@ -41,7 +48,7 @@ const StudentDetail = () =>
 
       useEffect(() =>
       {
-            axios.post(`http://${ domain }/admin/studentInfo`, { params: { id: id } },{headers:{'Content-Type': 'application/json'}})
+            axios.post(`http://${ domain }/admin/studentInfo`, { params: { id: id } }, { headers: { 'Content-Type': 'application/json' } })
                   .then(res =>
                   {
                         document.title = `Student ${ res.data.name }`;
@@ -57,7 +64,7 @@ const StudentDetail = () =>
                   })
                   .catch(err => console.log(err));
 
-            axios.post(`http://${ domain }/admin/getStudentClass`, { params: { id: id } },{headers: { 'Content-Type': 'application/json'}})
+            axios.post(`http://${ domain }/admin/getStudentClass`, { params: { id: id } }, { headers: { 'Content-Type': 'application/json' } })
                   .then(res =>
                   {
                         const temp = [];

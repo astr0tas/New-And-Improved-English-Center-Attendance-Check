@@ -10,13 +10,18 @@ import Profile from './components/General/Profile/Profile';
 
 // Admin routes
 import ClassList from './components/Admin/Class/List/ClassList';
+import ClassCreate from './components/Admin/Class/Create/ClassCreate';
 import ClassDetail from './components/Admin/Class/Detail/ClassDetail';
 import ClassEdit from './components/Admin/Class/Edit/ClassEdit';
 import AdminClassSession from './components/Admin/Class/Session/SessionDetail';
+
 import StaffList from './components/Admin/Staff/List/StaffList';
+import StaffCreate from './components/Admin/Staff/Create/StaffCreate';
 import StaffDetail from './components/Admin/Staff/Detail/StaffDetail'
 import StaffEdit from './components/Admin/Staff/Edit/StaffEdit';
+
 import StudentList from './components/Admin/Student/List/StudentList';
+import StudentCreate from './components/Admin/Student/Create/StudentCreate';
 import StudentDetail from './components/Admin/Student/Detail/StudentDetail'
 import StudentEdit from './components/Admin/Student/Edit/StudentEdit';
 
@@ -63,21 +68,24 @@ function App()
               {/* Admin routes */ }
               <Route>
                 <Route path='class-list' element={ <ClassList /> } />
-                <Route path='class-list/:name' element={ <ClassDetail /> } />
-                <Route path='class-list/:name/edit' element={ <ClassEdit /> } />
-                <Route path='class-list/:name/:number' element={ <AdminClassSession /> } />
+                <Route path='class-list/create' element={ <ClassCreate /> } />
+                <Route path='class-list/detail/:name' element={ <ClassDetail /> } />
+                <Route path='class-list/detail/:name/edit' element={ <ClassEdit /> } />
+                <Route path='class-list/detail/:name/:number' element={ <AdminClassSession /> } />
               </Route>
 
               <Route>
                 <Route path='staff-list' element={ <StaffList /> } />
-                <Route path='staff-list/:id' element={ <StaffDetail /> } />
-                <Route path='staff-list/:id/edit' element={ <StaffEdit /> } />
+                <Route path='staff-list/create' element={ <StaffCreate /> } />
+                <Route path='staff-list/detail/:id' element={ <StaffDetail /> } />
+                <Route path='staff-list/detail/:id/edit' element={ <StaffEdit /> } />
               </Route>
 
               <Route>
                 <Route path='student-list' element={ <StudentList /> } />
-                <Route path='student-list/:id' element={ <StudentDetail /> } />
-                <Route path='student-list/:id/edit' element={ <StudentEdit /> } />
+                <Route path='student-list/create' element={ <StudentCreate /> } />
+                <Route path='student-list/detail/:id' element={ <StudentDetail /> } />
+                <Route path='student-list/detail/:id/edit' element={ <StudentEdit /> } />
               </Route>
               {/* Staff routes */ }
               <Route>
