@@ -2,15 +2,15 @@ import styles from './AddTeacher.module.css';
 
 const AddTeacher = (props) =>
 {
-      const [teacherListContent, setTeacherListContent] = useState([]);
-      const [searchTeacher, setSearcherTeacher] = useState("");
-      const [confirmPopUp, setConfirmPopUp] = useState(false);
+      // const [teacherListContent, setTeacherListContent] = useState([]);
+      // const [searchTeacher, setSearcherTeacher] = useState("");
+      // const [confirmPopUp, setConfirmPopUp] = useState(false);
 
-      let timer;
+      // let timer;
 
       return (
             <>
-                  <Modal show={ props.addPopUp } enforceFocus={ true }
+                  {/* <Modal show={ props.addPopUp } enforceFocus={ true }
                         dialogClassName={ `${ styles.dialog } modal-dialog-scrollable` } contentClassName={ `w-100 h-100` }
                         className={ `reAdjustModel ${ styles.customModal } hideBrowserScrollbar` } container={ props.containerRef.current }>
                         <Modal.Header>
@@ -99,7 +99,7 @@ const AddTeacher = (props) =>
                                           .catch(err => console.error(err));
                               } }>YES</button>
                         </Modal.Footer>
-                  </Modal>
+                  </Modal> */}
             </>
       )
 }

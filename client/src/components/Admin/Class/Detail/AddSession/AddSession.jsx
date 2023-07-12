@@ -318,7 +318,12 @@ const AddSession = (props) =>
                                           <strong>Room</strong>
                                     </div>
                                     <div className='col d-flex align-items-center justify-content-center justify-content-sm-start'>
-                                          <Dropdown onSelect={ eventKey => setRoom(eventKey) }>
+                                          <Dropdown onSelect={ eventKey =>
+                                          {
+                                                setRoom(eventKey);
+                                                setTimetable(null);
+                                          }
+                                          }>
                                                 <Dropdown.Toggle variant="secondary" style={ { maxWidth: '250px' } } className='text-wrap'>
                                                       { room === null ? 'Choose' : room.split(',')[1] }
                                                 </Dropdown.Toggle>
@@ -349,6 +354,7 @@ const AddSession = (props) =>
                                     <div className='col d-flex align-items-center justify-content-center justify-content-sm-start'>
                                           <input className={ `${ styles.inputs } w-100` } type="date" onChange={ e =>
                                           {
+                                                setTimetable(null);
                                                 if (e.target.value !== '')
                                                 {
                                                       if (new Date(e.target.value) <= new Date())
@@ -493,6 +499,8 @@ const AddSession = (props) =>
                                     setDate(null);
                                     setTimetable(null);
                                     setMakeUpSession(null);
+                                    setTeacherName(null);
+                                    setSupervisorName(null);
                                     props.setSessionPopUp(false);
                               } }>Cancel</button>
                               <button className={ `btn btn-primary ms-2 ms-md-4` } onClick={ handleData }>Confirm</button>
@@ -527,6 +535,14 @@ const AddSession = (props) =>
                                     }, { headers: { 'Content-Type': 'application/json' } })
                                           .then(res =>
                                           {
+                                                setTeacher(null);
+                                                setSupervisor(null);
+                                                setRoom(null);
+                                                setDate(null);
+                                                setTimetable(null);
+                                                setMakeUpSession(null);
+                                                setTeacherName(null);
+                                                setSupervisorName(null);
                                                 props.setRender(!props.render);
                                           })
                                           .catch(err => console.error(err));

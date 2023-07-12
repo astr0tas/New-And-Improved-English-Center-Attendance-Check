@@ -108,7 +108,6 @@ adminRoutes.post('/classTeacher', (req, res) =>
 {
       const name = req.body.params.name;
       const teacherName = req.body.params.teacherName;
-      console.log(teacherName);
       classModel.classTeacher(name, (teacherName === undefined || teacherName === null) ? '' : teacherName, (result, err) =>
       {
             if (err)
@@ -282,6 +281,22 @@ adminRoutes.post('/getSessionSupervisor', (req, res) =>
             }
             else
                   res.status(200).send(result[0]);
+      })
+});
+
+adminRoutes.post('/removeTeacherFromClass', (req, res) =>
+{
+      const name = req.body.params.name;
+      const id = req.body.params.id;
+      classModel.removeTeacherFromClass(name, id, (result, err) =>
+      {
+            if (err)
+            {
+                  console.log(err);
+                  res.status(500).send('Server internal error!');
+            }
+            else
+                  res.status(200).send('Teacher removed successfully!');
       })
 });
 

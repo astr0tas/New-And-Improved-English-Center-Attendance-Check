@@ -76,7 +76,7 @@ export class Class
 
       classSession(name, callback)
       {
-            this.conn.query(`select session.number,session.session_date,timetable.start_hour,timetable.end_hour from session 
+            this.conn.query(`select session.number,session.session_date,timetable.start_hour,timetable.end_hour,session.status from session 
             join timetable on timetable.id=session.timetable_id
             where session.class_name=? order by session.number`, [name], (err, res) =>
             {
@@ -237,6 +237,21 @@ export class Class
             join supervisor on supervisor.id=employee.id
             join supervisor_responsible on supervisor_responsible.supervisor_id=supervisor.id
             where supervisor_responsible.session_number=? and supervisor_responsible.class_name=?`, [number, name], (err, res) =>
+            {
+                  if (err)
+                        callback(null, err);
+                  else
+                        callback(res, null);
+            });
+      }
+
+      removeTeacherFromClass(name, id, callback)
+      {
+            this.conn.query(`update TEACHER_RESPONSIBLE set teacher_id=null where class_name=?;
+            delete from teach where teacher_id=? and class_name=?;
+            update session set status=5 where class_name=? and number in(
+                  select Session_number from TEACHER_RESPONSIBLE where Class_name=? and Teacher_ID is null
+            );`, [name, id, name, name, name], (err, res) =>
             {
                   if (err)
                         callback(null, err);

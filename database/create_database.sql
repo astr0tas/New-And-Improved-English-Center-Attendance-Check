@@ -105,7 +105,7 @@ CREATE TABLE TEACHER_RESPONSIBLE (
     Class_name VARCHAR(100),
 	PRIMARY KEY(Session_number,Class_name),
     FOREIGN KEY(Session_number,Class_name) REFERENCES SESSION(Number,Class_name) ON DELETE CASCADE ON UPDATE CASCADE,
-    Teacher_ID VARCHAR(15) not null,
+    Teacher_ID VARCHAR(15),
     FOREIGN KEY(Teacher_ID) REFERENCES TEACHER(ID)
 );  
 
@@ -114,7 +114,7 @@ CREATE TABLE SUPERVISOR_RESPONSIBLE (
     Class_name VARCHAR(100),
     PRIMARY KEY(Session_number,Class_name),
     FOREIGN KEY(Session_number,Class_name) REFERENCES SESSION(Number,Class_name) ON DELETE CASCADE ON UPDATE CASCADE,
-    Supervisor_ID VARCHAR(15) not null,
+    Supervisor_ID VARCHAR(15),
     Note_for_class text,
     Teacher_Note text,
     Teacher_Status int not null default -1,

@@ -18,18 +18,18 @@ const Student = (props) =>
 {
       const removeStudent = () =>
       {
-            props.setRemoveTarget(props.id);
-            props.setRemovePopUp(true);
+            props.setRemoveStudentTarget(props.id);
+            props.setRemoveStudentPopUp(true);
       }
 
       return (
             <tr>
-                  <td className='text-center'>{ props.i }</td>
-                  <td className='text-center'>{ props.name }</td>
-                  <td className='text-center'>{ props.ssn }</td>
-                  <td className='text-center'>{ props.phone }</td>
-                  <td className='text-center'>{ props.email }</td>
-                  <td>
+                  <td className='text-center align-middle'>{ props.i }</td>
+                  <td className='text-center align-middle'>{ props.name }</td>
+                  <td className='text-center align-middle'>{ props.ssn }</td>
+                  <td className='text-center align-middle'>{ props.phone }</td>
+                  <td className='text-center align-middle'>{ props.email }</td>
+                  <td className="text-center align-middle">
                         <div className="d-flex align-items-center justify-content-center">
                               <button className='btn btn-primary btn-sm me-2' onClick={ () => props.Navigate(`/student-list/detail/${ props.id }`) }>Detail</button>
                               <button className='btn btn-danger btn-sm ms-2' onClick={ removeStudent }>Remove</button>
@@ -45,6 +45,7 @@ const Session = (props) =>
       const [teacherID, setTeacherID] = useState(null);
       const [supervisorName, setSupervisorName] = useState("N/A");
       const [supervisorID, setSupervisorID] = useState(null);
+      const [status, setStatus] = useState("N/A");
 
       useEffect(() =>
       {
@@ -69,30 +70,62 @@ const Session = (props) =>
                         }
                   })
                   .catch(err => console.error(err));
-      }, [props.name, props.number])
+
+            if (props.status === 1)
+                  setStatus("On going");
+            else if (props.status === 2)
+                  setStatus("Finished");
+            else if (props.status === 3)
+                  setStatus("Canceled");
+            else if (props.status === 4)
+                  setStatus("Scheduled");
+            else if (props.status === 5)
+                  setStatus("Missing teacher/supervisor");
+      }, [props.name, props.number, props.status])
 
       return (
             <tr>
-                  <td className='text-center'>Session { props.number }</td>
-                  <td className='text-center'><AiOutlineClockCircle className='me-2' style={ { marginBottom: '1px' } } />{ DMDY(props.session_date) }&nbsp;:&nbsp;{ props.start }&nbsp;-&nbsp;{ props.end }</td>
-                  <td className='text-center'><button className='btn btn-primary btn-sm' onClick={ () => props.Navigate(`./Session ${ props.number }`) }>Detail</button></td>
-                  <td className='text-center'>{ teacherName }</td>
-                  <td className='text-center'><button className='btn btn-primary btn-sm' onClick={ () => props.Navigate(`/staff-list/detail/${ teacherID }`) }>Detail</button></td>
-                  <td className='text-center'>{ supervisorName }</td>
-                  <td className='text-center'><button className='btn btn-primary btn-sm' onClick={ () => props.Navigate(`/staff-list/detail/${ supervisorID }`) }>Detail</button></td>
+                  <td className='text-center align-middle'>Session { props.number }</td>
+                  <td className='text-center align-middle'><AiOutlineClockCircle className='me-2' style={ { marginBottom: '1px' } } />{ DMDY(props.session_date) }&nbsp;:&nbsp;{ props.start }&nbsp;-&nbsp;{ props.end }</td>
+                  <td className={ `text-center align-middle` } style={ {
+                        color: props.status === 1 ? '#128400' : (
+                              props.status === 2 ? 'gray' : (
+                                    (props.status === 3 || props.status === 5) ? 'red' :
+                                          (
+                                                props.status === 4 ? 'blue' : 'black'
+                                          )
+                              )
+                        )
+                  } }>{ status }</td>
+                  <td className='text-center align-middle'><button className='btn btn-primary btn-sm' onClick={ () => props.Navigate(`./Session ${ props.number }`) }>Detail</button></td>
+                  <td className='text-center align-middle'>{ teacherName }</td>
+                  <td className='text-center align-middle'><button className='btn btn-primary btn-sm' onClick={ () => props.Navigate(`/staff-list/detail/${ teacherID }`) }>Detail</button></td>
+                  <td className='text-center align-middle'>{ supervisorName }</td>
+                  <td className='text-center align-middle'><button className='btn btn-primary btn-sm' onClick={ () => props.Navigate(`/staff-list/detail/${ supervisorID }`) }>Detail</button></td>
             </tr>
       )
 }
 
 const Teacher = (props) =>
 {
+      const removeTeacher = () =>
+      {
+            props.setRemoveTeacherTarget(props.id);
+            props.setRemoveTeacherPopUp(true);
+      }
+
       return (
             <tr>
-                  <td className="text-center">{ props.i }</td>
-                  <td className="text-center">{ props.name }</td>
-                  <td className="text-center">{ props.phone }</td>
-                  <td className="text-center">{ props.email }</td>
-                  <td className="text-center"><button className="btn btn-sm btn-primary" onClick={ () => props.Navigate(`/staff-list/detail/${ props.id }`) }>Detail</button></td>
+                  <td className="text-center align-middle">{ props.i }</td>
+                  <td className="text-center align-middle">{ props.name }</td>
+                  <td className="text-center align-middle">{ props.phone }</td>
+                  <td className="text-center align-middle">{ props.email }</td>
+                  <td className="text-center align-middle">
+                        <div className="d-flex align-items-center justify-content-center">
+                              <button className="btn btn-sm btn-primary" onClick={ () => props.Navigate(`/staff-list/detail/${ props.id }`) }>Detail</button>
+                              <button className='btn btn-danger btn-sm ms-2' onClick={ removeTeacher }>Remove</button>
+                        </div>
+                  </td>
             </tr>
       )
 }
@@ -116,12 +149,16 @@ const ClassDetail = () =>
 
       const containerRef = useRef(null);
       const [statusPopUp, setStatusPopUp] = useState(false);
-      const [removePopUp, setRemovePopUp] = useState(false);
-      const [removeTarget, setRemoveTarget] = useState(null);
       const [maxPopUp, setMaxPopUp] = useState(false);
       const [addPopUp, setAddPopUp] = useState(false);
       const [sessionPopUp, setSessionPopUp] = useState(false);
-      const [teacherPopUp, setTeacherPopUp] = useState(false)
+      const [teacherPopUp, setTeacherPopUp] = useState(false);
+
+      const [removeStudentPopUp, setRemoveStudentPopUp] = useState(false);
+      const [removeStudentTarget, setRemoveStudentTarget] = useState(null);
+
+      const [removeTeacherTarget, setRemoveTeacherTarget] = useState(null);
+      const [removeTeacherPopUp, setRemoveTeacherPopUp] = useState(false);
 
       const Navigate = useNavigate();
 
@@ -171,7 +208,7 @@ const ClassDetail = () =>
                               for (let i = 0; i < res.data.length; i++)
                                     temp.push(<Student key={ i } i={ i + 1 } Navigate={ Navigate } id={ res.data[i].id } render={ render } setRender={ setRender }
                                           name={ res.data[i].name } phone={ res.data[i].phone } email={ res.data[i].email }
-                                          ssn={ res.data[i].ssn } setRemoveTarget={ setRemoveTarget } setRemovePopUp={ setRemovePopUp } />);
+                                          ssn={ res.data[i].ssn } setRemoveStudentTarget={ setRemoveStudentTarget } setRemoveStudentPopUp={ setRemoveStudentPopUp } />);
                               setContent(temp);
                         })
                         .catch(err => console.error(err));
@@ -184,7 +221,8 @@ const ClassDetail = () =>
                               const temp = [];
                               for (let i = 0; i < res.data.length; i++)
                                     temp.push(<Teacher key={ i } Navigate={ Navigate } i={ i + 1 }
-                                          name={ res.data[i].name } phone={ res.data[i].phone } email={ res.data[i].email } id={ res.data[i].id } />);
+                                          name={ res.data[i].name } phone={ res.data[i].phone } email={ res.data[i].email } id={ res.data[i].id }
+                                          setRemoveTeacherTarget={ setRemoveTeacherTarget } setRemoveTeacherPopUp={ setRemoveTeacherPopUp } />);
                               setContent(temp);
                         })
                         .catch(err => console.error(err));
@@ -197,7 +235,7 @@ const ClassDetail = () =>
                               const temp = [];
                               for (let i = 0; i < res.data.length; i++)
                                     temp.push(<Session key={ i } number={ res.data[i].number } Navigate={ Navigate } name={ name }
-                                          start={ res.data[i].start_hour } end={ res.data[i].end_hour } session_date={ res.data[i].session_date } />);
+                                          start={ res.data[i].start_hour } end={ res.data[i].end_hour } session_date={ res.data[i].session_date } status={ res.data[i].status } />);
                               setContent(temp);
                         })
                         .catch(err => console.error(err));
@@ -255,15 +293,16 @@ const ClassDetail = () =>
                                                             <th scope="col" className='col-1 text-center'>#</th>
                                                             <th scope="col" className='col-4 text-center'>Name</th>
                                                             <th scope="col" className='col-2 text-center'>Phone</th>
-                                                            <th scope="col" className='col-3 text-center'>Email</th>
-                                                            <th scope="col" className='col-2 text-center'>Action</th>
+                                                            <th scope="col" className='col-2 text-center'>Email</th>
+                                                            <th scope="col" className='col-3 text-center'>Action</th>
                                                       </>
                                                 }
                                                 {
                                                       listType === 2 &&
                                                       <>
                                                             <th scope="col" className='col-1 text-center'>Session number</th>
-                                                            <th scope="col" className='col-4 text-center'>Time</th>
+                                                            <th scope="col" className='col-3 text-center'>Time</th>
+                                                            <th scope="col" className='col-1 text-center'>Status</th>
                                                             <th scope="col" className='col-1 text-center'>Action</th>
                                                             <th scope="col" className='col-2 text-center'>Teacher</th>
                                                             <th scope="col" className='col-1 text-center'>Action</th>
@@ -317,7 +356,7 @@ const ClassDetail = () =>
                               } }>Yes</button>
                         </Modal.Footer>
                   </Modal>
-                  <Modal show={ removePopUp } onHide={ () => { setRemoveTarget(null); setRemovePopUp(false); } } className={ `reAdjustModel hideBrowserScrollbar` } container={ containerRef.current }>
+                  <Modal show={ removeStudentPopUp } onHide={ () => { setRemoveStudentTarget(null); setRemoveStudentPopUp(false); } } className={ `reAdjustModel hideBrowserScrollbar` } container={ containerRef.current }>
                         <Modal.Header className='border border-0' closeButton>
                         </Modal.Header>
                         <Modal.Body className='border border-0 d-flex justify-content-center'>
@@ -326,13 +365,37 @@ const ClassDetail = () =>
                         <Modal.Footer className='justify-content-center border border-0'>
                               <button className={ `btn btn-primary ms-2 ms-md-4` } onClick={ () =>
                               {
-                                    setRemoveTarget(null);
-                                    setRemovePopUp(false);
+                                    setRemoveStudentTarget(null);
+                                    setRemoveStudentPopUp(false);
                               } }>No</button>
                               <button className={ `btn btn-danger ms-2 ms-md-4` } onClick={ () =>
                               {
-                                    setRemovePopUp(false);
-                                    axios.post(`http://${ domain }/admin/removeStudentFromClass`, { params: { name: name, id: removeTarget } }, { headers: { 'Content-Type': 'application/json' } })
+                                    setRemoveStudentPopUp(false);
+                                    axios.post(`http://${ domain }/admin/removeStudentFromClass`, { params: { name: name, id: removeStudentTarget } }, { headers: { 'Content-Type': 'application/json' } })
+                                          .then(res =>
+                                          {
+                                                setRender(!render);
+                                          })
+                                          .catch(err => console.log(err));
+                              } }>Yes</button>
+                        </Modal.Footer>
+                  </Modal>
+                  <Modal show={ removeTeacherPopUp } onHide={ () => { setRemoveTeacherTarget(null); setRemoveTeacherPopUp(false); } } className={ `reAdjustModel hideBrowserScrollbar` } container={ containerRef.current }>
+                        <Modal.Header className='border border-0' closeButton>
+                        </Modal.Header>
+                        <Modal.Body className='border border-0 d-flex justify-content-center'>
+                              <h4 className='text-center'>Do you want to remove this teacher from this class?</h4>
+                        </Modal.Body>
+                        <Modal.Footer className='justify-content-center border border-0'>
+                              <button className={ `btn btn-primary ms-2 ms-md-4` } onClick={ () =>
+                              {
+                                    setRemoveTeacherTarget(null);
+                                    setRemoveTeacherPopUp(false);
+                              } }>No</button>
+                              <button className={ `btn btn-danger ms-2 ms-md-4` } onClick={ () =>
+                              {
+                                    setRemoveTeacherPopUp(false);
+                                    axios.post(`http://${ domain }/admin/removeTeacherFromClass`, { params: { name: name, id: removeTeacherTarget } }, { headers: { 'Content-Type': 'application/json' } })
                                           .then(res =>
                                           {
                                                 setRender(!render);
