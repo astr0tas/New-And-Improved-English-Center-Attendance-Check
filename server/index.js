@@ -59,7 +59,7 @@ app.use((req, res, next) =>
       } else
       {
             // Verify the Content-Type header for other request methods (only POST requests are used in this project)
-            if (contentType !== 'application/json')
+            if (contentType !== 'application/json' && !contentType.includes('multipart/form-data'))
             {
                   return res.status(400).send('Invalid Content-Type');
             }

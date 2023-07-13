@@ -334,10 +334,21 @@ export class Class
             });
       }
 
-      getSessionStudent(name, number, callback)
+      getSessionStudent(name, callback)
       {
             this.conn.query(`select student.id,student.name from student
-            join IN_CLASS on IN_CLASS.student_id=student.id`, [name, number], (err, res) =>
+            join IN_CLASS on IN_CLASS.student_id=student.id where IN_CLASS.class_name=? order by student.name`, [name], (err, res) =>
+            {
+                  if (err)
+                        callback(null, err);
+                  else
+                        callback(res, null);
+            });
+      }
+
+      getStudentSessionAttendace(className, sessionNumber, id, callback)
+      {
+            this.conn.query(`select status,note from STUDENT_ATTENDANCE where session_number=? and class_name=? and student_id=?`, [sessionNumber, className, id], (err, res) =>
             {
                   if (err)
                         callback(null, err);

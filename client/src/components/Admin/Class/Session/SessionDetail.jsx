@@ -6,13 +6,38 @@ import axios from 'axios';
 import { DMDY } from '../../../../tools/dateFormat';
 import '../../../../css/scroll.css';
 import { Modal } from 'react-bootstrap';
-import { isRefValid } from '../../../../tools/refChecker';
 
 const Student = (props) =>
 {
+      const toggleStatus = (status) =>
+      {
+            if (props.studentAttendence.length)
+            {
+                  console.log(status);
+                  props.studentAttendence[props.i - 1].status = status;
+            }
+      }
+
       useEffect(() =>
       {
-      }, [])
+            // console.log('ok');
+            props.setStudentAttendence(prev => [...prev, { id: props.id, status: null, note: null, i: props.i }]);
+
+            axios.post(`http://${ domain }/admin/getStudentSessionAttendace`, { params: { className: props.className, sessionNumber: props.sessionNumber, id: props.id } }, { headers: { 'Content-Type': 'application/json' } })
+                  .then(res =>
+                  {
+                        if (res.data.length)
+                        {
+                              // if (isRefValid(props.studentAttendence, props.i - 1))
+                              // {
+                              //       props.studentAttendence.current[props.i - 1].status = res.data[0].status;
+                              //       props.studentAttendence.current[props.i - 1].note = res.data[0].note;
+                              // }
+                        }
+                  })
+                  .catch(err => console.log(err));
+            // eslint-disable-next-line
+      }, [props.id, props.className, props.sessionNumber, props.i])
 
       return (
             <tr>
@@ -20,16 +45,31 @@ const Student = (props) =>
                   <td className='text-center align-middle'>{ props.name }</td>
                   <td className='text-center align-middle'><button className='btn btn-sm btn-primary' onClick={ () => props.Navigate(`/student-list/detail/${ props.id }`) }>Detail</button></td>
                   <td className='text-center align-middle'>
-                        <input name={ `${ props.id }_attendace` } type='radio' className={ `${ styles.hover }` } style={ { width: '1.3rem', height: '1.3rem' } }></input>
+                        <input name={ `${ props.id }_attendace` } type='radio' className={ `${ styles.hover }` }
+                              style={ { width: '1.3rem', height: '1.3rem' } }
+                              checked={ props.studentAttendence.length && props.studentAttendence[props.i - 1].status === 1 }
+                              onChange={ () => toggleStatus(1) }></input>
                   </td>
                   <td className='text-center align-middle'>
-                        <input name={ `${ props.id }_attendace` } type='radio' className={ `${ styles.hover }` } style={ { width: '1.3rem', height: '1.3rem' } }></input>
+                        <input name={ `${ props.id }_attendace` } type='radio' className={ `${ styles.hover }` }
+                              style={ { width: '1.3rem', height: '1.3rem' } }
+                              checked={ props.studentAttendence.length && props.studentAttendence[props.i - 1].status === 2 }
+                              onChange={ () => toggleStatus(2) }></input>
                   </td>
                   <td className='text-center align-middle'>
-                        <input name={ `${ props.id }_attendace` } type='radio' className={ `${ styles.hover }` } style={ { width: '1.3rem', height: '1.3rem' } }></input>
+                        <input name={ `${ props.id }_attendace` } type='radio' className={ `${ styles.hover }` }
+                              style={ { width: '1.3rem', height: '1.3rem' } }
+                              checked={ props.studentAttendence.length && props.studentAttendence[props.i - 1].status === 3 }
+                              onChange={ () => toggleStatus(3) }></input>
                   </td>
                   <td className='text-center align-middle'>
-                        <input type='text'></input>
+                        <input type='text'
+                              // value={ (isRefValid(props.studentAttendence, props.i - 1) && props.studentAttendence.current[props.i - 1].note !== null) ? props.studentAttendence.current[props.i - 1].note : '' }
+                              onChange={ e =>
+                              {
+                                    // if (isRefValid(props.studentAttendence, props.i - 1))
+                                    //       props.studentAttendence.current[props.i - 1].note = e.target.value;
+                              } }></input>
                   </td>
             </tr>
       )
@@ -39,6 +79,8 @@ const AdminClassSessionDetail = () =>
 {
       const name = useParams().name;
       const number = useParams().number.split(' ')[1];
+
+      document.title = `Class ${ name } session ${ number }`;
 
       const [room, setRoom] = useState("N/A");
       const [status, setStatus] = useState("N/A");
@@ -55,7 +97,8 @@ const AdminClassSessionDetail = () =>
       const [supervisorImage, setSupervisorImage] = useState(require('../../../../images/profile.png'));
 
       const [studentList, setStudentList] = useState([]);
-      const studentAttendence = useRef([]);
+
+      const [studentAttendence, setStudentAttendence] = useState([]);
 
       const Navigate = useNavigate();
 
@@ -80,7 +123,7 @@ const AdminClassSessionDetail = () =>
                         {
                               setTeacherID(res.data.id ? res.data.id : null);
                               setTeacherName(res.data.name ? res.data.name : 'N/A');
-                              setTeacherImage(res.data.image ? `` : require('../../../../images/profile.png'));
+                              setTeacherImage(res.data.image ? `http://${ domain }/image/employee/${ res.data.image }` : require('../../../../images/profile.png'));
                         }
                   })
                   .catch(err => console.error(err));
@@ -92,24 +135,27 @@ const AdminClassSessionDetail = () =>
                         {
                               setSupervisorID(res.data.id ? res.data.id : null);
                               setSupervisorName(res.data.name ? res.data.name : 'N/A');
-                              setSupervisorImage(res.data.image ? `` : require('../../../../images/profile.png'));
+                              setSupervisorImage(res.data.image ? `http://${ domain }/image/employee/${ res.data.image }` : require('../../../../images/profile.png'));
                         }
                   })
                   .catch(err => console.error(err));
 
-            axios.post(`http://${ domain }/admin/getSessionStudent`, { params: { name: name, number: number } }, { headers: { 'Content-Type': 'application/json' } })
+            axios.post(`http://${ domain }/admin/getSessionStudent`, { params: { name: name } }, { headers: { 'Content-Type': 'application/json' } })
                   .then(res =>
                   {
                         if (res.data !== '')
                         {
                               const temp = [];
                               for (let i = 0; i < res.data.length; i++)
-                                    temp.push(<Student Navigate={ Navigate } key={ i } i={ i + 1 } id={ res.data[i].id } name={ res.data[i].name } studentAttendence={ studentAttendence } />);
+                                    temp.push(<Student Navigate={ Navigate } key={ i } i={ i + 1 }
+                                          id={ res.data[i].id } name={ res.data[i].name }
+                                          studentAttendence={ studentAttendence } setStudentAttendence={ setStudentAttendence }
+                                          className={ name } sessionNumer={ number } />);
                               setStudentList(temp);
                         }
                   })
                   .catch(err => console.error(err));
-      }, [number, name, Navigate]);
+      }, [number, name, Navigate, studentAttendence]);
 
       return (
             <div className='w-100 h-100 d-flex flex-column overflow-auto hideBrowserScrollbar'>
@@ -145,7 +191,7 @@ const AdminClassSessionDetail = () =>
                               <div className='d-flex flex-column align-items-center mt-3'>
                                     <h4>{ teacherName }</h4>
                                     <img className={ `${ styles.images }` } alt='' src={ teacherImage }></img>
-                                    <button className='btn btn-sm btn-primary mt-2' onClick={ () => Navigate(`staff-list/detail/${ teacherID }`) }>Detail</button>
+                                    <button className='btn btn-sm btn-primary mt-2' onClick={ () => Navigate(`/staff-list/detail/${ teacherID }`) }>Detail</button>
                                     <div className='d-flex align-items-center justify-content-center mt-2 mb-2'>
                                           <div className='d-flex flex-column align-items-center me-4'>
                                                 <label htmlFor='teacherOnClass' style={ { color: '#128400' } }>On class</label>
@@ -166,7 +212,7 @@ const AdminClassSessionDetail = () =>
                               <div className='d-flex flex-column align-items-center mt-3'>
                                     <h4>{ supervisorName }</h4>
                                     <img className={ `${ styles.images }` } alt='' src={ supervisorImage }></img>
-                                    <button className='btn btn-sm btn-primary mt-2' onClick={ () => Navigate(`staff-list/detail/${ supervisorID }`) }>Detail</button>
+                                    <button className='btn btn-sm btn-primary mt-2' onClick={ () => Navigate(`/staff-list/detail/${ supervisorID }`) }>Detail</button>
                               </div>
                         </div>
                   </div>
@@ -216,7 +262,7 @@ const AdminClassSessionDetail = () =>
                   </div>
                   <div className='w-100 d-flex align-items-center justify-content-center mb-3'>
                         <button className='btn btn-secondary me-3' onClick={ () => Navigate(`/class-list/detail/${ name }`) }>Back</button>
-                        <button className='btn btn-primary ms-3'>Confirm</button>
+                        <button className='btn btn-primary ms-3' onClick={ () => { console.log(studentAttendence); } }>Confirm</button>
                   </div>
             </div>
       )

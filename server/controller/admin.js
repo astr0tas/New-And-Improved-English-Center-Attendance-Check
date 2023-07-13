@@ -383,8 +383,24 @@ adminRoutes.post('/sessionSupervisor', (req, res) =>
 adminRoutes.post('/getSessionStudent', (req, res) =>
 {
       const name = req.body.params.name;
-      const number = req.body.params.number;
-      classModel.getSessionStudent(name, number, (result, err) =>
+      classModel.getSessionStudent(name, (result, err) =>
+      {
+            if (err)
+            {
+                  console.log(err);
+                  res.status(500).send('Server internal error!');
+            }
+            else
+                  res.status(200).send(result);
+      })
+});
+
+adminRoutes.post('/getStudentSessionAttendace', (req, res) =>
+{
+      const className = req.body.params.className;
+      const sessionNumber = req.body.params.sessionNumber;
+      const id = req.body.params.id;
+      classModel.getStudentSessionAttendace(className, sessionNumber, id, (result, err) =>
       {
             if (err)
             {
