@@ -15,13 +15,13 @@ const Staff = (props) =>
 {
       return (
             <tr className={ `${ styles.hover }` } onClick={ () => { props.Navigate(`./detail/${ props.id }`); } }>
-                  <td className='text-center'>{ props.i }</td>
-                  <td className='text-center'>{ props.name }</td>
-                  <td className='text-center'>{ props.ssn }</td>
-                  <td className='text-center'>{ props.phone }</td>
-                  <td className='text-center'>{ props.email }</td>
-                  <td className='text-center'>{ DMY(props.birthdate) }</td>
-                  <td className='text-center'>{ props.address }</td>
+                  <td className='text-center align-middle'>{ props.i }</td>
+                  <td className='text-center align-middle'>{ props.name }</td>
+                  <td className='text-center align-middle'>{ props.ssn }</td>
+                  <td className='text-center align-middle'>{ props.phone }</td>
+                  <td className='text-center align-middle'>{ props.email }</td>
+                  <td className='text-center align-middle'>{ DMY(props.birthdate) }</td>
+                  <td className='text-center align-middle'>{ props.address }</td>
             </tr>
       )
 }
@@ -123,17 +123,17 @@ const StaffList = () =>
                                           <input type='text' placeholder='Find staff' className={ `ps-4` } onChange={ findStaff }></input>
                                     </div>
                               </div>
-                              <div className={ `flex-grow-1 w-100 overflow-auto mt-3 px-1 mb-3` } style={ { minHeight: tableContent.length ? '200px' : '40px' } }>
+                              <div className={ `flex-grow-1 w-100 overflow-auto mt-3 px-1 mb-3` } style={ { minHeight: tableContent.length ? '200px' : '65px' } }>
                                     <table className="table table-hover table-info">
                                           <thead style={ { position: "sticky", top: "0" } }>
                                                 <tr>
-                                                      <th scope="col" className='col-1 text-center'>#</th>
-                                                      <th scope="col" className='col-3 text-center'>Name</th>
-                                                      <th scope="col" className='col-1 text-center'>SSN</th>
-                                                      <th scope="col" className='col-1 text-center'>Phone</th>
-                                                      <th scope="col" className='col-2 text-center'>Email</th>
-                                                      <th scope="col" className='col-1 text-center'>Birthdate</th>
-                                                      <th scope="col" className='col-3 text-center'>Address</th>
+                                                      <th scope="col" className='col-1 text-center align-middle'>#</th>
+                                                      <th scope="col" className='col-3 text-center align-middle'>Name</th>
+                                                      <th scope="col" className='col-1 text-center align-middle'>SSN</th>
+                                                      <th scope="col" className='col-1 text-center align-middle'>Phone number</th>
+                                                      <th scope="col" className='col-2 text-center align-middle'>Email</th>
+                                                      <th scope="col" className='col-1 text-center align-middle'>Birthdate</th>
+                                                      <th scope="col" className='col-3 text-center align-middle'>Address</th>
                                                 </tr>
                                           </thead>
                                           <tbody>

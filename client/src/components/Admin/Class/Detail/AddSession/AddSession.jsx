@@ -27,15 +27,17 @@ const TeacherSelect = (props) =>
                               const temp = [];
                               for (let i = 0; i < res.data.length; i++)
                                     temp.push(<tr key={ i }>
-                                          <td className='text-center'>{ i + 1 }</td>
-                                          <td className='text-center'>{ res.data[i].name }</td>
-                                          <td className='text-center'>{ res.data[i].phone }</td>
-                                          <td className='text-center'>{ res.data[i].email }</td>
-                                          <td className='text-center'>
-                                                <input className={ `d-inline-block me-2 ${ styles.hover } align-middle` } type='radio' style={ { width: '1.3rem', height: '1.3rem' } }
-                                                      name='teacherSelector' onChange={ () => { props.setTeacher(res.data[i].id); props.setTeacherName(res.data[i].name); } }
-                                                      checked={ res.data[i].id === props.teacher }></input>
-                                                <button className='btn btn-sm btn-primary ms-2'>Detail</button>
+                                          <td className='text-center align-middle'>{ i + 1 }</td>
+                                          <td className='text-center align-middle'>{ res.data[i].name }</td>
+                                          <td className='text-center align-middle'>{ res.data[i].phone }</td>
+                                          <td className='text-center align-middle'>{ res.data[i].email }</td>
+                                          <td className='text-center align-middle'>
+                                                <div className='d-flex flex-column flex-sm-row align-items-center justify-content-center'>
+                                                      <input className={ `me-sm-2 mb-1 mb-sm-0 ${ styles.hover }` } type='radio' style={ { width: '1.3rem', height: '1.3rem' } }
+                                                            name='teacherSelector' onChange={ () => { props.setTeacher(res.data[i].id); props.setTeacherName(res.data[i].name); } }
+                                                            checked={ res.data[i].id === props.teacher }></input>
+                                                      <button className='btn btn-sm btn-primary ms-sm-2' onClick={ () => props.Navigate(`/staff-list/detail/${ res.data[i].id }`) }>Detail</button>
+                                                </div>
                                           </td>
                                     </tr>);
                               setTeacherListContent(temp);
@@ -62,16 +64,16 @@ const TeacherSelect = (props) =>
                               } }></input>
                         </div>
                   </Modal.Header>
-                  <Modal.Body className='px-1 py-0'>
+                  <Modal.Body className='px-1 py-0' style={ { minHeight: teacherListContent.length ? '150px' : '65px' } }>
                         <div className={ `h-100 w-100` }>
                               <table className="table table-hover table-info">
                                     <thead style={ { position: "sticky", top: "0" } }>
                                           <tr>
-                                                <th scope="col" className='col-1 text-center'>#</th>
-                                                <th scope="col" className='col-4 text-center'>Name</th>
-                                                <th scope="col" className='col-2 text-center'>Phone number</th>
-                                                <th scope="col" className='col-2 text-center'>Email</th>
-                                                <th scope="col" className='col-3 text-center'>Action</th>
+                                                <th scope="col" className='col-1 text-center align-middle'>#</th>
+                                                <th scope="col" className='col-4 text-center align-middle'>Name</th>
+                                                <th scope="col" className='col-2 text-center align-middle'>Phone number</th>
+                                                <th scope="col" className='col-2 text-center align-middle'>Email</th>
+                                                <th scope="col" className='col-3 text-center align-middle'>Action</th>
                                           </tr>
                                     </thead>
                                     <tbody>
@@ -108,15 +110,17 @@ const SupervisorSelect = (props) =>
                               const temp = [];
                               for (let i = 0; i < res.data.length; i++)
                                     temp.push(<tr key={ i }>
-                                          <td className='text-center'>{ i + 1 }</td>
-                                          <td className='text-center'>{ res.data[i].name }</td>
-                                          <td className='text-center'>{ res.data[i].phone }</td>
-                                          <td className='text-center'>{ res.data[i].email }</td>
-                                          <td className='text-center'>
-                                                <input className={ `d-inline-block me-2 my-auto ${ styles.hover } align-middle` } type='radio' style={ { width: '1.3rem', height: '1.3rem' } }
-                                                      name='supervisorSelector' onChange={ () => { props.setSupervisor(res.data[i].id); props.setSupervisorName(res.data[i].name); } }
-                                                      checked={ res.data[i].id === props.supervisor }></input>
-                                                <button className='btn btn-sm btn-primary ms-2'>Detail</button>
+                                          <td className='text-center align-middle'>{ i + 1 }</td>
+                                          <td className='text-center align-middle'>{ res.data[i].name }</td>
+                                          <td className='text-center align-middle'>{ res.data[i].phone }</td>
+                                          <td className='text-center align-middle'>{ res.data[i].email }</td>
+                                          <td className='text-center align-middle'>
+                                                <div className='d-flex flex-column flex-sm-row align-items-center justify-content-center'>
+                                                      <input className={ `me-sm-2 mb-1 mb-sm-0 ${ styles.hover }` } type='radio' style={ { width: '1.3rem', height: '1.3rem' } }
+                                                            name='supervisorSelector' onChange={ () => { props.setSupervisor(res.data[i].id); props.setSupervisorName(res.data[i].name); } }
+                                                            checked={ res.data[i].id === props.supervisor }></input>
+                                                      <button className='btn btn-sm btn-primary ms-sm-2' onClick={ () => props.Navigate(`/staff-list/detail/${ res.data[i].id }`) }>Detail</button>
+                                                </div>
                                           </td>
                                     </tr>);
                               setSupervisorListContent(temp);
@@ -143,16 +147,16 @@ const SupervisorSelect = (props) =>
                               } }></input>
                         </div>
                   </Modal.Header>
-                  <Modal.Body className='px-1 py-0'>
+                  <Modal.Body className='px-1 py-0' style={ { minHeight: supervisorListContent.length ? '150px' : '65px' } }>
                         <div className={ `h-100 w-100` }>
                               <table className="table table-hover table-info">
                                     <thead style={ { position: "sticky", top: "0" } }>
                                           <tr>
-                                                <th scope="col" className='col-1 text-center'>#</th>
-                                                <th scope="col" className='col-4 text-center'>Name</th>
-                                                <th scope="col" className='col-2 text-center'>Phone number</th>
-                                                <th scope="col" className='col-2 text-center'>Email</th>
-                                                <th scope="col" className='col-3 text-center'>Action</th>
+                                                <th scope="col" className='col-1 text-center align-middle'>#</th>
+                                                <th scope="col" className='col-4 text-center align-middle'>Name</th>
+                                                <th scope="col" className='col-2 text-center align-middle'>Phone number</th>
+                                                <th scope="col" className='col-2 text-center align-middle'>Email</th>
+                                                <th scope="col" className='col-3 text-center align-middle'>Action</th>
                                           </tr>
                                     </thead>
                                     <tbody>
@@ -551,10 +555,10 @@ const AddSession = (props) =>
                   </Modal>
                   <TeacherSelect addTeacherPopUp={ addTeacherPopUp } setAddTeacherPopUp={ setAddTeacherPopUp } name={ props.name }
                         containerRef={ props.containerRef } teacher={ teacher } setTeacher={ setTeacher } teacherName={ teacherName }
-                        setTeacherName={ setTeacherName } />
+                        setTeacherName={ setTeacherName } Navigate={ props.Navigate } />
                   <SupervisorSelect addSupervisorPopUp={ addSupervisorPopUp } setAddSupervisorPopUp={ setAddSupervisorPopUp } name={ props.name }
                         containerRef={ props.containerRef } supervisor={ supervisor } setSupervisor={ setSupervisor }
-                        supervisorName={ supervisorName } setSupervisorName={ setSupervisorName } />
+                        supervisorName={ supervisorName } setSupervisorName={ setSupervisorName } Navigate={ props.Navigate } />
             </>
       )
 }

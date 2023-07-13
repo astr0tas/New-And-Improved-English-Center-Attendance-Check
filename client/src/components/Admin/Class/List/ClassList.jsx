@@ -33,13 +33,13 @@ const Class = (props) =>
 
       return (
             <tr className={ `${ styles.hover }` } onClick={ () => { props.setListType(0); props.Navigate(`./detail/${ props.name }`); } }>
-                  <td className='text-center'>{ props.i }</td>
-                  <td className='text-center'>{ props.name }</td>
-                  <td className='text-center'>{ currentStudents }/{ props.initialStudents }</td>
-                  <td className='text-center'>{ currentSessions }/{ props.initialSessions }</td>
-                  <td className='text-center'>{ props.start === null ? 'N/A' : DMY(props.start) }</td>
-                  <td className='text-center'>{ props.end === null ? 'N/A' : DMY(props.end) }</td>
-                  <td className='text-center' style={ { color: props.status === 0 ? 'red' : '#128400' } }>{ props.status === 0 ? 'Deactivated' : 'Active' }</td>
+                  <td className='text-center align-middle'>{ props.i }</td>
+                  <td className='text-center align-middle'>{ props.name }</td>
+                  <td className='text-center align-middle'>{ currentStudents }/{ props.initialStudents }</td>
+                  <td className='text-center align-middle'>{ currentSessions }/{ props.initialSessions }</td>
+                  <td className='text-center align-middle'>{ props.start === null ? 'N/A' : DMY(props.start) }</td>
+                  <td className='text-center align-middle'>{ props.end === null ? 'N/A' : DMY(props.end) }</td>
+                  <td className='text-center align-middle' style={ { color: props.status === 0 ? 'red' : '#128400' } }>{ props.status === 0 ? 'Deactivated' : 'Active' }</td>
             </tr>
       )
 }
@@ -110,17 +110,17 @@ const ClassList = () =>
                               </div>
                         </div>
                   </div>
-                  <div className={ `flex-grow-1 w-100 overflow-auto mt-3 px-1 mb-3` } style={ { minHeight: tableContent.length ? '200px' : '40px' } }>
+                  <div className={ `flex-grow-1 w-100 overflow-auto mt-3 px-1 mb-3` } style={ { minHeight: tableContent.length ? '200px' : '65px' } }>
                         <table className="table table-hover table-info">
                               <thead style={ { position: "sticky", top: "0" } }>
                                     <tr>
-                                          <th scope="col" className='col-1 text-center'>#</th>
-                                          <th scope="col" className='col-4 text-center'>Name</th>
-                                          <th scope="col" className='col-1 text-center'>Students</th>
-                                          <th scope="col" className='col-1 text-center'>Sessions</th>
-                                          <th scope="col" className='col-2 text-center'>Start date</th>
-                                          <th scope="col" className='col-2 text-center'>End date</th>
-                                          <th scope="col" className='col-1 text-center'>Status</th>
+                                          <th scope="col" className='col-1 text-center align-middle'>#</th>
+                                          <th scope="col" className='col-4 text-center align-middle'>Name</th>
+                                          <th scope="col" className='col-1 text-center align-middle'>Students</th>
+                                          <th scope="col" className='col-1 text-center align-middle'>Sessions</th>
+                                          <th scope="col" className='col-2 text-center align-middle'>Start date</th>
+                                          <th scope="col" className='col-2 text-center align-middle'>End date</th>
+                                          <th scope="col" className='col-1 text-center align-middle'>Status</th>
                                     </tr>
                               </thead>
                               <tbody>

@@ -13,10 +13,6 @@
       max-height: 75% !important;
 }
 
-.p {
-      font-size: 1rem;
-      color: red;
-}
 
 .search {
       font-size: 1.2rem;
@@ -24,18 +20,15 @@
       margin-left: 4px;
 }
 
+.hover:hover {
+      cursor: pointer;
+}
+
 @media only screen and (min-width: 768px) {
 
       .customModal,
       .confirmModal {
             max-width: 75% !important;
-      }
-}
-
-@media only screen and (max-width:330px) {
-      .p {
-            font-size: 0.8rem;
-            color: red;
       }
 }
 

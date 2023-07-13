@@ -256,7 +256,7 @@ adminRoutes.post('/getSessionTeacher', (req, res) =>
 {
       const name = req.body.params.name;
       const number = req.body.params.number;
-      classModel.getSessionTeacher(name,number, (result, err) =>
+      classModel.getSessionTeacher(name, number, (result, err) =>
       {
             if (err)
             {
@@ -297,6 +297,39 @@ adminRoutes.post('/removeTeacherFromClass', (req, res) =>
             }
             else
                   res.status(200).send('Teacher removed successfully!');
+      })
+});
+
+adminRoutes.post('/getTeacherNotInClass', (req, res) =>
+{
+      const name = req.body.params.name;
+      const className = req.body.params.className;
+      classModel.getTeacherNotInClass(name, className, (result, err) =>
+      {
+            if (err)
+            {
+                  console.log(err);
+                  res.status(500).send('Server internal error!');
+            }
+            else
+                  res.status(200).send(result);
+      })
+});
+
+adminRoutes.post('/addTeacherToClass', (req, res) =>
+{
+      const name = req.body.params.name;
+      const teachers = req.body.params.teachers;
+      console.log(name, teachers);
+      classModel.addTeacherToClass(name, teachers, (result, err) =>
+      {
+            if (err)
+            {
+                  console.log(err);
+                  res.status(500).send('Server internal error!');
+            }
+            else
+                  res.status(200).send('Teacher(s) added successfully!');
       })
 });
 

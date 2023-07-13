@@ -279,35 +279,35 @@ const ClassDetail = () =>
                                                 {
                                                       listType === 0 &&
                                                       <>
-                                                            <th scope="col" className='col-1 text-center'>#</th>
-                                                            <th scope="col" className='col-4 text-center'>Name</th>
-                                                            <th scope="col" className='col-1 text-center'>SSN</th>
-                                                            <th scope="col" className='col-2 text-center'>Phone number</th>
-                                                            <th scope="col" className='col-2 text-center'>Email</th>
-                                                            <th scope="col" className='col-2 text-center'>Action</th>
+                                                            <th scope="col" className='col-1 text-center align-middle'>#</th>
+                                                            <th scope="col" className='col-4 text-center align-middle'>Name</th>
+                                                            <th scope="col" className='col-1 text-center align-middle'>SSN</th>
+                                                            <th scope="col" className='col-2 text-center align-middle'>Phone number</th>
+                                                            <th scope="col" className='col-2 text-center align-middle'>Email</th>
+                                                            <th scope="col" className='col-2 text-center align-middle'>Action</th>
                                                       </>
                                                 }
                                                 {
                                                       listType === 1 &&
                                                       <>
-                                                            <th scope="col" className='col-1 text-center'>#</th>
-                                                            <th scope="col" className='col-4 text-center'>Name</th>
-                                                            <th scope="col" className='col-2 text-center'>Phone</th>
-                                                            <th scope="col" className='col-2 text-center'>Email</th>
-                                                            <th scope="col" className='col-3 text-center'>Action</th>
+                                                            <th scope="col" className='col-1 text-center align-middle'>#</th>
+                                                            <th scope="col" className='col-4 text-center align-middle'>Name</th>
+                                                            <th scope="col" className='col-2 text-center align-middle'>Phone number</th>
+                                                            <th scope="col" className='col-2 text-center align-middle'>Email</th>
+                                                            <th scope="col" className='col-3 text-center align-middle'>Action</th>
                                                       </>
                                                 }
                                                 {
                                                       listType === 2 &&
                                                       <>
-                                                            <th scope="col" className='col-1 text-center'>Session number</th>
-                                                            <th scope="col" className='col-3 text-center'>Time</th>
-                                                            <th scope="col" className='col-1 text-center'>Status</th>
-                                                            <th scope="col" className='col-1 text-center'>Action</th>
-                                                            <th scope="col" className='col-2 text-center'>Teacher</th>
-                                                            <th scope="col" className='col-1 text-center'>Action</th>
-                                                            <th scope="col" className='col-2 text-center'>Supervisor</th>
-                                                            <th scope="col" className='col-1 text-center'>Action</th>
+                                                            <th scope="col" className='col-1 text-center align-middle'>Session number</th>
+                                                            <th scope="col" className='col-3 text-center align-middle'>Time</th>
+                                                            <th scope="col" className='col-1 text-center align-middle'>Status</th>
+                                                            <th scope="col" className='col-1 text-center align-middle'>Action</th>
+                                                            <th scope="col" className='col-2 text-center align-middle'>Teacher</th>
+                                                            <th scope="col" className='col-1 text-center align-middle'>Action</th>
+                                                            <th scope="col" className='col-2 text-center align-middle'>Supervisor</th>
+                                                            <th scope="col" className='col-1 text-center align-middle'>Action</th>
                                                       </>
                                                 }
                                           </tr>
@@ -419,11 +419,11 @@ const ClassDetail = () =>
                   </Modal>
                   <AddStudent containerRef={ containerRef } setAddPopUp={ setAddPopUp } name={ name }
                         addPopUp={ addPopUp } currentStudent={ currentStudent } maxStudent={ maxStudent }
-                        render={ render } setRender={ setRender } />
+                        render={ render } setRender={ setRender } Navigate={ Navigate } />
                   <AddSession containerRef={ containerRef } setSessionPopUp={ setSessionPopUp } name={ name } currentSession={ currentSession }
-                        sessionPopUp={ sessionPopUp } render={ render } setRender={ setRender } />
+                        sessionPopUp={ sessionPopUp } render={ render } setRender={ setRender } Navigate={ Navigate } />
                   <AddTeacher containerRef={ containerRef } setTeacherPopUp={ setTeacherPopUp } name={ name }
-                        teacherPopUp={ teacherPopUp } render={ render } setRender={ setRender } />
+                        teacherPopUp={ teacherPopUp } render={ render } setRender={ setRender } Navigate={ Navigate } />
             </div >
       )
 }

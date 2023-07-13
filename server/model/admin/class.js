@@ -222,7 +222,7 @@ export class Class
             this.conn.query(`select employee.id,employee.name from employee
             join teacher on teacher.id=employee.id
             join teacher_responsible on teacher_responsible.teacher_id=teacher.id
-            where teacher_responsible.session_number=? and teacher_responsible.class_name=?`, [number,name], (err, res) =>
+            where teacher_responsible.session_number=? and teacher_responsible.class_name=?`, [number, name], (err, res) =>
             {
                   if (err)
                         callback(null, err);
@@ -252,6 +252,39 @@ export class Class
             update session set status=5 where class_name=? and number in(
                   select Session_number from TEACHER_RESPONSIBLE where Class_name=? and Teacher_ID is null
             );`, [name, id, name, name, name], (err, res) =>
+            {
+                  if (err)
+                        callback(null, err);
+                  else
+                        callback(res, null);
+            });
+      }
+
+      getTeacherNotInClass(name, className, callback)
+      {
+            this.conn.query(`select employee.id,employee.name,employee.phone,employee.email from employee
+            join teacher on teacher.id=employee.id
+            where employee.name like ? and employee.id not in(
+                  select teacher_id from teach where class_name=?
+            )`, ['%' + name + '%', className], (err, res) =>
+            {
+                  if (err)
+                        callback(null, err);
+                  else
+                        callback(res, null);
+            });
+      }
+
+      addTeacherToClass(name, teachers, callback)
+      {
+            let sql = "";
+            const params = [];
+            for (let i = 0; i < teachers.length; i++)
+            {
+                  sql += "insert into teach values(?,?);";
+                  params.push(teachers[i], name);
+            }
+            this.conn.query(sql, params, (err, res) =>
             {
                   if (err)
                         callback(null, err);

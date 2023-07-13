@@ -12,6 +12,7 @@ const AddStudent = (props) =>
       const [searchStudent, setSearchStudent] = useState("");
       const [studentAdded, setStudentAdded] = useState([]);
       const [confirmPopUp, setConfirmPopUp] = useState(false);
+      const [isEmpty, setIsEmpty] = useState(false);
 
       let timer;
 
@@ -50,13 +51,16 @@ const AddStudent = (props) =>
                               for (let i = 0; i < res.data.length; i++)
                                     temp.push(
                                           <tr key={ i }>
-                                                <td className='text-center'>{ i + 1 }</td>
-                                                <td className='text-center'>{ res.data[i].name }</td>
-                                                <td className='text-center'>{ res.data[i].ssn }</td>
-                                                <td className='text-center'>{ res.data[i].phone }</td>
-                                                <td className='text-center'>{ res.data[i].email }</td>
-                                                <td className='text-center'>
-                                                      <input type='checkbox' onChange={ e => configList(e, res.data[i].id) } style={ { width: '1.2rem', height: '1.2rem' } } className={ `${ styles.hover }` }></input>
+                                                <td className='text-center align-middle'>{ i + 1 }</td>
+                                                <td className='text-center align-middle'>{ res.data[i].name }</td>
+                                                <td className='text-center align-middle'>{ res.data[i].ssn }</td>
+                                                <td className='text-center align-middle'>{ res.data[i].phone }</td>
+                                                <td className='text-center align-middle'>{ res.data[i].email }</td>
+                                                <td className='text-center align-middle'>
+                                                      <div className="d-flex align-items-center justify-content-center">
+                                                            <input type='checkbox' onChange={ e => configList(e, res.data[i].id) } style={ { width: '1.2rem', height: '1.2rem' } } className={ `${ styles.hover } me-2` }></input>
+                                                            <button className="ms-2 btn-sm btn btn-primary" onClick={ () => props.Navigate(`/student-list/detail/${ res.data[i].id }`) }>Detail</button>
+                                                      </div>
                                                 </td>
                                           </tr >
                                     );
@@ -87,17 +91,17 @@ const AddStudent = (props) =>
                                     } }></input>
                               </div>
                         </Modal.Header>
-                        <Modal.Body className='px-1 py-0'>
+                        <Modal.Body className='px-1 py-0' style={ { minHeight: !studentListContent.length ? '65px' : '150px' } }>
                               <div className={ `h-100 w-100` }>
                                     <table className="table table-hover table-info">
                                           <thead style={ { position: "sticky", top: "0" } }>
                                                 <tr>
-                                                      <th scope="col" className='col-1 text-center'>#</th>
-                                                      <th scope="col" className='col-4 text-center'>Name</th>
-                                                      <th scope="col" className='col-2 text-center'>SSN</th>
-                                                      <th scope="col" className='col-2 text-center'>Phone number</th>
-                                                      <th scope="col" className='col-2 text-center'>Email</th>
-                                                      <th scope="col" className='col-1 text-center'>Action</th>
+                                                      <th scope="col" className='col-1 text-center align-middle'>#</th>
+                                                      <th scope="col" className='col-3 text-center align-middle'>Name</th>
+                                                      <th scope="col" className='col-2 text-center align-middle'>SSN</th>
+                                                      <th scope="col" className='col-2 text-center align-middle'>Phone number</th>
+                                                      <th scope="col" className='col-2 text-center align-middle'>Email</th>
+                                                      <th scope="col" className='col-2 text-center align-middle'>Action</th>
                                                 </tr>
                                           </thead>
                                           <tbody>
@@ -117,9 +121,17 @@ const AddStudent = (props) =>
                                     props.currentStudent + studentAdded.length === props.maxStudent
                                     &&
                                     <div className='d-flex align-items-center'>
-                                          <p className={ `${ styles.p } mb-0` }>
+                                          <strong style={ { color: 'red' } }>
                                                 Maximum number of students reached!
-                                          </p>
+                                          </strong>
+                                    </div>
+                              }
+                              {
+                                    isEmpty &&
+                                    <div className='d-flex align-items-center'>
+                                          <strong style={ { color: 'red' } }>
+                                                No student selected!
+                                          </strong>
                                     </div>
                               }
                               <div className='d-flex align-items-center'>
@@ -127,10 +139,17 @@ const AddStudent = (props) =>
                                     {
                                           props.setAddPopUp(false);
                                           setStudentAdded([]);
+                                          setIsEmpty(false);
                                     } }>Cancel</button>
                                     <button className={ `btn btn-primary ms-2 ms-md-4` } onClick={ () =>
                                     {
-                                          setConfirmPopUp(true);
+                                          if (studentAdded.length)
+                                          {
+                                                setConfirmPopUp(true);
+                                                setIsEmpty(false);
+                                          }
+                                          else
+                                                setIsEmpty(true);
                                     } }>Confirm</button>
                               </div>
                         </Modal.Footer>
