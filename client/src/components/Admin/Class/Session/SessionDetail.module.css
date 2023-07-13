@@ -1,0 +1,25 @@
+.section {
+      width: 100%;
+}
+
+.hover:hover {
+      cursor: pointer;
+}
+
+.images{
+      width:250px;
+      height:250px;
+      background-color:white;
+      border:1px solid black;
+      border-radius:10px;
+}
+
+@media only screen and (min-width: 1200px) {
+      .section:first-child {
+            width: 40%;
+      }
+
+      .section:last-child {
+            width: 60%;
+      }
+}

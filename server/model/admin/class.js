@@ -292,4 +292,57 @@ export class Class
                         callback(res, null);
             });
       }
+
+      classSessionDetail(name, number, callback)
+      {
+            this.conn.query(`select session.session_date,session.status,session.classroom_id,timetable.start_hour,timetable.end_hour,session.session_number_make_up_for
+            from session join timetable on session.timetable_id=timetable.id
+            where session.class_name=? and session.number=?`, [name, number], (err, res) =>
+            {
+                  if (err)
+                        callback(null, err);
+                  else
+                        callback(res, null);
+            });
+      }
+
+      sessionTeacher(name, number, callback)
+      {
+            this.conn.query(`select employee.id,employee.name,employee.image from employee
+            join teacher on teacher.id=employee.id
+            join TEACHER_RESPONSIBLE on TEACHER_RESPONSIBLE.teacher_id=teacher.id
+            where TEACHER_RESPONSIBLE.class_name=? and TEACHER_RESPONSIBLE.session_number=?`, [name, number], (err, res) =>
+            {
+                  if (err)
+                        callback(null, err);
+                  else
+                        callback(res, null);
+            });
+      }
+
+      sessionSupervisor(name, number, callback)
+      {
+            this.conn.query(`select employee.id,employee.name,employee.image from employee
+            join supervisor on supervisor.id=employee.id
+            join SUPERVISOR_RESPONSIBLE on SUPERVISOR_RESPONSIBLE.Supervisor_ID=supervisor.id
+            where SUPERVISOR_RESPONSIBLE.class_name=? and SUPERVISOR_RESPONSIBLE.session_number=?`, [name, number], (err, res) =>
+            {
+                  if (err)
+                        callback(null, err);
+                  else
+                        callback(res, null);
+            });
+      }
+
+      getSessionStudent(name, number, callback)
+      {
+            this.conn.query(`select student.id,student.name from student
+            join IN_CLASS on IN_CLASS.student_id=student.id`, [name, number], (err, res) =>
+            {
+                  if (err)
+                        callback(null, err);
+                  else
+                        callback(res, null);
+            });
+      }
 }

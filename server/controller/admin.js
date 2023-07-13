@@ -320,7 +320,6 @@ adminRoutes.post('/addTeacherToClass', (req, res) =>
 {
       const name = req.body.params.name;
       const teachers = req.body.params.teachers;
-      console.log(name, teachers);
       classModel.addTeacherToClass(name, teachers, (result, err) =>
       {
             if (err)
@@ -330,6 +329,70 @@ adminRoutes.post('/addTeacherToClass', (req, res) =>
             }
             else
                   res.status(200).send('Teacher(s) added successfully!');
+      })
+});
+
+adminRoutes.post('/classSessionDetail', (req, res) =>
+{
+      const name = req.body.params.name;
+      const number = req.body.params.number;
+      classModel.classSessionDetail(name, number, (result, err) =>
+      {
+            if (err)
+            {
+                  console.log(err);
+                  res.status(500).send('Server internal error!');
+            }
+            else
+                  res.status(200).send(result[0]);
+      })
+});
+
+adminRoutes.post('/sessionTeacher', (req, res) =>
+{
+      const name = req.body.params.name;
+      const number = req.body.params.number;
+      classModel.sessionTeacher(name, number, (result, err) =>
+      {
+            if (err)
+            {
+                  console.log(err);
+                  res.status(500).send('Server internal error!');
+            }
+            else
+                  res.status(200).send(result[0]);
+      })
+});
+
+adminRoutes.post('/sessionSupervisor', (req, res) =>
+{
+      const name = req.body.params.name;
+      const number = req.body.params.number;
+      classModel.sessionSupervisor(name, number, (result, err) =>
+      {
+            if (err)
+            {
+                  console.log(err);
+                  res.status(500).send('Server internal error!');
+            }
+            else
+                  res.status(200).send(result[0]);
+      })
+});
+
+adminRoutes.post('/getSessionStudent', (req, res) =>
+{
+      const name = req.body.params.name;
+      const number = req.body.params.number;
+      classModel.getSessionStudent(name, number, (result, err) =>
+      {
+            if (err)
+            {
+                  console.log(err);
+                  res.status(500).send('Server internal error!');
+            }
+            else
+                  res.status(200).send(result);
       })
 });
 
