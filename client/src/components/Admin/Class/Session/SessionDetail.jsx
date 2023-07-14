@@ -28,23 +28,18 @@ const Student = forwardRef((props, ref) =>
 
       useEffect(() =>
       {
-
-            if (!isRender)
-            {
                   axios.post(`http://${ domain }/admin/getStudentSessionAttendace`, { params: { className: props.className, sessionNumber: props.sessionNumber, id: props.id } }, { headers: { 'Content-Type': 'application/json' } })
                         .then(res =>
                         {
                               if (res.data.length)
                               {
-                                    setIsRender(true);
                                     setStudentStatus(res.data[0].status);
                                     setStudentNote(res.data[0].note);
                               }
                         })
                         .catch(err => console.log(err));
-            }
 
-      }, [props.id, props.className, props.sessionNumber, props.i, studentStatus, studentStatus]);
+      }, [props.id, props.className, props.sessionNumber, props.i]);
 
       return (
             <tr>
@@ -238,7 +233,12 @@ const AdminClassSessionDetail = () =>
                                           </div>
                                     </div>
                                     <label htmlFor='teacherNote'>Note</label>
-                                    <input type='text' id='teacherNote' className='w-100' value={ teacherNote } onChange={ e => setTeacherNote(e.target.value) }></input>
+                                    <input type='text' id='teacherNote' className='w-100' value={ teacherNote } onChange={ e =>{
+if(e.target.value!=='')
+ setTeacherNote(e.target.value);
+else
+setTeacherNote(null);
+} }></input>
                               </div>
                               <div className='d-flex flex-column align-items-center mt-3'>
                                     <h4>{ supervisorName }</h4>
