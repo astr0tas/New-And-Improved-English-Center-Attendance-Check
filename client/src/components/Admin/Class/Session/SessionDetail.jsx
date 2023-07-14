@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, forwardRef, useImperativeHandle } from 'react';
 import styles from './SessionDetail.module.css';
 import { useNavigate, useParams } from 'react-router-dom';
 import { domain } from '../../../../tools/domain';
@@ -6,38 +6,45 @@ import axios from 'axios';
 import { DMDY } from '../../../../tools/dateFormat';
 import '../../../../css/scroll.css';
 import { Modal } from 'react-bootstrap';
+import { isRefValid } from '../../../../tools/refChecker';
 
-const Student = (props) =>
+const Student = forwardRef((props, ref) =>
 {
+      const [isRender, setIsRender] = useState(false);
+      const [studentStatus, setStudentStatus] = useState(-1);
+      const [studentNote, setStudentNote] = useState(null);
+
       const toggleStatus = (status) =>
       {
-            if (props.studentAttendence.length)
-            {
-                  console.log(status);
-                  props.studentAttendence[props.i - 1].status = status;
-            }
+            setStudentStatus(status);
       }
+
+      useImperativeHandle(ref, () => ({
+            id: props.id,
+            status: studentStatus,
+            note: studentNote,
+            toggleStatus: toggleStatus
+      }));
 
       useEffect(() =>
       {
-            // console.log('ok');
-            props.setStudentAttendence(prev => [...prev, { id: props.id, status: null, note: null, i: props.i }]);
 
-            axios.post(`http://${ domain }/admin/getStudentSessionAttendace`, { params: { className: props.className, sessionNumber: props.sessionNumber, id: props.id } }, { headers: { 'Content-Type': 'application/json' } })
-                  .then(res =>
-                  {
-                        if (res.data.length)
+            if (!isRender)
+            {
+                  axios.post(`http://${ domain }/admin/getStudentSessionAttendace`, { params: { className: props.className, sessionNumber: props.sessionNumber, id: props.id } }, { headers: { 'Content-Type': 'application/json' } })
+                        .then(res =>
                         {
-                              // if (isRefValid(props.studentAttendence, props.i - 1))
-                              // {
-                              //       props.studentAttendence.current[props.i - 1].status = res.data[0].status;
-                              //       props.studentAttendence.current[props.i - 1].note = res.data[0].note;
-                              // }
-                        }
-                  })
-                  .catch(err => console.log(err));
-            // eslint-disable-next-line
-      }, [props.id, props.className, props.sessionNumber, props.i])
+                              if (res.data.length)
+                              {
+                                    setIsRender(true);
+                                    setStudentStatus(res.data[0].status);
+                                    setStudentNote(res.data[0].note);
+                              }
+                        })
+                        .catch(err => console.log(err));
+            }
+
+      }, [props.id, props.className, props.sessionNumber, props.i, studentStatus, studentStatus]);
 
       return (
             <tr>
@@ -47,33 +54,39 @@ const Student = (props) =>
                   <td className='text-center align-middle'>
                         <input name={ `${ props.id }_attendace` } type='radio' className={ `${ styles.hover }` }
                               style={ { width: '1.3rem', height: '1.3rem' } }
-                              checked={ props.studentAttendence.length && props.studentAttendence[props.i - 1].status === 1 }
-                              onChange={ () => toggleStatus(1) }></input>
+                              checked={ studentStatus === 1 }
+                              onChange={ () => toggleStatus(1) }>
+                        </input>
                   </td>
                   <td className='text-center align-middle'>
                         <input name={ `${ props.id }_attendace` } type='radio' className={ `${ styles.hover }` }
                               style={ { width: '1.3rem', height: '1.3rem' } }
-                              checked={ props.studentAttendence.length && props.studentAttendence[props.i - 1].status === 2 }
-                              onChange={ () => toggleStatus(2) }></input>
+                              checked={ studentStatus === 2 }
+                              onChange={ () => toggleStatus(2) }>
+                        </input>
                   </td>
                   <td className='text-center align-middle'>
                         <input name={ `${ props.id }_attendace` } type='radio' className={ `${ styles.hover }` }
                               style={ { width: '1.3rem', height: '1.3rem' } }
-                              checked={ props.studentAttendence.length && props.studentAttendence[props.i - 1].status === 3 }
-                              onChange={ () => toggleStatus(3) }></input>
+                              checked={ studentStatus === 3 }
+                              onChange={ () => toggleStatus(3) }>
+                        </input>
                   </td>
                   <td className='text-center align-middle'>
                         <input type='text'
-                              // value={ (isRefValid(props.studentAttendence, props.i - 1) && props.studentAttendence.current[props.i - 1].note !== null) ? props.studentAttendence.current[props.i - 1].note : '' }
+                              value={ studentNote ? studentNote : '' }
                               onChange={ e =>
                               {
-                                    // if (isRefValid(props.studentAttendence, props.i - 1))
-                                    //       props.studentAttendence.current[props.i - 1].note = e.target.value;
-                              } }></input>
+                                    if (e.target.value !== '')
+                                          setStudentNote(e.target.value)
+                                    else
+                                          setStudentNote(null);
+                              } }>
+                        </input>
                   </td>
             </tr>
       )
-}
+});
 
 const AdminClassSessionDetail = () =>
 {
@@ -97,10 +110,23 @@ const AdminClassSessionDetail = () =>
       const [supervisorImage, setSupervisorImage] = useState(require('../../../../images/profile.png'));
 
       const [studentList, setStudentList] = useState([]);
+      const childrenRefs = useRef([]);
 
-      const [studentAttendence, setStudentAttendence] = useState([]);
+      const [teacherStatus, setTeacherStatus] = useState(-1);
+      const [teacherNote, setTeacherNote] = useState(null);
 
       const Navigate = useNavigate();
+
+      const toggleStatus = (status) =>
+      {
+            for (let i = 0; i < childrenRefs.current.length; i++)
+            {
+                  if (isRefValid(childrenRefs, i))
+                  {
+                        childrenRefs.current[i].toggleStatus(status);
+                  }
+            }
+      }
 
       useEffect(() =>
       {
@@ -147,15 +173,14 @@ const AdminClassSessionDetail = () =>
                         {
                               const temp = [];
                               for (let i = 0; i < res.data.length; i++)
-                                    temp.push(<Student Navigate={ Navigate } key={ i } i={ i + 1 }
+                                    temp.push(<Student Navigate={ Navigate } key={ i } i={ i + 1 } ref={ el => childrenRefs.current[i] = el }
                                           id={ res.data[i].id } name={ res.data[i].name }
-                                          studentAttendence={ studentAttendence } setStudentAttendence={ setStudentAttendence }
                                           className={ name } sessionNumer={ number } />);
                               setStudentList(temp);
                         }
                   })
                   .catch(err => console.error(err));
-      }, [number, name, Navigate, studentAttendence]);
+      }, [number, name, Navigate]);
 
       return (
             <div className='w-100 h-100 d-flex flex-column overflow-auto hideBrowserScrollbar'>
@@ -195,19 +220,25 @@ const AdminClassSessionDetail = () =>
                                     <div className='d-flex align-items-center justify-content-center mt-2 mb-2'>
                                           <div className='d-flex flex-column align-items-center me-4'>
                                                 <label htmlFor='teacherOnClass' style={ { color: '#128400' } }>On class</label>
-                                                <input name='teacherAttendance' id='teacherOnClass' type='radio' style={ { width: '1.3rem', height: '1.3rem' } } className={ `${ styles.hover } ` }></input>
+                                                <input name='teacherAttendance' id='teacherOnClass' type='radio'
+                                                      style={ { width: '1.3rem', height: '1.3rem' } } className={ `${ styles.hover } ` }
+                                                      checked={ teacherStatus === 1 } onChange={ () => setTeacherStatus(1) }></input>
                                           </div>
                                           <div className='d-flex flex-column align-items-center'>
                                                 <label htmlFor='teacherLate' style={ { color: 'orange' } }>Late</label>
-                                                <input name='teacherAttendance' id='teacherLate' type='radio' style={ { width: '1.3rem', height: '1.3rem' } } className={ `${ styles.hover }` }></input>
+                                                <input name='teacherAttendance' id='teacherLate' type='radio'
+                                                      style={ { width: '1.3rem', height: '1.3rem' } } className={ `${ styles.hover }` }
+                                                      checked={ teacherStatus === 2 } onChange={ () => setTeacherStatus(2) }></input>
                                           </div>
                                           <div className='d-flex flex-column align-items-center ms-4'>
                                                 <label htmlFor='teacherAbsent' style={ { color: 'red' } }>Absent</label>
-                                                <input name='teacherAttendance' id='teacherAbsent' type='radio' style={ { width: '1.3rem', height: '1.3rem' } } className={ `${ styles.hover }` }></input>
+                                                <input name='teacherAttendance' id='teacherAbsent' type='radio'
+                                                      style={ { width: '1.3rem', height: '1.3rem' } } className={ `${ styles.hover }` }
+                                                      checked={ teacherStatus === 3 } onChange={ () => setTeacherStatus(3) }></input>
                                           </div>
                                     </div>
                                     <label htmlFor='teacherNote'>Note</label>
-                                    <input type='text' id='teacherNote' className='w-100'></input>
+                                    <input type='text' id='teacherNote' className='w-100' value={ teacherNote } onChange={ e => setTeacherNote(e.target.value) }></input>
                               </div>
                               <div className='d-flex flex-column align-items-center mt-3'>
                                     <h4>{ supervisorName }</h4>
@@ -228,7 +259,10 @@ const AdminClassSessionDetail = () =>
                                                       <p className='mb-2'>On class</p>
                                                       {
                                                             studentList.length &&
-                                                            <input name="allAttendance" type="radio" className={ `${ styles.hover }` } style={ { width: '1.3rem', height: '1.3rem' } }></input>
+                                                            <input name="allAttendance" type="radio"
+                                                                  className={ `${ styles.hover }` } style={ { width: '1.3rem', height: '1.3rem' } }
+                                                                  onChange={ () => toggleStatus(1) }>
+                                                            </input>
                                                       }
                                                 </div>
                                           </th>
@@ -237,16 +271,24 @@ const AdminClassSessionDetail = () =>
                                                       <p className='mb-2'>Late</p>
                                                       {
                                                             studentList.length &&
-                                                            <input name="allAttendance" type="radio" className={ `${ styles.hover }` } style={ { width: '1.3rem', height: '1.3rem' } }></input>
-                                                      }                                                </div>
+                                                            <input name="allAttendance" type="radio"
+                                                                  className={ `${ styles.hover }` } style={ { width: '1.3rem', height: '1.3rem' } }
+                                                                  onChange={ () => toggleStatus(2) }>
+                                                            </input>
+                                                      }
+                                                </div>
                                           </th>
                                           <th scope="col" className='col-1 text-center align-middle'>
                                                 <div className="d-flex flex-column align-items-center justify-content-center">
                                                       <p className='mb-2'>Absent</p>
                                                       {
                                                             studentList.length &&
-                                                            <input name="allAttendance" type="radio" className={ `${ styles.hover }` } style={ { width: '1.3rem', height: '1.3rem' } }></input>
-                                                      }                                                </div>
+                                                            <input name="allAttendance" type="radio"
+                                                                  className={ `${ styles.hover }` } style={ { width: '1.3rem', height: '1.3rem' } }
+                                                                  onChange={ () => toggleStatus(3) }>
+                                                            </input>
+                                                      }
+                                                </div>
                                           </th>
                                           <th scope="col" className='col-3 text-center align-middle'>Note</th>
                                     </tr>
@@ -262,7 +304,7 @@ const AdminClassSessionDetail = () =>
                   </div>
                   <div className='w-100 d-flex align-items-center justify-content-center mb-3'>
                         <button className='btn btn-secondary me-3' onClick={ () => Navigate(`/class-list/detail/${ name }`) }>Back</button>
-                        <button className='btn btn-primary ms-3' onClick={ () => { console.log(studentAttendence); } }>Confirm</button>
+                        <button className='btn btn-primary ms-3' onClick={ () => { console.log(childrenRefs.current); } }>Confirm</button>
                   </div>
             </div>
       )
