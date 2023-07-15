@@ -348,38 +348,6 @@ adminRoutes.post('/classSessionDetail', (req, res) =>
       })
 });
 
-adminRoutes.post('/sessionTeacher', (req, res) =>
-{
-      const name = req.body.params.name;
-      const number = req.body.params.number;
-      classModel.sessionTeacher(name, number, (result, err) =>
-      {
-            if (err)
-            {
-                  console.log(err);
-                  res.status(500).send('Server internal error!');
-            }
-            else
-                  res.status(200).send(result[0]);
-      })
-});
-
-adminRoutes.post('/sessionSupervisor', (req, res) =>
-{
-      const name = req.body.params.name;
-      const number = req.body.params.number;
-      classModel.sessionSupervisor(name, number, (result, err) =>
-      {
-            if (err)
-            {
-                  console.log(err);
-                  res.status(500).send('Server internal error!');
-            }
-            else
-                  res.status(200).send(result[0]);
-      })
-});
-
 adminRoutes.post('/getSessionStudent', (req, res) =>
 {
       const name = req.body.params.name;
@@ -409,6 +377,90 @@ adminRoutes.post('/getStudentSessionAttendace', (req, res) =>
             }
             else
                   res.status(200).send(result);
+      })
+});
+
+adminRoutes.post('/checkAttendance', (req, res) =>
+{
+      const name = req.body.params.name;
+      const number = req.body.params.number;
+      const students = req.body.params.students;
+      const teacher = req.body.params.teacher;
+      classModel.checkAttendance(name, number, students, teacher, (result, err) =>
+      {
+            if (err)
+            {
+                  console.log(err);
+                  res.status(500).send('Server internal error!');
+            }
+            else
+                  res.status(200).send(result);
+      })
+});
+
+adminRoutes.post('/cancelSession', (req, res) =>
+{
+      const name = req.body.params.name;
+      const number = req.body.params.number;
+      classModel.cancelSession(name, number, (result, err) =>
+      {
+            if (err)
+            {
+                  console.log(err);
+                  res.status(500).send('Server internal error!');
+            }
+            else
+                  res.status(200).send('Session cancelled successfully!');
+      })
+});
+
+adminRoutes.post('/restoreSession', (req, res) =>
+{
+      const name = req.body.params.name;
+      const number = req.body.params.number;
+      classModel.restoreSession(name, number, (result, err) =>
+      {
+            if (err)
+            {
+                  console.log(err);
+                  res.status(500).send('Server internal error!');
+            }
+            else
+                  res.status(200).send('Session restored successfully!');
+      })
+});
+
+adminRoutes.post('/changeTeacher', (req, res) =>
+{
+      const name = req.body.params.name;
+      const number = req.body.params.number;
+      const teacher = req.body.params.teacher;
+      classModel.changeTeacher(name, number, teacher, (result, err) =>
+      {
+            if (err)
+            {
+                  console.log(err);
+                  res.status(500).send('Server internal error!');
+            }
+            else
+                  res.status(200).send('Teacher changed successfully!');
+      })
+});
+
+adminRoutes.post('/changeSupervisor', (req, res) =>
+{
+      const name = req.body.params.name;
+      const number = req.body.params.number;
+      const supervisor = req.body.params.supervisor;
+      classModel.changeSupervisor(name, number, supervisor, (result, err) =>
+      {
+            if (err)
+            {
+                  console.log(err);
+                  res.status(500).send('Server internal error!');
+            }
+            else
+                  res.status(200).send('Supervisor changed successfully!');
       })
 });
 

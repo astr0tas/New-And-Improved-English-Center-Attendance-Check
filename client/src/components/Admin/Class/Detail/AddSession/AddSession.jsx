@@ -83,7 +83,7 @@ const TeacherSelect = (props) =>
                         </div >
                   </Modal.Body>
                   <Modal.Footer className='justify-content-center'>
-                        <button className={ `btn btn-danger ms-2 ms-md-4` } onClick={ () =>
+                        <button className={ `btn btn-danger` } onClick={ () =>
                         {
                               props.setTeacherName(null);
                               props.setTeacher(null);
@@ -166,7 +166,7 @@ const SupervisorSelect = (props) =>
                         </div >
                   </Modal.Body>
                   <Modal.Footer className='justify-content-center'>
-                        <button className={ `btn btn-danger ms-2 ms-md-4` } onClick={ () =>
+                        <button className={ `btn btn-danger` } onClick={ () =>
                         {
                               props.setSupervisorName(null);
                               props.setSupervisor(null);

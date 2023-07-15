@@ -106,6 +106,8 @@ CREATE TABLE TEACHER_RESPONSIBLE (
 	PRIMARY KEY(Session_number,Class_name),
     FOREIGN KEY(Session_number,Class_name) REFERENCES SESSION(Number,Class_name) ON DELETE CASCADE ON UPDATE CASCADE,
     Teacher_ID VARCHAR(15),
+    Teacher_Note text,
+    Teacher_Status int not null default -1,
     FOREIGN KEY(Teacher_ID) REFERENCES TEACHER(ID)
 );  
 
@@ -116,8 +118,6 @@ CREATE TABLE SUPERVISOR_RESPONSIBLE (
     FOREIGN KEY(Session_number,Class_name) REFERENCES SESSION(Number,Class_name) ON DELETE CASCADE ON UPDATE CASCADE,
     Supervisor_ID VARCHAR(15),
     Note_for_class text,
-    Teacher_Note text,
-    Teacher_Status int not null default -1,
     FOREIGN KEY(Supervisor_ID) REFERENCES SUPERVISOR(ID)
 ); 
 
@@ -130,7 +130,7 @@ CREATE TABLE STUDENT_ATTENDANCE (
     Note text,
     FOREIGN KEY(Session_number,Class_name) REFERENCES SESSION(Number,Class_name) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY(Student_ID) REFERENCES STUDENT(ID)
-);  
+);
 
 CREATE TABLE IN_CLASS(
     Student_ID VARCHAR(15),

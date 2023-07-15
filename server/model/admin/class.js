@@ -126,7 +126,8 @@ export class Class
 
       removeStudentFromClass(name, id, callback)
       {
-            this.conn.query(`delete from in_class where student_id=? and class_name=?`, [id, name], (err, res) =>
+            this.conn.query(`delete from in_class where student_id=? and class_name=?;
+            delete from STUDENT_ATTENDANCE where Student_ID=? and class_name=?;`, [id, name, id, name], (err, res) =>
             {
                   if (err)
                         callback(null, err);
@@ -154,8 +155,8 @@ export class Class
             const params = [];
             for (let i = 0; i < students.length; i++)
             {
-                  sql += "insert into in_class values(?,?);";
-                  params.push(students[i], name);
+                  sql += "insert into in_class values(?,?); call addStudentToSessions(?,?);";
+                  params.push(students[i], name, name, students[i]);
             }
             this.conn.query(sql, params, (err, res) =>
             {
@@ -204,11 +205,13 @@ export class Class
       addSessionToClass(name, room, session, date, timetable, makeUpFor, supervisor, teacher, callback)
       {
             this.conn.query(`insert into session values(?,?,?,?,?,4,?,?);
-            insert into teacher_responsible values(?,?,?);
-            insert into supervisor_responsible values(?,?,?,null,null,-1);
+            insert into teacher_responsible values(?,?,?,null,-1);
+            insert into supervisor_responsible values(?,?,?,null);
+            call addSessionToStudents(?,?);
             `, [session, name, timetable, room, date, makeUpFor, makeUpFor === null ? null : name,
                   session, name, teacher,
-                  session, name, supervisor], (err, res) =>
+                  session, name, supervisor,
+                  name, session], (err, res) =>
             {
                   if (err)
                         callback(null, err);
@@ -219,7 +222,7 @@ export class Class
 
       getSessionTeacher(name, number, callback)
       {
-            this.conn.query(`select employee.id,employee.name from employee
+            this.conn.query(`select employee.id,employee.name,teacher_responsible.teacher_status as status,teacher_responsible.teacher_note as note from employee
             join teacher on teacher.id=employee.id
             join teacher_responsible on teacher_responsible.teacher_id=teacher.id
             where teacher_responsible.session_number=? and teacher_responsible.class_name=?`, [number, name], (err, res) =>
@@ -233,7 +236,7 @@ export class Class
 
       getSessionSupervisor(name, number, callback)
       {
-            this.conn.query(`select employee.id,employee.name from employee
+            this.conn.query(`select employee.id,employee.name, employee.image from employee
             join supervisor on supervisor.id=employee.id
             join supervisor_responsible on supervisor_responsible.supervisor_id=supervisor.id
             where supervisor_responsible.session_number=? and supervisor_responsible.class_name=?`, [number, name], (err, res) =>
@@ -247,11 +250,11 @@ export class Class
 
       removeTeacherFromClass(name, id, callback)
       {
-            this.conn.query(`update TEACHER_RESPONSIBLE set teacher_id=null where class_name=?;
+            this.conn.query(`update TEACHER_RESPONSIBLE set teacher_id=null where class_name=? and teacher_id=?;
             delete from teach where teacher_id=? and class_name=?;
             update session set status=5 where class_name=? and number in(
                   select Session_number from TEACHER_RESPONSIBLE where Class_name=? and Teacher_ID is null
-            );`, [name, id, name, name, name], (err, res) =>
+            );`, [name, id, id, name, name, name], (err, res) =>
             {
                   if (err)
                         callback(null, err);
@@ -306,34 +309,6 @@ export class Class
             });
       }
 
-      sessionTeacher(name, number, callback)
-      {
-            this.conn.query(`select employee.id,employee.name,employee.image from employee
-            join teacher on teacher.id=employee.id
-            join TEACHER_RESPONSIBLE on TEACHER_RESPONSIBLE.teacher_id=teacher.id
-            where TEACHER_RESPONSIBLE.class_name=? and TEACHER_RESPONSIBLE.session_number=?`, [name, number], (err, res) =>
-            {
-                  if (err)
-                        callback(null, err);
-                  else
-                        callback(res, null);
-            });
-      }
-
-      sessionSupervisor(name, number, callback)
-      {
-            this.conn.query(`select employee.id,employee.name,employee.image from employee
-            join supervisor on supervisor.id=employee.id
-            join SUPERVISOR_RESPONSIBLE on SUPERVISOR_RESPONSIBLE.Supervisor_ID=supervisor.id
-            where SUPERVISOR_RESPONSIBLE.class_name=? and SUPERVISOR_RESPONSIBLE.session_number=?`, [name, number], (err, res) =>
-            {
-                  if (err)
-                        callback(null, err);
-                  else
-                        callback(res, null);
-            });
-      }
-
       getSessionStudent(name, callback)
       {
             this.conn.query(`select student.id,student.name from student
@@ -349,6 +324,70 @@ export class Class
       getStudentSessionAttendace(className, sessionNumber, id, callback)
       {
             this.conn.query(`select status,note from STUDENT_ATTENDANCE where session_number=? and class_name=? and student_id=?`, [sessionNumber, className, id], (err, res) =>
+            {
+                  if (err)
+                        callback(null, err);
+                  else
+                        callback(res, null);
+            });
+      }
+
+      checkAttendance(name, number, students, teacher, callback)
+      {
+            let sql = "update TEACHER_RESPONSIBLE set teacher_status=?,teacher_note=? where teacher_id=? and class_name=? and session_number=?;";
+            const params = [teacher.status, teacher.note, teacher.id, name, number];
+
+            for (let i = 0; i < students.length; i++)
+            {
+                  sql += 'update STUDENT_ATTENDANCE set status=?,note=? where student_id=? and class_name=? and session_number=?;';
+                  params.push(students[i].status, students[i].note, students[i].id, name, number);
+            }
+
+            this.conn.query(sql, params, (err, res) =>
+            {
+                  if (err)
+                        callback(null, err);
+                  else
+                        callback(res, null);
+            });
+      }
+
+      cancelSession(name, number, callback)
+      {
+            this.conn.query(`update session set status=3 where class_name=? and number=?`, [name, number], (err, res) =>
+            {
+                  if (err)
+                        callback(null, err);
+                  else
+                        callback(res, null);
+            });
+      }
+
+      restoreSession(name, number, callback)
+      {
+            this.conn.query(`call restoreSession(?,?);`, [name, number], (err, res) =>
+            {
+                  if (err)
+                        callback(null, err);
+                  else
+                        callback(res, null);
+            });
+      }
+
+      changeTeacher(name, number, teacher, callback)
+      {
+            this.conn.query(`call changeTeacher(?,?,?);`, [name, number, teacher], (err, res) =>
+            {
+                  if (err)
+                        callback(null, err);
+                  else
+                        callback(res, null);
+            });
+      }
+
+      changeSupervisor(name, number, supervisor, callback)
+      {
+            this.conn.query(`call changeSupervisor(?,?,?);`, [name, number, supervisor], (err, res) =>
             {
                   if (err)
                         callback(null, err);

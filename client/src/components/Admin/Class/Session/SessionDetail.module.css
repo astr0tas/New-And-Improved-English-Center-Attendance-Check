@@ -6,12 +6,55 @@
       cursor: pointer;
 }
 
-.images{
-      width:250px;
-      height:250px;
-      background-color:white;
-      border:1px solid black;
-      border-radius:10px;
+.images {
+      width: 250px;
+      height: 250px;
+      background-color: white;
+      border: 1px solid black;
+      border-radius: 10px;
+}
+
+.confirmModal {
+      max-width: 80% !important;
+}
+
+.customModal2 {
+      max-width: 95% !important;
+}
+
+.confirmModal {
+      padding-top: 30vh !important;
+      padding-top: 30dvh !important;
+}
+
+.dialog {
+      max-width: 100% !important;
+      max-height: 75% !important;
+}
+
+.search {
+      font-size: 1.2rem;
+      margin-top: 5px;
+      margin-left: 4px;
+}
+
+.searchInput {
+      max-width: 150px;
+}
+
+@media only screen and (min-width: 768px) {
+
+      .confirmModal {
+            max-width: 40% !important;
+      }
+
+      .customModal2 {
+            max-width: 75% !important;
+      }
+
+      .searchInput {
+            max-width: 200px;
+      }
 }
 
 @media only screen and (min-width: 1200px) {
@@ -21,5 +64,26 @@
 
       .section:last-child {
             width: 60%;
+      }
+}
+
+@media only screen and (max-height:450px) {
+
+      .customModal2 {
+            padding-top: 0vh !important;
+            padding-top: 0dvh !important;
+      }
+
+      .dialog {
+            min-height: 100% !important;
+            max-height: 100% !important;
+      }
+}
+
+@media only screen and (min-width: 2400px) {
+
+      .customModal2,
+      .confirmModal {
+            max-width: 25% !important;
       }
 }

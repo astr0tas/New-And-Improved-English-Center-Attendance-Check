@@ -169,6 +169,7 @@ const AddStudent = (props) =>
                               {
                                     setConfirmPopUp(false);
                                     props.setAddPopUp(false);
+
                                     axios.post(`http://${ domain }/admin/addStudentToClass`, { params: { name: props.name, students: studentAdded } }, { headers: { 'Content-Type': 'application/json' } })
                                           .then(res =>
                                           {
