@@ -19,9 +19,10 @@ const TeacherSelect = (props) =>
 
       useEffect(() =>
       {
-            if (props.addTeacherPopUp)
+            if (props.addTeacherPopUp && props.date !== null && props.timetable !== null)
             {
-                  axios.post(`http://${ domain }/admin/classTeacher`, { params: { name: props.name, teacherName: searchTeacher } }, { headers: { 'Content-Type': 'application/json' } })
+                  console.log('render');
+                  axios.post(`http://${ domain }/admin/classTeacher`, { params: { name: props.name, teacherName: searchTeacher, date: props.date, timetable: props.timetable.split(',')[1].split(' - ') } }, { headers: { 'Content-Type': 'application/json' } })
                         .then(res =>
                         {
                               const temp = [];
@@ -502,9 +503,12 @@ const AddSession = (props) =>
                                     setRoom(null);
                                     setDate(null);
                                     setTimetable(null);
+                                    setTimetableList(null);
                                     setMakeUpSession(null);
                                     setTeacherName(null);
                                     setSupervisorName(null);
+                                    setRoomList(null);
+                                    setSessionList(null);
                                     props.setSessionPopUp(false);
                               } }>Cancel</button>
                               <button className={ `btn btn-primary ms-2 ms-md-4` } onClick={ handleData }>Confirm</button>
@@ -546,7 +550,10 @@ const AddSession = (props) =>
                                                 setTimetable(null);
                                                 setMakeUpSession(null);
                                                 setTeacherName(null);
+                                                setTimetableList(null);
                                                 setSupervisorName(null);
+                                                setRoomList(null);
+                                                setSessionList(null);
                                                 props.setRender(!props.render);
                                           })
                                           .catch(err => console.error(err));
@@ -555,7 +562,7 @@ const AddSession = (props) =>
                   </Modal>
                   <TeacherSelect addTeacherPopUp={ addTeacherPopUp } setAddTeacherPopUp={ setAddTeacherPopUp } name={ props.name }
                         containerRef={ props.containerRef } teacher={ teacher } setTeacher={ setTeacher } teacherName={ teacherName }
-                        setTeacherName={ setTeacherName } Navigate={ props.Navigate } />
+                        setTeacherName={ setTeacherName } Navigate={ props.Navigate } date={ date } timetable={ timetable } />
                   <SupervisorSelect addSupervisorPopUp={ addSupervisorPopUp } setAddSupervisorPopUp={ setAddSupervisorPopUp } name={ props.name }
                         containerRef={ props.containerRef } supervisor={ supervisor } setSupervisor={ setSupervisor }
                         supervisorName={ supervisorName } setSupervisorName={ setSupervisorName } Navigate={ props.Navigate } />

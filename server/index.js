@@ -12,6 +12,8 @@ import staffRoutes from "./controller/staff.js";
 import adminRoutes from "./controller/admin.js";
 import generalRoutes from "./controller/general.js";
 
+import { updateSessionStatusRegularly } from './model/updateSessionStatus.js';
+
 export const FileStore = FileStoreFactory(session);
 
 const app = express();
@@ -82,4 +84,23 @@ app.use('/admin', adminRoutes);
 app.use('/', generalRoutes);
 app.use('/staff', staffRoutes);
 
-app.listen(8080, () => { console.log("Server is listening on port 8080"); });
+
+const updateFunction = (conn) =>
+{
+      conn.liveFunction((res, err) =>
+      {
+            if (err)
+                  console.log(err);
+            else
+                  console.log('Sessions status updated!');
+      });
+      setTimeout(() => updateFunction(conn), 15000);
+}
+
+app.listen(8080, () =>
+{
+      console.log("Server is listening on port 8080");
+
+      const conn = new updateSessionStatusRegularly();
+      updateFunction(conn);
+});

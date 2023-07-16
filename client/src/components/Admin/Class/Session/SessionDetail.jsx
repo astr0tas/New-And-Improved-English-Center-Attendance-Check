@@ -271,7 +271,7 @@ const AdminClassSessionDetail = () =>
       const name = useParams().name;
       const number = useParams().number.split(' ')[1];
 
-      document.title = `Class ${ name } session ${ number }`;
+      document.title = `Class ${ name } Session ${ number }`;
 
       const [room, setRoom] = useState("N/A");
       const [status, setStatus] = useState("N/A");

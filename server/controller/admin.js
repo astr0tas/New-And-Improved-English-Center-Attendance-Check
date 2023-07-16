@@ -108,16 +108,22 @@ adminRoutes.post('/classTeacher', (req, res) =>
 {
       const name = req.body.params.name;
       const teacherName = req.body.params.teacherName;
-      classModel.classTeacher(name, (teacherName === undefined || teacherName === null) ? '' : teacherName, (result, err) =>
-      {
-            if (err)
+      const date = req.body.params.date;
+      const timetable = req.body.params.timetable;
+      classModel.classTeacher(name,
+            (teacherName === undefined || teacherName === null) ? '' : teacherName,
+            (date === undefined || date === null) ? null : date,
+            (timetable === undefined || timetable === null) ? null : timetable,
+            (result, err) =>
             {
-                  console.log(err);
-                  res.status(500).send('Server internal error!');
-            }
-            else
-                  res.status(200).send(result);
-      })
+                  if (err)
+                  {
+                        console.log(err);
+                        res.status(500).send('Server internal error!');
+                  }
+                  else
+                        res.status(200).send(result);
+            })
 });
 
 adminRoutes.post('/toggleStatus', (req, res) =>

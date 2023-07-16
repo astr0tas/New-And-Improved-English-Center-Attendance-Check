@@ -99,18 +99,35 @@ export class Class
             });
       }
 
-      classTeacher(name, teacherName, callback)
+      classTeacher(name, teacherName, date, timetable, callback)
       {
-            this.conn.query(`select employee.id,employee.name,employee.name,employee.phone,employee.email from employee
+            if (date === null || timetable === null)
+                  this.conn.query(`select employee.id,employee.name,employee.name,employee.phone,employee.email from employee
             join teacher on teacher.id=employee.id
             join teach on teach.teacher_id=employee.id
             where teach.class_name=? and employee.name like ? order by TRIM(SUBSTRING_INDEX(employee.name, ' ', -1))`, [name, '%' + teacherName + '%'], (err, res) =>
-            {
-                  if (err)
-                        callback(null, err);
-                  else
-                        callback(res, null);
-            });
+                  {
+                        if (err)
+                              callback(null, err);
+                        else
+                              callback(res, null);
+                  });
+            else
+                  this.conn.query(`select employee.id,employee.name,employee.name,employee.phone,employee.email from employee
+            join teacher on teacher.id=employee.id
+            join teach on teach.teacher_id=employee.id
+            where teach.class_name=? and employee.name like ? and employee.id not in(
+                  select Teacher_ID from TEACHER_RESPONSIBLE 
+                  join session on TEACHER_RESPONSIBLE.class_name=session.class_name and TEACHER_RESPONSIBLE.session_number=session.number
+                  join timetable on timetable.id=session.timetable_id
+                  where session.session_date=? and not (?<timetable.start_hour or ?>timetable.end_hour)
+            ) order by TRIM(SUBSTRING_INDEX(employee.name, ' ', -1))`, [name, '%' + teacherName + '%', date, timetable[1], timetable[0]], (err, res) =>
+                  {
+                        if (err)
+                              callback(null, err);
+                        else
+                              callback(res, null);
+                  });
       }
 
       toggleStatus(name, status, callback)

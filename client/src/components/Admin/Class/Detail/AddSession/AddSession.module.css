@@ -81,8 +81,11 @@
 @media only screen and (min-width: 2400px) {
 
       .customModal1,
-      .customModal2,
       .confirmModal {
             max-width: 25% !important;
+      }
+
+      .customModal2 {
+            max-width: 50% !important;
       }
 }
