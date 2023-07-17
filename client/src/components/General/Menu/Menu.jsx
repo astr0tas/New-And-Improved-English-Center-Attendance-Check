@@ -1,7 +1,7 @@
 import styles from './Menu.module.css';
 import { VscAccount } from "react-icons/vsc";
 import { useEffect, useRef, useState, useContext } from 'react';
-import axios from 'axios';
+import request from '../../../tools/request';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { MdOutlineClass } from 'react-icons/md';
 import { AiOutlineHome, AiOutlinePoweroff } from 'react-icons/ai';
@@ -53,7 +53,7 @@ const Menu = () =>
       const logOut = () =>
       {
             setChosenRole(chosenRole - chosenRole); // this is dumb but it it used for getting rid of the warning of not using `chosenRole`
-            axios.get(`http://${ domain }/logout`, {
+            request.get(`http://${ domain }/logout`, {
                   withCredentials: true
             })
                   .then(res =>
@@ -77,7 +77,7 @@ const Menu = () =>
 
       useEffect(() =>
       {
-            axios.get(`http://${ domain }/isLoggedIn`, {
+            request.get(`http://${ domain }/isLoggedIn`, {
                   withCredentials: true
             })
                   .then(res =>

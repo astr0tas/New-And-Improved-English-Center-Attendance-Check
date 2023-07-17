@@ -1,6 +1,6 @@
 import styles from './Login.module.css';
 import { useEffect, useState, useContext } from 'react';
-import axios from 'axios';
+import request from '../../../../tools/request';
 import { useNavigate, Link } from 'react-router-dom';
 import { AiOutlineCloseCircle } from 'react-icons/ai';
 import React from 'react';
@@ -35,7 +35,7 @@ const Login = () =>
             else
             {
                   setIsMissing(false);
-                  axios.post(`http://${ domain }/`, { params: { username: inputs.username, password: inputs.password, type: chosenRole } }, {
+                  request.post(`http://${ domain }/`, { params: { username: inputs.username, password: inputs.password, type: chosenRole } }, {
                         withCredentials: true,
                         headers: {
                               'Content-Type': 'application/json'
@@ -59,7 +59,7 @@ const Login = () =>
 
       useEffect(() =>
       {
-            axios.get(`http://${ domain }/isLoggedIn`, {
+            request.get(`http://${ domain }/isLoggedIn`, {
                   withCredentials: true,
                   headers: {
                         'Content-Type': 'application/json'

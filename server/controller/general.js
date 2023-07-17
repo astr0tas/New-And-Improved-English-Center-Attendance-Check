@@ -7,6 +7,14 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import multer from "multer";
 import fs from 'fs';
+import CryptoJS from 'crypto-js';
+import { key } from '../keyGenerator.js';
+
+function encryptWithAES(data)
+{
+      const string = JSON.stringify(data);
+      return CryptoJS.AES.encrypt(JSON.stringify(string), key).toString();
+}
 
 const generalRoutes = express.Router();
 
@@ -29,7 +37,7 @@ generalRoutes.post('/', (req, res) =>
                   if (result.length > 1)
                         res.status(400).send("Username and password duplicated!");
                   else if (result.length === 0)
-                        res.status(200).send(false);
+                        res.status(200).send(encryptWithAES(false));
                   else
                   {
                         req.session.userID = result[0].ID;
@@ -37,7 +45,7 @@ generalRoutes.post('/', (req, res) =>
                         req.session.save(() =>
                         {
                               // Session saved
-                              res.status(200).send(true);
+                              res.status(200).send(encryptWithAES(true));
                         });
                   }
             }
@@ -73,7 +81,7 @@ generalRoutes.get('/logout', (req, res) =>
             else
             {
                   res.clearCookie('userID');
-                  res.status(200).send('Logged out successfully!');
+                  res.status(200).send(encryptWithAES('Logged out successfully!'));
 
                   // Get a list of files in the session directory
                   fs.readdir(sessionDir, (err, files) =>
@@ -111,9 +119,9 @@ generalRoutes.get('/isLoggedIn', (req, res) =>
 {
       const idOK = req.session.userID !== undefined && req.session.userID !== null;
       if (idOK)
-            res.status(200).send([true, req.session.userType]);
+            res.status(200).send(encryptWithAES([true, req.session.userType]));
       else
-            res.status(200).send([false]);
+            res.status(200).send(encryptWithAES([false]));
 });
 
 generalRoutes.post('/recovery', (req, res) =>
@@ -128,7 +136,7 @@ generalRoutes.post('/recovery', (req, res) =>
                   res.status(500).send('Server internal error!');
             }
             else
-                  res.status(200).send('Success');
+                  res.status(200).send(encryptWithAES('Success'));
       })
 });
 
@@ -145,9 +153,9 @@ generalRoutes.post('/validateUser', (req, res) =>
             else
             {
                   if (result.length)
-                        res.status(200).send(true);
+                        res.status(200).send(encryptWithAES(true));
                   else
-                        res.status(200).send(false);
+                        res.status(200).send(encryptWithAES(false));
             }
       })
 });
@@ -165,7 +173,7 @@ generalRoutes.get('/profile', (req, res) =>
                   res.status(500).send('Server internal error!');
             }
             else
-                  res.status(200).send(result[0]);
+                  res.status(200).send(encryptWithAES(result[0]));
       });
 });
 
@@ -219,7 +227,7 @@ generalRoutes.post('/updateProfile', multer().fields([
                   res.status(500).send('Server internal error!');
             }
             else
-                  res.status(200).send(result);
+                  res.status(200).send(encryptWithAES('Personal Info updated successfully!'));
       });
 });
 

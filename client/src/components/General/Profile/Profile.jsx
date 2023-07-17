@@ -5,7 +5,7 @@ import { BsPencilSquare } from 'react-icons/bs';
 import { GiCancel, GiConfirmed } from 'react-icons/gi';
 import { isRefValid } from '../../../tools/refChecker';
 import '../../../css/scroll.css';
-import axios from 'axios';
+import request from '../../../tools/request';
 import { domain } from '../../../tools/domain';
 import { DMY, YMD } from '../../../tools/dateFormat';
 import { AiOutlineCloseCircle } from 'react-icons/ai';
@@ -53,7 +53,7 @@ const Profile = () =>
 
       useEffect(() =>
       {
-            axios.get(`http://${ domain }/profile`, {
+            request.get(`http://${ domain }/profile`, {
                   withCredentials: true
             })
                   .then(res =>
@@ -123,7 +123,7 @@ const Profile = () =>
                   formdata.append('password', password === '' ? null : password);
                   formdata.append('userType', userType);
                   formdata.append('image', newImage);
-                  axios.post(`http://${ domain }/updateProfile`, formdata, {
+                  request.post(`http://${ domain }/updateProfile`, formdata, {
                         withCredentials: true,
                         headers: {
                               'Content-Type': 'multipart/form-data'

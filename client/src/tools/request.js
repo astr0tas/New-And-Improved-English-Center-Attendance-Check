@@ -6,22 +6,16 @@ const request = axios.create();
 
 async function decrypt(encryptedData)
 {
-      const key = await axios.get(`http://${ domain }/getKey`);
-      // Decrypt the data
-      const decryptedBytes = CryptoJS.AES.decrypt(encryptedData, key.data.key);
+      const res = await axios.get(`http://${ domain }/getKey`);
 
-      // Convert decrypted data to a string
-      const decryptedData = decryptedBytes.toString(CryptoJS.enc.Utf8);
+      const bytes = CryptoJS.AES.decrypt(encryptedData, res.data.key);
+      const decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
 
-      // Convert to json format
-      const decryptedJson = JSON.parse(decryptedData);
-
-      return decryptedJson;
+      return JSON.parse(decryptedData);
 }
 
 request.interceptors.response.use(async (response) =>
 {
-      console.log(response.data);
       const decryptedData = await decrypt(response.data);
       return { ...response, data: decryptedData };
 }, (error) =>

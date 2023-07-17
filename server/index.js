@@ -5,8 +5,7 @@ import bodyParser from "body-parser";
 import FileStoreFactory from 'session-file-store';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import dotenv from 'dotenv';
-dotenv.config();
+import { key } from './keyGenerator.js';
 
 import { domain } from "./domain.js";
 
@@ -82,7 +81,6 @@ app.use((req, res, next) =>
 
 app.get('/getKey', (req, res) =>
 {
-      const key = process.env.SECRET_KEY;
       res.status(200).send({ key });
 });
 

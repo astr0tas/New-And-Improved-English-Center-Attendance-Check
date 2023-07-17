@@ -4,7 +4,6 @@ import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { useContext, useEffect, useState } from 'react';
 import { DMY } from '../../../../tools/dateFormat';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { domain } from '../../../../tools/domain';
 import { context } from '../../../../context';
 import '../../../../css/scroll.css';
@@ -17,14 +16,14 @@ const Class = (props) =>
 
       useEffect(() =>
       {
-            axios.post(`http://${ domain }/admin/getCurrentStudent`, { params: { name: props.name } }, { headers: { 'Content-Type': 'application/json' } })
+            request.post(`http://${ domain }/admin/getCurrentStudent`, { params: { name: props.name } }, { headers: { 'Content-Type': 'application/json' } })
                   .then(res =>
                   {
                         setCurrentStudents(res.data.currentStudents);
                   })
                   .catch(err => console.error(err));
 
-            axios.post(`http://${ domain }/admin/getCurrentSession`, { params: { name: props.name } }, { headers: { 'Content-Type': 'application/json' } })
+            request.post(`http://${ domain }/admin/getCurrentSession`, { params: { name: props.name } }, { headers: { 'Content-Type': 'application/json' } })
                   .then(res =>
                   {
                         setCurrentSessions(res.data.currentSessions);

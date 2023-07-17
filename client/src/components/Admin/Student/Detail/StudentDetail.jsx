@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 import styles from './StudentDetail.module.css';
-import axios from 'axios';
+import request from '../../../../tools/request';
 import { domain } from '../../../../tools/domain';
 import { useNavigate, useParams } from 'react-router-dom';
 import { DMY } from '../../../../tools/dateFormat';
@@ -48,7 +48,7 @@ const StudentDetail = () =>
 
       useEffect(() =>
       {
-            axios.post(`http://${ domain }/admin/studentInfo`, { params: { id: id } }, { headers: { 'Content-Type': 'application/json' } })
+            request.post(`http://${ domain }/admin/studentInfo`, { params: { id: id } }, { headers: { 'Content-Type': 'application/json' } })
                   .then(res =>
                   {
                         document.title = `Student ${ res.data.name }`;
@@ -64,7 +64,7 @@ const StudentDetail = () =>
                   })
                   .catch(err => console.log(err));
 
-            axios.post(`http://${ domain }/admin/getStudentClass`, { params: { id: id } }, { headers: { 'Content-Type': 'application/json' } })
+            request.post(`http://${ domain }/admin/getStudentClass`, { params: { id: id } }, { headers: { 'Content-Type': 'application/json' } })
                   .then(res =>
                   {
                         const temp = [];

@@ -1,6 +1,6 @@
 import styles from './AddSession.module.css';
 import { useState, useEffect } from "react";
-import axios from 'axios';
+import request from '../../../../../tools/request';
 import { domain } from "../../../../../tools/domain";
 import { Modal } from 'react-bootstrap';
 import '../../../../../css/scroll.css';
@@ -22,7 +22,7 @@ const TeacherSelect = (props) =>
             if (props.addTeacherPopUp && props.date !== null && props.timetable !== null)
             {
                   console.log('render');
-                  axios.post(`http://${ domain }/admin/classTeacher`, { params: { name: props.name, teacherName: searchTeacher, date: props.date, timetable: props.timetable.split(',')[1].split(' - ') } }, { headers: { 'Content-Type': 'application/json' } })
+                  request.post(`http://${ domain }/admin/classTeacher`, { params: { name: props.name, teacherName: searchTeacher, date: props.date, timetable: props.timetable.split(',')[1].split(' - ') } }, { headers: { 'Content-Type': 'application/json' } })
                         .then(res =>
                         {
                               const temp = [];
@@ -105,7 +105,7 @@ const SupervisorSelect = (props) =>
       {
             if (props.addSupervisorPopUp)
             {
-                  axios.post(`http://${ domain }/admin/staffList`, { params: { name: searchSupervisor, type: 2 } }, { headers: { 'Content-Type': 'application/json' } })
+                  request.post(`http://${ domain }/admin/staffList`, { params: { name: searchSupervisor, type: 2 } }, { headers: { 'Content-Type': 'application/json' } })
                         .then(res =>
                         {
                               const temp = [];
@@ -261,7 +261,7 @@ const AddSession = (props) =>
       {
             if (props.sessionPopUp)
             {
-                  axios.post(`http://${ domain }/admin/getRoom`, { params: { name: props.name } }, { headers: { 'Content-Type': 'application/json' } })
+                  request.post(`http://${ domain }/admin/getRoom`, { params: { name: props.name } }, { headers: { 'Content-Type': 'application/json' } })
                         .then(res =>
                         {
                               const temp = [];
@@ -275,7 +275,7 @@ const AddSession = (props) =>
 
                   if (room && date)
                   {
-                        axios.post(`http://${ domain }/admin/getTimetable`, { params: { room: room.split(',')[0], date: date } }, { headers: { 'Content-Type': 'application/json' } })
+                        request.post(`http://${ domain }/admin/getTimetable`, { params: { room: room.split(',')[0], date: date } }, { headers: { 'Content-Type': 'application/json' } })
                               .then(res =>
                               {
                                     const temp = [];
@@ -288,7 +288,7 @@ const AddSession = (props) =>
                               .catch(err => console.log(err));
                   }
 
-                  axios.post(`http://${ domain }/admin/getClassCanceledSession`, { params: { name: props.name } }, { headers: { 'Content-Type': 'application/json' } })
+                  request.post(`http://${ domain }/admin/getClassCanceledSession`, { params: { name: props.name } }, { headers: { 'Content-Type': 'application/json' } })
                         .then(res =>
                         {
                               const temp = [];
@@ -529,7 +529,7 @@ const AddSession = (props) =>
                               {
                                     setConfirmPopUp(false);
                                     props.setSessionPopUp(false);
-                                    axios.post(`http://${ domain }/admin/addSessionToClass`, {
+                                    request.post(`http://${ domain }/admin/addSessionToClass`, {
                                           params: {
                                                 name: props.name,
                                                 room: room.split(',')[0],

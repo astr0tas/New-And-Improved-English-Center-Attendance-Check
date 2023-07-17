@@ -2,22 +2,13 @@ import express from "express";
 import { Class } from '../model/admin/class.js';
 import { Staff } from "../model/admin/staff.js";
 import { Student } from "../model/admin/student.js";
-import crypto from 'crypto';
-import dotenv from 'dotenv';
-dotenv.config();
-const key = process.env.SECRET_KEY;
-const iv = process.env.SECRET_IV;
+import CryptoJS from 'crypto-js';
+import { key } from '../keyGenerator.js';
 
 function encryptWithAES(data)
 {
-      const iv = crypto.randomBytes(16);
-      const cipher = crypto.createCipheriv('aes-256-cbc', key, iv);
-      let encrypted = cipher.update(data, 'utf8', 'hex');
-      encrypted += cipher.final('hex');
-      return {
-            iv: iv.toString('hex'),
-            encryptedData: encrypted
-      };
+      const string = JSON.stringify(data);
+      return CryptoJS.AES.encrypt(JSON.stringify(string), key).toString();
 }
 
 const adminRoutes = express.Router();
@@ -40,10 +31,7 @@ adminRoutes.post('/classList', (req, res) =>
                   if (!result.length)
                         res.status(204).send();
                   else
-                  {
-                        console.log(encryptWithAES(JSON.stringify(result)));
-                        res.status(200).send(encryptWithAES(JSON.stringify(result)));
-                  }
+                        res.status(200).send(encryptWithAES(result));
             }
       })
 });
@@ -59,7 +47,7 @@ adminRoutes.post('/getCurrentStudent', (req, res) =>
                   res.status(500).send('Server internal error!');
             }
             else
-                  res.status(200).send(result[0]);
+                  res.status(200).send(encryptWithAES(result[0]));
       })
 });
 
@@ -74,7 +62,7 @@ adminRoutes.post('/getCurrentSession', (req, res) =>
                   res.status(500).send('Server internal error!');
             }
             else
-                  res.status(200).send(result[0]);
+                  res.status(200).send(encryptWithAES(result[0]));
       })
 });
 
@@ -89,7 +77,7 @@ adminRoutes.post('/classInfo', (req, res) =>
                   res.status(500).send('Server internal error!');
             }
             else
-                  res.status(200).send(result[0]);
+                  res.status(200).send(encryptWithAES(result[0]));
       })
 });
 
@@ -104,7 +92,7 @@ adminRoutes.post('/classStudent', (req, res) =>
                   res.status(500).send('Server internal error!');
             }
             else
-                  res.status(200).send(result);
+                  res.status(200).send(encryptWithAES(result));
       })
 });
 
@@ -119,7 +107,7 @@ adminRoutes.post('/classSession', (req, res) =>
                   res.status(500).send('Server internal error!');
             }
             else
-                  res.status(200).send(result);
+                  res.status(200).send(encryptWithAES(result));
       })
 });
 
@@ -141,7 +129,7 @@ adminRoutes.post('/classTeacher', (req, res) =>
                         res.status(500).send('Server internal error!');
                   }
                   else
-                        res.status(200).send(result);
+                        res.status(200).send(encryptWithAES(result));
             })
 });
 
@@ -157,7 +145,7 @@ adminRoutes.post('/toggleStatus', (req, res) =>
                   res.status(500).send('Server internal error!');
             }
             else
-                  res.status(200).send('Class status update successfully!');
+                  res.status(200).send(encryptWithAES('Class status update successfully!'));
       })
 });
 
@@ -173,7 +161,7 @@ adminRoutes.post('/removeStudentFromClass', (req, res) =>
                   res.status(500).send('Server internal error!');
             }
             else
-                  res.status(200).send('Student removed successfully!');
+                  res.status(200).send(encryptWithAES('Student removed successfully!'));
       })
 });
 
@@ -189,7 +177,7 @@ adminRoutes.post('/getStudentNotFromClass', (req, res) =>
                   res.status(500).send('Server internal error!');
             }
             else
-                  res.status(200).send(result);
+                  res.status(200).send(encryptWithAES(result));
       })
 });
 
@@ -205,7 +193,7 @@ adminRoutes.post('/addStudentToClass', (req, res) =>
                   res.status(500).send('Server internal error!');
             }
             else
-                  res.status(200).send('Student(s) added successfully!');
+                  res.status(200).send(encryptWithAES('Student(s) added successfully!'));
       })
 });
 
@@ -220,7 +208,7 @@ adminRoutes.post('/getRoom', (req, res) =>
                   res.status(500).send('Server internal error!');
             }
             else
-                  res.status(200).send(result);
+                  res.status(200).send(encryptWithAES(result));
       })
 });
 
@@ -236,7 +224,7 @@ adminRoutes.post('/getTimetable', (req, res) =>
                   res.status(500).send('Server internal error!');
             }
             else
-                  res.status(200).send(result);
+                  res.status(200).send(encryptWithAES(result));
       })
 });
 
@@ -251,7 +239,7 @@ adminRoutes.post('/getClassCanceledSession', (req, res) =>
                   res.status(500).send('Server internal error!');
             }
             else
-                  res.status(200).send(result);
+                  res.status(200).send(encryptWithAES(result));
       })
 });
 
@@ -273,7 +261,7 @@ adminRoutes.post('/addSessionToClass', (req, res) =>
                   res.status(500).send('Server internal error!');
             }
             else
-                  res.status(200).send('Session added successfully!');
+                  res.status(200).send(encryptWithAES('Session added successfully!'));
       })
 });
 
@@ -289,7 +277,7 @@ adminRoutes.post('/getSessionTeacher', (req, res) =>
                   res.status(500).send('Server internal error!');
             }
             else
-                  res.status(200).send(result[0]);
+                  res.status(200).send(encryptWithAES(result[0]));
       })
 });
 
@@ -305,7 +293,7 @@ adminRoutes.post('/getSessionSupervisor', (req, res) =>
                   res.status(500).send('Server internal error!');
             }
             else
-                  res.status(200).send(result[0]);
+                  res.status(200).send(encryptWithAES(result[0]));
       })
 });
 
@@ -321,7 +309,7 @@ adminRoutes.post('/removeTeacherFromClass', (req, res) =>
                   res.status(500).send('Server internal error!');
             }
             else
-                  res.status(200).send('Teacher removed successfully!');
+                  res.status(200).send(encryptWithAES('Teacher removed successfully!'));
       })
 });
 
@@ -337,7 +325,7 @@ adminRoutes.post('/getTeacherNotInClass', (req, res) =>
                   res.status(500).send('Server internal error!');
             }
             else
-                  res.status(200).send(result);
+                  res.status(200).send(encryptWithAES(result));
       })
 });
 
@@ -353,7 +341,7 @@ adminRoutes.post('/addTeacherToClass', (req, res) =>
                   res.status(500).send('Server internal error!');
             }
             else
-                  res.status(200).send('Teacher(s) added successfully!');
+                  res.status(200).send(encryptWithAES('Teacher(s) added successfully!'));
       })
 });
 
@@ -369,7 +357,7 @@ adminRoutes.post('/classSessionDetail', (req, res) =>
                   res.status(500).send('Server internal error!');
             }
             else
-                  res.status(200).send(result[0]);
+                  res.status(200).send(encryptWithAES(result[0]));
       })
 });
 
@@ -384,7 +372,7 @@ adminRoutes.post('/getSessionStudent', (req, res) =>
                   res.status(500).send('Server internal error!');
             }
             else
-                  res.status(200).send(result);
+                  res.status(200).send(encryptWithAES(result));
       })
 });
 
@@ -401,7 +389,7 @@ adminRoutes.post('/getStudentSessionAttendace', (req, res) =>
                   res.status(500).send('Server internal error!');
             }
             else
-                  res.status(200).send(result);
+                  res.status(200).send(encryptWithAES(result));
       })
 });
 
@@ -419,7 +407,7 @@ adminRoutes.post('/checkAttendance', (req, res) =>
                   res.status(500).send('Server internal error!');
             }
             else
-                  res.status(200).send(result);
+                  res.status(200).send(encryptWithAES(result));
       })
 });
 
@@ -435,7 +423,7 @@ adminRoutes.post('/cancelSession', (req, res) =>
                   res.status(500).send('Server internal error!');
             }
             else
-                  res.status(200).send('Session cancelled successfully!');
+                  res.status(200).send(encryptWithAES('Session cancelled successfully!'));
       })
 });
 
@@ -451,7 +439,7 @@ adminRoutes.post('/restoreSession', (req, res) =>
                   res.status(500).send('Server internal error!');
             }
             else
-                  res.status(200).send('Session restored successfully!');
+                  res.status(200).send(encryptWithAES('Session restored successfully!'));
       })
 });
 
@@ -468,7 +456,7 @@ adminRoutes.post('/changeTeacher', (req, res) =>
                   res.status(500).send('Server internal error!');
             }
             else
-                  res.status(200).send('Teacher changed successfully!');
+                  res.status(200).send(encryptWithAES('Teacher changed successfully!'));
       })
 });
 
@@ -485,7 +473,7 @@ adminRoutes.post('/changeSupervisor', (req, res) =>
                   res.status(500).send('Server internal error!');
             }
             else
-                  res.status(200).send('Supervisor changed successfully!');
+                  res.status(200).send(encryptWithAES('Supervisor changed successfully!'));
       })
 });
 
@@ -507,7 +495,7 @@ adminRoutes.post('/staffList', (req, res) =>
                   if (!result.length)
                         res.status(204).send();
                   else
-                        res.status(200).send(result);
+                        res.status(200).send(encryptWithAES(result));
             }
       })
 });
@@ -523,7 +511,7 @@ adminRoutes.post('/staffInfo', (req, res) =>
                   res.status(500).send('Server internal error!');
             }
             else
-                  res.status(200).send(result[0]);
+                  res.status(200).send(encryptWithAES(result[0]));
       })
 });
 
@@ -538,7 +526,7 @@ adminRoutes.post('/getTeacherClass', (req, res) =>
                   res.status(500).send('Server internal error!');
             }
             else
-                  res.status(200).send(result);
+                  res.status(200).send(encryptWithAES(result));
       })
 });
 
@@ -553,7 +541,7 @@ adminRoutes.post('/getSupervisorClass', (req, res) =>
                   res.status(500).send('Server internal error!');
             }
             else
-                  res.status(200).send(result);
+                  res.status(200).send(encryptWithAES(result));
       })
 });
 
@@ -575,7 +563,7 @@ adminRoutes.post('/studentList', (req, res) =>
                   if (!result.length)
                         res.status(204).send();
                   else
-                        res.status(200).send(result);
+                        res.status(200).send(encryptWithAES(result));
             }
       })
 });
@@ -591,7 +579,7 @@ adminRoutes.post('/studentInfo', (req, res) =>
                   res.status(500).send('Server internal error!');
             }
             else
-                  res.status(200).send(result[0]);
+                  res.status(200).send(encryptWithAES(result[0]));
       })
 });
 
@@ -606,7 +594,7 @@ adminRoutes.post('/getStudentClass', (req, res) =>
                   res.status(500).send('Server internal error!');
             }
             else
-                  res.status(200).send(result);
+                  res.status(200).send(encryptWithAES(result));
       })
 });
 

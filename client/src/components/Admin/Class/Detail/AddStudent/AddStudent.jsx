@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from 'axios';
+import request from '../../../../../tools/request';
 import { domain } from "../../../../../tools/domain";
 import { Modal } from 'react-bootstrap';
 import styles from './AddStudent.module.css';
@@ -44,7 +44,7 @@ const AddStudent = (props) =>
       {
             if (props.addPopUp)
             {
-                  axios.post(`http://${ domain }/admin/getStudentNotFromClass`, { params: { className: props.name, studentName: searchStudent } }, { headers: { 'Content-Type': 'application/json' } })
+                  request.post(`http://${ domain }/admin/getStudentNotFromClass`, { params: { className: props.name, studentName: searchStudent } }, { headers: { 'Content-Type': 'application/json' } })
                         .then(res =>
                         {
                               const temp = [];
@@ -170,7 +170,7 @@ const AddStudent = (props) =>
                                     setConfirmPopUp(false);
                                     props.setAddPopUp(false);
 
-                                    axios.post(`http://${ domain }/admin/addStudentToClass`, { params: { name: props.name, students: studentAdded } }, { headers: { 'Content-Type': 'application/json' } })
+                                    request.post(`http://${ domain }/admin/addStudentToClass`, { params: { name: props.name, students: studentAdded } }, { headers: { 'Content-Type': 'application/json' } })
                                           .then(res =>
                                           {
                                                 setStudentAdded([]);
