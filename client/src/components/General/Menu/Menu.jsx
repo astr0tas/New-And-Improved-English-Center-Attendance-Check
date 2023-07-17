@@ -13,7 +13,6 @@ import { BsListColumnsReverse } from 'react-icons/bs';
 import '../../../css/scroll.css';
 import { context } from '../../../context';
 
-
 const Menu = () =>
 {
       const Navigate = useNavigate();

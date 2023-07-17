@@ -3,3 +3,5 @@
 /model/image/employee/admin
 /model/image/employee/staff
 /model/image/student
+/model/privateKey.pem
+/model/publicKey.pem

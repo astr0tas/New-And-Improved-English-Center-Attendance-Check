@@ -5,6 +5,8 @@ import bodyParser from "body-parser";
 import FileStoreFactory from 'session-file-store';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import dotenv from 'dotenv';
+dotenv.config();
 
 import { domain } from "./domain.js";
 
@@ -17,8 +19,6 @@ import { updateSessionStatusRegularly } from './model/updateSessionStatus.js';
 export const FileStore = FileStoreFactory(session);
 
 const app = express();
-app.use('/image/employee', express.static(path.join(path.dirname(fileURLToPath(import.meta.url)), 'model', 'image', 'employee')));
-app.use('/image/student', express.static(path.join(path.dirname(fileURLToPath(import.meta.url)), 'model', 'image', 'student')));
 app.use(cors({
       origin: `http://${ domain }`,
       methods: '*',
@@ -58,7 +58,8 @@ app.use((req, res, next) =>
             {
                   return res.status(400).send('Invalid Content-Type');
             }
-      } else
+      }
+      else
       {
             // Verify the Content-Type header for other request methods (only POST requests are used in this project)
             if (contentType !== 'application/json' && !contentType.includes('multipart/form-data'))
@@ -79,11 +80,18 @@ app.use((req, res, next) =>
       next();
 });
 
+app.get('/getKey', (req, res) =>
+{
+      const key = process.env.SECRET_KEY;
+      res.status(200).send({ key });
+});
 
 app.use('/admin', adminRoutes);
 app.use('/', generalRoutes);
 app.use('/staff', staffRoutes);
 
+app.use('/image/employee', express.static(path.join(path.dirname(fileURLToPath(import.meta.url)), 'model', 'image', 'employee')));
+app.use('/image/student', express.static(path.join(path.dirname(fileURLToPath(import.meta.url)), 'model', 'image', 'student')));
 
 const updateFunction = (conn) =>
 {

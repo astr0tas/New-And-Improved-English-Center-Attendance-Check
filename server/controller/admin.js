@@ -2,7 +2,23 @@ import express from "express";
 import { Class } from '../model/admin/class.js';
 import { Staff } from "../model/admin/staff.js";
 import { Student } from "../model/admin/student.js";
+import crypto from 'crypto';
+import dotenv from 'dotenv';
+dotenv.config();
+const key = process.env.SECRET_KEY;
+const iv = process.env.SECRET_IV;
 
+function encryptWithAES(data)
+{
+      const iv = crypto.randomBytes(16);
+      const cipher = crypto.createCipheriv('aes-256-cbc', key, iv);
+      let encrypted = cipher.update(data, 'utf8', 'hex');
+      encrypted += cipher.final('hex');
+      return {
+            iv: iv.toString('hex'),
+            encryptedData: encrypted
+      };
+}
 
 const adminRoutes = express.Router();
 
@@ -24,7 +40,10 @@ adminRoutes.post('/classList', (req, res) =>
                   if (!result.length)
                         res.status(204).send();
                   else
-                        res.status(200).send(result);
+                  {
+                        console.log(encryptWithAES(JSON.stringify(result)));
+                        res.status(200).send(encryptWithAES(JSON.stringify(result)));
+                  }
             }
       })
 });

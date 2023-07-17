@@ -8,6 +8,7 @@ import axios from 'axios';
 import { domain } from '../../../../tools/domain';
 import { context } from '../../../../context';
 import '../../../../css/scroll.css';
+import request from '../../../../tools/request';
 
 const Class = (props) =>
 {
@@ -58,7 +59,7 @@ const ClassList = () =>
 
       useEffect(() =>
       {
-            axios.post(`http://${ domain }/admin/classList`, { params: { name: name, status: classState } },
+            request.post(`http://${ domain }/admin/classList`, { params: { name: name, status: classState } },
                   {
                         headers: { 'Content-Type': 'application/json' }
                   })

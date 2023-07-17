@@ -3,10 +3,10 @@ import { Authentication } from "../model/authentication.js";
 import { Profile } from "../model/profile.js";
 import { AdminHome } from "../model/admin/home.js";
 import { StaffHome } from '../model/staff/home.js';
-import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import multer from "multer";
+import fs from 'fs';
 
 const generalRoutes = express.Router();
 
