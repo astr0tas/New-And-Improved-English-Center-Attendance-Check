@@ -8,7 +8,15 @@ import { key } from '../keyGenerator.js';
 function encryptWithAES(data)
 {
       const string = JSON.stringify(data);
-      return CryptoJS.AES.encrypt(JSON.stringify(string), key).toString();
+      const result = CryptoJS.AES.encrypt(JSON.stringify(string), key).toString();
+      return result;
+}
+
+function decryptWithAES(data)
+{
+      const bytes = CryptoJS.AES.decrypt(data, key);
+      const decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+      return decryptedData;
 }
 
 const adminRoutes = express.Router();
@@ -17,8 +25,9 @@ const classModel = new Class();
 
 adminRoutes.post('/classList', (req, res) =>
 {
-      const name = req.body.params.name;
-      const status = req.body.params.status;
+      const data = decryptWithAES(req.body.data);
+      const name = data.params.name;
+      const status = data.params.status;
       classModel.getList(name, status, (result, err) =>
       {
             if (err)

@@ -13,7 +13,15 @@ import { key } from '../keyGenerator.js';
 function encryptWithAES(data)
 {
       const string = JSON.stringify(data);
-      return CryptoJS.AES.encrypt(JSON.stringify(string), key).toString();
+      const result = CryptoJS.AES.encrypt(JSON.stringify(string), key).toString();
+      return result;
+}
+
+function decryptWithAES(data)
+{
+      const bytes = CryptoJS.AES.decrypt(data, key);
+      const decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+      return decryptedData;
 }
 
 const generalRoutes = express.Router();

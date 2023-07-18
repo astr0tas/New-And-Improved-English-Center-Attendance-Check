@@ -16,19 +16,19 @@ const Class = (props) =>
 
       useEffect(() =>
       {
-            request.post(`http://${ domain }/admin/getCurrentStudent`, { params: { name: props.name } }, { headers: { 'Content-Type': 'application/json' } })
-                  .then(res =>
-                  {
-                        setCurrentStudents(res.data.currentStudents);
-                  })
-                  .catch(err => console.error(err));
+            // request.post(`http://${ domain }/admin/getCurrentStudent`, { params: { name: props.name } }, { headers: { 'Content-Type': 'application/json' } })
+            //       .then(res =>
+            //       {
+            //             setCurrentStudents(res.data.currentStudents);
+            //       })
+            //       .catch(err => console.error(err));
 
-            request.post(`http://${ domain }/admin/getCurrentSession`, { params: { name: props.name } }, { headers: { 'Content-Type': 'application/json' } })
-                  .then(res =>
-                  {
-                        setCurrentSessions(res.data.currentSessions);
-                  })
-                  .catch(err => console.error(err));
+            // request.post(`http://${ domain }/admin/getCurrentSession`, { params: { name: props.name } }, { headers: { 'Content-Type': 'application/json' } })
+            //       .then(res =>
+            //       {
+            //             setCurrentSessions(res.data.currentSessions);
+            //       })
+            //       .catch(err => console.error(err));
       }, [props.name])
 
       return (

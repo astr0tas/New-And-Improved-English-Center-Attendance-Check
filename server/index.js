@@ -6,6 +6,7 @@ import FileStoreFactory from 'session-file-store';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { key } from './keyGenerator.js';
+import NodeRSA from "node-rsa";
 
 import { domain } from "./domain.js";
 
@@ -79,9 +80,11 @@ app.use((req, res, next) =>
       next();
 });
 
-app.get('/getKey', (req, res) =>
+app.post('/getKey', (req, res) =>
 {
-      res.status(200).send({ key });
+      const keys = new NodeRSA(req.body.params.key, 'public', { encryptionScheme: 'pkcs1' });
+      const encryptedKey = keys.encrypt(key, 'base64');
+      res.status(200).send({ key: encryptedKey });
 });
 
 app.use('/admin', adminRoutes);
