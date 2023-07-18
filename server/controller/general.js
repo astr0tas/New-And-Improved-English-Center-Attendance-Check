@@ -12,6 +12,7 @@ import { key } from '../keyGenerator.js';
 
 function encryptWithAES(data)
 {
+      if (data === null || data === undefined || data === '' || data === 'null' || data === 'undefined') return null;
       const string = JSON.stringify(data);
       const result = CryptoJS.AES.encrypt(JSON.stringify(string), key).toString();
       return result;
@@ -19,6 +20,7 @@ function encryptWithAES(data)
 
 function decryptWithAES(data)
 {
+      if (data === null || data === undefined || data === '' || data === 'null' || data === 'undefined') return null;
       const bytes = CryptoJS.AES.decrypt(data, key);
       const decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
       return decryptedData;
@@ -30,9 +32,10 @@ const authenticateModel = new Authentication();
 
 generalRoutes.post('/', (req, res) =>
 {
-      const username = req.body.params.username;
-      const password = req.body.params.password;
-      const type = req.body.params.type;
+      const data = decryptWithAES(req.body.data);
+      const username = data.params.username;
+      const password = data.params.password;
+      const type = data.params.type;
       authenticateModel.login(username, password, type, (result, err) =>
       {
             if (err)
@@ -134,8 +137,9 @@ generalRoutes.get('/isLoggedIn', (req, res) =>
 
 generalRoutes.post('/recovery', (req, res) =>
 {
-      const username = req.body.params.username;
-      const password = req.body.params.password;
+      const data = decryptWithAES(req.body.data);
+      const username = data.params.username;
+      const password = data.params.password;
       authenticateModel.recovery(username, password, (result, err) =>
       {
             if (err)
@@ -150,7 +154,8 @@ generalRoutes.post('/recovery', (req, res) =>
 
 generalRoutes.post('/validateUser', (req, res) =>
 {
-      const username = req.body.params.username;
+      const data = decryptWithAES(req.body.data);
+      const username = data.params.username;
       authenticateModel.validateUser(username, (result, err) =>
       {
             if (err)
@@ -199,13 +204,22 @@ generalRoutes.post('/updateProfile', multer().fields([
 ]), (req, res) =>
 {
       const id = req.session.userID;
-      const { ssn, name, address, birthday, birthplace, email, phone, password, userType } = req.body;
+      const name = decryptWithAES(req.body.name);
+      const address = decryptWithAES(req.body.address);
+      const birthday = decryptWithAES(req.body.birthday);
+      const birthplace = decryptWithAES(req.body.birthplace);
+      const email = decryptWithAES(req.body.email);
+      const phone = decryptWithAES(req.body.phone);
+      const password = decryptWithAES(req.body.password);
+      const userType = decryptWithAES(req.body.userType);
+      const ssn = decryptWithAES(req.body.ssn);
+
       let imagePath = null;
       if (req.files['image'] !== null && req.files['image'] !== undefined)
       {
             const imageFile = req.files['image'][0];
             // Get the target directory to store the image
-            const directory = path.join(path.dirname(path.dirname(fileURLToPath(import.meta.url))), 'model', 'image', 'employee', userType === '1' ? 'admin' : 'staff', id);
+            const directory = path.join(path.dirname(path.dirname(fileURLToPath(import.meta.url))), 'model', 'image', 'employee', userType === 1 ? 'admin' : 'staff', id);
             // Create the uploads folder if it doesn't exist
             if (!fs.existsSync(directory))
                   fs.mkdirSync(directory, { recursive: true });
@@ -225,7 +239,7 @@ generalRoutes.post('/updateProfile', multer().fields([
             const filePath = path.join(directory, filename);
             fs.writeFileSync(filePath, imageFile.buffer);
 
-            imagePath = (userType === '1' ? 'admin' : 'staff') + '/' + id + '/' + filename;
+            imagePath = (userType === 1 ? 'admin' : 'staff') + '/' + id + '/' + filename;
       }
       profileModel.updateInfo(id, ssn, name, address, birthday, birthplace, email, phone, password, imagePath, (result, err) =>
       {

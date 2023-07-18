@@ -45,42 +45,42 @@ export class Profile
       {
             let queryStmts = "";
             const queryParams = [];
-            if (ssn !== 'null')
+            if (ssn !== null)
             {
                   queryStmts += `update employee set ssn=? where id=?;`;
                   queryParams.push(ssn, id);
             }
-            if (name !== 'null')
+            if (name !== null)
             {
                   queryStmts += `update employee set name=? where id=?;`;
                   queryParams.push(name, id);
             }
-            if (address !== 'null')
+            if (address !== null)
             {
                   queryStmts += `update employee set address=? where id=?;`;
                   queryParams.push(address, id);
             }
-            if (birthday !== 'null')
+            if (birthday !== null)
             {
                   queryStmts += `update employee set birthday=? where id=?;`;
                   queryParams.push(birthday, id);
             }
-            if (birthplace !== 'null')
+            if (birthplace !== null)
             {
                   queryStmts += `update employee set birthplace=? where id=?;`;
                   queryParams.push(birthplace, id);
             }
-            if (email !== 'null')
+            if (email !== null)
             {
                   queryStmts += `update employee set email=? where id=?;`;
                   queryParams.push(email, id);
             }
-            if (phone !== 'null')
+            if (phone !== null)
             {
                   queryStmts += `update employee set phone=? where id=?;`;
                   queryParams.push(phone, id);
             }
-            if (password !== 'null')
+            if (password !== null)
             {
                   queryStmts += `update employee set password=? where id=?;`;
                   queryParams.push(password, id);

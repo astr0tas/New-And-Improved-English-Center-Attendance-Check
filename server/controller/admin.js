@@ -7,6 +7,7 @@ import { key } from '../keyGenerator.js';
 
 function encryptWithAES(data)
 {
+      if (data === null || data === undefined || data === '' || data === 'null' || data === 'undefined') return null;
       const string = JSON.stringify(data);
       const result = CryptoJS.AES.encrypt(JSON.stringify(string), key).toString();
       return result;
@@ -14,6 +15,7 @@ function encryptWithAES(data)
 
 function decryptWithAES(data)
 {
+      if (data === null || data === undefined || data === '' || data === 'null' || data === 'undefined') return null;
       const bytes = CryptoJS.AES.decrypt(data, key);
       const decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
       return decryptedData;
@@ -47,7 +49,8 @@ adminRoutes.post('/classList', (req, res) =>
 
 adminRoutes.post('/getCurrentStudent', (req, res) =>
 {
-      const name = req.body.params.name;
+      const data = decryptWithAES(req.body.data);
+      const name = data.params.name;
       classModel.getCurrentStudent(name, (result, err) =>
       {
             if (err)
@@ -62,7 +65,8 @@ adminRoutes.post('/getCurrentStudent', (req, res) =>
 
 adminRoutes.post('/getCurrentSession', (req, res) =>
 {
-      const name = req.body.params.name;
+      const data = decryptWithAES(req.body.data);
+      const name = data.params.name;
       classModel.getCurrentSession(name, (result, err) =>
       {
             if (err)
@@ -77,7 +81,8 @@ adminRoutes.post('/getCurrentSession', (req, res) =>
 
 adminRoutes.post('/classInfo', (req, res) =>
 {
-      const name = req.body.params.name;
+      const data = decryptWithAES(req.body.data);
+      const name = data.params.name;
       classModel.getInfo(name, (result, err) =>
       {
             if (err)
@@ -92,7 +97,8 @@ adminRoutes.post('/classInfo', (req, res) =>
 
 adminRoutes.post('/classStudent', (req, res) =>
 {
-      const name = req.body.params.name;
+      const data = decryptWithAES(req.body.data);
+      const name = data.params.name;
       classModel.classStudent(name, (result, err) =>
       {
             if (err)
@@ -107,7 +113,8 @@ adminRoutes.post('/classStudent', (req, res) =>
 
 adminRoutes.post('/classSession', (req, res) =>
 {
-      const name = req.body.params.name;
+      const data = decryptWithAES(req.body.data);
+      const name = data.params.name;
       classModel.classSession(name, (result, err) =>
       {
             if (err)
@@ -122,10 +129,11 @@ adminRoutes.post('/classSession', (req, res) =>
 
 adminRoutes.post('/classTeacher', (req, res) =>
 {
-      const name = req.body.params.name;
-      const teacherName = req.body.params.teacherName;
-      const date = req.body.params.date;
-      const timetable = req.body.params.timetable;
+      const data = decryptWithAES(req.body.data);
+      const name = data.params.name;
+      const teacherName = data.params.teacherName;
+      const date = data.params.date;
+      const timetable = data.params.timetable;
       classModel.classTeacher(name,
             (teacherName === undefined || teacherName === null) ? '' : teacherName,
             (date === undefined || date === null) ? null : date,
@@ -144,8 +152,9 @@ adminRoutes.post('/classTeacher', (req, res) =>
 
 adminRoutes.post('/toggleStatus', (req, res) =>
 {
-      const name = req.body.params.name;
-      const status = req.body.params.status;
+      const data = decryptWithAES(req.body.data);
+      const name = data.params.name;
+      const status = data.params.status;
       classModel.toggleStatus(name, status, (result, err) =>
       {
             if (err)
@@ -160,8 +169,9 @@ adminRoutes.post('/toggleStatus', (req, res) =>
 
 adminRoutes.post('/removeStudentFromClass', (req, res) =>
 {
-      const name = req.body.params.name;
-      const id = req.body.params.id;
+      const data = decryptWithAES(req.body.data);
+      const name = data.params.name;
+      const id = data.params.id;
       classModel.removeStudentFromClass(name, id, (result, err) =>
       {
             if (err)
@@ -176,8 +186,9 @@ adminRoutes.post('/removeStudentFromClass', (req, res) =>
 
 adminRoutes.post('/getStudentNotFromClass', (req, res) =>
 {
-      const className = req.body.params.className;
-      const studentName = req.body.params.studentName;
+      const data = decryptWithAES(req.body.data);
+      const className = data.params.className;
+      const studentName = data.params.studentName;
       classModel.getStudentNotFromClass(className, studentName, (result, err) =>
       {
             if (err)
@@ -192,8 +203,9 @@ adminRoutes.post('/getStudentNotFromClass', (req, res) =>
 
 adminRoutes.post('/addStudentToClass', (req, res) =>
 {
-      const name = req.body.params.name;
-      const students = req.body.params.students;
+      const data = decryptWithAES(req.body.data);
+      const name = data.params.name;
+      const students = data.params.students;
       classModel.addStudentToClass(name, students, (result, err) =>
       {
             if (err)
@@ -208,7 +220,8 @@ adminRoutes.post('/addStudentToClass', (req, res) =>
 
 adminRoutes.post('/getRoom', (req, res) =>
 {
-      const name = req.body.params.name;
+      const data = decryptWithAES(req.body.data);
+      const name = data.params.name;
       classModel.getRoom(name, (result, err) =>
       {
             if (err)
@@ -223,8 +236,9 @@ adminRoutes.post('/getRoom', (req, res) =>
 
 adminRoutes.post('/getTimetable', (req, res) =>
 {
-      const room = req.body.params.room;
-      const date = req.body.params.date;
+      const data = decryptWithAES(req.body.data);
+      const room = data.params.room;
+      const date = data.params.date;
       classModel.getTimetable(room, date, (result, err) =>
       {
             if (err)
@@ -239,7 +253,8 @@ adminRoutes.post('/getTimetable', (req, res) =>
 
 adminRoutes.post('/getClassCanceledSession', (req, res) =>
 {
-      const name = req.body.params.name;
+      const data = decryptWithAES(req.body.data);
+      const name = data.params.name;
       classModel.getClassCanceledSession(name, (result, err) =>
       {
             if (err)
@@ -254,14 +269,15 @@ adminRoutes.post('/getClassCanceledSession', (req, res) =>
 
 adminRoutes.post('/addSessionToClass', (req, res) =>
 {
-      const name = req.body.params.name;
-      const room = req.body.params.room;
-      const session = req.body.params.session;
-      const date = req.body.params.date;
-      const timetable = req.body.params.timetable;
-      const makeUpFor = req.body.params.makeUpFor;
-      const teacher = req.body.params.teacher;
-      const supervisor = req.body.params.supervisor;
+      const data = decryptWithAES(req.body.data);
+      const name = data.params.name;
+      const room = data.params.room;
+      const session = data.params.session;
+      const date = data.params.date;
+      const timetable = data.params.timetable;
+      const makeUpFor = data.params.makeUpFor;
+      const teacher = data.params.teacher;
+      const supervisor = data.params.supervisor;
       classModel.addSessionToClass(name, room, session, date, timetable, makeUpFor, supervisor, teacher, (result, err) =>
       {
             if (err)
@@ -276,8 +292,9 @@ adminRoutes.post('/addSessionToClass', (req, res) =>
 
 adminRoutes.post('/getSessionTeacher', (req, res) =>
 {
-      const name = req.body.params.name;
-      const number = req.body.params.number;
+      const data = decryptWithAES(req.body.data);
+      const name = data.params.name;
+      const number = data.params.number;
       classModel.getSessionTeacher(name, number, (result, err) =>
       {
             if (err)
@@ -292,8 +309,9 @@ adminRoutes.post('/getSessionTeacher', (req, res) =>
 
 adminRoutes.post('/getSessionSupervisor', (req, res) =>
 {
-      const name = req.body.params.name;
-      const number = req.body.params.number;
+      const data = decryptWithAES(req.body.data);
+      const name = data.params.name;
+      const number = data.params.number;
       classModel.getSessionSupervisor(name, number, (result, err) =>
       {
             if (err)
@@ -308,8 +326,9 @@ adminRoutes.post('/getSessionSupervisor', (req, res) =>
 
 adminRoutes.post('/removeTeacherFromClass', (req, res) =>
 {
-      const name = req.body.params.name;
-      const id = req.body.params.id;
+      const data = decryptWithAES(req.body.data);
+      const name = data.params.name;
+      const id = data.params.id;
       classModel.removeTeacherFromClass(name, id, (result, err) =>
       {
             if (err)
@@ -324,8 +343,9 @@ adminRoutes.post('/removeTeacherFromClass', (req, res) =>
 
 adminRoutes.post('/getTeacherNotInClass', (req, res) =>
 {
-      const name = req.body.params.name;
-      const className = req.body.params.className;
+      const data = decryptWithAES(req.body.data);
+      const name = data.params.name;
+      const className = data.params.className;
       classModel.getTeacherNotInClass(name, className, (result, err) =>
       {
             if (err)
@@ -340,8 +360,9 @@ adminRoutes.post('/getTeacherNotInClass', (req, res) =>
 
 adminRoutes.post('/addTeacherToClass', (req, res) =>
 {
-      const name = req.body.params.name;
-      const teachers = req.body.params.teachers;
+      const data = decryptWithAES(req.body.data);
+      const name = data.params.name;
+      const teachers = data.params.teachers;
       classModel.addTeacherToClass(name, teachers, (result, err) =>
       {
             if (err)
@@ -356,8 +377,9 @@ adminRoutes.post('/addTeacherToClass', (req, res) =>
 
 adminRoutes.post('/classSessionDetail', (req, res) =>
 {
-      const name = req.body.params.name;
-      const number = req.body.params.number;
+      const data = decryptWithAES(req.body.data);
+      const name = data.params.name;
+      const number = data.params.number;
       classModel.classSessionDetail(name, number, (result, err) =>
       {
             if (err)
@@ -372,7 +394,8 @@ adminRoutes.post('/classSessionDetail', (req, res) =>
 
 adminRoutes.post('/getSessionStudent', (req, res) =>
 {
-      const name = req.body.params.name;
+      const data = decryptWithAES(req.body.data);
+      const name = data.params.name;
       classModel.getSessionStudent(name, (result, err) =>
       {
             if (err)
@@ -387,9 +410,10 @@ adminRoutes.post('/getSessionStudent', (req, res) =>
 
 adminRoutes.post('/getStudentSessionAttendace', (req, res) =>
 {
-      const className = req.body.params.className;
-      const sessionNumber = req.body.params.sessionNumber;
-      const id = req.body.params.id;
+      const data = decryptWithAES(req.body.data);
+      const className = data.params.className;
+      const sessionNumber = data.params.sessionNumber;
+      const id = data.params.id;
       classModel.getStudentSessionAttendace(className, sessionNumber, id, (result, err) =>
       {
             if (err)
@@ -404,10 +428,11 @@ adminRoutes.post('/getStudentSessionAttendace', (req, res) =>
 
 adminRoutes.post('/checkAttendance', (req, res) =>
 {
-      const name = req.body.params.name;
-      const number = req.body.params.number;
-      const students = req.body.params.students;
-      const teacher = req.body.params.teacher;
+      const data = decryptWithAES(req.body.data);
+      const name = data.params.name;
+      const number = data.params.number;
+      const students = data.params.students;
+      const teacher = data.params.teacher;
       classModel.checkAttendance(name, number, students, teacher, (result, err) =>
       {
             if (err)
@@ -422,8 +447,9 @@ adminRoutes.post('/checkAttendance', (req, res) =>
 
 adminRoutes.post('/cancelSession', (req, res) =>
 {
-      const name = req.body.params.name;
-      const number = req.body.params.number;
+      const data = decryptWithAES(req.body.data);
+      const name = data.params.name;
+      const number = data.params.number;
       classModel.cancelSession(name, number, (result, err) =>
       {
             if (err)
@@ -438,8 +464,9 @@ adminRoutes.post('/cancelSession', (req, res) =>
 
 adminRoutes.post('/restoreSession', (req, res) =>
 {
-      const name = req.body.params.name;
-      const number = req.body.params.number;
+      const data = decryptWithAES(req.body.data);
+      const name = data.params.name;
+      const number = data.params.number;
       classModel.restoreSession(name, number, (result, err) =>
       {
             if (err)
@@ -454,9 +481,10 @@ adminRoutes.post('/restoreSession', (req, res) =>
 
 adminRoutes.post('/changeTeacher', (req, res) =>
 {
-      const name = req.body.params.name;
-      const number = req.body.params.number;
-      const teacher = req.body.params.teacher;
+      const data = decryptWithAES(req.body.data);
+      const name = data.params.name;
+      const number = data.params.number;
+      const teacher = data.params.teacher;
       classModel.changeTeacher(name, number, teacher, (result, err) =>
       {
             if (err)
@@ -471,9 +499,10 @@ adminRoutes.post('/changeTeacher', (req, res) =>
 
 adminRoutes.post('/changeSupervisor', (req, res) =>
 {
-      const name = req.body.params.name;
-      const number = req.body.params.number;
-      const supervisor = req.body.params.supervisor;
+      const data = decryptWithAES(req.body.data);
+      const name = data.params.name;
+      const number = data.params.number;
+      const supervisor = data.params.supervisor;
       classModel.changeSupervisor(name, number, supervisor, (result, err) =>
       {
             if (err)
@@ -490,8 +519,9 @@ const staffModel = new Staff();
 
 adminRoutes.post('/staffList', (req, res) =>
 {
-      const name = req.body.params.name;
-      const type = req.body.params.type;
+      const data = decryptWithAES(req.body.data);
+      const name = data.params.name;
+      const type = data.params.type;
       staffModel.getList(name, type, (result, err) =>
       {
             if (err)
@@ -511,7 +541,8 @@ adminRoutes.post('/staffList', (req, res) =>
 
 adminRoutes.post('/staffInfo', (req, res) =>
 {
-      const id = req.body.params.id;
+      const data = decryptWithAES(req.body.data);
+      const id = data.params.id;
       staffModel.getInfo(id, (result, err) =>
       {
             if (err)
@@ -526,7 +557,8 @@ adminRoutes.post('/staffInfo', (req, res) =>
 
 adminRoutes.post('/getTeacherClass', (req, res) =>
 {
-      const id = req.body.params.id;
+      const data = decryptWithAES(req.body.data);
+      const id = data.params.id;
       staffModel.getTeacherClass(id, (result, err) =>
       {
             if (err)
@@ -541,7 +573,8 @@ adminRoutes.post('/getTeacherClass', (req, res) =>
 
 adminRoutes.post('/getSupervisorClass', (req, res) =>
 {
-      const id = req.body.params.id;
+      const data = decryptWithAES(req.body.data);
+      const id = data.params.id;
       staffModel.getSupervisorClass(id, (result, err) =>
       {
             if (err)
@@ -559,7 +592,8 @@ const studentModel = new Student();
 
 adminRoutes.post('/studentList', (req, res) =>
 {
-      const name = req.body.params.name;
+      const data = decryptWithAES(req.body.data);
+      const name = data.params.name;
       studentModel.getList(name, (result, err) =>
       {
             if (err)
@@ -579,7 +613,8 @@ adminRoutes.post('/studentList', (req, res) =>
 
 adminRoutes.post('/studentInfo', (req, res) =>
 {
-      const id = req.body.params.id;
+      const data = decryptWithAES(req.body.data);
+      const id = data.params.id;
       studentModel.studentInfo(id, (result, err) =>
       {
             if (err)
@@ -594,7 +629,8 @@ adminRoutes.post('/studentInfo', (req, res) =>
 
 adminRoutes.post('/getStudentClass', (req, res) =>
 {
-      const id = req.body.params.id;
+      const data = decryptWithAES(req.body.data);
+      const id = data.params.id;
       studentModel.getStudentClass(id, (result, err) =>
       {
             if (err)

@@ -10,6 +10,8 @@ import { domain } from '../../../tools/domain';
 import { DMY, YMD } from '../../../tools/dateFormat';
 import { AiOutlineCloseCircle } from 'react-icons/ai';
 import { useOutletContext } from 'react-router-dom';
+import axios from 'axios';
+import { encrypt } from '../../../tools/encryption';
 
 const Profile = () =>
 {
@@ -96,7 +98,7 @@ const Profile = () =>
             }
       }
 
-      const changeInfo = (e) =>
+      const changeInfo = async (e) =>
       {
             e.preventDefault();
             let isOk = true;
@@ -113,17 +115,17 @@ const Profile = () =>
             if (isOk)
             {
                   const formdata = new FormData();
-                  formdata.append('ssn', newSSN === '' ? null : newSSN);
-                  formdata.append('name', newName === '' ? null : newName);
-                  formdata.append('address', newAddress === '' ? null : newAddress);
-                  formdata.append('birthday', newBirthday === '' ? null : newBirthday);
-                  formdata.append('birthplace', newBirthplace === '' ? null : newBirthplace);
-                  formdata.append('email', newEmail === '' ? null : newEmail);
-                  formdata.append('phone', newPhone === '' ? null : newPhone);
-                  formdata.append('password', password === '' ? null : password);
-                  formdata.append('userType', userType);
+                  formdata.append('ssn', newSSN === '' ? null : await encrypt(newSSN));
+                  formdata.append('name', newName === '' ? null : await encrypt(newName));
+                  formdata.append('address', newAddress === '' ? null : await encrypt(newAddress));
+                  formdata.append('birthday', newBirthday === '' ? null : await encrypt(newBirthday));
+                  formdata.append('birthplace', newBirthplace === '' ? null : await encrypt(newBirthplace));
+                  formdata.append('email', newEmail === '' ? null : await encrypt(newEmail));
+                  formdata.append('phone', newPhone === '' ? null : await encrypt(newPhone));
+                  formdata.append('password', password === '' ? null : await encrypt(password));
+                  formdata.append('userType', await encrypt(userType));
                   formdata.append('image', newImage);
-                  request.post(`http://${ domain }/updateProfile`, formdata, {
+                  axios.post(`http://${ domain }/updateProfile`, formdata, {
                         withCredentials: true,
                         headers: {
                               'Content-Type': 'multipart/form-data'
@@ -168,7 +170,7 @@ const Profile = () =>
                                           {
                                                 setNewImage(null);
                                                 if (isRefValid(profileImg))
-                                                      profileImg.current.src = require('../../../images/profile.png');
+                                                      profileImg.current.src = image;
                                           }
                                           else
                                           {
