@@ -17,8 +17,9 @@ function decryptWithAES(data)
 {
       if (data === null || data === undefined || data === '' || data === 'null' || data === 'undefined') return null;
       const bytes = CryptoJS.AES.decrypt(data, key);
-      const decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
-      return decryptedData;
+      const decryptedData = bytes.toString(CryptoJS.enc.Utf8);
+      if (decryptedData === null || decryptedData === undefined || decryptedData === '' || decryptedData === 'null' || decryptedData === 'undefined') return null;
+      return JSON.parse(decryptedData);
 }
 
 const adminRoutes = express.Router();
@@ -35,12 +36,12 @@ adminRoutes.post('/classList', (req, res) =>
             if (err)
             {
                   console.log(err);
-                  res.status(500).send('Server internal error!');
+                  res.status(500).send({ message: 'Server internal error!' });
             }
             else
             {
                   if (!result.length)
-                        res.status(204).send();
+                        res.status(204).send({ message: 'No class found in the database!' });
                   else
                         res.status(200).send(encryptWithAES(result));
             }
@@ -56,7 +57,7 @@ adminRoutes.post('/getCurrentStudent', (req, res) =>
             if (err)
             {
                   console.log(err);
-                  res.status(500).send('Server internal error!');
+                  res.status(500).send({ message: 'Server internal error!' });
             }
             else
                   res.status(200).send(encryptWithAES(result[0]));
@@ -72,7 +73,7 @@ adminRoutes.post('/getCurrentSession', (req, res) =>
             if (err)
             {
                   console.log(err);
-                  res.status(500).send('Server internal error!');
+                  res.status(500).send({ message: 'Server internal error!' });
             }
             else
                   res.status(200).send(encryptWithAES(result[0]));
@@ -88,7 +89,7 @@ adminRoutes.post('/classInfo', (req, res) =>
             if (err)
             {
                   console.log(err);
-                  res.status(500).send('Server internal error!');
+                  res.status(500).send({ message: 'Server internal error!' });
             }
             else
                   res.status(200).send(encryptWithAES(result[0]));
@@ -104,7 +105,7 @@ adminRoutes.post('/classStudent', (req, res) =>
             if (err)
             {
                   console.log(err);
-                  res.status(500).send('Server internal error!');
+                  res.status(500).send({ message: 'Server internal error!' });
             }
             else
                   res.status(200).send(encryptWithAES(result));
@@ -120,7 +121,7 @@ adminRoutes.post('/classSession', (req, res) =>
             if (err)
             {
                   console.log(err);
-                  res.status(500).send('Server internal error!');
+                  res.status(500).send({ message: 'Server internal error!' });
             }
             else
                   res.status(200).send(encryptWithAES(result));
@@ -143,7 +144,7 @@ adminRoutes.post('/classTeacher', (req, res) =>
                   if (err)
                   {
                         console.log(err);
-                        res.status(500).send('Server internal error!');
+                        res.status(500).send({ message: 'Server internal error!' });
                   }
                   else
                         res.status(200).send(encryptWithAES(result));
@@ -160,7 +161,7 @@ adminRoutes.post('/toggleStatus', (req, res) =>
             if (err)
             {
                   console.log(err);
-                  res.status(500).send('Server internal error!');
+                  res.status(500).send({ message: 'Server internal error!' });
             }
             else
                   res.status(200).send(encryptWithAES('Class status update successfully!'));
@@ -177,7 +178,7 @@ adminRoutes.post('/removeStudentFromClass', (req, res) =>
             if (err)
             {
                   console.log(err);
-                  res.status(500).send('Server internal error!');
+                  res.status(500).send({ message: 'Server internal error!' });
             }
             else
                   res.status(200).send(encryptWithAES('Student removed successfully!'));
@@ -194,7 +195,7 @@ adminRoutes.post('/getStudentNotFromClass', (req, res) =>
             if (err)
             {
                   console.log(err);
-                  res.status(500).send('Server internal error!');
+                  res.status(500).send({ message: 'Server internal error!' });
             }
             else
                   res.status(200).send(encryptWithAES(result));
@@ -211,7 +212,7 @@ adminRoutes.post('/addStudentToClass', (req, res) =>
             if (err)
             {
                   console.log(err);
-                  res.status(500).send('Server internal error!');
+                  res.status(500).send({ message: 'Server internal error!' });
             }
             else
                   res.status(200).send(encryptWithAES('Student(s) added successfully!'));
@@ -227,7 +228,7 @@ adminRoutes.post('/getRoom', (req, res) =>
             if (err)
             {
                   console.log(err);
-                  res.status(500).send('Server internal error!');
+                  res.status(500).send({ message: 'Server internal error!' });
             }
             else
                   res.status(200).send(encryptWithAES(result));
@@ -244,7 +245,7 @@ adminRoutes.post('/getTimetable', (req, res) =>
             if (err)
             {
                   console.log(err);
-                  res.status(500).send('Server internal error!');
+                  res.status(500).send({ message: 'Server internal error!' });
             }
             else
                   res.status(200).send(encryptWithAES(result));
@@ -260,7 +261,7 @@ adminRoutes.post('/getClassCanceledSession', (req, res) =>
             if (err)
             {
                   console.log(err);
-                  res.status(500).send('Server internal error!');
+                  res.status(500).send({ message: 'Server internal error!' });
             }
             else
                   res.status(200).send(encryptWithAES(result));
@@ -283,7 +284,7 @@ adminRoutes.post('/addSessionToClass', (req, res) =>
             if (err)
             {
                   console.log(err);
-                  res.status(500).send('Server internal error!');
+                  res.status(500).send({ message: 'Server internal error!' });
             }
             else
                   res.status(200).send(encryptWithAES('Session added successfully!'));
@@ -300,7 +301,7 @@ adminRoutes.post('/getSessionTeacher', (req, res) =>
             if (err)
             {
                   console.log(err);
-                  res.status(500).send('Server internal error!');
+                  res.status(500).send({ message: 'Server internal error!' });
             }
             else
                   res.status(200).send(encryptWithAES(result[0]));
@@ -317,7 +318,7 @@ adminRoutes.post('/getSessionSupervisor', (req, res) =>
             if (err)
             {
                   console.log(err);
-                  res.status(500).send('Server internal error!');
+                  res.status(500).send({ message: 'Server internal error!' });
             }
             else
                   res.status(200).send(encryptWithAES(result[0]));
@@ -334,7 +335,7 @@ adminRoutes.post('/removeTeacherFromClass', (req, res) =>
             if (err)
             {
                   console.log(err);
-                  res.status(500).send('Server internal error!');
+                  res.status(500).send({ message: 'Server internal error!' });
             }
             else
                   res.status(200).send(encryptWithAES('Teacher removed successfully!'));
@@ -351,7 +352,7 @@ adminRoutes.post('/getTeacherNotInClass', (req, res) =>
             if (err)
             {
                   console.log(err);
-                  res.status(500).send('Server internal error!');
+                  res.status(500).send({ message: 'Server internal error!' });
             }
             else
                   res.status(200).send(encryptWithAES(result));
@@ -368,7 +369,7 @@ adminRoutes.post('/addTeacherToClass', (req, res) =>
             if (err)
             {
                   console.log(err);
-                  res.status(500).send('Server internal error!');
+                  res.status(500).send({ message: 'Server internal error!' });
             }
             else
                   res.status(200).send(encryptWithAES('Teacher(s) added successfully!'));
@@ -385,7 +386,7 @@ adminRoutes.post('/classSessionDetail', (req, res) =>
             if (err)
             {
                   console.log(err);
-                  res.status(500).send('Server internal error!');
+                  res.status(500).send({ message: 'Server internal error!' });
             }
             else
                   res.status(200).send(encryptWithAES(result[0]));
@@ -401,7 +402,7 @@ adminRoutes.post('/getSessionStudent', (req, res) =>
             if (err)
             {
                   console.log(err);
-                  res.status(500).send('Server internal error!');
+                  res.status(500).send({ message: 'Server internal error!' });
             }
             else
                   res.status(200).send(encryptWithAES(result));
@@ -419,7 +420,7 @@ adminRoutes.post('/getStudentSessionAttendace', (req, res) =>
             if (err)
             {
                   console.log(err);
-                  res.status(500).send('Server internal error!');
+                  res.status(500).send({ message: 'Server internal error!' });
             }
             else
                   res.status(200).send(encryptWithAES(result));
@@ -438,7 +439,7 @@ adminRoutes.post('/checkAttendance', (req, res) =>
             if (err)
             {
                   console.log(err);
-                  res.status(500).send('Server internal error!');
+                  res.status(500).send({ message: 'Server internal error!' });
             }
             else
                   res.status(200).send(encryptWithAES(result));
@@ -455,7 +456,7 @@ adminRoutes.post('/cancelSession', (req, res) =>
             if (err)
             {
                   console.log(err);
-                  res.status(500).send('Server internal error!');
+                  res.status(500).send({ message: 'Server internal error!' });
             }
             else
                   res.status(200).send(encryptWithAES('Session cancelled successfully!'));
@@ -472,7 +473,7 @@ adminRoutes.post('/restoreSession', (req, res) =>
             if (err)
             {
                   console.log(err);
-                  res.status(500).send('Server internal error!');
+                  res.status(500).send({ message: 'Server internal error!' });
             }
             else
                   res.status(200).send(encryptWithAES('Session restored successfully!'));
@@ -490,7 +491,7 @@ adminRoutes.post('/changeTeacher', (req, res) =>
             if (err)
             {
                   console.log(err);
-                  res.status(500).send('Server internal error!');
+                  res.status(500).send({ message: 'Server internal error!' });
             }
             else
                   res.status(200).send(encryptWithAES('Teacher changed successfully!'));
@@ -508,7 +509,7 @@ adminRoutes.post('/changeSupervisor', (req, res) =>
             if (err)
             {
                   console.log(err);
-                  res.status(500).send('Server internal error!');
+                  res.status(500).send({ message: 'Server internal error!' });
             }
             else
                   res.status(200).send(encryptWithAES('Supervisor changed successfully!'));
@@ -527,12 +528,12 @@ adminRoutes.post('/staffList', (req, res) =>
             if (err)
             {
                   console.log(err);
-                  res.status(500).send('Server internal error!');
+                  res.status(500).send({ message: 'Server internal error!' });
             }
             else
             {
                   if (!result.length)
-                        res.status(204).send();
+                        res.status(204).send({message:'No staff found in the database!'});
                   else
                         res.status(200).send(encryptWithAES(result));
             }
@@ -548,7 +549,7 @@ adminRoutes.post('/staffInfo', (req, res) =>
             if (err)
             {
                   console.log(err);
-                  res.status(500).send('Server internal error!');
+                  res.status(500).send({ message: 'Server internal error!' });
             }
             else
                   res.status(200).send(encryptWithAES(result[0]));
@@ -564,7 +565,7 @@ adminRoutes.post('/getTeacherClass', (req, res) =>
             if (err)
             {
                   console.log(err);
-                  res.status(500).send('Server internal error!');
+                  res.status(500).send({ message: 'Server internal error!' });
             }
             else
                   res.status(200).send(encryptWithAES(result));
@@ -580,7 +581,7 @@ adminRoutes.post('/getSupervisorClass', (req, res) =>
             if (err)
             {
                   console.log(err);
-                  res.status(500).send('Server internal error!');
+                  res.status(500).send({ message: 'Server internal error!' });
             }
             else
                   res.status(200).send(encryptWithAES(result));
@@ -599,12 +600,12 @@ adminRoutes.post('/studentList', (req, res) =>
             if (err)
             {
                   console.log(err);
-                  res.status(500).send('Server internal error!');
+                  res.status(500).send({ message: 'Server internal error!' });
             }
             else
             {
                   if (!result.length)
-                        res.status(204).send();
+                        res.status(204).send({message:'No student found in the database!'});
                   else
                         res.status(200).send(encryptWithAES(result));
             }
@@ -620,7 +621,7 @@ adminRoutes.post('/studentInfo', (req, res) =>
             if (err)
             {
                   console.log(err);
-                  res.status(500).send('Server internal error!');
+                  res.status(500).send({ message: 'Server internal error!' });
             }
             else
                   res.status(200).send(encryptWithAES(result[0]));
@@ -636,7 +637,7 @@ adminRoutes.post('/getStudentClass', (req, res) =>
             if (err)
             {
                   console.log(err);
-                  res.status(500).send('Server internal error!');
+                  res.status(500).send({ message: 'Server internal error!' });
             }
             else
                   res.status(200).send(encryptWithAES(result));

@@ -15,8 +15,9 @@ function decryptWithAES(data)
 {
       if (data === null || data === undefined || data === '' || data === 'null' || data === 'undefined') return null;
       const bytes = CryptoJS.AES.decrypt(data, key);
-      const decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
-      return decryptedData;
+      const decryptedData = bytes.toString(CryptoJS.enc.Utf8);
+      if (decryptedData === null || decryptedData === undefined || decryptedData === '' || decryptedData === 'null' || decryptedData === 'undefined') return null;
+      return JSON.parse(decryptedData);
 }
 
 const staffRoutes = express.Router();

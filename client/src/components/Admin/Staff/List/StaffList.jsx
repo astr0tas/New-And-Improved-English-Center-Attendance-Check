@@ -28,8 +28,6 @@ const Staff = (props) =>
 
 const StaffList = () =>
 {
-      document.title = 'Staff List';
-
       const { staffType, setStaffType } = useContext(context);
 
       const [tableContent, setTableContent] = useState([]);
@@ -63,6 +61,8 @@ const StaffList = () =>
 
       useEffect(() =>
       {
+            document.title = staffType === 0 ? 'Staff List' : staffType === 1 ? 'Teacher List' : 'Supervisor List';
+
             let opt1Inst, opt2Inst;
             if (isRefValid(opt1))
             {

@@ -44,6 +44,9 @@ app.use(session({
 
 app.use((req, res, next) =>
 {
+      if (req.url === '/getKey' && !req.session.userID)
+            res.status(403).send({message:'No key for you!'});
+
       const contentType = req.get('Content-Type');
       const authorization = req.header('Authorization');
 
@@ -56,7 +59,7 @@ app.use((req, res, next) =>
             // Allow undefined or null Content-Type
             if (contentType !== undefined && contentType !== null)
             {
-                  return res.status(400).send('Invalid Content-Type');
+                  return res.status(400).send({message:'Invalid Content-Type'});
             }
       }
       else
@@ -64,7 +67,7 @@ app.use((req, res, next) =>
             // Verify the Content-Type header for other request methods (only POST requests are used in this project)
             if (contentType !== 'application/json' && !contentType.includes('multipart/form-data'))
             {
-                  return res.status(400).send('Invalid Content-Type');
+                  return res.status(400).send({message:'Invalid Content-Type'});
             }
       }
 

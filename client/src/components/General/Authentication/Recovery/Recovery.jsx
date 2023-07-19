@@ -1,5 +1,5 @@
 import styles from './Recovery.module.css';
-import request from '../../../../tools/request';
+import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 import { useRef, useState } from 'react';
 import { AiOutlineCloseCircle } from 'react-icons/ai';
@@ -35,12 +35,12 @@ function Recovery()
             {
                   setIsMissing(false);
 
-                  request.post(`http://${ domain }/validateUser`, { params: { username: username } }, {
+                  axios.post(`http://${ domain }/validateUser`, { params: { username: username } }, {
                         headers: { 'Content-Type': 'application/json' }
                   })
                         .then(res =>
                         {
-                              if (res.data)
+                              if (res.data.message)
                               {
                                     setIsWrong(false);
                                     if (isRefValid(checkUsername))
@@ -73,12 +73,11 @@ function Recovery()
             else
             {
                   setIsMatch(true);
-                  request.post(`http://${ domain }/recovery`, { params: { username: username, password: password } }, {
+                  axios.post(`http://${ domain }/recovery`, { params: { username: username, password: password } }, {
                         headers: { 'Content-Type': 'application/json'}
                   })
                         .then(res =>
                         {
-                              console.log(res);
                               setShowPopUp(true);
                         })
                         .catch(error => console.log(error));

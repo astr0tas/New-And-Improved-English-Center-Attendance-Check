@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, forwardRef, useImperativeHandle } from 're
 import styles from './SessionDetail.module.css';
 import { useNavigate, useParams } from 'react-router-dom';
 import { domain } from '../../../../tools/domain';
-import axios from 'axios';
+import request from '../../../../tools/request';
 import { DMDY } from '../../../../tools/dateFormat';
 import '../../../../css/scroll.css';
 import '../../../../css/modal.css';
@@ -22,7 +22,7 @@ const TeacherSelect = (props) =>
       {
             if (props.changeTeacherPopUp)
             {
-                  axios.post(`http://${ domain }/admin/classTeacher`, { params: { name: props.name, teacherName: searchTeacher } }, { headers: { 'Content-Type': 'application/json' } })
+                  request.post(`http://${ domain }/admin/classTeacher`, { params: { name: props.name, teacherName: searchTeacher } }, { headers: { 'Content-Type': 'application/json' } })
                         .then(res =>
                         {
                               const temp = [];
@@ -111,7 +111,7 @@ const SupervisorSelect = (props) =>
       {
             if (props.changeSupervisorPopUp)
             {
-                  axios.post(`http://${ domain }/admin/staffList`, { params: { name: searchSupervisor, type: 2 } }, { headers: { 'Content-Type': 'application/json' } })
+                  request.post(`http://${ domain }/admin/staffList`, { params: { name: searchSupervisor, type: 2 } }, { headers: { 'Content-Type': 'application/json' } })
                         .then(res =>
                         {
                               const temp = [];
@@ -208,7 +208,7 @@ const Student = forwardRef((props, ref) =>
 
       useEffect(() =>
       {
-            axios.post(`http://${ domain }/admin/getStudentSessionAttendace`, { params: { className: props.className, sessionNumber: props.sessionNumber, id: props.id } }, { headers: { 'Content-Type': 'application/json' } })
+            request.post(`http://${ domain }/admin/getStudentSessionAttendace`, { params: { className: props.className, sessionNumber: props.sessionNumber, id: props.id } }, { headers: { 'Content-Type': 'application/json' } })
                   .then(res =>
                   {
                         if (res.data.length)
@@ -356,7 +356,7 @@ const AdminClassSessionDetail = () =>
             }
             if (isOK)
             {
-                  axios.post(`http://${ domain }/admin/checkAttendance`,
+                  request.post(`http://${ domain }/admin/checkAttendance`,
                         { params: { name: name, number: number, students: childrenRefs.current, teacher: { id: teacherID, status: teacherStatus, note: teacherNote } } },
                         { headers: { 'Content-Type': 'application/json' } })
                         .then(res =>
@@ -369,7 +369,7 @@ const AdminClassSessionDetail = () =>
 
       useEffect(() =>
       {
-            axios.post(`http://${ domain }/admin/classSessionDetail`, { params: { name: name, number: number } }, { headers: { 'Content-Type': 'application/json' } })
+            request.post(`http://${ domain }/admin/classSessionDetail`, { params: { name: name, number: number } }, { headers: { 'Content-Type': 'application/json' } })
                   .then(res =>
                   {
                         setDate(res.data.session_date);
@@ -381,7 +381,7 @@ const AdminClassSessionDetail = () =>
                   })
                   .catch(err => console.error(err));
 
-            axios.post(`http://${ domain }/admin/getSessionTeacher`, { params: { name: name, number: number } }, { headers: { 'Content-Type': 'application/json' } })
+            request.post(`http://${ domain }/admin/getSessionTeacher`, { params: { name: name, number: number } }, { headers: { 'Content-Type': 'application/json' } })
                   .then(res =>
                   {
                         if (res.data !== '')
@@ -396,7 +396,7 @@ const AdminClassSessionDetail = () =>
                   })
                   .catch(err => console.error(err));
 
-            axios.post(`http://${ domain }/admin/getSessionSupervisor`, { params: { name: name, number: number } }, { headers: { 'Content-Type': 'application/json' } })
+            request.post(`http://${ domain }/admin/getSessionSupervisor`, { params: { name: name, number: number } }, { headers: { 'Content-Type': 'application/json' } })
                   .then(res =>
                   {
                         if (res.data !== '')
@@ -409,7 +409,7 @@ const AdminClassSessionDetail = () =>
                   })
                   .catch(err => console.error(err));
 
-            axios.post(`http://${ domain }/admin/getSessionStudent`, { params: { name: name } }, { headers: { 'Content-Type': 'application/json' } })
+            request.post(`http://${ domain }/admin/getSessionStudent`, { params: { name: name } }, { headers: { 'Content-Type': 'application/json' } })
                   .then(res =>
                   {
                         if (res.data !== '')
@@ -583,7 +583,7 @@ const AdminClassSessionDetail = () =>
                               <button className={ `btn btn-danger ms-3` } onClick={ () =>
                               {
                                     setShowPopUp1(false);
-                                    axios.post(`http://${ domain }/admin/cancelSession`, { params: { name: name, number: number } }, { headers: { 'Content-Type': 'application/json' } })
+                                    request.post(`http://${ domain }/admin/cancelSession`, { params: { name: name, number: number } }, { headers: { 'Content-Type': 'application/json' } })
                                           .then(res => setRender(!render))
                                           .catch(err => console.error(err));
                               } }>YES</button>
@@ -601,7 +601,7 @@ const AdminClassSessionDetail = () =>
                               <button className={ `btn btn-danger ms-3` } onClick={ () =>
                               {
                                     setShowPopUp4(false);
-                                    axios.post(`http://${ domain }/admin/restoreSession`, { params: { name: name, number: number } }, { headers: { 'Content-Type': 'application/json' } })
+                                    request.post(`http://${ domain }/admin/restoreSession`, { params: { name: name, number: number } }, { headers: { 'Content-Type': 'application/json' } })
                                           .then(res => setRender(!render))
                                           .catch(err => console.error(err));
                               } }>Yes</button>
@@ -670,7 +670,7 @@ const AdminClassSessionDetail = () =>
                                     setNewTeacher(null);
                                     setConfirmChangeTeacher(false);
                                     setChangeTeacherPopUp(false);
-                                    axios.post(`http://${ domain }/admin/changeTeacher`, {
+                                    request.post(`http://${ domain }/admin/changeTeacher`, {
                                           params: {
                                                 name: name,
                                                 number: number,
@@ -699,7 +699,7 @@ const AdminClassSessionDetail = () =>
                                     setNewSupervisor(null);
                                     setConfirmChangeSupervisor(false);
                                     setChangeSupervisorPopUp(false);
-                                    axios.post(`http://${ domain }/admin/changeSupervisor`, {
+                                    request.post(`http://${ domain }/admin/changeSupervisor`, {
                                           params: {
                                                 name: name,
                                                 number: number,
