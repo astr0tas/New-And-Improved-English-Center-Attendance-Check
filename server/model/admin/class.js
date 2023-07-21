@@ -412,4 +412,15 @@ export class Class
                         callback(res, null);
             });
       }
+
+      getPeriods(callback)
+      {
+            this.conn.query(`select * from timetable`, [], (err, res) =>
+            {
+                  if (err)
+                        callback(null, err);
+                  else
+                        callback(res, null);
+            });
+      }
 }

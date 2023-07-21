@@ -1,13 +1,101 @@
 import styles from './ClassCreate.module.css';
 import { Modal } from 'react-bootstrap';
 import axios from 'axios';
-import { domain } from "../../../../../tools/domain";
+import { domain } from "../../../../tools/domain";
 import { useEffect, useState } from 'react';
 import { Dropdown } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { AiOutlineCloseCircle } from 'react-icons/ai';
-import '../../../../../css/scroll.css';
+import '../../../../css/scroll.css';
+
+const PeriodSelect = (props) =>
+{
+      const [periodList, setPeriodList] = useState([]);
+
+      const toggle = (e, id) =>
+      {
+            if (e.target.checked && !props.period.find(element => element.dow === parseInt(props.dow.split(',')[0])))
+                  props.setPeriod(prev => [...prev, { dow: parseInt(props.dow.split(',')[0]), id: id }]);
+            else
+                  props.setPeriod(props.period.filter(element => element.id !== id || element.dow !== parseInt(props.dow.split(',')[0])));
+      }
+
+      useEffect(() =>
+      {
+            if (props.addPeriodPopUp && props.dow)
+            {
+                  axios.get(`http://${ domain }/admin/getPeriods`)
+                        .then(res =>
+                        {
+                              const temp = [];
+                              for (let i = 0; i < res.data.length; i++)
+                                    temp.push(<tr key={ i }>
+                                          <td className='text-center align-middle'>{ i + 1 }</td>
+                                          <td className='text-center align-middle'>{ res.data[i].Start_hour } - { res.data[i].End_hour }</td>
+                                          <td className='text-center align-middle'>
+                                                <input type='checkbox' className={ `${ styles.hover }` }
+                                                      style={ { width: '1.3rem', height: '1.3rem' } }
+                                                      checked={ props.period.length && !!props.period.find(element => element.dow === parseInt(props.dow.split(',')[0]) && element.id === res.data[i].ID) }
+                                                      onChange={ e => toggle(e, res.data[i].ID) }></input>
+                                          </td>
+                                    </tr>);
+                              setPeriodList(temp);
+                        })
+                        .catch(err => console.log(err));
+            }
+            else
+                  setPeriodList([]);
+      }, [props.dow, props.period]);
+
+      return (
+            <Modal show={ props.addPeriodPopUp } onHide={ () => props.setAddPeriodPopUp(false) }
+                  dialogClassName={ `${ styles.dialog } modal-dialog-scrollable` } contentClassName={ `w-100 h-100` }
+                  className={ `reAdjustModel ${ styles.customModal2 } hideBrowserScrollbar` } container={ props.containerRef.current }>
+                  <Modal.Header closeButton>
+                  </Modal.Header>
+                  <Modal.Body className='px-1' style={ { minHeight: props.dow ? '165px' : '100px' } }>
+                        <div className={ `h-100 w-100` }>
+                              <div className='w-100 d-flex justify-content-center mb-2'>
+                                    <Dropdown onSelect={ eventKey => props.setDow(eventKey) }>
+                                          <Dropdown.Toggle variant="primary" size='sm' style={ { maxWidth: '250px' } } className='text-wrap'>
+                                                { !props.dow ? 'Choose' : props.dow.split(',')[1] }
+                                          </Dropdown.Toggle>
+                                          <Dropdown.Menu style={ { maxHeight: '150px', overflow: 'auto' } }>
+                                                <Dropdown.Item eventKey={ null }>Clear</Dropdown.Item>
+                                                <Dropdown.Item eventKey={ [1, 'Monday'] }>Monday</Dropdown.Item>
+                                                <Dropdown.Item eventKey={ [2, 'Tuesday'] }>Tuesday</Dropdown.Item>
+                                                <Dropdown.Item eventKey={ [3, 'Wednesday'] }>Wednesday</Dropdown.Item>
+                                                <Dropdown.Item eventKey={ [4, 'Thursday'] }>Thursday</Dropdown.Item>
+                                                <Dropdown.Item eventKey={ [5, 'Friday'] }>Friday</Dropdown.Item>
+                                                <Dropdown.Item eventKey={ [6, 'Saturday'] }>Saturday</Dropdown.Item>
+                                          </Dropdown.Menu>
+                                    </Dropdown>
+                              </div>
+                              <table className="table table-hover table-info">
+                                    <thead>
+                                          <tr>
+                                                <th scope="col" className='col-1 text-center align-middle'>#</th>
+                                                <th scope="col" className='col-8 text-center align-middle'>Period</th>
+                                                <th scope="col" className='col text-center align-middle'>Action</th>
+                                          </tr>
+                                    </thead>
+                                    <tbody>
+                                          { periodList }
+                                    </tbody>
+                              </table>
+                        </div >
+                  </Modal.Body>
+                  <Modal.Footer className='justify-content-center'>
+                        <button className={ `btn btn-danger` } onClick={ () =>
+                        {
+                              if (props.dow)
+                                    props.setPeriod([]);
+                        } }>Clear</button>
+                  </Modal.Footer>
+            </Modal>
+      )
+}
 
 const TeacherSelect = (props) =>
 {
@@ -207,15 +295,16 @@ const ClassCreate = (props) =>
       const [name, setName] = useState(null);
       const [startDate, setStartDate] = useState(null);
       const [length, setLength] = useState(null);
-      const [period, setPeriod] = useState(null);
+      const [period, setPeriod] = useState([]);
       const [teacher, setTeacher] = useState(null);
       const [supervisor, setSupervisor] = useState(null);
       const [teacherName, setTeacherName] = useState(null);
       const [supervisorName, setSupervisorName] = useState(null);
+      const [dow, setDow] = useState(null);
 
-      const [showPeriodPopUp, setShowPeriodPopUp] = useState(false);
       const [addTeacherPopUp, setAddTeacherPopUp] = useState(false);
       const [addSupervisorPopUp, setAddSupervisorPopUp] = useState(false);
+      const [addPeriodPopUp, setAddPeriodPopUp] = useState(false);
 
       useEffect(() =>
       {
@@ -284,18 +373,18 @@ const ClassCreate = (props) =>
                                     </div>
                                     <div className='row mt-5'>
                                           <div className='col-sm-4 d-flex align-items-center justify-content-center col-12'>
-                                                <strong>End date</strong>
+                                                <strong className='text-center'>Period</strong>
                                           </div>
                                           <div className='col d-flex align-items-center justify-content-center justify-content-sm-start'>
-                                                <input value={ (startDate && length) ?  : '' } className={ `${ styles.inputs } w-100` } type="date" disabled></input>
+                                                <p className={ `${ styles.inputs } ${ styles.hover } w-100 mb-0 ps-2 pt-1` } onClick={ () => setAddPeriodPopUp(true) }></p>
                                           </div>
                                     </div>
                                     <div className='row mt-5'>
                                           <div className='col-sm-4 d-flex align-items-center justify-content-center col-12'>
-                                                <strong className='text-center'>Period</strong>
+                                                <strong>End date</strong>
                                           </div>
                                           <div className='col d-flex align-items-center justify-content-center justify-content-sm-start'>
-                                                <p className={ `${ styles.inputs } ${ styles.hover } w-100 mb-0 ps-2 pt-1` } onClick={ () => setShowPeriodPopUp(true) }></p>
+                                                <input value={ startDate && length && period.length ? '' : '' } className={ `${ styles.inputs } w-100` } type="date" disabled></input>
                                           </div>
                                     </div>
                                     {
@@ -358,6 +447,13 @@ const ClassCreate = (props) =>
                                     <button className={ `btn btn-danger ms-2 ms-md-4` } onClick={ () =>
                                     {
                                           props.setCreateClassPopUp(false);
+                                          setName(null);
+                                          setStartDate(null);
+                                          setLength(null);
+                                          setPeriod([]);
+                                          setTeacher(null);
+                                          setSupervisor(null);
+                                          setDow(null);
                                     } } type='button'>Cancel</button>
                                     <button type='submit' className={ `btn btn-primary ms-2 ms-md-4` }>Confirm</button>
                               </Modal.Footer>
@@ -387,6 +483,8 @@ const ClassCreate = (props) =>
                   <SupervisorSelect addSupervisorPopUp={ addSupervisorPopUp } setAddSupervisorPopUp={ setAddSupervisorPopUp } name={ props.name }
                         containerRef={ props.containerRef } supervisor={ supervisor } setSupervisor={ setSupervisor }
                         supervisorName={ supervisorName } setSupervisorName={ setSupervisorName } Navigate={ props.Navigate } />
+                  <PeriodSelect addPeriodPopUp={ addPeriodPopUp } setAddPeriodPopUp={ setAddPeriodPopUp } Navigate={ props.Navigate }
+                        containerRef={ props.containerRef } period={ period } setPeriod={ setPeriod } dow={ dow } setDow={ setDow } />
             </>
       )
 }

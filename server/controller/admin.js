@@ -137,7 +137,7 @@ adminRoutes.post('/toggleStatus', (req, res) =>
                   res.status(500).send({ message: 'Server internal error!' });
             }
             else
-                  res.status(200).send({message:'Class status update successfully!'});
+                  res.status(200).send({ message: 'Class status update successfully!' });
       })
 });
 
@@ -153,7 +153,7 @@ adminRoutes.post('/removeStudentFromClass', (req, res) =>
                   res.status(500).send({ message: 'Server internal error!' });
             }
             else
-                  res.status(200).send({message:'Student removed successfully!'});
+                  res.status(200).send({ message: 'Student removed successfully!' });
       })
 });
 
@@ -185,7 +185,7 @@ adminRoutes.post('/addStudentToClass', (req, res) =>
                   res.status(500).send({ message: 'Server internal error!' });
             }
             else
-                  res.status(200).send({message:'Student(s) added successfully!'});
+                  res.status(200).send({ message: 'Student(s) added successfully!' });
       })
 });
 
@@ -253,7 +253,7 @@ adminRoutes.post('/addSessionToClass', (req, res) =>
                   res.status(500).send({ message: 'Server internal error!' });
             }
             else
-                  res.status(200).send({message:'Session added successfully!'});
+                  res.status(200).send({ message: 'Session added successfully!' });
       })
 });
 
@@ -301,7 +301,7 @@ adminRoutes.post('/removeTeacherFromClass', (req, res) =>
                   res.status(500).send({ message: 'Server internal error!' });
             }
             else
-                  res.status(200).send({message:'Teacher removed successfully!'});
+                  res.status(200).send({ message: 'Teacher removed successfully!' });
       })
 });
 
@@ -333,7 +333,7 @@ adminRoutes.post('/addTeacherToClass', (req, res) =>
                   res.status(500).send({ message: 'Server internal error!' });
             }
             else
-                  res.status(200).send({message:'Teacher(s) added successfully!'});
+                  res.status(200).send({ message: 'Teacher(s) added successfully!' });
       })
 });
 
@@ -415,7 +415,7 @@ adminRoutes.post('/cancelSession', (req, res) =>
                   res.status(500).send({ message: 'Server internal error!' });
             }
             else
-                  res.status(200).send({message:'Session cancelled successfully!'});
+                  res.status(200).send({ message: 'Session cancelled successfully!' });
       })
 });
 
@@ -431,7 +431,7 @@ adminRoutes.post('/restoreSession', (req, res) =>
                   res.status(500).send({ message: 'Server internal error!' });
             }
             else
-                  res.status(200).send({message:'Session restored successfully!'});
+                  res.status(200).send({ message: 'Session restored successfully!' });
       })
 });
 
@@ -448,7 +448,7 @@ adminRoutes.post('/changeTeacher', (req, res) =>
                   res.status(500).send({ message: 'Server internal error!' });
             }
             else
-                  res.status(200).send({message:'Teacher changed successfully!'});
+                  res.status(200).send({ message: 'Teacher changed successfully!' });
       })
 });
 
@@ -465,7 +465,7 @@ adminRoutes.post('/changeSupervisor', (req, res) =>
                   res.status(500).send({ message: 'Server internal error!' });
             }
             else
-                  res.status(200).send({message:'Supervisor changed successfully!'});
+                  res.status(200).send({ message: 'Supervisor changed successfully!' });
       })
 });
 
@@ -486,6 +486,20 @@ adminRoutes.post('/changeSupervisor', (req, res) =>
 //                   res.status(200).send(encryptWithAES('Supervisor changed successfully!'));
 //       })
 // });
+
+adminRoutes.get('/getPeriods', (req, res) =>
+{
+      classModel.getPeriods((result, err) =>
+      {
+            if (err)
+            {
+                  console.log(err);
+                  res.status(500).send({ message: 'Server internal error!' });
+            }
+            else
+                  res.status(200).send(result);
+      })
+});
 
 const staffModel = new Staff();
 

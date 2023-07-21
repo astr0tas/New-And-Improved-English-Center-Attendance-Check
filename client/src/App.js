@@ -11,7 +11,7 @@ import Profile from './components/General/Profile/Profile';
 // Admin routes
 import ClassList from './components/Admin/Class/List/ClassList';
 import ClassDetail from './components/Admin/Class/Detail/ClassDetail';
-import AdminClassSession from './components/Admin/Class/Detail/Session/SessionDetail';
+import AdminClassSession from './components/Admin/Class/Session/SessionDetail';
 
 import StaffList from './components/Admin/Staff/List/StaffList';
 import StaffCreate from './components/Admin/Staff/Create/StaffCreate';

@@ -1,13 +1,13 @@
 import { useEffect, useRef, useState, forwardRef, useImperativeHandle } from 'react';
 import styles from './SessionDetail.module.css';
 import { useNavigate, useParams } from 'react-router-dom';
-import { domain } from '../../../../../tools/domain';
+import { domain } from '../../../../tools/domain';
 import axios from 'axios';
-import { DMDY } from '../../../../../tools/dateFormat';
-import '../../../../../css/scroll.css';
-import '../../../../../css/modal.css';
+import { DMDY } from '../../../../tools/dateFormat';
+import '../../../../css/scroll.css';
+import '../../../../css/modal.css';
 import { Modal } from 'react-bootstrap';
-import { isRefValid } from '../../../../../tools/refChecker';
+import { isRefValid } from '../../../../tools/refChecker';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 
@@ -282,10 +282,10 @@ const AdminClassSessionDetail = () =>
 
       const [teacherID, setTeacherID] = useState(null);
       const [teacherName, setTeacherName] = useState("N/A");
-      const [teacherImage, setTeacherImage] = useState(require('../../../../../images/profile.png'));
+      const [teacherImage, setTeacherImage] = useState(require('../../../../images/profile.png'));
       const [supervisorID, setSupervisorID] = useState(null);
       const [supervisorName, setSupervisorName] = useState("N/A");
-      const [supervisorImage, setSupervisorImage] = useState(require('../../../../../images/profile.png'));
+      const [supervisorImage, setSupervisorImage] = useState(require('../../../../images/profile.png'));
 
       const [studentList, setStudentList] = useState([]);
       const childrenRefs = useRef([]);
@@ -388,7 +388,7 @@ const AdminClassSessionDetail = () =>
                         {
                               setTeacherID(res.data.id ? res.data.id : null);
                               setTeacherName(res.data.name ? res.data.name : 'N/A');
-                              setTeacherImage(res.data.image ? `http://${ domain }/image/employee/${ res.data.image }` : require('../../../../../images/profile.png'));
+                              setTeacherImage(res.data.image ? `http://${ domain }/image/employee/${ res.data.image }` : require('../../../../images/profile.png'));
                               setTeacherStatus(res.data.status);
                               setTeacherNote(res.data.note);
                               setNewTeacher(res.data.id ? res.data.id : null);
@@ -403,7 +403,7 @@ const AdminClassSessionDetail = () =>
                         {
                               setSupervisorID(res.data.id ? res.data.id : null);
                               setSupervisorName(res.data.name ? res.data.name : 'N/A');
-                              setSupervisorImage(res.data.image ? `http://${ domain }/image/employee/${ res.data.image }` : require('../../../../../images/profile.png'));
+                              setSupervisorImage(res.data.image ? `http://${ domain }/image/employee/${ res.data.image }` : require('../../../../images/profile.png'));
                               setNewSupervisor(res.data.id ? res.data.id : null);
                         }
                   })

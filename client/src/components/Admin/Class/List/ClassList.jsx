@@ -8,7 +8,7 @@ import { domain } from '../../../../tools/domain';
 import { context } from '../../../../context';
 import '../../../../css/scroll.css';
 import axios from 'axios';
-import ClassCreate from './Create/ClassCreate';
+import ClassCreate from '../Create/ClassCreate';
 
 const Class = (props) =>
 {
