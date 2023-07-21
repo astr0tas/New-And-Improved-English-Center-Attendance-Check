@@ -1,6 +1,6 @@
 import styles from './AddSession.module.css';
 import { useState, useEffect } from "react";
-import request from '../../../../../tools/request';
+import axios from 'axios';
 import { domain } from "../../../../../tools/domain";
 import { Modal } from 'react-bootstrap';
 import '../../../../../css/scroll.css';
@@ -14,6 +14,7 @@ const TeacherSelect = (props) =>
 {
       const [searchTeacher, setSearchTeacher] = useState("");
       const [teacherListContent, setTeacherListContent] = useState([]);
+      const [render, setRender] = useState(false);
 
       let timer;
 
@@ -21,8 +22,7 @@ const TeacherSelect = (props) =>
       {
             if (props.addTeacherPopUp && props.date !== null && props.timetable !== null)
             {
-                  console.log('render');
-                  request.post(`http://${ domain }/admin/classTeacher`, { params: { name: props.name, teacherName: searchTeacher, date: props.date, timetable: props.timetable.split(',')[1].split(' - ') } }, { headers: { 'Content-Type': 'application/json' } })
+                  axios.post(`http://${ domain }/admin/classTeacher`, { params: { name: props.name, teacherName: searchTeacher, date: props.date, timetable: props.timetable.split(',')[1].split(' - ') } }, { headers: { 'Content-Type': 'application/json' } })
                         .then(res =>
                         {
                               const temp = [];
@@ -45,22 +45,26 @@ const TeacherSelect = (props) =>
                         })
                         .catch(err => console.error(err));
             }
-      }, [searchTeacher, props]);
+            else if (!props.addTeacherPopUp)
+                  setSearchTeacher('');
+
+            // eslint-disable-next-line
+      }, [props, render]);
 
       return (
-            <Modal show={ props.addTeacherPopUp } onHide={ () => props.setAddTeacherPopUp(false) }
+            <Modal show={ props.addTeacherPopUp } onHide={ () => { props.setAddTeacherPopUp(false); setSearchTeacher(''); } }
                   dialogClassName={ `${ styles.dialog } modal-dialog-scrollable` } contentClassName={ `w-100 h-100` }
                   className={ `reAdjustModel ${ styles.customModal2 } hideBrowserScrollbar` } container={ props.containerRef.current }>
                   <Modal.Header closeButton>
                         <div>
                               <FontAwesomeIcon icon={ faMagnifyingGlass } className={ `position-absolute ${ styles.search }` } />
-                              <input type='text' style={ { fontSize: '1rem', paddingLeft: '30px', maxWidth: '200px' } } onChange={ e =>
+                              <input value={ searchTeacher } type='text' style={ { fontSize: '1rem', paddingLeft: '30px', maxWidth: '200px' } } onChange={ e =>
                               {
+                                    setSearchTeacher(e.target.value);
                                     clearTimeout(timer);
-
                                     timer = setTimeout(() =>
                                     {
-                                          setSearchTeacher(e.target.value);
+                                          setRender(!render);
                                     }, 1000);
                               } }></input>
                         </div>
@@ -88,6 +92,8 @@ const TeacherSelect = (props) =>
                         {
                               props.setTeacherName(null);
                               props.setTeacher(null);
+                              setSearchTeacher('');
+                              setRender(!render);
                         } }>Clear</button>
                   </Modal.Footer>
             </Modal>
@@ -98,6 +104,7 @@ const SupervisorSelect = (props) =>
 {
       const [searchSupervisor, setSearchSupervisor] = useState("");
       const [supervisorListContent, setSupervisorListContent] = useState([]);
+      const [render, setRender] = useState(false);
 
       let timer;
 
@@ -105,7 +112,7 @@ const SupervisorSelect = (props) =>
       {
             if (props.addSupervisorPopUp)
             {
-                  request.post(`http://${ domain }/admin/staffList`, { params: { name: searchSupervisor, type: 2 } }, { headers: { 'Content-Type': 'application/json' } })
+                  axios.post(`http://${ domain }/admin/staffList`, { params: { name: searchSupervisor, type: 2 } }, { headers: { 'Content-Type': 'application/json' } })
                         .then(res =>
                         {
                               const temp = [];
@@ -128,22 +135,26 @@ const SupervisorSelect = (props) =>
                         })
                         .catch(err => console.error(err));
             }
-      }, [searchSupervisor, props]);
+            else
+                  setSearchSupervisor('');
+
+            // eslint-disable-next-line
+      }, [props, render]);
 
       return (
-            <Modal show={ props.addSupervisorPopUp } onHide={ () => props.setAddSupervisorPopUp(false) }
+            <Modal show={ props.addSupervisorPopUp } onHide={ () => { props.setAddSupervisorPopUp(false); setSearchSupervisor(''); } }
                   dialogClassName={ `${ styles.dialog } modal-dialog-scrollable` } contentClassName={ `w-100 h-100` }
                   className={ `reAdjustModel ${ styles.customModal2 } hideBrowserScrollbar` } container={ props.containerRef.current }>
                   <Modal.Header closeButton>
                         <div>
                               <FontAwesomeIcon icon={ faMagnifyingGlass } className={ `position-absolute ${ styles.search }` } />
-                              <input type='text' style={ { fontSize: '1rem', paddingLeft: '30px', maxWidth: '200px' } } onChange={ e =>
+                              <input value={ searchSupervisor } type='text' style={ { fontSize: '1rem', paddingLeft: '30px', maxWidth: '200px' } } onChange={ e =>
                               {
+                                    setSearchSupervisor(e.target.value);
                                     clearTimeout(timer);
-
                                     timer = setTimeout(() =>
                                     {
-                                          setSearchSupervisor(e.target.value);
+                                          setRender(!render);
                                     }, 1000);
                               } }></input>
                         </div>
@@ -171,6 +182,8 @@ const SupervisorSelect = (props) =>
                         {
                               props.setSupervisorName(null);
                               props.setSupervisor(null);
+                              setSearchSupervisor('');
+                              setRender(!render);
                         } }>Clear</button>
                   </Modal.Footer>
             </Modal>
@@ -261,7 +274,7 @@ const AddSession = (props) =>
       {
             if (props.sessionPopUp)
             {
-                  request.post(`http://${ domain }/admin/getRoom`, { params: { name: props.name } }, { headers: { 'Content-Type': 'application/json' } })
+                  axios.post(`http://${ domain }/admin/getSuitableRoom`, { params: { name: props.name } }, { headers: { 'Content-Type': 'application/json' } })
                         .then(res =>
                         {
                               const temp = [];
@@ -275,7 +288,7 @@ const AddSession = (props) =>
 
                   if (room && date)
                   {
-                        request.post(`http://${ domain }/admin/getTimetable`, { params: { room: room.split(',')[0], date: date } }, { headers: { 'Content-Type': 'application/json' } })
+                        axios.post(`http://${ domain }/admin/getTimetable`, { params: { room: room.split(',')[0], date: date } }, { headers: { 'Content-Type': 'application/json' } })
                               .then(res =>
                               {
                                     const temp = [];
@@ -288,7 +301,7 @@ const AddSession = (props) =>
                               .catch(err => console.log(err));
                   }
 
-                  request.post(`http://${ domain }/admin/getClassCanceledSession`, { params: { name: props.name } }, { headers: { 'Content-Type': 'application/json' } })
+                  axios.post(`http://${ domain }/admin/getClassCanceledSession`, { params: { name: props.name } }, { headers: { 'Content-Type': 'application/json' } })
                         .then(res =>
                         {
                               const temp = [];
@@ -310,7 +323,7 @@ const AddSession = (props) =>
                         <Modal.Header closeButton>
                         </Modal.Header>
                         <Modal.Body>
-                              <div className='row my-5'>
+                              <div className='row mb-5 mt-2'>
                                     <div className='col-sm-4 d-flex align-items-center justify-content-center col-12'>
                                           <strong>Session</strong>
                                     </div>
@@ -352,7 +365,7 @@ const AddSession = (props) =>
                                           </p>
                                     </div>
                               }
-                              <div className='row mt-5'>
+                              <div className={ `row ${ isEmptyRoom ? 'mt-1' : 'mt-5' }` }>
                                     <div className='col-sm-4 d-flex align-items-center justify-content-center col-12'>
                                           <strong>Date</strong>
                                     </div>
@@ -407,7 +420,7 @@ const AddSession = (props) =>
                                           </p>
                                     </div>
                               }
-                              <div className='row mt-5'>
+                              <div className={ `row ${ (isPast || isEmptyDate) ? 'mt-1' : 'mt-5' }` }>
                                     <div className='col-sm-4 d-flex align-items-center justify-content-center col-12'>
                                           <strong className='text-center'>Time period</strong>
                                     </div>
@@ -436,12 +449,12 @@ const AddSession = (props) =>
                                           </p>
                                     </div>
                               }
-                              <div className='row mt-5'>
+                              <div className={ `row ${ isEmptyPeriod ? 'mt-1' : 'mt-5' }` }>
                                     <div className='col-sm-4 d-flex align-items-center justify-content-center col-12'>
                                           <strong>Teacher</strong>
                                     </div>
                                     <div className='col d-flex align-items-center justify-content-center justify-content-sm-start'>
-                                          <p className={ `${ styles.inputs } ${ styles.hover } w-100 mb-0 ps-2 pt-1` } onClick={ () => setAddTeacherPopUp(true) }>{ teacherName }</p>
+                                          <p className={ `${ styles.inputs } ${ styles.hover } w-100 mb-0 ps-2 pt-1 hideBrowserScrollbar` } onClick={ () => setAddTeacherPopUp(true) }>{ teacherName }</p>
                                     </div>
                               </div>
                               {
@@ -457,12 +470,12 @@ const AddSession = (props) =>
                                           </p>
                                     </div>
                               }
-                              <div className='row mt-5'>
+                              <div className={ `row ${ isEmptyTeacher ? 'mt-1' : 'mt-5' }` }>
                                     <div className='col-sm-4 d-flex align-items-center justify-content-center col-12'>
                                           <strong>Supervisor</strong>
                                     </div>
                                     <div className='col d-flex align-items-center justify-content-center justify-content-sm-start'>
-                                          <p className={ `${ styles.inputs } ${ styles.hover } w-100 mb-0 ps-2 pt-1` } disabled onClick={ () => setAddSupervisorPopUp(true) }>{ supervisorName }</p>
+                                          <p className={ `${ styles.inputs } ${ styles.hover } w-100 mb-0 ps-2 pt-1 hideBrowserScrollbar` } onClick={ () => setAddSupervisorPopUp(true) }>{ supervisorName }</p>
                                     </div>
                               </div>
                               {
@@ -478,7 +491,7 @@ const AddSession = (props) =>
                                           </p>
                                     </div>
                               }
-                              <div className='row mt-5'>
+                              <div className={ `row ${ isEmptySupervisor ? 'mt-1' : 'mt-5' }` }>
                                     <div className='col-sm-4 d-flex align-items-center justify-content-center col-12'>
                                           <strong className='text-center'>Make up for</strong>
                                     </div>
@@ -529,7 +542,7 @@ const AddSession = (props) =>
                               {
                                     setConfirmPopUp(false);
                                     props.setSessionPopUp(false);
-                                    request.post(`http://${ domain }/admin/addSessionToClass`, {
+                                    axios.post(`http://${ domain }/admin/addSessionToClass`, {
                                           params: {
                                                 name: props.name,
                                                 room: room.split(',')[0],

@@ -5,9 +5,6 @@ import bodyParser from "body-parser";
 import FileStoreFactory from 'session-file-store';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { key } from './keyGenerator.js';
-import NodeRSA from "node-rsa";
-
 import { domain } from "./domain.js";
 
 import staffRoutes from "./controller/staff.js";
@@ -44,9 +41,6 @@ app.use(session({
 
 app.use((req, res, next) =>
 {
-      if (req.url === '/getKey' && !req.session.userID)
-            res.status(403).send({message:'No key for you!'});
-
       const contentType = req.get('Content-Type');
       const authorization = req.header('Authorization');
 
@@ -81,13 +75,6 @@ app.use((req, res, next) =>
 
       // If all verification steps pass, proceed to the API endpoint
       next();
-});
-
-app.post('/getKey', (req, res) =>
-{
-      const keys = new NodeRSA(req.body.params.key, 'public', { encryptionScheme: 'pkcs1' });
-      const encryptedKey = keys.encrypt(key, 'base64');
-      res.status(200).send({ key: encryptedKey });
 });
 
 app.use('/admin', adminRoutes);

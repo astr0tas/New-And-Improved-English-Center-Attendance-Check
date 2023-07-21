@@ -7,25 +7,6 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import multer from "multer";
 import fs from 'fs';
-import CryptoJS from 'crypto-js';
-import { key } from '../keyGenerator.js';
-
-function encryptWithAES(data)
-{
-      if (data === null || data === undefined || data === '' || data === 'null' || data === 'undefined') return null;
-      const string = JSON.stringify(data);
-      const result = CryptoJS.AES.encrypt(JSON.stringify(string), key).toString();
-      return result;
-}
-
-function decryptWithAES(data)
-{
-      if (data === null || data === undefined || data === '' || data === 'null' || data === 'undefined') return null;
-      const bytes = CryptoJS.AES.decrypt(data, key);
-      const decryptedData = bytes.toString(CryptoJS.enc.Utf8);
-      if (decryptedData === null || decryptedData === undefined || decryptedData === '' || decryptedData === 'null' || decryptedData === 'undefined') return null;
-      return JSON.parse(decryptedData);
-}
 
 const generalRoutes = express.Router();
 
@@ -130,9 +111,9 @@ generalRoutes.get('/isLoggedIn', (req, res) =>
 {
       const idOK = req.session.userID !== undefined && req.session.userID !== null;
       if (idOK)
-            res.status(200).send({message:[true, req.session.userType]});
+            res.status(200).send({ message: [true, req.session.userType] });
       else
-            res.status(200).send({ message:[false]});
+            res.status(200).send({ message: [false] });
 });
 
 generalRoutes.post('/recovery', (req, res) =>
@@ -164,9 +145,9 @@ generalRoutes.post('/validateUser', (req, res) =>
             else
             {
                   if (result.length)
-                        res.status(200).send({message:true});
+                        res.status(200).send({ message: true });
                   else
-                        res.status(200).send({message:false});
+                        res.status(200).send({ message: false });
             }
       })
 });
@@ -184,7 +165,7 @@ generalRoutes.get('/profile', (req, res) =>
                   res.status(500).send({ message: 'Server internal error!' });
             }
             else
-                  res.status(200).send(encryptWithAES(result[0]));
+                  res.status(200).send(result[0]);
       });
 });
 
@@ -202,15 +183,7 @@ generalRoutes.post('/updateProfile', multer().fields([
 ]), (req, res) =>
 {
       const id = req.session.userID;
-      const name = decryptWithAES(req.body.name);
-      const address = decryptWithAES(req.body.address);
-      const birthday = decryptWithAES(req.body.birthday);
-      const birthplace = decryptWithAES(req.body.birthplace);
-      const email = decryptWithAES(req.body.email);
-      const phone = decryptWithAES(req.body.phone);
-      const password = decryptWithAES(req.body.password);
-      const userType = decryptWithAES(req.body.userType);
-      const ssn = decryptWithAES(req.body.ssn);
+      const { ssn, name, address, birthday, birthplace, email, phone, password, userType } = req.body;
 
       let imagePath = null;
       if (req.files['image'] !== null && req.files['image'] !== undefined)
@@ -247,7 +220,7 @@ generalRoutes.post('/updateProfile', multer().fields([
                   res.status(500).send({ message: 'Server internal error!' });
             }
             else
-                  res.status(200).send(encryptWithAES({ message: 'Personal Info updated successfully!' }));
+                  res.status(200).send({ message: 'Personal Info updated successfully!' });
       });
 });
 

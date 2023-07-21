@@ -1,6 +1,6 @@
 import styles from './AddTeacher.module.css';
 import { useState, useEffect } from "react";
-import request from '../../../../../tools/request';
+import axios from 'axios';
 import { domain } from "../../../../../tools/domain";
 import { Modal } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -28,7 +28,7 @@ const AddTeacher = (props) =>
       {
             if (props.teacherPopUp)
             {
-                  request.post(`http://${ domain }/admin/getTeacherNotInClass`, { params: { name: searchTeacher, className: props.name } }, { headers: { 'Content-Type': 'application/json' } })
+                  axios.post(`http://${ domain }/admin/getTeacherNotInClass`, { params: { name: searchTeacher, className: props.name } }, { headers: { 'Content-Type': 'application/json' } })
                         .then(res =>
                         {
                               const temp = [];
@@ -131,7 +131,7 @@ const AddTeacher = (props) =>
                               {
                                     setConfirmPopUp(false);
                                     props.setTeacherPopUp(false);
-                                    request.post(`http://${ domain }/admin/addTeacherToClass`, { params: { name: props.name, teachers: teacherAdded } }, { headers: { 'Content-Type': 'application/json' } })
+                                    axios.post(`http://${ domain }/admin/addTeacherToClass`, { params: { name: props.name, teachers: teacherAdded } }, { headers: { 'Content-Type': 'application/json' } })
                                           .then(res =>
                                           {
                                                 setTeacherAdded([]);

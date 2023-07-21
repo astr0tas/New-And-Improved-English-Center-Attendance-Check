@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import request from '../../../../tools/request';
+import axios from 'axios';
 import { domain } from '../../../../tools/domain';
 import { DMY } from '../../../../tools/dateFormat';
 import { AiOutlineUser } from 'react-icons/ai';
@@ -77,7 +77,7 @@ const StaffList = () =>
             }
 
             if (staffType !== 0)
-                  request.post(`http://${ domain }/admin/staffList`, { params: { name: name, type: staffType } }, { headers: { 'Content-Type': 'application/json' } })
+                  axios.post(`http://${ domain }/admin/staffList`, { params: { name: name, type: staffType } }, { headers: { 'Content-Type': 'application/json' } })
                         .then(res =>
                         {
                               const temp = [];

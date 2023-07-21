@@ -10,10 +10,8 @@ import Profile from './components/General/Profile/Profile';
 
 // Admin routes
 import ClassList from './components/Admin/Class/List/ClassList';
-import ClassCreate from './components/Admin/Class/Create/ClassCreate';
 import ClassDetail from './components/Admin/Class/Detail/ClassDetail';
-import ClassEdit from './components/Admin/Class/Edit/ClassEdit';
-import AdminClassSession from './components/Admin/Class/Session/SessionDetail';
+import AdminClassSession from './components/Admin/Class/Detail/Session/SessionDetail';
 
 import StaffList from './components/Admin/Staff/List/StaffList';
 import StaffCreate from './components/Admin/Staff/Create/StaffCreate';
@@ -68,9 +66,7 @@ function App()
               {/* Admin routes */ }
               <Route>
                 <Route path='class-list' element={ <ClassList /> } />
-                <Route path='class-list/create' element={ <ClassCreate /> } />
                 <Route path='class-list/detail/:name' element={ <ClassDetail /> } />
-                <Route path='class-list/detail/:name/edit' element={ <ClassEdit /> } />
                 <Route path='class-list/detail/:name/:number' element={ <AdminClassSession /> } />
               </Route>
 

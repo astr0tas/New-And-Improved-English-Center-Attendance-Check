@@ -32,7 +32,7 @@ export class Class
 
       getList(name, status, callback)
       {
-            this.conn.query(`select * from class where name like ? and status=? order by status desc, start_date desc, name`, [name + '%', status], (err, res) =>
+            this.conn.query(`select * from class where name like ? and status=? order by status desc, start_date desc, name`, ['%' + name + '%', status], (err, res) =>
             {
                   if (err)
                         callback(null, err);
@@ -184,7 +184,7 @@ export class Class
             });
       }
 
-      getRoom(name, callback)
+      getSuitableRoom(name, callback)
       {
             this.conn.query(`select classroom.id,classroom.max_seats from classroom where classroom.max_seats >= (select class.Max_students from class where class.name=?)`, [name], (err, res) =>
             {

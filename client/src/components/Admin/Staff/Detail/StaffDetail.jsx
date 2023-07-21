@@ -1,5 +1,5 @@
 import styles from './StaffDetail.module.css';
-import request from '../../../../tools/request';
+import axios from 'axios';
 import { domain } from '../../../../tools/domain';
 import { useNavigate, useParams } from 'react-router-dom';
 import { DMY } from '../../../../tools/dateFormat';
@@ -47,7 +47,7 @@ const StaffDetail = () =>
 
       useEffect(() =>
       {
-            request.post(`http://${ domain }/admin/staffInfo`, { params: { id: id } }, { headers: { 'Content-Type': 'application/json' } })
+            axios.post(`http://${ domain }/admin/staffInfo`, { params: { id: id } }, { headers: { 'Content-Type': 'application/json' } })
                   .then(res =>
                   {
                         document.title = `${ res.data.type === 1 ? 'Teacher' : 'Supervisor' } ${ res.data.name }`;
@@ -63,7 +63,7 @@ const StaffDetail = () =>
 
                         if (res.data.type === 1)
                         {
-                              request.post(`http://${ domain }/admin/getTeacherClass`, { params: { id: id } }, { headers: { 'Content-Type': 'application/json' } })
+                              axios.post(`http://${ domain }/admin/getTeacherClass`, { params: { id: id } }, { headers: { 'Content-Type': 'application/json' } })
                                     .then(res =>
                                     {
                                           const temp = [];
@@ -76,7 +76,7 @@ const StaffDetail = () =>
                         }
                         else
                         {
-                              request.post(`http://${ domain }/admin/getSupervisorClass`, { params: { id: id } }, { headers: { 'Content-Type': 'application/json' } })
+                              axios.post(`http://${ domain }/admin/getSupervisorClass`, { params: { id: id } }, { headers: { 'Content-Type': 'application/json' } })
                                     .then(res =>
                                     {
                                           const temp = [];

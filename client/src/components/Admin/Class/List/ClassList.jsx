@@ -1,13 +1,14 @@
 import styles from './ClassList.module.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { DMY } from '../../../../tools/dateFormat';
 import { useNavigate } from 'react-router-dom';
 import { domain } from '../../../../tools/domain';
 import { context } from '../../../../context';
 import '../../../../css/scroll.css';
-import request from '../../../../tools/request';
+import axios from 'axios';
+import ClassCreate from './Create/ClassCreate';
 
 const Class = (props) =>
 {
@@ -16,14 +17,14 @@ const Class = (props) =>
 
       useEffect(() =>
       {
-            request.post(`http://${ domain }/admin/getCurrentStudent`, { params: { name: props.name } }, { headers: { 'Content-Type': 'application/json' } })
+            axios.post(`http://${ domain }/admin/getCurrentStudent`, { params: { name: props.name } }, { headers: { 'Content-Type': 'application/json' } })
                   .then(res =>
                   {
                         setCurrentStudents(res.data.currentStudents);
                   })
                   .catch(err => console.error(err));
 
-            request.post(`http://${ domain }/admin/getCurrentSession`, { params: { name: props.name } }, { headers: { 'Content-Type': 'application/json' } })
+            axios.post(`http://${ domain }/admin/getCurrentSession`, { params: { name: props.name } }, { headers: { 'Content-Type': 'application/json' } })
                   .then(res =>
                   {
                         setCurrentSessions(res.data.currentSessions);
@@ -54,11 +55,14 @@ const ClassList = () =>
       const { setListType } = useContext(context);
       const Navigate = useNavigate();
 
+      const [createClassPopUp, setCreateClassPopUp] = useState(false);
+      const containerRef = useRef(null);
+
       let timer1;
 
       useEffect(() =>
       {
-            request.post(`http://${ domain }/admin/classList`, { params: { name: name, status: classState } },
+            axios.post(`http://${ domain }/admin/classList`, { params: { name: name, status: classState } },
                   {
                         headers: { 'Content-Type': 'application/json' }
                   })
@@ -92,7 +96,7 @@ const ClassList = () =>
       }
 
       return (
-            <div className='w-100 d-flex flex-column overflow-auto flex-grow-1 mt-2 mb-2 hideBrowserScrollbar'>
+            <div className='w-100 d-flex flex-column overflow-auto flex-grow-1 mt-2 mb-2 hideBrowserScrollbar align-items-center' ref={ containerRef }>
                   <div className='mt-4 mt-md-2 me-md-auto ms-md-3 mx-auto d-flex align-items-center flex-column flex-sm-row'>
                         <div className='mb-3 mb-sm-0 position-relative'>
                               <FontAwesomeIcon icon={ faMagnifyingGlass } className={ `position-absolute ${ styles.search }` } />
@@ -129,8 +133,10 @@ const ClassList = () =>
                         </table>
                   </div>
                   <div className="w-100 d-flex align-items-center mb-3 justify-content-center">
-                        <button className="btn btn-primary" onClick={ () => Navigate('./create') }>Add a class</button>
+                        <button className="btn btn-primary" onClick={ () => setCreateClassPopUp(true) }>Add a class</button>
                   </div>
+                  <ClassCreate Navigate={ Navigate } containerRef={ containerRef } createClassPopUp={ createClassPopUp }
+                        setCreateClassPopUp={ setCreateClassPopUp } />
             </div>
       )
 }
