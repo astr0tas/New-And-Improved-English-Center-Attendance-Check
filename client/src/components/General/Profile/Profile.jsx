@@ -148,7 +148,7 @@ const Profile = () =>
                                     <h4 className='text-center'>Do you want to update your info?</h4>
                               </Modal.Body>
                               <Modal.Footer className='justify-content-center border border-0'>
-                                    <button type='button' className='btn btn-danger ms-2 ms-md-4' onClick={ () =>
+                                    <button type='button' className='btn btn-danger me-2 me-md-4' onClick={ () =>
                                     {
                                           setshowpopup(false);
                                     } }>No</button>

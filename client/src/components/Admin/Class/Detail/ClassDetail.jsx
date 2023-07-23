@@ -87,6 +87,7 @@ const Session = (props) =>
             <tr>
                   <td className='text-center align-middle'>Session { props.number }</td>
                   <td className='text-center align-middle'><AiOutlineClockCircle className='me-2' style={ { marginBottom: '1px' } } />{ DMDY(props.session_date) }&nbsp;:&nbsp;{ props.start }&nbsp;-&nbsp;{ props.end }</td>
+                  <td className='text-center align-middle'>{ props.room }</td>
                   <td className={ `text-center align-middle` } style={ {
                         color: props.status === 1 ? '#128400' : (
                               props.status === 2 ? 'gray' : (
@@ -234,7 +235,7 @@ const ClassDetail = () =>
                         {
                               const temp = [];
                               for (let i = 0; i < res.data.length; i++)
-                                    temp.push(<Session key={ i } number={ res.data[i].number } Navigate={ Navigate } name={ name }
+                                    temp.push(<Session key={ i } number={ res.data[i].number } Navigate={ Navigate } name={ name } room={ res.data[i].classroom_id }
                                           start={ res.data[i].start_hour } end={ res.data[i].end_hour } session_date={ res.data[i].session_date } status={ res.data[i].status } />);
                               setContent(temp);
                         })
@@ -245,7 +246,7 @@ const ClassDetail = () =>
       return (
             <div className="w-100 h-100 d-flex flex-column align-items-center" ref={ containerRef }>
                   <div className="w-100 d-flex flex-column overflow-auto hideBrowserScrollbar mt-2 mb-2 flex-grow-1">
-                        <strong className={ `ms-md-3 mb-0 me-md-0 mx-auto mt-2 ${ styles.back }` } onClick={ () => Navigate(-1) }>Back</strong>
+                        <strong className={ `ms-md-3 mb-0 me-md-0 mx-auto mt-2 ${ styles.back }` } onClick={ () => Navigate('/class-list') }>Back</strong>
                         <div className='mx-auto'>
                               <h2 className='mt-4 text-center'>{ name }</h2>
                               <div className='d-flex align-items-center'>
@@ -301,7 +302,8 @@ const ClassDetail = () =>
                                                       listType === 2 &&
                                                       <>
                                                             <th scope="col" className='col-1 text-center align-middle'>Session number</th>
-                                                            <th scope="col" className='col-3 text-center align-middle'>Time</th>
+                                                            <th scope="col" className='col-2 text-center align-middle'>Time</th>
+                                                            <th scope="col" className='col-1 text-center align-middle'>Room</th>
                                                             <th scope="col" className='col-1 text-center align-middle'>Status</th>
                                                             <th scope="col" className='col-1 text-center align-middle'>Action</th>
                                                             <th scope="col" className='col-2 text-center align-middle'>Teacher</th>
@@ -340,7 +342,7 @@ const ClassDetail = () =>
                               <h4 className='text-center'>Do you want to { status === 1 ? 'deactivate' : 'activate' } this class?</h4>
                         </Modal.Body>
                         <Modal.Footer className='justify-content-center border border-0'>
-                              <button className={ `btn ${ status === 1 ? 'btn-primary' : 'btn-danger' } ms-2 ms-md-4` } onClick={ () =>
+                              <button className={ `btn ${ status === 1 ? 'btn-primary' : 'btn-danger' } me-2 me-md-4` } onClick={ () =>
                               {
                                     setStatusPopUp(false);
                               } }>No</button>
@@ -387,7 +389,7 @@ const ClassDetail = () =>
                               <h4 className='text-center'>Do you want to remove this teacher from this class?</h4>
                         </Modal.Body>
                         <Modal.Footer className='justify-content-center border border-0'>
-                              <button className={ `btn btn-primary ms-2 ms-md-4` } onClick={ () =>
+                              <button className={ `btn btn-primary me-2 me-md-4` } onClick={ () =>
                               {
                                     setRemoveTeacherTarget(null);
                                     setRemoveTeacherPopUp(false);
@@ -411,7 +413,7 @@ const ClassDetail = () =>
                               <h4 className='text-center'>Maximum number of students reached!</h4>
                         </Modal.Body>
                         <Modal.Footer className='justify-content-center border border-0'>
-                              <button className={ `btn btn-primary ms-2 ms-md-4` } onClick={ () =>
+                              <button className={ `btn btn-primary` } onClick={ () =>
                               {
                                     setMaxPopUp(false);
                               } }>OKAY</button>

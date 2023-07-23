@@ -301,7 +301,7 @@ const AddSession = (props) =>
                               .catch(err => console.log(err));
                   }
 
-                  axios.post(`http://${ domain }/admin/getClassCanceledSession`, { params: { name: props.name } }, { headers: { 'Content-Type': 'application/json' } })
+                  axios.post(`http://${ domain }/admin/getClassCanceledMissingSession`, { params: { name: props.name } }, { headers: { 'Content-Type': 'application/json' } })
                         .then(res =>
                         {
                               const temp = [];
@@ -534,7 +534,7 @@ const AddSession = (props) =>
                               <h4 className='text-center'>Are you sure you want to add this session?</h4>
                         </Modal.Body>
                         <Modal.Footer className='justify-content-center border border-0'>
-                              <button className={ `btn btn-danger ms-2 ms-md-4` } onClick={ () =>
+                              <button className={ `btn btn-danger me-2 me-md-4` } onClick={ () =>
                               {
                                     setConfirmPopUp(false);
                               } }>NO</button>

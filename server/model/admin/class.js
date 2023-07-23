@@ -76,7 +76,7 @@ export class Class
 
       classSession(name, callback)
       {
-            this.conn.query(`select session.number,session.session_date,timetable.start_hour,timetable.end_hour,session.status from session 
+            this.conn.query(`select session.number,session.session_date,timetable.start_hour,timetable.end_hour,session.status,session.classroom_id from session 
             join timetable on timetable.id=session.timetable_id
             where session.class_name=? order by session.number`, [name], (err, res) =>
             {
@@ -208,9 +208,9 @@ export class Class
             });
       }
 
-      getClassCanceledSession(name, callback)
+      getClassCanceledMissingSession(name, callback)
       {
-            this.conn.query(`select number from session where class_name=? and status=3`, [name], (err, res) =>
+            this.conn.query(`select number from session where class_name=? and (status=3 or status=5)`, [name], (err, res) =>
             {
                   if (err)
                         callback(null, err);
@@ -416,6 +416,88 @@ export class Class
       getPeriods(callback)
       {
             this.conn.query(`select * from timetable`, [], (err, res) =>
+            {
+                  if (err)
+                        callback(null, err);
+                  else
+                        callback(res, null);
+            });
+      }
+
+      getSuitableTeacher(teacherName, startDate, endDate, dow, startHour, endHour, callback)
+      {
+            this.conn.query(`select employee.id,employee.name,employee.email,employee.phone from employee
+            join teacher on teacher.id=employee.id where employee.name like ? and teacher.id not in (
+                  select teacher_responsible.teacher_id from teacher_responsible
+                  join session on session.number=teacher_responsible.session_number and session.class_name=teacher_responsible.class_name
+                  join timetable on timetable.id=session.timetable_id
+                  join class on class.name=session.class_name
+                  where class.status=true and not (class.start_date>? or class.end_date<?)
+                  and WEEKDAY(session.session_date)+1=?
+                  and not (timetable.start_hour>? or timetable.end_hour<?) and teacher_responsible.teacher_id is not null
+                  )`, ['%' + teacherName + '%', endDate, startDate, dow, endHour, startHour], (err, res) =>
+            {
+                  if (err)
+                        callback(null, err);
+                  else
+                        callback(res, null);
+            });
+      }
+
+      getDuplicateName(name, callback)
+      {
+            this.conn.query(`select name from class where name=?`, [name], (err, res) =>
+            {
+                  if (err)
+                        callback(null, err);
+                  else
+                        callback(res, null);
+            });
+      }
+
+      changeClassRoom(name, number, room, callback)
+      {
+            this.conn.query(`update session set classroom_id=? where class_name=? and number=?`, [room, name, number], (err, res) =>
+            {
+                  if (err)
+                        callback(null, err);
+                  else
+                        callback(res, null);
+            });
+      }
+
+      getSuitableStudent(name, startDate, endDate, period, callback)
+      {
+            let sql = `select s1.id,s1.name,s1.ssn,s1.phone,s1.email from student s1 
+                  where s1.name like ? and s1.id not in(
+                  select s2.id from student s2
+                  join in_class on in_class.student_id=s2.id
+                  join class on class.name=in_class.class_name
+                  join session on session.class_name=class.name
+                  join timetable on timetable.id=session.timetable_id
+                  where class.status=true and not (class.start_date>? or class.end_date<?)
+                  and ((WEEKDAY(session.session_date)+1=?
+                  and not (timetable.start_hour>? or timetable.end_hour<?))`;
+            const params = ['%' + name + '%', endDate, startDate, period[0].dow, period[0].end, period[0].start];
+            for (let i = 1; i < period.length; i++)
+            {
+                  sql += `or (WEEKDAY(session.session_date)+1=?
+                  and not (timetable.start_hour>? or timetable.end_hour<?))`;
+                  params.push(period[i].dow, period[i].end, period[i].start);
+            }
+            sql += ')) order by s1.id';
+            this.conn.query(sql, params, (err, res) =>
+            {
+                  if (err)
+                        callback(null, err);
+                  else
+                        callback(res, null);
+            });
+      }
+
+      getSuitableRoomForNewClass(seats, callback)
+      {
+            this.conn.query(`select id,max_seats from classroom where max_seats>=? order by id`, [seats], (err, res) =>
             {
                   if (err)
                         callback(null, err);

@@ -10,6 +10,7 @@ import { Modal } from 'react-bootstrap';
 import { isRefValid } from '../../../../tools/refChecker';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
+import { Dropdown } from 'react-bootstrap';
 
 const TeacherSelect = (props) =>
 {
@@ -182,7 +183,7 @@ const SupervisorSelect = (props) =>
                               props.setChangeSupervisorPopUp(false);
                               props.setNewSupervisor(null);
                         } }>Cancel</button>
-                        <button className={ `btn btn-primary me-2 me-md-4` } onClick={ () => props.setConfirmChangeSupervisor(true) }
+                        <button className={ `btn btn-primary ms-2 ms-md-4` } onClick={ () => props.setConfirmChangeSupervisor(true) }
                               disabled={ props.newSupervisor === props.supervisorID }>Confirm</button>
                   </Modal.Footer>
             </Modal>
@@ -288,6 +289,8 @@ const AdminClassSessionDetail = () =>
       const [supervisorImage, setSupervisorImage] = useState(require('../../../../images/profile.png'));
 
       const [studentList, setStudentList] = useState([]);
+      const [roomList, setRoomList] = useState([]);
+      const [newClassRoom, setNewClassRoom] = useState(null);
       const childrenRefs = useRef([]);
 
       const [teacherStatus, setTeacherStatus] = useState(-1);
@@ -312,6 +315,7 @@ const AdminClassSessionDetail = () =>
 
       const [confirmChangeTeacher, setConfirmChangeTeacher] = useState(false);
       const [confirmChangeSupervisor, setConfirmChangeSupervisor] = useState(false);
+      const [confirmChangeClassRoom, setConfirmChangeClassRoom] = useState(false);
 
       const Navigate = useNavigate();
 
@@ -378,6 +382,22 @@ const AdminClassSessionDetail = () =>
                         setEnd(res.data.end_hour);
                         setStatus(res.data.status ? res.data.status : 'N/A');
                         setMakeUp(res.data.session_number_make_up_for);
+
+                        if (res.data.status === 4)
+                        {
+                              axios.post(`http://${ domain }/admin/getSuitableRoom`, { params: { name: name } }, { headers: { 'Content-Type': 'application/json' } })
+                                    .then(respone =>
+                                    {
+                                          const temp = [];
+                                          for (let i = 0; i < respone.data.length; i++)
+                                                if (respone.data[i].id !== res.data.classroom_id)
+                                                      temp.push(<Dropdown.Item key={ i } eventKey={ respone.data[i].id }>
+                                                            { respone.data[i].id }&nbsp;-&nbsp;{ respone.data[i].max_seats }
+                                                      </Dropdown.Item>);
+                                          setRoomList(temp);
+                                    })
+                                    .catch(err => console.log(err));
+                        }
                   })
                   .catch(err => console.error(err));
 
@@ -441,7 +461,20 @@ const AdminClassSessionDetail = () =>
                                     <h2>Session { number ? number : 'N/A' }</h2>
                                     <p className='text-center align-middle'>Date: { date ? DMDY(date) : 'N/A' }</p>
                                     <p>Time: { start ? start : 'N/A' } - { end ? end : 'N/A' }</p>
-                                    <p>Room: { room }</p>
+                                    <div className='d-flex align-items-center'>
+                                          <p>Room: { room }</p>
+                                          {
+                                                status === 4 &&
+                                                <Dropdown onSelect={ eventKey => { setNewClassRoom(eventKey); setConfirmChangeClassRoom(true); } } className='ms-2 mb-3'>
+                                                      <Dropdown.Toggle variant="secondary" size='sm' style={ { maxWidth: '150px' } } className='text-wrap'>
+                                                            { room }
+                                                      </Dropdown.Toggle>
+                                                      <Dropdown.Menu style={ { maxHeight: '150px', overflow: 'auto' } }>
+                                                            <Dropdown.Item eventKey={ null }>Clear</Dropdown.Item>
+                                                            { roomList }
+                                                      </Dropdown.Menu>
+                                                </Dropdown> }
+                                    </div>
                                     <div className='d-flex align-items-center'>
                                           <p className='mb-0'>Satus:&nbsp;</p>
                                           <p className='mb-0 me-3' style={ {
@@ -579,8 +612,8 @@ const AdminClassSessionDetail = () =>
                               <h4 className='text-center'>Are you sure you want to cancel this session?</h4>
                         </Modal.Body>
                         <Modal.Footer className='justify-content-center border border-0'>
-                              <button className={ `btn btn-primary me-3` } onClick={ () => setShowPopUp1(false) }>NO</button>
-                              <button className={ `btn btn-danger ms-3` } onClick={ () =>
+                              <button className={ `btn btn-primary me-2 me-md-4` } onClick={ () => setShowPopUp1(false) }>NO</button>
+                              <button className={ `btn btn-danger ms-2 ms-md-4` } onClick={ () =>
                               {
                                     setShowPopUp1(false);
                                     axios.post(`http://${ domain }/admin/cancelSession`, { params: { name: name, number: number } }, { headers: { 'Content-Type': 'application/json' } })
@@ -597,8 +630,8 @@ const AdminClassSessionDetail = () =>
                               <h4 className='text-center'>Are you sure you want to restore this session?</h4>
                         </Modal.Body>
                         <Modal.Footer className='justify-content-center border border-0'>
-                              <button className={ `btn btn-primary me-3` } onClick={ () => setShowPopUp4(false) }>No</button>
-                              <button className={ `btn btn-danger ms-3` } onClick={ () =>
+                              <button className={ `btn btn-primary me-2 me-md-4` } onClick={ () => setShowPopUp4(false) }>No</button>
+                              <button className={ `btn btn-danger ms-2 ms-md-4` } onClick={ () =>
                               {
                                     setShowPopUp4(false);
                                     axios.post(`http://${ domain }/admin/restoreSession`, { params: { name: name, number: number } }, { headers: { 'Content-Type': 'application/json' } })
@@ -649,6 +682,24 @@ const AdminClassSessionDetail = () =>
                         </Modal.Footer>
                   </Modal>
 
+                  <Modal show={ confirmChangeClassRoom } onHide={ () => setConfirmChangeClassRoom(false) } className={ `reAdjustModel hideBrowserScrollbar` } container={ containerRef.current }>
+                        <Modal.Header className='border border-0' closeButton>
+                        </Modal.Header>
+                        <Modal.Body className='border border-0 d-flex justify-content-center'>
+                              <h4 className='text-center'>Are you sure you want to change this session class room?</h4>
+                        </Modal.Body>
+                        <Modal.Footer className='justify-content-center border border-0'>
+                              <button className={ `btn btn-danger me-2 me-md-4` } onClick={ () => setConfirmChangeClassRoom(false) }>No</button>
+                              <button className={ `btn btn-primary ms-2 ms-md-4` } onClick={ () =>
+                              {
+                                    setConfirmChangeClassRoom(false);
+                                    axios.post(`http://${ domain }/admin/changeClassRoom`, { params: { name: name, number: number, room: newClassRoom } }, { headers: { 'Content-Type': 'application/json' } })
+                                          .then(res => setRender(!render))
+                                          .catch(err => console.error(err));
+                              } }>Yes</button>
+                        </Modal.Footer>
+                  </Modal>
+
                   <TeacherSelect changeTeacherPopUp={ changeTeacherPopUp } setChangeTeacherPopUp={ setChangeTeacherPopUp } name={ name } setConfirmChangeTeacher={ setConfirmChangeTeacher }
                         containerRef={ containerRef } newTeacher={ newTeacher } setNewTeacher={ setNewTeacher } Navigate={ Navigate } teacherID={ teacherID } />
                   <SupervisorSelect changeSupervisorPopUp={ changeSupervisorPopUp } setChangeSupervisorPopUp={ setChangeSupervisorPopUp } name={ name } setConfirmChangeSupervisor={ setConfirmChangeSupervisor }
@@ -661,7 +712,7 @@ const AdminClassSessionDetail = () =>
                               <h4 className='text-center'>Are you sure you want to change this session teacher?</h4>
                         </Modal.Body>
                         <Modal.Footer className='justify-content-center border border-0'>
-                              <button className={ `btn btn-danger ms-2 ms-md-4` } onClick={ () =>
+                              <button className={ `btn btn-danger me-2 me-md-4` } onClick={ () =>
                               {
                                     setConfirmChangeTeacher(false);
                               } }>No</button>
@@ -690,7 +741,7 @@ const AdminClassSessionDetail = () =>
                               <h4 className='text-center'>Are you sure you want to change this session supervisor?</h4>
                         </Modal.Body>
                         <Modal.Footer className='justify-content-center border border-0'>
-                              <button className={ `btn btn-danger ms-2 ms-md-4` } onClick={ () =>
+                              <button className={ `btn btn-danger me-2 me-md-4` } onClick={ () =>
                               {
                                     setConfirmChangeSupervisor(false);
                               } }>No</button>

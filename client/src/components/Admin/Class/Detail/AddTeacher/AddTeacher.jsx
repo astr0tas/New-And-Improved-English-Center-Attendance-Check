@@ -98,7 +98,7 @@ const AddTeacher = (props) =>
                                     </div>
                               }
                               <div className='d-flex align-items-center'>
-                                    <button className={ `btn btn-danger ms-2 ms-md-4` } onClick={ () =>
+                                    <button className={ `btn btn-danger me-2 me-md-4` } onClick={ () =>
                                     {
                                           props.setTeacherPopUp(false);
                                           setIsEmpty(false);
@@ -123,7 +123,7 @@ const AddTeacher = (props) =>
                               <h4 className='text-center'>Are you sure you want to add the selected teacher(s)?</h4>
                         </Modal.Body>
                         <Modal.Footer className='justify-content-center border border-0'>
-                              <button className={ `btn btn-danger ms-2 ms-md-4` } onClick={ () =>
+                              <button className={ `btn btn-danger me-2 me-md-4` } onClick={ () =>
                               {
                                     setConfirmPopUp(false);
                               } }>NO</button>

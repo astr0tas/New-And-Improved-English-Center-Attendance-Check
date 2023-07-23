@@ -61,7 +61,8 @@ CREATE TABLE CLASS (
   Status boolean default false,
   Max_students INT default 0,
   Initial_sessions INT default 0,
-  PRIMARY KEY (Name)
+  PRIMARY KEY (Name),
+  check (Start_date<End_date)
 );
 
 CREATE TABLE CLASSROOM (
