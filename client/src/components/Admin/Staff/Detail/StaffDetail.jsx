@@ -1,7 +1,7 @@
 import styles from './StaffDetail.module.css';
 import axios from 'axios';
 import { domain } from '../../../../tools/domain';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams, NavLink } from 'react-router-dom';
 import { DMY } from '../../../../tools/dateFormat';
 import { useContext, useEffect, useState } from 'react';
 import { context } from '../../../../context';
@@ -23,11 +23,12 @@ const Class = (props) =>
                         props.status === 1 ? 'Active' : 'Finished'
                   ) }</td>
                   <td className='text-center'>
-                        <button className='btn btn-sm btn-primary' onClick={ () =>
-                        {
-                              setListType(0);
-                              props.Navigate(`/class-list/detail/${ props.name }`);
-                        } }>Detail</button>
+                        <NavLink to={ `/class-list/detail/${ props.name }` }>
+                              <button className='btn btn-sm btn-primary' onClick={ () =>
+                              {
+                                    setListType(0);
+                              } }>Detail</button>
+                        </NavLink>
                   </td>
             </tr>
       )
@@ -47,8 +48,6 @@ const StaffDetail = () =>
       const id = useParams().id;
 
       const [classes, setClasses] = useState([]);
-
-      const Navigate = useNavigate();
 
       useEffect(() =>
       {
@@ -73,7 +72,7 @@ const StaffDetail = () =>
                                     {
                                           const temp = [];
                                           for (let i = 0; i < res.data.length; i++)
-                                                temp.push(<Class key={ i } i={ i + 1 } Navigate={ Navigate } name={ res.data[i].name }
+                                                temp.push(<Class key={ i } i={ i + 1 } name={ res.data[i].name }
                                                       start={ res.data[i].start_date } end={ res.data[i].end_date } status={ res.data[i].status } />);
                                           setClasses(temp);
                                     })
@@ -86,7 +85,7 @@ const StaffDetail = () =>
                                     {
                                           const temp = [];
                                           for (let i = 0; i < res.data.length; i++)
-                                                temp.push(<Class key={ i } i={ i + 1 } Navigate={ Navigate } name={ res.data[i].name }
+                                                temp.push(<Class key={ i } i={ i + 1 } name={ res.data[i].name }
                                                       start={ res.data[i].start_date } end={ res.data[i].end_date } status={ res.data[i].status } />);
                                           setClasses(temp);
                                     })
@@ -94,7 +93,7 @@ const StaffDetail = () =>
                         }
                   })
                   .catch(err => console.log(err));
-      }, [Navigate, id]);
+      }, [id]);
 
       return (
             <div className="w-100 d-flex flex-column overflow-auto flex-grow-1 mt-2 mb-2">
@@ -151,8 +150,12 @@ const StaffDetail = () =>
                         </table>
                   </div>
                   <div className='d-flex align-items-center w-100 justify-content-center mb-3'>
-                        <button className='btn btn-secondary me-3 me-sm-4' onClick={ () => Navigate('/staff-list') }>Back</button>
-                        <button className='btn btn-primary ms-3 ms-sm-4' onClick={ () => Navigate('./edit') }>Change info</button>
+                        <NavLink to={ '/staff-list' }>
+                              <button className='btn btn-secondary me-3 me-sm-4'>Back</button>
+                        </NavLink>
+                        <NavLink to={ './edit' }>
+                              <button className='btn btn-primary ms-3 ms-sm-4'>Change info</button>
+                        </NavLink>
                   </div>
             </div>
       )

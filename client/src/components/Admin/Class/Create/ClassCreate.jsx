@@ -8,6 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import '../../../../css/scroll.css';
 import { YMD, DMY } from '../../../../tools/dateFormat';
+import { NavLink } from 'react-router-dom';
 
 const PeriodSelect = (props) =>
 {
@@ -163,7 +164,9 @@ const TeacherSelect = (props) =>
                                                             onChange={ () => addTeacher(res.data[i].id, res.data[i].name, parseInt(props.dow.split(',')[0])) }
                                                             checked={ !!props.period.find(elem => elem.dow === parseInt(props.dow.split(',')[0]) && elem.teacherID === res.data[i].id) }
                                                             name={ props.dow.split(',')[1] }></input>
-                                                      <button className='btn btn-sm btn-primary ms-sm-2' onClick={ () => props.Navigate(`/staff-list/detail/${ res.data[i].id }`) }>Detail</button>
+                                                      <NavLink to={ `/staff-list/detail/${ res.data[i].id }` }>
+                                                            <button className='btn btn-sm btn-primary ms-sm-2'>Detail</button>
+                                                      </NavLink>
                                                 </div>
                                           </td>
                                     </tr>);
@@ -264,7 +267,9 @@ const SupervisorSelect = (props) =>
                                                       <input className={ `me-sm-2 mb-1 mb-sm-0 ${ styles.hover }` } type='radio' style={ { width: '1.3rem', height: '1.3rem' } }
                                                             name='supervisorSelector' onChange={ () => { props.setSupervisor(res.data[i].id); props.setSupervisorName(res.data[i].name); } }
                                                             checked={ res.data[i].id === props.supervisor }></input>
-                                                      <button className='btn btn-sm btn-primary ms-sm-2' onClick={ () => props.Navigate(`/staff-list/detail/${ res.data[i].id }`) }>Detail</button>
+                                                      <NavLink to={ `/staff-list/detail/${ res.data[i].id }` }>
+                                                            <button className='btn btn-sm btn-primary ms-sm-2'>Detail</button>
+                                                      </NavLink>
                                                 </div>
                                           </td>
                                     </tr>);
@@ -371,7 +376,9 @@ const AddStudent = (props) =>
                                                                   onChange={ e => configList(e, res.data[i].id, res.data[i].name) }
                                                                   style={ { width: '1.2rem', height: '1.2rem' } } className={ `${ styles.hover } me-2` }
                                                                   checked={ props.studentAdded.length !== 0 && !!props.studentAdded.find(elem => elem.id === res.data[i].id) }></input>
-                                                            <button className="ms-2 btn-sm btn btn-primary" onClick={ () => props.Navigate(`/student-list/detail/${ res.data[i].id }`) }>Detail</button>
+                                                            <NavLink to={ `/student-list/detail/${ res.data[i].id }` }>
+                                                                  <button className="ms-2 btn-sm btn btn-primary">Detail</button>
+                                                            </NavLink>
                                                       </div>
                                                 </td>
                                           </tr >
@@ -491,7 +498,7 @@ const RoomSelect = (props) =>
       }, [render, props]);
 
       return (
-            <Modal show={ props.addRoomPopUp } onHide={ () =>  props.setAddRoomPopUp(false) }
+            <Modal show={ props.addRoomPopUp } onHide={ () => props.setAddRoomPopUp(false) }
                   dialogClassName={ `${ styles.dialog } modal-dialog-scrollable` } contentClassName={ `w-100 h-100` }
                   className={ `reAdjustModel ${ styles.customModal2 } hideBrowserScrollbar` } container={ props.containerRef.current }>
                   <Modal.Header closeButton>
@@ -970,17 +977,17 @@ const ClassCreate = (props) =>
                   </Modal>
                   <TeacherSelect addTeacherPopUp={ addTeacherPopUp } setAddTeacherPopUp={ setAddTeacherPopUp }
                         containerRef={ props.containerRef } dow={ teacherDow } setDow={ setTeacherDow }
-                        Navigate={ props.Navigate } startDate={ startDate } endDate={ endDate } period={ period } />
+                        startDate={ startDate } endDate={ endDate } period={ period } />
                   <SupervisorSelect addSupervisorPopUp={ addSupervisorPopUp } setAddSupervisorPopUp={ setAddSupervisorPopUp } name={ props.name }
                         containerRef={ props.containerRef } supervisor={ supervisor } setSupervisor={ setSupervisor }
-                        supervisorName={ supervisorName } setSupervisorName={ setSupervisorName } Navigate={ props.Navigate } />
-                  <PeriodSelect addPeriodPopUp={ addPeriodPopUp } setAddPeriodPopUp={ setAddPeriodPopUp } Navigate={ props.Navigate }
+                        supervisorName={ supervisorName } setSupervisorName={ setSupervisorName } />
+                  <PeriodSelect addPeriodPopUp={ addPeriodPopUp } setAddPeriodPopUp={ setAddPeriodPopUp }
                         containerRef={ props.containerRef } period={ period } setPeriod={ setPeriod } dow={ periodDow } setDow={ setPeriodDow } setTeacherDow={ setTeacherDow } />
-                  <AddStudent containerRef={ props.containerRef } addPopUp={ addStudentPopUp } setAddPopUp={ setAddStudentPopUp } Navigate={ props.Navigate }
+                  <AddStudent containerRef={ props.containerRef } addPopUp={ addStudentPopUp } setAddPopUp={ setAddStudentPopUp }
                         studentAdded={ studentAdded } setStudentAdded={ setStudentAdded } startDate={ startDate } endDate={ endDate } period={ period } />
                   <RoomSelect addRoomPopUp={ addRoomPopUp } setAddRoomPopUp={ setAddRoomPopUp }
                         containerRef={ props.containerRef } dow={ roomDow } setDow={ setRoomDow }
-                        Navigate={ props.Navigate } startDate={ startDate } endDate={ endDate }
+                        startDate={ startDate } endDate={ endDate }
                         period={ period } studentAdded={ studentAdded } />
             </>
       )

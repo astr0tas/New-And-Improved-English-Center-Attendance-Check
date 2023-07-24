@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 import styles from './StudentDetail.module.css';
 import axios from 'axios';
 import { domain } from '../../../../tools/domain';
-import { useNavigate, useParams } from 'react-router-dom';
+import { NavLink, useParams } from 'react-router-dom';
 import { DMY } from '../../../../tools/dateFormat';
 import { context } from '../../../../context';
 
@@ -23,11 +23,12 @@ const Class = (props) =>
                         props.status === 1 ? 'Active' : 'Finished'
                   ) }</td>
                   <td className='d-flex align-items-center justify-content-center flex-column flex-sm-row'>
-                        <button className='btn btn-sm btn-secondary mx-sm-2 my-2 my-sm-0' onClick={ () =>
-                        {
-                              setListType(0);
-                              props.Navigate(`/class-list/detail/${ props.name }`);
-                        } }>Detail</button>
+                        <NavLink to={ `/class-list/detail/${ props.name }` }>
+                              <button className='btn btn-sm btn-secondary mx-sm-2 my-2 my-sm-0' onClick={ () =>
+                              {
+                                    setListType(0);
+                              } }>Detail</button>
+                        </NavLink>
                         <button className='btn btn-sm btn-primary mx-sm-2 my-2 my-sm-0'>Stats</button>
                   </td>
             </tr>
@@ -48,8 +49,6 @@ const StudentDetail = () =>
       const id = useParams().id;
 
       const [classes, setClasses] = useState([]);
-
-      const Navigate = useNavigate();
 
       useEffect(() =>
       {
@@ -74,12 +73,12 @@ const StudentDetail = () =>
                   {
                         const temp = [];
                         for (let i = 0; i < res.data.length; i++)
-                              temp.push(<Class key={ i } i={ i + 1 } Navigate={ Navigate } name={ res.data[i].name }
+                              temp.push(<Class key={ i } i={ i + 1 } name={ res.data[i].name }
                                     start={ res.data[i].start_date } end={ res.data[i].end_date } status={ res.data[i].Status } />);
                         setClasses(temp);
                   })
                   .catch(err => console.log(err));
-      }, [Navigate, id]);
+      }, [id]);
 
       return (
             <div className="w-100 d-flex flex-column overflow-auto flex-grow-1 mt-2 mb-2">
@@ -136,8 +135,12 @@ const StudentDetail = () =>
                         </table>
                   </div>
                   <div className='d-flex align-items-center w-100 justify-content-center mb-3'>
-                        <button className='btn btn-secondary me-3 me-sm-4' onClick={ () => Navigate('/student-list') }>Back</button>
-                        <button className='btn btn-primary ms-3 ms-sm-4' onClick={ () => Navigate('./edit') }>Change info</button>
+                        <NavLink to={ '/student-list' }>
+                              <button className='btn btn-secondary me-3 me-sm-4'>Back</button>
+                        </NavLink>
+                        <NavLink to={ './edit' }>
+                              <button className='btn btn-primary ms-3 ms-sm-4'>Change info</button>
+                        </NavLink>
                   </div>
             </div>
       )

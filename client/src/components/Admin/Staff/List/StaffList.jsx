@@ -2,7 +2,7 @@ import styles from './StaffList.module.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { useContext, useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, NavLink } from 'react-router-dom';
 import axios from 'axios';
 import { domain } from '../../../../tools/domain';
 import { DMY } from '../../../../tools/dateFormat';
@@ -15,13 +15,41 @@ const Staff = (props) =>
 {
       return (
             <tr className={ `${ styles.hover }` } onClick={ () => { props.Navigate(`./detail/${ props.id }`); } }>
-                  <td className='text-center align-middle'>{ props.i }</td>
-                  <td className='text-center align-middle'>{ props.name }</td>
-                  <td className='text-center align-middle'>{ props.ssn }</td>
-                  <td className='text-center align-middle'>{ props.phone }</td>
-                  <td className='text-center align-middle'>{ props.email }</td>
-                  <td className='text-center align-middle'>{ DMY(props.birthdate) }</td>
-                  <td className='text-center align-middle'>{ props.address }</td>
+                  <td className='text-center align-middle'>
+                        <NavLink className={ `d-block ${ styles.hover } text-dark text-decoration-none` } to={ `./detail/${ props.id }` }>
+                              { props.i }
+                        </NavLink>
+                  </td>
+                  <td className='text-center align-middle'>
+                        <NavLink className={ `d-block ${ styles.hover } text-dark text-decoration-none` } to={ `./detail/${ props.id }` }>
+                              { props.name }
+                        </NavLink>
+                  </td>
+                  <td className='text-center align-middle'>
+                        <NavLink className={ `d-block ${ styles.hover } text-dark text-decoration-none` } to={ `./detail/${ props.id }` }>
+                              { props.ssn }
+                        </NavLink>
+                  </td>
+                  <td className='text-center align-middle'>
+                        <NavLink className={ `d-block ${ styles.hover } text-dark text-decoration-none` } to={ `./detail/${ props.id }` }>
+                              { props.phone }
+                        </NavLink>
+                  </td>
+                  <td className='text-center align-middle'>
+                        <NavLink className={ `d-block ${ styles.hover } text-dark text-decoration-none` } to={ `./detail/${ props.id }` }>
+                              { props.email }
+                        </NavLink>
+                  </td>
+                  <td className='text-center align-middle'>
+                        <NavLink className={ `d-block ${ styles.hover } text-dark text-decoration-none` } to={ `./detail/${ props.id }` }>
+                              { DMY(props.birthdate) }
+                        </NavLink>
+                  </td>
+                  <td className='text-center align-middle'>
+                        <NavLink className={ `d-block ${ styles.hover } text-dark text-decoration-none` } to={ `./detail/${ props.id }` }>
+                              { props.address }
+                        </NavLink>
+                  </td>
             </tr>
       )
 }

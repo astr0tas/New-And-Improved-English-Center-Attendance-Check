@@ -166,7 +166,7 @@ begin
     declare currentSessions int;
 	
 	DECLARE done INT DEFAULT FALSE;
-	declare reader cursor for select name from class where name like concat('%',searchName,'%') and status=searchStatus order by status desc, start_date desc, name;
+	declare reader cursor for select name from class where name like concat('%',searchName,'%') and status=searchStatus order by start_date desc, name;
 	DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
     
     open reader;
@@ -216,20 +216,24 @@ begin
             set sessionDate=null,startHour=null,endHour=null,sessionStatus=null,sessionClassroomID=null,
             sessionTeacherID=null,sessionTeacherName=null,
             sessionSupervisorID=null,sessionSupervisorName=null;
-            
+                        
             select session_date,start_hour,end_hour,status,classroom_id into sessionDate,startHour,endHour,sessionStatus,sessionClassroomID from session 
             join timetable on timetable.id=session.timetable_id where class_name=className and number=numberLoop;
-            
+                        
             select employee.id,employee.name into sessionTeacherID,sessionTeacherName from employee
             join teacher on teacher.id=employee.id
             join teacher_responsible on teacher_responsible.teacher_id=teacher.id
             where teacher_responsible.session_number=numberLoop and teacher_responsible.class_name=className;
             
+            set done=false;
+                        
             select employee.id,employee.name into sessionSupervisorID,sessionSupervisorName from employee
             join supervisor on supervisor.id=employee.id
             join supervisor_responsible on supervisor_responsible.supervisor_id=supervisor.id
             where supervisor_responsible.session_number=numberLoop and supervisor_responsible.class_name=className;
             
+            set done=false;
+                        
             select numberLoop as number,sessionDate,startHour,endHour,sessionStatus,sessionClassroomID,sessionTeacherID,sessionTeacherName,sessionSupervisorID,sessionSupervisorName;
         end loop;
 	close reader;
@@ -283,5 +287,41 @@ begin
     select sessionDate,sessionStatus,sessionClassroomID,startHour,endHour,sessionNumberMakeUpFor,
     sessionTeacherID,sessionTeacherName,sessionTeacherImage,sessionTeacherStatus,sessionTeacherNote,
     sessionSupervisorID,sessionSupervisorName,sessionSupervisorImage,sessionSupervisorNote;
+end//
+delimiter ;
+
+drop procedure if exists toggleStatus;
+delimiter //
+create procedure toggleStatus(
+	in className varchar(100),
+    in classStatus int
+)
+begin
+	declare endDate date;
+    declare numberLoop int;
+    DECLARE done INT DEFAULT FALSE;
+	declare reader cursor for select number from session where class_name=className order by number;
+	DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+	if classStatus=2 then
+		update class set status=1 where name=className;
+        update session set status=3 where class_name=className and (status=1 or status=4);
+    elseif classStatus=1 then
+		select end_date into endDate from class where name=className;
+        if curdate()<=endDate then
+			update class set status=2 where name=className;
+			open reader;
+				read_loop: loop
+				fetch reader into numberLoop;
+				IF done THEN
+					LEAVE read_loop;
+				END IF;
+                call restoreSession(className,numberLoop);
+			end loop;
+			close reader;
+        else
+			update class set status=0 where name=className;
+            update session set status=2 where class_name=className and (status=1 or status=4 or status=3);
+        end if;
+    end if;
 end//
 delimiter ;

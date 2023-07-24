@@ -7,7 +7,6 @@ import { isRefValid } from '../../../tools/refChecker';
 import '../../../css/scroll.css';
 import { domain } from '../../../tools/domain';
 import { DMY, YMD } from '../../../tools/dateFormat';
-import { AiOutlineCloseCircle } from 'react-icons/ai';
 import { useOutletContext } from 'react-router-dom';
 import axios from 'axios';
 
@@ -42,7 +41,10 @@ const Profile = () =>
       const profileImg = useRef(null);
 
       const [isWrong, setIsWrong] = useState(false);
-      const [isFuture, setIsFuture] = useState(false);
+      const [isYoung, setIsYoung] = useState(false);
+      const [invalidSSN, setInvalidSSN] = useState(false);
+      const [invalidPhone, setInvalidPhone] = useState(false);
+      const [invalidEmail, setInvalidEmail] = useState(false);
 
       const [render, setRender] = useState(false);
 
@@ -79,8 +81,11 @@ const Profile = () =>
             setEditMode(val);
             if (!val)
             {
+                  setInvalidSSN(false);
+                  setInvalidPhone(false);
                   setIsWrong(false);
-                  setIsFuture(false);
+                  setInvalidEmail(false);
+                  setIsYoung(false);
                   setPassword("");
                   setRepassword("");
                   setNewAddress("");
@@ -96,18 +101,59 @@ const Profile = () =>
             }
       }
 
-      const changeInfo = (e) =>
+      function hasAlphabetCharacters(inputString)
       {
-            e.preventDefault();
+            const alphabetPattern = /[a-zA-Z]/;
+
+            return alphabetPattern.test(inputString);
+      }
+
+      function isValidEmail(email)
+      {
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailPattern.test(email);
+      }
+
+      function isValidAge(inDate)
+      {
+            const input = new Date(inDate);
+            const now = new Date();
+
+            return input.getFullYear()+18 < now.getFullYear() || (
+                  input.getFullYear()+18 === now.getFullYear() && (
+                        input.getMonth() < now.getMonth() || (
+                              input.getMonth() === now.getMonth() && input.getDate() <= now.getDate()
+                        )
+                  )
+            );
+      }
+
+      const changeInfo = () =>
+      {
             let isOk = true;
             if (password !== repassword)
             {
                   setIsWrong(true);
                   isOk = false;
             }
-            if (new Date(newBirthday) > new Date())
+            if (newBirthday !== '' && !isValidAge(newBirthday))
             {
-                  setIsFuture(true);
+                  setIsYoung(true);
+                  isOk = false;
+            }
+            if (newSSN !== '' && hasAlphabetCharacters(newSSN))
+            {
+                  setInvalidSSN(true);
+                  isOk = false;
+            }
+            if (newPhone !== '' && hasAlphabetCharacters(newPhone))
+            {
+                  setInvalidPhone(true);
+                  isOk = false;
+            }
+            if (newEmail !== '' && !isValidEmail(newEmail))
+            {
+                  setInvalidEmail(true);
                   isOk = false;
             }
             if (isOk)
@@ -139,25 +185,26 @@ const Profile = () =>
       }
 
       return (
-            <div className="w-100 h-100 d-flex overflow-auto">
-                  <form className='my-auto d-flex flex-column align-items-center w-100' onSubmit={ changeInfo } ref={ popUpContainer }>
-                        <Modal show={ showpopup } className={ `reAdjustModel` } container={ popUpContainer.current }>
-                              <Modal.Header className='border border-0'>
-                              </Modal.Header>
-                              <Modal.Body className='border border-0 d-flex justify-content-center'>
-                                    <h4 className='text-center'>Do you want to update your info?</h4>
-                              </Modal.Body>
-                              <Modal.Footer className='justify-content-center border border-0'>
-                                    <button type='button' className='btn btn-danger me-2 me-md-4' onClick={ () =>
-                                    {
-                                          setshowpopup(false);
-                                    } }>No</button>
-                                    <button type='submit' className='btn btn-primary ms-2 ms-md-4' onClick={ () =>
-                                    {
-                                          setshowpopup(false);
-                                    } }>Yes</button>
-                              </Modal.Footer>
-                        </Modal>
+            <div className="w-100 h-100 d-flex overflow-auto flex-column align-items-center" ref={ popUpContainer }>
+                  <Modal show={ showpopup } className={ `reAdjustModel` } container={ popUpContainer.current } onHide={ () => setshowpopup(false) }>
+                        <Modal.Header className='border border-0' closeButton>
+                        </Modal.Header>
+                        <Modal.Body className='border border-0 d-flex justify-content-center'>
+                              <h4 className='text-center'>Do you want to update your info?</h4>
+                        </Modal.Body>
+                        <Modal.Footer className='justify-content-center border border-0'>
+                              <button className='btn btn-danger me-2 me-md-4' onClick={ () =>
+                              {
+                                    setshowpopup(false);
+                              } }>No</button>
+                              <button className='btn btn-primary ms-2 ms-md-4' onClick={ () =>
+                              {
+                                    setshowpopup(false);
+                                    changeInfo();
+                              } }>Yes</button>
+                        </Modal.Footer>
+                  </Modal>
+                  <div className='d-flex flex-column align-items-center my-auto w-100'>
                         <img alt='profile' className={ `${ styles.img } mt-2 mt-md-4` } ref={ profileImg }></img>
                         {
                               editMode &&
@@ -210,7 +257,7 @@ const Profile = () =>
                                           </div>
                                     }
                               </div>
-                              <div className={ `align-self-center overflow-auto hideBrowserScrollbar` } style={ { width: '85%' } }>
+                              <div className={ `align-self-center overflow-auto hideBrowserScrollbar mt-2` } style={ { width: '85%' } }>
                                     <div className='d-flex align-items-center mt-2 justify-content-center'>
                                           <strong>SSN:&nbsp;&nbsp;</strong>
                                           {
@@ -218,10 +265,16 @@ const Profile = () =>
                                                 <p className='mb-0'>{ ssn }</p>
                                           }
                                           {
-                                                editMode && <input placeholder='Enter your SSN' className={ `${ styles.inputs }` } type='text' maxLength='12' pattern='[0-9]{12}'
+                                                editMode && <input placeholder='Enter your SSN' className={ `${ styles.inputs }` } type='text'
                                                       defaultValue={ ssn } onChange={ e => setNewSSN(e.target.value) }></input>
                                           }
                                     </div>
+                                    {
+                                          invalidSSN &&
+                                          <p className={ `${ styles.p } mt-2 mb-0 text-center align-middle` }>
+                                                Your SSN must not contain alphabetical character(s)!
+                                          </p>
+                                    }
                                     <div className='d-flex align-items-center mt-2 justify-content-center'>
                                           <strong>Birthdate:&nbsp;&nbsp;</strong>
                                           {
@@ -234,17 +287,12 @@ const Profile = () =>
                                           }
                                     </div>
                                     {
-                                          isFuture &&
-                                          <div className='d-flex align-items-center mb-2 justify-content-center'>
-                                                <AiOutlineCloseCircle style={ {
-                                                      marginRight: '5px'
-                                                } } className={ `${ styles.p } mt-2` } />
-                                                <p className={ `${ styles.p } mt-2 mb-0` }>
-                                                      Your birthday must not be the future!
-                                                </p>
-                                          </div>
+                                          isYoung &&
+                                          <p className={ `${ styles.p } mt-2 mb-0 text-center align-middle` }>
+                                                Your age must be equal or above 18!
+                                          </p>
                                     }
-                                    <div className='d-flex align-items-center mt-2 justify-content-center'>
+                                    <div className='d-flex align-items-center mt-2 mb-2 justify-content-center'>
                                           <strong>Birthplace:&nbsp;&nbsp;</strong>
                                           {
                                                 !editMode &&
@@ -266,17 +314,29 @@ const Profile = () =>
                                                       defaultValue={ email } onChange={ e => setNewEmail(e.target.value) }></input>
                                           }
                                     </div>
-                                    <div className='d-flex align-items-center mt-2 mb-2 justify-content-center'>
+                                    {
+                                          invalidEmail &&
+                                          <p className={ `${ styles.p } mt-2 mb-0 text-center align-middle` }>
+                                                Your email is invalid!
+                                          </p>
+                                    }
+                                    <div className='d-flex align-items-center mt-2 justify-content-center'>
                                           <strong>Phone:&nbsp;&nbsp;</strong>
                                           {
                                                 !editMode &&
                                                 <p className='mb-0'>{ phone }</p>
                                           }
                                           {
-                                                editMode && <input placeholder='Enter your phone' className={ `${ styles.inputs }` } type='text' maxLength='10' pattern='[0-9]{10}'
+                                                editMode && <input placeholder='Enter your phone' className={ `${ styles.inputs }` } type='text'
                                                       defaultValue={ phone } onChange={ e => setNewPhone(e.target.value) }></input>
                                           }
                                     </div>
+                                    {
+                                          invalidPhone &&
+                                          <p className={ `${ styles.p } mt-2 mb-0 text-center align-middle` }>
+                                                Your phone number must not contain alphabetical character(s)!
+                                          </p>
+                                    }
                                     <div className='d-flex align-items-center mt-2 mb-2 justify-content-center'>
                                           <strong>Address:&nbsp;&nbsp;</strong>
                                           {
@@ -310,19 +370,13 @@ const Profile = () =>
                                     {
                                           isWrong
                                           &&
-                                          <div className='d-flex align-items-center mb-2 justify-content-center'>
-                                                <AiOutlineCloseCircle style={ {
-                                                      marginRight: '5px',
-                                                      marginBottom: '16px'
-                                                } } className={ `${ styles.p }` } />
-                                                <p className={ `${ styles.p }` }>
-                                                      Passwords are not matched!
-                                                </p>
-                                          </div>
+                                          <p className={ `${ styles.p } text-center align-middle` }>
+                                                Your passwords are not matched!
+                                          </p>
                                     }
                               </div>
                         </div>
-                  </form>
+                  </div>
             </div>
       )
 }

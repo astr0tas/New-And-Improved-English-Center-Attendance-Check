@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, forwardRef, useImperativeHandle } from 'react';
 import styles from './SessionDetail.module.css';
-import { useNavigate, useParams } from 'react-router-dom';
+import {  useParams, NavLink } from 'react-router-dom';
 import { domain } from '../../../../tools/domain';
 import axios from 'axios';
 import { DMDY } from '../../../../tools/dateFormat';
@@ -38,7 +38,9 @@ const TeacherSelect = (props) =>
                                                       <input className={ `me-sm-2 mb-1 mb-sm-0 ${ styles.hover }` } type='radio' style={ { width: '1.3rem', height: '1.3rem' } }
                                                             name='teacherSelector' onChange={ () => props.setNewTeacher(res.data[i].id) }
                                                             checked={ props.newTeacher === res.data[i].id }></input>
-                                                      <button className='btn btn-sm btn-primary ms-sm-2' onClick={ () => props.Navigate(`/staff-list/detail/${ res.data[i].id }`) }>Detail</button>
+                                                      <NavLink to={ `/staff-list/detail/${ res.data[i].id }` }>
+                                                            <button className='btn btn-sm btn-primary ms-sm-2'>Detail</button>
+                                                      </NavLink>
                                                 </div>
                                           </td>
                                     </tr>);
@@ -127,7 +129,9 @@ const SupervisorSelect = (props) =>
                                                       <input className={ `me-sm-2 mb-1 mb-sm-0 ${ styles.hover }` } type='radio' style={ { width: '1.3rem', height: '1.3rem' } }
                                                             name='supervisorSelector' onChange={ () => props.setNewSupervisor(res.data[i].id) }
                                                             checked={ props.newSupervisor === res.data[i].id }></input>
-                                                      <button className='btn btn-sm btn-primary ms-sm-2' onClick={ () => props.Navigate(`/staff-list/detail/${ res.data[i].id }`) }>Detail</button>
+                                                      <NavLink to={ `/staff-list/detail/${ res.data[i].id }` }>
+                                                            <button className='btn btn-sm btn-primary ms-sm-2' >Detail</button>
+                                                      </NavLink>
                                                 </div>
                                           </td>
                                     </tr>);
@@ -226,7 +230,11 @@ const Student = forwardRef((props, ref) =>
             <tr>
                   <td className='text-center align-middle'>{ props.i }</td>
                   <td className='text-center align-middle'>{ props.name }</td>
-                  <td className='text-center align-middle'><button className='btn btn-sm btn-primary' onClick={ () => props.Navigate(`/student-list/detail/${ props.id }`) }>Detail</button></td>
+                  <td className='text-center align-middle'>
+                        <NavLink to={ `/student-list/detail/${ props.id }` }>
+                              <button className='btn btn-sm btn-primary'>Detail</button>
+                        </NavLink>
+                  </td>
                   <td className='text-center align-middle'>
                         <input name={ `${ props.id }_attendace` } type='radio' className={ `${ (props.status === 1 || props.status === 2) ? styles.hover : '' }` }
                               style={ { width: '1.3rem', height: '1.3rem' } }
@@ -316,8 +324,6 @@ const AdminClassSessionDetail = () =>
       const [confirmChangeTeacher, setConfirmChangeTeacher] = useState(false);
       const [confirmChangeSupervisor, setConfirmChangeSupervisor] = useState(false);
       const [confirmChangeClassRoom, setConfirmChangeClassRoom] = useState(false);
-
-      const Navigate = useNavigate();
 
       const toggleStatus = (status) =>
       {
@@ -420,7 +426,7 @@ const AdminClassSessionDetail = () =>
                         {
                               const temp = [];
                               for (let i = 0; i < res.data.length; i++)
-                                    temp.push(<Student Navigate={ Navigate } key={ i } i={ i + 1 } ref={ el => childrenRefs.current[i] = el }
+                                    temp.push(<Student key={ i } i={ i + 1 } ref={ el => childrenRefs.current[i] = el }
                                           id={ res.data[i].id } name={ res.data[i].name }
                                           className={ name } sessionNumber={ number } status={ status } />);
                               setStudentList(temp);
@@ -435,7 +441,7 @@ const AdminClassSessionDetail = () =>
             if (isRefValid(radioAbsent))
                   radioAbsent.current.checked = false;
 
-      }, [number, name, Navigate, render, status]);
+      }, [number, name, render, status]);
 
       return (
             <div className='w-100 h-100 d-flex flex-column align-items-center' ref={ containerRef }>
@@ -488,7 +494,12 @@ const AdminClassSessionDetail = () =>
                                           <h4>{ teacherName }</h4>
                                           <button className='btn btn-sm btn-secondary mb-3' onClick={ () => setChangeTeacherPopUp(true) }>Change</button>
                                           <img className={ `${ styles.images }` } alt='' src={ teacherImage }></img>
-                                          <button className='btn btn-sm btn-primary mt-2' onClick={ () => Navigate(`/staff-list/detail/${ teacherID }`) } disabled={ !teacherID }>Detail</button>
+                                          {
+                                                teacherID &&
+                                                <NavLink to={ `/staff-list/detail/${ teacherID }` }>
+                                                      <button className='btn btn-sm btn-primary mt-2'>Detail</button>
+                                                </NavLink>
+                                          }
                                           <div className='d-flex align-items-center justify-content-center mt-2 mb-2'>
                                                 <div className='d-flex flex-column align-items-center me-4'>
                                                       <label htmlFor='teacherOnClass' style={ { color: '#128400' } }>On class</label>
@@ -522,7 +533,12 @@ const AdminClassSessionDetail = () =>
                                           <h4>{ supervisorName }</h4>
                                           <button className='btn btn-sm btn-secondary mb-3' onClick={ () => setChangeSupervisorPopUp(true) }>Change</button>
                                           <img className={ `${ styles.images }` } alt='' src={ supervisorImage }></img>
-                                          <button className='btn btn-sm btn-primary mt-2' onClick={ () => Navigate(`/staff-list/detail/${ supervisorID }`) } disabled={ !supervisorID }>Detail</button>
+                                          {
+                                                supervisorID &&
+                                                <NavLink to={ `/staff-list/detail/${ supervisorID }` }>
+                                                      <button className='btn btn-sm btn-primary mt-2'>Detail</button>
+                                                </NavLink>
+                                          }
                                     </div>
                               </div>
                         </div>
@@ -582,11 +598,13 @@ const AdminClassSessionDetail = () =>
                               <input id='classNote' type='text' style={ { width: '250px' } } disabled={ !(status === 1 || status === 2) }></input>
                         </div>
                         <div className='w-100 d-flex align-items-center justify-content-center mb-3'>
-                              <button className='btn btn-secondary me-3' onClick={ () => Navigate(`/class-list/detail/${ name }`) }>Back</button>
+                              <NavLink to={ `/class-list/detail/${ name }` }>
+                              <button className='btn btn-secondary me-3'>Back</button>
                               {
                                     (status === 1 || status === 2) &&
                                     <button className='btn btn-primary ms-3' onClick={ checkAttendance }>Confirm</button>
-                              }
+                                    }
+                              </NavLink>
                         </div>
                   </div>
                   <Modal show={ showPopUp1 } onHide={ () => setShowPopUp1(false) } className={ `reAdjustModel hideBrowserScrollbar` } container={ containerRef.current }>
@@ -685,9 +703,9 @@ const AdminClassSessionDetail = () =>
                   </Modal>
 
                   <TeacherSelect changeTeacherPopUp={ changeTeacherPopUp } setChangeTeacherPopUp={ setChangeTeacherPopUp } name={ name } setConfirmChangeTeacher={ setConfirmChangeTeacher }
-                        containerRef={ containerRef } newTeacher={ newTeacher } setNewTeacher={ setNewTeacher } Navigate={ Navigate } teacherID={ teacherID } />
+                        containerRef={ containerRef } newTeacher={ newTeacher } setNewTeacher={ setNewTeacher } teacherID={ teacherID } />
                   <SupervisorSelect changeSupervisorPopUp={ changeSupervisorPopUp } setChangeSupervisorPopUp={ setChangeSupervisorPopUp } name={ name } setConfirmChangeSupervisor={ setConfirmChangeSupervisor }
-                        containerRef={ containerRef } newSupervisor={ newSupervisor } setNewSupervisor={ setNewSupervisor } Navigate={ Navigate } supervisorID={ supervisorID } />
+                        containerRef={ containerRef } newSupervisor={ newSupervisor } setNewSupervisor={ setNewSupervisor } supervisorID={ supervisorID } />
 
                   <Modal show={ confirmChangeTeacher } onHide={ () => { setConfirmChangeTeacher(false); } } className={ `reAdjustModel hideBrowserScrollbar ${ styles.confirmModal }` } container={ containerRef.current }>
                         <Modal.Header className='border border-0' closeButton>

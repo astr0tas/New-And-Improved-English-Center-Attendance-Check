@@ -5,6 +5,7 @@ import { domain } from "../../../../../tools/domain";
 import { Modal } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
+import { NavLink } from 'react-router-dom';
 
 const AddTeacher = (props) =>
 {
@@ -41,7 +42,9 @@ const AddTeacher = (props) =>
                                           <td className='align-middle text-center'>
                                                 <div className='d-flex align-items-center justify-content-center'>
                                                       <input type='checkbox' style={ { width: '1.2rem', height: '1.2rem' } } onChange={ e => configList(e, res.data[i].id) } className={ `${ styles.hover } me-2` }></input>
-                                                      <button className='btn btn-sm btn-primary' onClick={ () => props.Navigate(`/staff-list/detail/${ res.data[i].id }`) }>Detail</button>
+                                                      <NavLink to={ `/staff-list/detail/${ res.data[i].id }` }>
+                                                            <button className='btn btn-sm btn-primary'>Detail</button>
+                                                      </NavLink>
                                                 </div>
                                           </td>
                                     </tr >);

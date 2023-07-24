@@ -9,6 +9,7 @@ import { AiOutlineCloseCircle } from 'react-icons/ai';
 import { Dropdown } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
+import { NavLink } from 'react-router-dom';
 
 const TeacherSelect = (props) =>
 {
@@ -37,7 +38,9 @@ const TeacherSelect = (props) =>
                                                       <input className={ `me-sm-2 mb-1 mb-sm-0 ${ styles.hover }` } type='radio' style={ { width: '1.3rem', height: '1.3rem' } }
                                                             name='teacherSelector' onChange={ () => { props.setTeacher(res.data[i].id); props.setTeacherName(res.data[i].name); } }
                                                             checked={ res.data[i].id === props.teacher }></input>
-                                                      <button className='btn btn-sm btn-primary ms-sm-2' onClick={ () => props.Navigate(`/staff-list/detail/${ res.data[i].id }`) }>Detail</button>
+                                                      <NavLink to={ `/staff-list/detail/${ res.data[i].id }` }>
+                                                            <button className='btn btn-sm btn-primary ms-sm-2'>Detail</button>
+                                                      </NavLink>
                                                 </div>
                                           </td>
                                     </tr>);
@@ -127,7 +130,9 @@ const SupervisorSelect = (props) =>
                                                       <input className={ `me-sm-2 mb-1 mb-sm-0 ${ styles.hover }` } type='radio' style={ { width: '1.3rem', height: '1.3rem' } }
                                                             name='supervisorSelector' onChange={ () => { props.setSupervisor(res.data[i].id); props.setSupervisorName(res.data[i].name); } }
                                                             checked={ res.data[i].id === props.supervisor }></input>
-                                                      <button className='btn btn-sm btn-primary ms-sm-2' onClick={ () => props.Navigate(`/staff-list/detail/${ res.data[i].id }`) }>Detail</button>
+                                                      <NavLink to={ `/staff-list/detail/${ res.data[i].id }` }>
+                                                            <button className='btn btn-sm btn-primary ms-sm-2'>Detail</button>
+                                                      </NavLink>
                                                 </div>
                                           </td>
                                     </tr>);
@@ -575,10 +580,10 @@ const AddSession = (props) =>
                   </Modal>
                   <TeacherSelect addTeacherPopUp={ addTeacherPopUp } setAddTeacherPopUp={ setAddTeacherPopUp } name={ props.name }
                         containerRef={ props.containerRef } teacher={ teacher } setTeacher={ setTeacher } teacherName={ teacherName }
-                        setTeacherName={ setTeacherName } Navigate={ props.Navigate } date={ date } timetable={ timetable } />
+                        setTeacherName={ setTeacherName } date={ date } timetable={ timetable } />
                   <SupervisorSelect addSupervisorPopUp={ addSupervisorPopUp } setAddSupervisorPopUp={ setAddSupervisorPopUp } name={ props.name }
                         containerRef={ props.containerRef } supervisor={ supervisor } setSupervisor={ setSupervisor }
-                        supervisorName={ supervisorName } setSupervisorName={ setSupervisorName } Navigate={ props.Navigate } />
+                        supervisorName={ supervisorName } setSupervisorName={ setSupervisorName } />
             </>
       )
 }

@@ -112,7 +112,7 @@ export class Class
 
       toggleStatus(name, status, callback)
       {
-            this.conn.query(`update class set status=? where name=?`, [status, name], (err, res) =>
+            this.conn.query(`call toggleStatus(?,?);`, [name, status], (err, res) =>
             {
                   if (err)
                         callback(null, err);
@@ -470,7 +470,7 @@ export class Class
             const maxSeats = sorted[0].roomSize;
             const params = [start, end, name, maxSeats, length * 4 * period.length];
             const addedTeacher = [];
-            let sql = `insert into class values(?,?,?,true,?,?);`;
+            let sql = `insert into class values(?,?,?,2,?,?);`;
             for (let i = 0; i < students.length; i++)
             {
                   sql += `insert into in_class values(?,?);`;

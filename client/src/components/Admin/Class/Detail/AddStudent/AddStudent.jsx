@@ -5,6 +5,7 @@ import { Modal } from 'react-bootstrap';
 import styles from './AddStudent.module.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
+import { NavLink } from "react-router-dom";
 
 const AddStudent = (props) =>
 {
@@ -59,7 +60,9 @@ const AddStudent = (props) =>
                                                 <td className='text-center align-middle'>
                                                       <div className="d-flex align-items-center justify-content-center">
                                                             <input type='checkbox' onChange={ e => configList(e, res.data[i].id) } style={ { width: '1.2rem', height: '1.2rem' } } className={ `${ styles.hover } me-2` }></input>
-                                                            <button className="ms-2 btn-sm btn btn-primary" onClick={ () => props.Navigate(`/student-list/detail/${ res.data[i].id }`) }>Detail</button>
+                                                            <NavLink to={ `/student-list/detail/${ res.data[i].id }` }>
+                                                                  <button className="ms-2 btn-sm btn btn-primary">Detail</button>
+                                                            </NavLink>
                                                       </div>
                                                 </td>
                                           </tr >

@@ -58,7 +58,7 @@ CREATE TABLE CLASS (
   Start_date DATE,
   End_date DATE,
   Name VARCHAR(100),
-  Status int default 1,
+  Status int default 2,
   Max_students INT,
   Initial_sessions INT default 0,
   PRIMARY KEY (Name),

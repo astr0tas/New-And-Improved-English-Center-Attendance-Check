@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { DMY } from '../../../../tools/dateFormat';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, NavLink } from 'react-router-dom';
 import { domain } from '../../../../tools/domain';
 import { context } from '../../../../context';
 import '../../../../css/scroll.css';
@@ -13,14 +13,48 @@ import ClassCreate from '../Create/ClassCreate';
 const Class = (props) =>
 {
       return (
-            <tr className={ `${ styles.hover }` } onClick={ () => { props.setListType(0); props.Navigate(`./detail/${ props.name }`); } }>
-                  <td className='text-center align-middle'>{ props.i }</td>
-                  <td className='text-center align-middle'>{ props.name }</td>
-                  <td className='text-center align-middle'>{ props.currentStudents }/{ props.initialStudents }</td>
-                  <td className='text-center align-middle'>{ props.currentSessions }/{ props.initialSessions }</td>
-                  <td className='text-center align-middle'>{ props.start === null ? 'N/A' : DMY(props.start) }</td>
-                  <td className='text-center align-middle'>{ props.end === null ? 'N/A' : DMY(props.end) }</td>
-                  <td className='text-center align-middle' style={ { color: props.status === 0 ? 'red' : '#128400' } }>{ props.status === 0 ? 'Deactivated' : 'Active' }</td>
+            <tr onClick={ () => { props.setListType(0); props.Navigate(`./detail/${ props.name }`); } } className={ `${ styles.hover }` }>
+                  <td className='text-center align-middle'>
+                        <NavLink className={ `d-block ${ styles.hover } text-dark text-decoration-none` } to={ `./detail/${ props.name }` } onClick={ () => props.setListType(0) }>
+                              { props.i }
+                        </NavLink>
+                  </td>
+                  <td className='text-center align-middle'>
+                        <NavLink className={ `d-block ${ styles.hover } text-dark text-decoration-none` } to={ `./detail/${ props.name }` } onClick={ () => props.setListType(0) }>
+                              { props.name }
+                        </NavLink>
+                  </td>
+                  <td className='text-center align-middle'>
+                        <NavLink className={ `d-block ${ styles.hover } text-dark text-decoration-none` } to={ `./detail/${ props.name }` } onClick={ () => props.setListType(0) }>
+                              { props.currentStudents }/{ props.initialStudents }
+                        </NavLink>
+                  </td>
+                  <td className='text-center align-middle'>
+                        <NavLink className={ `d-block ${ styles.hover } text-dark text-decoration-none` } to={ `./detail/${ props.name }` } onClick={ () => props.setListType(0) }>
+                              { props.currentSessions }/{ props.initialSessions }
+                        </NavLink>
+                  </td>
+                  <td className='text-center align-middle'>
+                        <NavLink className={ `d-block ${ styles.hover } text-dark text-decoration-none` } to={ `./detail/${ props.name }` } onClick={ () => props.setListType(0) }>
+                              { props.start === null ? 'N/A' : DMY(props.start) }
+                        </NavLink>
+                  </td>
+                  <td className='text-center align-middle'>
+                        <NavLink className={ `d-block ${ styles.hover } text-dark text-decoration-none` } to={ `./detail/${ props.name }` } onClick={ () => props.setListType(0) }>
+                              { props.end === null ? 'N/A' : DMY(props.end) }
+                        </NavLink>
+                  </td>
+                  <td className='text-center align-middle'>
+                        <NavLink className={ `d-block ${ styles.hover } text-decoration-none` } to={ `./detail/${ props.name }` }
+                              onClick={ () => props.setListType(0) } style={ {
+                                    color: props.status === 1 ? 'red' : (
+                                          props.status === 2 ? '#128400' : 'gray')
+                              } }>
+                              { props.status === 1 ? 'Deactivated' : (
+                                    props.status === 2 ? 'Active' : 'Finished'
+                              ) }
+                        </NavLink>
+                  </td>
             </tr>
       )
 }
@@ -73,11 +107,6 @@ const ClassList = () =>
             }, 1500);
       }
 
-      const changeStatus = (val) =>
-      {
-            setClassState(val);
-      }
-
       return (
             <div className='w-100 d-flex flex-column overflow-auto flex-grow-1 mt-2 mb-2 hideBrowserScrollbar align-items-center' ref={ containerRef }>
                   <div className='mt-4 mt-md-2 me-md-auto ms-md-3 mx-auto d-flex align-items-center flex-column flex-sm-row'>
@@ -85,19 +114,19 @@ const ClassList = () =>
                               <FontAwesomeIcon icon={ faMagnifyingGlass } className={ `position-absolute ${ styles.search }` } />
                               <input type='text' placeholder='Find class' className={ `ps-4` } onChange={ findClass }></input>
                         </div>
-                        <div className='ms-3 d-flex align-items-center'>
+                        <div className='ms-md-3 ms-sm-2 d-flex align-items-center flex-column flex-sm-row'>
                               <strong>Status</strong>
-                              <div className='d-flex align-items-center'>
-                                    <input type="radio" id="active" name="status" value={ 1 } className={ `ms-2 me-1 ${ styles.hover } ${ styles.radios }` } onChange={ () => changeStatus(1) } checked={ classState === 1 } />
-                                    <label htmlFor="active" className={ `me-3` } style={ { color: '#128400' } }>Active</label>
+                              <div className='d-flex align-items-center my-1 my-sm-0'>
+                                    <input type="radio" id="active" name="status" className={ `ms-sm-2 ms-md-3 me-1 ${ styles.hover } ${ styles.radios }` } onChange={ () => setClassState(2) } checked={ classState === 2 } />
+                                    <label htmlFor="active" style={ { color: '#128400' } }>Active</label>
                               </div>
-                              <div className='d-flex align-items-center'>
-                                    <input type="radio" id="deactivated" name="status" value={ 0 } className={ `me-1 ${ styles.hover } ${ styles.radios }` } onChange={ () => changeStatus(0) } checked={ classState === 0 } />
+                              <div className='d-flex align-items-center my-1 my-sm-0'>
+                                    <input type="radio" id="deactivated" name="status" className={ `ms-sm-2 ms-md-3 me-1 ${ styles.hover } ${ styles.radios }` } onChange={ () => setClassState(1) } checked={ classState === 1 } />
                                     <label htmlFor="deactivated" style={ { color: 'red' } }>Deactivated</label>
                               </div>
-                              <div className='d-flex align-items-center'>
-                                    <input type="radio" id="deactivated" name="status" value={ 2 } className={ `ms-3 me-1 ${ styles.hover } ${ styles.radios }` } onChange={ () => changeStatus(2) } checked={ classState === 2 } />
-                                    <label htmlFor="deactivated" style={ { color: 'gray' } }>Finished</label>
+                              <div className='d-flex align-items-center my-1 my-sm-0'>
+                                    <input type="radio" id="finished" name="status" className={ `ms-sm-2 ms-md-3 me-1 ${ styles.hover } ${ styles.radios }` } onChange={ () => setClassState(0) } checked={ classState === 0 } />
+                                    <label htmlFor="finished" style={ { color: 'gray' } }>Finished</label>
                               </div>
                         </div>
                   </div>

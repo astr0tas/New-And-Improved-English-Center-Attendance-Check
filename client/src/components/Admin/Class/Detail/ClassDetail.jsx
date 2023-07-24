@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams, NavLink } from 'react-router-dom';
 import styles from './ClassDetail.module.css';
 import { useContext, useEffect, useRef, useState } from 'react';
 import axios from 'axios';
@@ -31,7 +31,9 @@ const Student = (props) =>
                   <td className='text-center align-middle'>{ props.email }</td>
                   <td className="text-center align-middle">
                         <div className="d-flex align-items-center justify-content-center">
-                              <button className='btn btn-primary btn-sm me-2' onClick={ () => props.Navigate(`/student-list/detail/${ props.id }`) }>Detail</button>
+                              <NavLink to={ `/student-list/detail/${ props.id }` }>
+                                    <button className='btn btn-primary btn-sm me-2'>Detail</button>
+                              </NavLink>
                               <button className='btn btn-danger btn-sm ms-2' onClick={ removeStudent }>Remove</button>
                         </div>
                   </td>
@@ -72,11 +74,29 @@ const Session = (props) =>
                               )
                         )
                   } }>{ status }</td>
-                  <td className='text-center align-middle'><button className='btn btn-primary btn-sm' onClick={ () => props.Navigate(`./Session ${ props.number }`) }>Detail</button></td>
+                  <td className='text-center align-middle'>
+                        <NavLink to={ `./Session ${ props.number }` }>
+                              <button className='btn btn-primary btn-sm'>Detail</button>
+                        </NavLink>
+                  </td>
                   <td className='text-center align-middle'>{ props.teacherName ? props.teacherName : 'N/A' }</td>
-                  <td className='text-center align-middle'><button className='btn btn-primary btn-sm' onClick={ () => props.Navigate(`/staff-list/detail/${ props.teacherID }`) } disabled={ !props.teacherName }>Detail</button></td>
+                  <td className='text-center align-middle'>
+                        {
+                              props.teacherName &&
+                              <NavLink to={ `/staff-list/detail/${ props.teacherID }` }>
+                                    <button className='btn btn-primary btn-sm'>Detail</button>
+                              </NavLink>
+                        }
+                  </td>
                   <td className='text-center align-middle'>{ props.supervisorName ? props.supervisorName : 'N/A' }</td>
-                  <td className='text-center align-middle'><button className='btn btn-primary btn-sm' onClick={ () => props.Navigate(`/staff-list/detail/${ props.supervisorID }`) } disabled={ !props.supervisorName }>Detail</button></td>
+                  <td className='text-center align-middle'>
+                        {
+                              props.supervisorName &&
+                              <NavLink to={ `/staff-list/detail/${ props.supervisorID }` }>
+                                    <button className='btn btn-primary btn-sm'>Detail</button>
+                              </NavLink>
+                        }
+                  </td>
             </tr>
       )
 }
@@ -97,7 +117,9 @@ const Teacher = (props) =>
                   <td className="text-center align-middle">{ props.email }</td>
                   <td className="text-center align-middle">
                         <div className="d-flex align-items-center justify-content-center">
-                              <button className="btn btn-sm btn-primary" onClick={ () => props.Navigate(`/staff-list/detail/${ props.id }`) }>Detail</button>
+                              <NavLink to={ `/staff-list/detail/${ props.id }` }>
+                                    <button className="btn btn-sm btn-primary">Detail</button>
+                              </NavLink>
                               <button className='btn btn-danger btn-sm ms-2' onClick={ removeTeacher }>Remove</button>
                         </div>
                   </td>
@@ -135,8 +157,6 @@ const ClassDetail = () =>
       const [removeTeacherTarget, setRemoveTeacherTarget] = useState(null);
       const [removeTeacherPopUp, setRemoveTeacherPopUp] = useState(false);
 
-      const Navigate = useNavigate();
-
       document.title = `Class ${ name }`;
 
       const addStudent = () =>
@@ -169,7 +189,7 @@ const ClassDetail = () =>
                         {
                               const temp = [];
                               for (let i = 0; i < res.data.length; i++)
-                                    temp.push(<Student key={ i } i={ i + 1 } Navigate={ Navigate } id={ res.data[i].id } render={ render } setRender={ setRender }
+                                    temp.push(<Student key={ i } i={ i + 1 } id={ res.data[i].id } render={ render } setRender={ setRender }
                                           name={ res.data[i].name } phone={ res.data[i].phone } email={ res.data[i].email }
                                           ssn={ res.data[i].ssn } setRemoveStudentTarget={ setRemoveStudentTarget } setRemoveStudentPopUp={ setRemoveStudentPopUp } />);
                               setContent(temp);
@@ -183,7 +203,7 @@ const ClassDetail = () =>
                         {
                               const temp = [];
                               for (let i = 0; i < res.data.length; i++)
-                                    temp.push(<Teacher key={ i } Navigate={ Navigate } i={ i + 1 }
+                                    temp.push(<Teacher key={ i } i={ i + 1 }
                                           name={ res.data[i].name } phone={ res.data[i].phone } email={ res.data[i].email } id={ res.data[i].id }
                                           setRemoveTeacherTarget={ setRemoveTeacherTarget } setRemoveTeacherPopUp={ setRemoveTeacherPopUp } />);
                               setContent(temp);
@@ -197,7 +217,7 @@ const ClassDetail = () =>
                         {
                               const temp = [];
                               for (let i = 0; i < res.data.length; i++)
-                                    temp.push(<Session key={ i } number={ res.data[i][0].number } Navigate={ Navigate } name={ name } room={ res.data[i][0].sessionClassroomID }
+                                    temp.push(<Session key={ i } number={ res.data[i][0].number } name={ name } room={ res.data[i][0].sessionClassroomID }
                                           start={ res.data[i][0].startHour } end={ res.data[i][0].endHour } session_date={ res.data[i][0].sessionDate } status={ res.data[i][0].sessionStatus }
                                           teacherName={ res.data[i][0].sessionTeacherName } teacherID={ res.data[i][0].sessionTeacherID }
                                           supervisorName={ res.data[i][0].sessionSupervisorName } supervisorID={ res.data[i][0].sessionSupervisorID } />);
@@ -205,12 +225,14 @@ const ClassDetail = () =>
                         })
                         .catch(err => console.error(err));
             }
-      }, [name, render, listType, Navigate]);
+      }, [name, render, listType]);
 
       return (
             <div className="w-100 h-100 d-flex flex-column align-items-center" ref={ containerRef }>
                   <div className="w-100 d-flex flex-column overflow-auto hideBrowserScrollbar mt-2 mb-2 flex-grow-1">
-                        <strong className={ `ms-md-3 mb-0 me-md-0 mx-auto mt-2 ${ styles.back }` } onClick={ () => Navigate('/class-list') }>Back</strong>
+                        <NavLink to={ '/class-list' } style={ { textDecoration: 'none' } }>
+                              <strong className={ `ms-md-3 mb-0 me-md-0 mx-auto mt-2 ${ styles.back }` }>Back</strong>
+                        </NavLink>
                         <div className='mx-auto'>
                               <h2 className='mt-4 text-center'>{ name }</h2>
                               <div className='d-flex align-items-center'>
@@ -219,10 +241,10 @@ const ClassDetail = () =>
                               </div>
                               <div className='d-flex align-items-center'>
                                     <strong className='mb-3'>Status:&nbsp;&nbsp;</strong>
-                                    <p className='mb-3' style={ { color: status === 1 ? '#128400' : (status === 0 ? 'red' : 'gray') } }>{
-                                          status === 1 ? 'Active' : (status === 0 ? 'Deactivated' : 'Finished')
+                                    <p className='mb-3' style={ { color: status === 2 ? '#128400' : (status === 1 ? 'red' : 'gray') } }>{
+                                          status === 2 ? 'Active' : (status === 1 ? 'Deactivated' : 'Finished')
                                     }</p>
-                                    { status !== 2 && <button className={ `${ status === 1 ? 'btn-danger' : 'btn-success' } btn btn-sm mb-3 ms-3` } onClick={ () => setStatusPopUp(true) }>{ status === 1 ? 'Deactivate' : 'Activate' }</button> }
+                                    { status !== 0 && <button className={ `${ status === 2 ? 'btn-danger' : 'btn-success' } btn btn-sm mb-3 ms-3` } onClick={ () => setStatusPopUp(true) }>{ status === 2 ? 'Deactivate' : 'Activate' }</button> }
                               </div>
                               <div className='d-flex align-items-center'>
                                     <strong className='mb-3'>Number of students:&nbsp;&nbsp;</strong>
@@ -298,24 +320,26 @@ const ClassDetail = () =>
                                     listType === 2 &&
                                     <button className='btn btn-primary me-md-3 me-2' onClick={ () => setSessionPopUp(true) }>Add session</button>
                               }
-                              <button className='btn btn-secondary ms-md-3 ms-2' onClick={ () => Navigate('./edit') }>Edit class</button>
+                              <NavLink to={ './edit' }>
+                                    <button className='btn btn-secondary ms-md-3 ms-2'>Edit class</button>
+                              </NavLink>
                         </div>
                   </div>
                   <Modal show={ statusPopUp } onHide={ () => setStatusPopUp(false) } className={ `reAdjustModel hideBrowserScrollbar` } container={ containerRef.current }>
                         <Modal.Header className='border border-0' closeButton>
                         </Modal.Header>
                         <Modal.Body className='border border-0 d-flex justify-content-center'>
-                              <h4 className='text-center'>Do you want to { status === 1 ? 'deactivate' : 'activate' } this class?</h4>
+                              <h4 className='text-center'>Do you want to { status === 2 ? 'deactivate' : 'activate' } this class?</h4>
                         </Modal.Body>
                         <Modal.Footer className='justify-content-center border border-0'>
-                              <button className={ `btn ${ status === 1 ? 'btn-primary' : 'btn-danger' } me-2 me-md-4` } onClick={ () =>
+                              <button className={ `btn ${ status === 2 ? 'btn-primary' : 'btn-danger' } me-2 me-md-4` } onClick={ () =>
                               {
                                     setStatusPopUp(false);
                               } }>No</button>
-                              <button className={ `btn ${ status === 1 ? 'btn-danger' : 'btn-primary' } ms-2 ms-md-4` } onClick={ () =>
+                              <button className={ `btn ${ status === 2 ? 'btn-danger' : 'btn-primary' } ms-2 ms-md-4` } onClick={ () =>
                               {
                                     setStatusPopUp(false);
-                                    axios.post(`http://${ domain }/admin/toggleStatus`, { params: { name: name, status: status === 1 ? 0 : 1 } }, { headers: { 'Content-Type': 'application/json' } })
+                                    axios.post(`http://${ domain }/admin/toggleStatus`, { params: { name: name, status: status } }, { headers: { 'Content-Type': 'application/json' } })
                                           .then(res =>
                                           {
                                                 setRender(!render);
@@ -387,11 +411,11 @@ const ClassDetail = () =>
                   </Modal>
                   <AddStudent containerRef={ containerRef } setAddPopUp={ setAddPopUp } name={ name }
                         addPopUp={ addPopUp } currentStudent={ currentStudent } maxStudent={ maxStudent }
-                        render={ render } setRender={ setRender } Navigate={ Navigate } />
+                        render={ render } setRender={ setRender } />
                   <AddSession containerRef={ containerRef } setSessionPopUp={ setSessionPopUp } name={ name } currentSession={ currentSession }
-                        sessionPopUp={ sessionPopUp } render={ render } setRender={ setRender } Navigate={ Navigate } />
+                        sessionPopUp={ sessionPopUp } render={ render } setRender={ setRender } />
                   <AddTeacher containerRef={ containerRef } setTeacherPopUp={ setTeacherPopUp } name={ name }
-                        teacherPopUp={ teacherPopUp } render={ render } setRender={ setRender } Navigate={ Navigate } />
+                        teacherPopUp={ teacherPopUp } render={ render } setRender={ setRender } />
             </div >
       )
 }

@@ -39,9 +39,9 @@ export class updatStatusRegularly
             where status!=3 and status!=5 and session_date=curdate() and start_hour<=curtime() and end_hour>=curtime();
             update session join timetable on timetable.id=session.timetable_id set status=2 
             where status!=3 and status!=5 and((session_date = curdate() and end_hour<curtime()) or session_date<curdate());
-            update class set class.status=2 where end_date < curdate();
+            update class set class.status=0 where end_date < curdate();
             update class join session on session.class_name = class.name join timetable on timetable.id = session.timetable_id
-            set class.status = 2 where session.session_date = curdate() and end_date = curdate() and timetable.end_hour < curtime();`, [], (err, res) =>
+            set class.status = 0 where session.session_date = curdate() and end_date = curdate() and timetable.end_hour < curtime();`, [], (err, res) =>
             {
                   if (err)
                         callback(null, err);
