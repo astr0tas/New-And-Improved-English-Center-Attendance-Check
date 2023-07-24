@@ -376,14 +376,26 @@ const AdminClassSessionDetail = () =>
             axios.post(`http://${ domain }/admin/classSessionDetail`, { params: { name: name, number: number } }, { headers: { 'Content-Type': 'application/json' } })
                   .then(res =>
                   {
-                        setDate(res.data.session_date);
-                        setRoom(res.data.classroom_id ? res.data.classroom_id : 'N/A');
-                        setStart(res.data.start_hour);
-                        setEnd(res.data.end_hour);
-                        setStatus(res.data.status ? res.data.status : 'N/A');
-                        setMakeUp(res.data.session_number_make_up_for);
+                        setDate(res.data[0][0].sessionDate);
+                        setRoom(res.data[0][0].sessionClassroomID ? res.data[0][0].sessionClassroomID : 'N/A');
+                        setStart(res.data[0][0].startHour);
+                        setEnd(res.data[0][0].endHour);
+                        setStatus(res.data[0][0].sessionStatus ? res.data[0][0].sessionStatus : 'N/A');
+                        setMakeUp(res.data[0][0].sessionNumberMakeUpFor);
 
-                        if (res.data.status === 4)
+                        setTeacherID(res.data[0][0].sessionTeacherID);
+                        setTeacherName(res.data[0][0].sessionTeacherName ? res.data[0][0].sessionTeacherName : 'N/A');
+                        setTeacherImage(res.data[0][0].sessionTeacherImage ? `http://${ domain }/image/employee/${ res.data[0][0].sessionTeacherImage }` : require('../../../../images/profile.png'));
+                        setTeacherStatus(res.data[0][0].sessionTeacherStatus);
+                        setTeacherNote(res.data[0][0].sessionTeacherNote);
+                        setNewTeacher(res.data[0][0].sessionTeacherID);
+
+                        setSupervisorID(res.data[0][0].sessionSupervisorID);
+                        setSupervisorName(res.data[0][0].sessionSupervisorName ? res.data[0][0].sessionSupervisorName : 'N/A');
+                        setSupervisorImage(res.data[0][0].sessionSupervisorImage ? `http://${ domain }/image/employee/${ res.data[0][0].sessionSupervisorImage }` : require('../../../../images/profile.png'));
+                        setNewSupervisor(res.data[0][0].sessionSupervisorID);
+
+                        if (res.data[0][0].sessionStatus === 4)
                         {
                               axios.post(`http://${ domain }/admin/getSuitableRoom`, { params: { name: name } }, { headers: { 'Content-Type': 'application/json' } })
                                     .then(respone =>
@@ -397,34 +409,6 @@ const AdminClassSessionDetail = () =>
                                           setRoomList(temp);
                                     })
                                     .catch(err => console.log(err));
-                        }
-                  })
-                  .catch(err => console.error(err));
-
-            axios.post(`http://${ domain }/admin/getSessionTeacher`, { params: { name: name, number: number } }, { headers: { 'Content-Type': 'application/json' } })
-                  .then(res =>
-                  {
-                        if (res.data !== '')
-                        {
-                              setTeacherID(res.data.id ? res.data.id : null);
-                              setTeacherName(res.data.name ? res.data.name : 'N/A');
-                              setTeacherImage(res.data.image ? `http://${ domain }/image/employee/${ res.data.image }` : require('../../../../images/profile.png'));
-                              setTeacherStatus(res.data.status);
-                              setTeacherNote(res.data.note);
-                              setNewTeacher(res.data.id ? res.data.id : null);
-                        }
-                  })
-                  .catch(err => console.error(err));
-
-            axios.post(`http://${ domain }/admin/getSessionSupervisor`, { params: { name: name, number: number } }, { headers: { 'Content-Type': 'application/json' } })
-                  .then(res =>
-                  {
-                        if (res.data !== '')
-                        {
-                              setSupervisorID(res.data.id ? res.data.id : null);
-                              setSupervisorName(res.data.name ? res.data.name : 'N/A');
-                              setSupervisorImage(res.data.image ? `http://${ domain }/image/employee/${ res.data.image }` : require('../../../../images/profile.png'));
-                              setNewSupervisor(res.data.id ? res.data.id : null);
                         }
                   })
                   .catch(err => console.error(err));
@@ -504,7 +488,7 @@ const AdminClassSessionDetail = () =>
                                           <h4>{ teacherName }</h4>
                                           <button className='btn btn-sm btn-secondary mb-3' onClick={ () => setChangeTeacherPopUp(true) }>Change</button>
                                           <img className={ `${ styles.images }` } alt='' src={ teacherImage }></img>
-                                          <button className='btn btn-sm btn-primary mt-2' onClick={ () => Navigate(`/staff-list/detail/${ teacherID }`) }>Detail</button>
+                                          <button className='btn btn-sm btn-primary mt-2' onClick={ () => Navigate(`/staff-list/detail/${ teacherID }`) } disabled={ !teacherID }>Detail</button>
                                           <div className='d-flex align-items-center justify-content-center mt-2 mb-2'>
                                                 <div className='d-flex flex-column align-items-center me-4'>
                                                       <label htmlFor='teacherOnClass' style={ { color: '#128400' } }>On class</label>
@@ -538,7 +522,7 @@ const AdminClassSessionDetail = () =>
                                           <h4>{ supervisorName }</h4>
                                           <button className='btn btn-sm btn-secondary mb-3' onClick={ () => setChangeSupervisorPopUp(true) }>Change</button>
                                           <img className={ `${ styles.images }` } alt='' src={ supervisorImage }></img>
-                                          <button className='btn btn-sm btn-primary mt-2' onClick={ () => Navigate(`/staff-list/detail/${ supervisorID }`) }>Detail</button>
+                                          <button className='btn btn-sm btn-primary mt-2' onClick={ () => Navigate(`/staff-list/detail/${ supervisorID }`) } disabled={ !supervisorID }>Detail</button>
                                     </div>
                               </div>
                         </div>

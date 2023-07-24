@@ -18,7 +18,7 @@ const PeriodSelect = (props) =>
       {
             props.setTeacherDow(null);
             if (e.target.checked && !props.period.find(element => element.dow === parseInt(props.dow.split(',')[0])))
-                  props.setPeriod(prev => [...prev, { dow: parseInt(props.dow.split(',')[0]), id: id, start: start, end: end, teacherID: null, dowString: props.dow.split(',')[1], teacherName: null }]);
+                  props.setPeriod(prev => [...prev, { dow: parseInt(props.dow.split(',')[0]), id: id, start: start, end: end, teacherID: null, dowString: props.dow.split(',')[1], teacherName: null, room: null, roomSize: null }]);
             else if (e.target.checked && !!props.period.find(element => element.dow === parseInt(props.dow.split(',')[0])))
             {
                   const index = props.period.findIndex(elem => elem.dow === parseInt(props.dow.split(',')[0]));
@@ -27,6 +27,8 @@ const PeriodSelect = (props) =>
                   props.period[index].end = end;
                   props.period[index].teacherName = null;
                   props.period[index].teacherID = null;
+                  props.period[index].room = null;
+                  props.period[index].roomSize = null;
                   setRender(!render);
             }
             else if (!e.target.checked)
@@ -176,7 +178,7 @@ const TeacherSelect = (props) =>
                   setTeacherListContent([]);
 
             // eslint-disable-next-line
-      }, [render, props.addTeacherPopUp, props.dow, props.period]);
+      }, [render, props]);
 
       return (
             <Modal show={ props.addTeacherPopUp } onHide={ () => props.setAddTeacherPopUp(false) }
@@ -438,6 +440,99 @@ const AddStudent = (props) =>
       )
 }
 
+const RoomSelect = (props) =>
+{
+      const [roomListContent, setRoomListContent] = useState([]);
+      const [render, setRender] = useState(false);
+
+      const addRoom = (id, dow, seats) =>
+      {
+            const index = props.period.findIndex(elem => elem.dow === dow);
+            props.period[index].room = id;
+            props.period[index].roomSize = seats;
+            setRender(!render);
+      }
+
+      useEffect(() =>
+      {
+            if (props.addRoomPopUp && props.studentAdded.length && props.dow)
+            {
+                  axios.post(`http://${ domain }/admin/getSuitableRoomForNewClass`, {
+                        params: {
+                              seats: props.studentAdded.length,
+                              start: props.startDate,
+                              end: props.endDate,
+                              period: props.period.find(elem => elem.dow === parseInt(props.dow.split(',')[0]))
+                        }
+                  }, { headers: { 'Content-Type': 'application/json' } })
+                        .then(res =>
+                        {
+                              const temp = [];
+                              for (let i = 0; i < res.data.length; i++)
+                                    temp.push(<tr key={ i }>
+                                          <td className='text-center align-middle'>{ i + 1 }</td>
+                                          <td className='text-center align-middle'>{ res.data[i].id }</td>
+                                          <td className='text-center align-middle'>{ res.data[i].max_seats }</td>
+                                          <td className='text-center align-middle'>
+                                                <input className={ `me-sm-2 mb-1 mb-sm-0 ${ styles.hover }` } type='radio' style={ { width: '1.3rem', height: '1.3rem' } }
+                                                      onChange={ () => addRoom(res.data[i].id, parseInt(props.dow.split(',')[0]), res.data[i].max_seats) }
+                                                      checked={ !!props.period.find(elem => elem.dow === parseInt(props.dow.split(',')[0]) && elem.room === res.data[i].id) }
+                                                      name={ props.dow.split(',')[1] }></input>
+                                          </td>
+                                    </tr>);
+                              setRoomListContent(temp);
+                        })
+                        .catch(err => console.log(err));
+            }
+            else if (!props.dow)
+                  setRoomListContent([]);
+
+            // eslint-disable-next-line
+      }, [render, props]);
+
+      return (
+            <Modal show={ props.addRoomPopUp } onHide={ () =>  props.setAddRoomPopUp(false) }
+                  dialogClassName={ `${ styles.dialog } modal-dialog-scrollable` } contentClassName={ `w-100 h-100` }
+                  className={ `reAdjustModel ${ styles.customModal2 } hideBrowserScrollbar` } container={ props.containerRef.current }>
+                  <Modal.Header closeButton>
+                        <Dropdown onSelect={ eventKey => props.setDow(eventKey) } className='ms-2'>
+                              <Dropdown.Toggle variant="primary" size='sm' style={ { maxWidth: '250px' } } className='text-wrap'>
+                                    { !props.dow ? 'Choose' : props.dow.split(',')[1] }
+                              </Dropdown.Toggle>
+                              <Dropdown.Menu style={ { maxHeight: '150px', overflow: 'auto' } }>
+                                    <Dropdown.Item eventKey={ null }>Clear</Dropdown.Item>
+                                    { props.endDate && props.period.map((elem, i) => <Dropdown.Item key={ i } eventKey={ [elem.dow, elem.dowString] }>{ elem.dowString }</Dropdown.Item>) }
+                              </Dropdown.Menu>
+                        </Dropdown>
+                  </Modal.Header>
+                  <Modal.Body className='px-1 py-0' style={ { minHeight: roomListContent.length ? '150px' : '65px' } }>
+                        <div className={ `h-100 w-100` }>
+                              <table className="table table-hover table-info">
+                                    <thead style={ { position: "sticky", top: "0" } }>
+                                          <tr>
+                                                <th scope="col" className='col-1 text-center align-middle'>#</th>
+                                                <th scope="col" className='col-5 text-center align-middle'>Room</th>
+                                                <th scope="col" className='col-3 text-center align-middle'>Number of seats</th>
+                                                <th scope="col" className='col-3 text-center align-middle'>Action</th>
+                                          </tr>
+                                    </thead>
+                                    <tbody>
+                                          { roomListContent }
+                                    </tbody>
+                              </table>
+                        </div >
+                  </Modal.Body>
+                  <Modal.Footer className='justify-content-center'>
+                        <button className={ `btn btn-danger` } onClick={ () =>
+                        {
+                              props.period.forEach(elem => { elem.room = null; elem.roomSize = null });
+                              setRender(!render);
+                        } }>Clear</button>
+                  </Modal.Footer>
+            </Modal>
+      )
+}
+
 const ClassCreate = (props) =>
 {
       const [confirmPopUp, setConfirmPopUp] = useState(false);
@@ -455,7 +550,6 @@ const ClassCreate = (props) =>
       const [isNameDuplicate, setNameDuplicate] = useState(false);
       const [isEmptyRoom, setIsEmptyRoom] = useState(false);
 
-
       const [name, setName] = useState(null);
       const [startDate, setStartDate] = useState(null);
       const [endDate, setEndDate] = useState(null);
@@ -467,13 +561,13 @@ const ClassCreate = (props) =>
       const [teacherDow, setTeacherDow] = useState(null);
       const [sessionList, setSessionList] = useState([]);
       const [studentAdded, setStudentAdded] = useState([]);
-      const [roomList, setRoomList] = useState([]);
-      const [room, setRoom] = useState(null);
+      const [roomDow, setRoomDow] = useState(null);
 
       const [addTeacherPopUp, setAddTeacherPopUp] = useState(false);
       const [addSupervisorPopUp, setAddSupervisorPopUp] = useState(false);
       const [addPeriodPopUp, setAddPeriodPopUp] = useState(false);
       const [addStudentPopUp, setAddStudentPopUp] = useState(false);
+      const [addRoomPopUp, setAddRoomPopUp] = useState(false);
 
       useEffect(() =>
       {
@@ -512,22 +606,9 @@ const ClassCreate = (props) =>
                   setSessionList([]);
                   setEndDate(null);
                   setTeacherDow(null);
-                  period.forEach(elem => { elem.teacherID = null; elem.teacherName = null; });
+                  setRoomDow(null);
             }
-
-            if (studentAdded.length)
-                  axios.post(`http://${ domain }/admin/getSuitableRoomForNewClass`, { params: { seats: studentAdded.length } }, { headers: { 'Content-Type': 'application/json' } })
-                        .then(res =>
-                        {
-                              const temp = [];
-                              for (let i = 0; i < res.data.length; i++)
-                                    temp.push(<Dropdown.Item key={ i } eventKey={ res.data[i].id }>
-                                          Room { res.data[i].id } - { res.data[i].max_seats }
-                                    </Dropdown.Item>);
-                              setRoomList(temp);
-                        })
-                        .catch(err => console.log(err));
-      }, [period, length, startDate, isInvalidLength, studentAdded]);
+      }, [period, length, startDate, isInvalidLength, studentAdded, endDate]);
 
       const handleData = (e) =>
       {
@@ -605,17 +686,14 @@ const ClassCreate = (props) =>
                   setIsEmptyLength(false);
                   setInvalidLength(false);
             }
-            if (!room)
+            if (!!period.find(elem => elem.room === null))
             {
                   isOk = false;
                   setIsEmptyRoom(true);
             }
             else
                   setIsEmptyRoom(false);
-            if (isOk)
-            {
-
-            }
+            setConfirmPopUp(isOk);
       }
 
       const convertToDateOfWeek = (input) =>
@@ -707,7 +785,9 @@ const ClassCreate = (props) =>
                                                 <input value={ length ? length : '' } className={ `${ styles.inputs } w-100` } type="number" onChange={ e =>
                                                 {
                                                       setLength(e.target.value);
-                                                      if (e.target.value < 1 || e.target.value > 24)
+                                                      if (e.target.value === '')
+                                                            setLength(null);
+                                                      else if (e.target.value < 1 || e.target.value > 24)
                                                             setInvalidLength(true);
                                                       else
                                                             setInvalidLength(false);
@@ -814,20 +894,23 @@ const ClassCreate = (props) =>
                               }
                               <div className={ `row ${ isEmptyStudent ? 'mt-1' : 'mt-5' }` }>
                                     <div className='col-sm-4 d-flex align-items-center justify-content-center col-12'>
-                                          <strong className='text-center'>Room</strong>
+                                          <strong>Room(s)</strong>
                                     </div>
                                     <div className='col d-flex align-items-center justify-content-center justify-content-sm-start'>
-                                          <Dropdown onSelect={ eventKey => setRoom(eventKey) }>
-                                                <Dropdown.Toggle variant="secondary" style={ { maxWidth: '250px' } } className='text-wrap'>
-                                                      { room === null ? 'Choose' : `${ room }` }
-                                                </Dropdown.Toggle>
-                                                <Dropdown.Menu style={ { maxHeight: '150px', overflow: 'auto' } }>
-                                                      <Dropdown.Item eventKey={ null }>Clear</Dropdown.Item>
-                                                      { roomList }
-                                                </Dropdown.Menu>
-                                          </Dropdown>
+                                          <p className={ `${ styles.inputs } ${ styles.hover } w-100 mb-0 ps-2 pt-1 hideBrowserScrollbar` } onClick={ () => setAddRoomPopUp(true) }>
+                                                {
+                                                      period.length !== 0 && !period.find(elem => elem.room === null) && period.map((elem, i) => `${ elem.room === null ? '' : elem.room }${ i === period.length - 1 ? '' : ', ' }`)
+                                                }
+                                          </p>
                                     </div>
                               </div>
+                              {
+                                    isEmptyRoom
+                                    &&
+                                    <p className={ `${ styles.p } text-center align-middle` }>
+                                          Room field is empty!
+                                    </p>
+                              }
                         </Modal.Body>
                         <Modal.Footer className='justify-content-center'>
                               <button className={ `btn btn-danger me-2 me-md-4` } onClick={ () =>
@@ -840,6 +923,7 @@ const ClassCreate = (props) =>
                                     setSupervisor(null);
                                     setPeriodDow(null);
                                     setEndDate(null);
+                                    setTeacherDow(null);
                               } }>Cancel</button>
                               <button onClick={ handleData } className={ `btn btn-primary ms-2 ms-md-4` }>Create</button>
                         </Modal.Footer>
@@ -859,12 +943,34 @@ const ClassCreate = (props) =>
                               {
                                     setConfirmPopUp(false);
                                     props.setCreateClassPopUp(false);
+                                    axios.post(`http://${ domain }/admin/createClass`, {
+                                          params: {
+                                                period: period,
+                                                start: startDate,
+                                                end: endDate,
+                                                name: name,
+                                                supervisor: supervisor,
+                                                sessionList: sessionList,
+                                                students: studentAdded,
+                                                courseLength: length
+                                          }
+                                    }, { headers: { 'Content-Type': 'application/json' } })
+                                          .then(res => props.setRender(!props.render))
+                                          .catch(err => console.log(err));
+                                    setName(null);
+                                    setStartDate(null);
+                                    setLength(null);
+                                    setPeriod([]);
+                                    setSupervisor(null);
+                                    setPeriodDow(null);
+                                    setEndDate(null);
+                                    setTeacherDow(null);
                               } }>Yes</button>
                         </Modal.Footer>
                   </Modal>
                   <TeacherSelect addTeacherPopUp={ addTeacherPopUp } setAddTeacherPopUp={ setAddTeacherPopUp }
                         containerRef={ props.containerRef } dow={ teacherDow } setDow={ setTeacherDow }
-                        Navigate={ props.Navigate } startDate={ startDate } endDate={ endDate } period={ period } setPeriod={ setPeriod } />
+                        Navigate={ props.Navigate } startDate={ startDate } endDate={ endDate } period={ period } />
                   <SupervisorSelect addSupervisorPopUp={ addSupervisorPopUp } setAddSupervisorPopUp={ setAddSupervisorPopUp } name={ props.name }
                         containerRef={ props.containerRef } supervisor={ supervisor } setSupervisor={ setSupervisor }
                         supervisorName={ supervisorName } setSupervisorName={ setSupervisorName } Navigate={ props.Navigate } />
@@ -872,6 +978,10 @@ const ClassCreate = (props) =>
                         containerRef={ props.containerRef } period={ period } setPeriod={ setPeriod } dow={ periodDow } setDow={ setPeriodDow } setTeacherDow={ setTeacherDow } />
                   <AddStudent containerRef={ props.containerRef } addPopUp={ addStudentPopUp } setAddPopUp={ setAddStudentPopUp } Navigate={ props.Navigate }
                         studentAdded={ studentAdded } setStudentAdded={ setStudentAdded } startDate={ startDate } endDate={ endDate } period={ period } />
+                  <RoomSelect addRoomPopUp={ addRoomPopUp } setAddRoomPopUp={ setAddRoomPopUp }
+                        containerRef={ props.containerRef } dow={ roomDow } setDow={ setRoomDow }
+                        Navigate={ props.Navigate } startDate={ startDate } endDate={ endDate }
+                        period={ period } studentAdded={ studentAdded } />
             </>
       )
 }

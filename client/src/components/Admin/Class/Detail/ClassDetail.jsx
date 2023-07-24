@@ -41,36 +41,10 @@ const Student = (props) =>
 
 const Session = (props) =>
 {
-      const [teacherName, setTeacherName] = useState("N/A");
-      const [teacherID, setTeacherID] = useState(null);
-      const [supervisorName, setSupervisorName] = useState("N/A");
-      const [supervisorID, setSupervisorID] = useState(null);
       const [status, setStatus] = useState("N/A");
 
       useEffect(() =>
       {
-            axios.post(`http://${ domain }/admin/getSessionTeacher`, { params: { name: props.name, number: props.number } }, { headers: { 'Content-Type': 'application/json' } })
-                  .then(res =>
-                  {
-                        if (res.data)
-                        {
-                              setTeacherName(res.data.name);
-                              setTeacherID(res.data.id);
-                        }
-                  })
-                  .catch(err => console.error(err));
-
-            axios.post(`http://${ domain }/admin/getSessionSupervisor`, { params: { name: props.name, number: props.number } }, { headers: { 'Content-Type': 'application/json' } })
-                  .then(res =>
-                  {
-                        if (res.data)
-                        {
-                              setSupervisorName(res.data.name);
-                              setSupervisorID(res.data.id);
-                        }
-                  })
-                  .catch(err => console.error(err));
-
             if (props.status === 1)
                   setStatus("On going");
             else if (props.status === 2)
@@ -81,7 +55,7 @@ const Session = (props) =>
                   setStatus("Scheduled");
             else if (props.status === 5)
                   setStatus("Missing teacher/supervisor");
-      }, [props.name, props.number, props.status])
+      }, [props.status])
 
       return (
             <tr>
@@ -99,10 +73,10 @@ const Session = (props) =>
                         )
                   } }>{ status }</td>
                   <td className='text-center align-middle'><button className='btn btn-primary btn-sm' onClick={ () => props.Navigate(`./Session ${ props.number }`) }>Detail</button></td>
-                  <td className='text-center align-middle'>{ teacherName }</td>
-                  <td className='text-center align-middle'><button className='btn btn-primary btn-sm' onClick={ () => props.Navigate(`/staff-list/detail/${ teacherID }`) }>Detail</button></td>
-                  <td className='text-center align-middle'>{ supervisorName }</td>
-                  <td className='text-center align-middle'><button className='btn btn-primary btn-sm' onClick={ () => props.Navigate(`/staff-list/detail/${ supervisorID }`) }>Detail</button></td>
+                  <td className='text-center align-middle'>{ props.teacherName ? props.teacherName : 'N/A' }</td>
+                  <td className='text-center align-middle'><button className='btn btn-primary btn-sm' onClick={ () => props.Navigate(`/staff-list/detail/${ props.teacherID }`) } disabled={ !props.teacherName }>Detail</button></td>
+                  <td className='text-center align-middle'>{ props.supervisorName ? props.supervisorName : 'N/A' }</td>
+                  <td className='text-center align-middle'><button className='btn btn-primary btn-sm' onClick={ () => props.Navigate(`/staff-list/detail/${ props.supervisorID }`) } disabled={ !props.supervisorName }>Detail</button></td>
             </tr>
       )
 }
@@ -178,27 +152,15 @@ const ClassDetail = () =>
             axios.post(`http://${ domain }/admin/classInfo`, { params: { name: name } }, { headers: { 'Content-Type': 'application/json' } })
                   .then(res =>
                   {
-                        setStatus(res.data.status);
-                        setStart(res.data.start_date);
-                        setEnd(res.data.end_date);
-                        setMaxStudent(res.data.max_students);
-                        setInitialSession(res.data.initial_sessions);
+                        setStatus(res.data[0][0].status);
+                        setStart(res.data[0][0].start_date);
+                        setEnd(res.data[0][0].end_date);
+                        setMaxStudent(res.data[0][0].max_students);
+                        setInitialSession(res.data[0][0].initial_sessions);
+                        setCurrentStudent(res.data[1][0].currentStudents);
+                        setCurrentSession(res.data[2][0].currentSessions);
                   })
                   .catch(err => console.log(err));
-
-            axios.post(`http://${ domain }/admin/getCurrentStudent`, { params: { name: name } }, { headers: { 'Content-Type': 'application/json' } })
-                  .then(res =>
-                  {
-                        setCurrentStudent(res.data.currentStudents);
-                  })
-                  .catch(err => console.error(err));
-
-            axios.post(`http://${ domain }/admin/getCurrentSession`, { params: { name: name } }, { headers: { 'Content-Type': 'application/json' } })
-                  .then(res =>
-                  {
-                        setCurrentSession(res.data.currentSessions);
-                  })
-                  .catch(err => console.error(err));
 
             if (listType === 0)
             {
@@ -235,8 +197,10 @@ const ClassDetail = () =>
                         {
                               const temp = [];
                               for (let i = 0; i < res.data.length; i++)
-                                    temp.push(<Session key={ i } number={ res.data[i].number } Navigate={ Navigate } name={ name } room={ res.data[i].classroom_id }
-                                          start={ res.data[i].start_hour } end={ res.data[i].end_hour } session_date={ res.data[i].session_date } status={ res.data[i].status } />);
+                                    temp.push(<Session key={ i } number={ res.data[i][0].number } Navigate={ Navigate } name={ name } room={ res.data[i][0].sessionClassroomID }
+                                          start={ res.data[i][0].startHour } end={ res.data[i][0].endHour } session_date={ res.data[i][0].sessionDate } status={ res.data[i][0].sessionStatus }
+                                          teacherName={ res.data[i][0].sessionTeacherName } teacherID={ res.data[i][0].sessionTeacherID }
+                                          supervisorName={ res.data[i][0].sessionSupervisorName } supervisorID={ res.data[i][0].sessionSupervisorID } />);
                               setContent(temp);
                         })
                         .catch(err => console.error(err));
@@ -255,8 +219,10 @@ const ClassDetail = () =>
                               </div>
                               <div className='d-flex align-items-center'>
                                     <strong className='mb-3'>Status:&nbsp;&nbsp;</strong>
-                                    <p className='mb-3' style={ { color: status === 1 ? '#128400' : 'red' } }>{ status === 1 ? 'Active' : 'Deactivated' }</p>
-                                    <button className={ `${ status === 1 ? 'btn-danger' : 'btn-success' } btn btn-sm mb-3 ms-3` } onClick={ () => setStatusPopUp(true) }>{ status === 1 ? 'Deactivate' : 'Activate' }</button>
+                                    <p className='mb-3' style={ { color: status === 1 ? '#128400' : (status === 0 ? 'red' : 'gray') } }>{
+                                          status === 1 ? 'Active' : (status === 0 ? 'Deactivated' : 'Finished')
+                                    }</p>
+                                    { status !== 2 && <button className={ `${ status === 1 ? 'btn-danger' : 'btn-success' } btn btn-sm mb-3 ms-3` } onClick={ () => setStatusPopUp(true) }>{ status === 1 ? 'Deactivate' : 'Activate' }</button> }
                               </div>
                               <div className='d-flex align-items-center'>
                                     <strong className='mb-3'>Number of students:&nbsp;&nbsp;</strong>
@@ -349,7 +315,7 @@ const ClassDetail = () =>
                               <button className={ `btn ${ status === 1 ? 'btn-danger' : 'btn-primary' } ms-2 ms-md-4` } onClick={ () =>
                               {
                                     setStatusPopUp(false);
-                                    axios.post(`http://${ domain }/admin/toggleStatus`, { params: { name: name, status: !status } }, { headers: { 'Content-Type': 'application/json' } })
+                                    axios.post(`http://${ domain }/admin/toggleStatus`, { params: { name: name, status: status === 1 ? 0 : 1 } }, { headers: { 'Content-Type': 'application/json' } })
                                           .then(res =>
                                           {
                                                 setRender(!render);

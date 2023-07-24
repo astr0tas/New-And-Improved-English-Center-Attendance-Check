@@ -16,7 +16,12 @@ const Class = (props) =>
                   <td className='text-center'>{ props.name }</td>
                   <td className='text-center'>{ DMY(props.start) }</td>
                   <td className='text-center'>{ DMY(props.end) }</td>
-                  <td className='text-center' style={ { color: props.status === 0 ? 'red' : '#128400' } }>{ props.status === 0 ? 'Deactivated' : 'Active' }</td>
+                  <td className='text-center' style={ {
+                        color: props.status === 0 ? 'red' : (
+                              props.status === 1 ? '#128400' : 'gray')
+                  } }>{ props.status === 0 ? 'Deactivated' : (
+                        props.status === 1 ? 'Active' : 'Finished'
+                  ) }</td>
                   <td className='d-flex align-items-center justify-content-center flex-column flex-sm-row'>
                         <button className='btn btn-sm btn-secondary mx-sm-2 my-2 my-sm-0' onClick={ () =>
                         {

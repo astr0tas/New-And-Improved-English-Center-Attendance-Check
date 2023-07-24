@@ -28,36 +28,6 @@ adminRoutes.post('/classList', (req, res) =>
       })
 });
 
-adminRoutes.post('/getCurrentStudent', (req, res) =>
-{
-      const name = req.body.params.name;
-      classModel.getCurrentStudent(name, (result, err) =>
-      {
-            if (err)
-            {
-                  console.log(err);
-                  res.status(500).send({ message: 'Server internal error!' });
-            }
-            else
-                  res.status(200).send(result[0]);
-      })
-});
-
-adminRoutes.post('/getCurrentSession', (req, res) =>
-{
-      const name = req.body.params.name;
-      classModel.getCurrentSession(name, (result, err) =>
-      {
-            if (err)
-            {
-                  console.log(err);
-                  res.status(500).send({ message: 'Server internal error!' });
-            }
-            else
-                  res.status(200).send(result[0]);
-      })
-});
-
 adminRoutes.post('/classInfo', (req, res) =>
 {
       const name = req.body.params.name;
@@ -69,7 +39,7 @@ adminRoutes.post('/classInfo', (req, res) =>
                   res.status(500).send({ message: 'Server internal error!' });
             }
             else
-                  res.status(200).send(result[0]);
+                  res.status(200).send(result);
       })
 });
 
@@ -257,38 +227,6 @@ adminRoutes.post('/addSessionToClass', (req, res) =>
       })
 });
 
-adminRoutes.post('/getSessionTeacher', (req, res) =>
-{
-      const name = req.body.params.name;
-      const number = req.body.params.number;
-      classModel.getSessionTeacher(name, number, (result, err) =>
-      {
-            if (err)
-            {
-                  console.log(err);
-                  res.status(500).send({ message: 'Server internal error!' });
-            }
-            else
-                  res.status(200).send(result[0]);
-      })
-});
-
-adminRoutes.post('/getSessionSupervisor', (req, res) =>
-{
-      const name = req.body.params.name;
-      const number = req.body.params.number;
-      classModel.getSessionSupervisor(name, number, (result, err) =>
-      {
-            if (err)
-            {
-                  console.log(err);
-                  res.status(500).send({ message: 'Server internal error!' });
-            }
-            else
-                  res.status(200).send(result[0]);
-      })
-});
-
 adminRoutes.post('/removeTeacherFromClass', (req, res) =>
 {
       const name = req.body.params.name;
@@ -349,7 +287,7 @@ adminRoutes.post('/classSessionDetail', (req, res) =>
                   res.status(500).send({ message: 'Server internal error!' });
             }
             else
-                  res.status(200).send(result[0]);
+                  res.status(200).send(result);
       })
 });
 
@@ -556,7 +494,34 @@ adminRoutes.post('/getSuitableStudent', (req, res) =>
 adminRoutes.post('/getSuitableRoomForNewClass', (req, res) =>
 {
       const seats = req.body.params.seats;
-      classModel.getSuitableRoomForNewClass(seats, (result, err) =>
+      const startDate = req.body.params.start;
+      const endDate = req.body.params.end;
+      const dow = req.body.params.period.dow;
+      const startHour = req.body.params.period.start;
+      const endHour = req.body.params.period.end;
+      classModel.getSuitableRoomForNewClass(seats, startDate, endDate, dow, startHour, endHour, (result, err) =>
+      {
+            if (err)
+            {
+                  console.log(err);
+                  res.status(500).send({ message: 'Server internal error!' });
+            }
+            else
+                  res.status(200).send(result);
+      })
+});
+
+adminRoutes.post('/createClass', (req, res) =>
+{
+      const name = req.body.params.name;
+      const start = req.body.params.start;
+      const end = req.body.params.end;
+      const supervisor = req.body.params.supervisor;
+      const period = req.body.params.period;
+      const sessions = req.body.params.sessionList;
+      const students = req.body.params.students;
+      const length = req.body.params.courseLength;
+      classModel.createClass(name, start, end, supervisor, period, sessions, students, length, (result, err) =>
       {
             if (err)
             {

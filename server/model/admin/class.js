@@ -32,40 +32,22 @@ export class Class
 
       getList(name, status, callback)
       {
-            this.conn.query(`select * from class where name like ? and status=? order by status desc, start_date desc, name`, ['%' + name + '%', status], (err, res) =>
+            this.conn.query(`call getClassList(?,?);`, [name, status], (err, res) =>
             {
                   if (err)
                         callback(null, err);
                   else
-                        callback(res, null);
-            })
-      }
-
-      getCurrentStudent(name, callback)
-      {
-            this.conn.query(`select count(in_class.class_name) as currentStudents from class join in_class on in_class.class_name=class.name where name=?`, [name], (err, res) =>
-            {
-                  if (err)
-                        callback(null, err);
-                  else
-                        callback(res, null);
-            })
-      }
-
-      getCurrentSession(name, callback)
-      {
-            this.conn.query(`select count(session.class_name) as currentSessions from class join session on session.class_name=class.name where name=?`, [name], (err, res) =>
-            {
-                  if (err)
-                        callback(null, err);
-                  else
-                        callback(res, null);
+                  {
+                        callback(res.length ? res.filter((elem, i) => i !== res.length - 1) : [], null);
+                  }
             })
       }
 
       getInfo(name, callback)
       {
-            this.conn.query(`select start_date,end_date,max_students,initial_sessions,status from class where name=?`, [name], (err, res) =>
+            this.conn.query(`select start_date,end_date,max_students,initial_sessions,status from class where name=?;
+            select count(in_class.class_name) as currentStudents from class join in_class on in_class.class_name=class.name where name=?;
+            select count(session.class_name) as currentSessions from class join session on session.class_name=class.name where name=?;`, [name, name, name], (err, res) =>
             {
                   if (err)
                         callback(null, err);
@@ -76,14 +58,12 @@ export class Class
 
       classSession(name, callback)
       {
-            this.conn.query(`select session.number,session.session_date,timetable.start_hour,timetable.end_hour,session.status,session.classroom_id from session 
-            join timetable on timetable.id=session.timetable_id
-            where session.class_name=? order by session.number`, [name], (err, res) =>
+            this.conn.query(`call getSessionList(?);`, [name], (err, res) =>
             {
                   if (err)
                         callback(null, err);
                   else
-                        callback(res, null);
+                        callback(res.length ? res.filter((elem, i) => i !== res.length - 1) : [], null);
             });
       }
 
@@ -237,34 +217,6 @@ export class Class
             });
       }
 
-      getSessionTeacher(name, number, callback)
-      {
-            this.conn.query(`select employee.id,employee.name,teacher_responsible.teacher_status as status,teacher_responsible.teacher_note as note from employee
-            join teacher on teacher.id=employee.id
-            join teacher_responsible on teacher_responsible.teacher_id=teacher.id
-            where teacher_responsible.session_number=? and teacher_responsible.class_name=?`, [number, name], (err, res) =>
-            {
-                  if (err)
-                        callback(null, err);
-                  else
-                        callback(res, null);
-            });
-      }
-
-      getSessionSupervisor(name, number, callback)
-      {
-            this.conn.query(`select employee.id,employee.name, employee.image from employee
-            join supervisor on supervisor.id=employee.id
-            join supervisor_responsible on supervisor_responsible.supervisor_id=supervisor.id
-            where supervisor_responsible.session_number=? and supervisor_responsible.class_name=?`, [number, name], (err, res) =>
-            {
-                  if (err)
-                        callback(null, err);
-                  else
-                        callback(res, null);
-            });
-      }
-
       removeTeacherFromClass(name, id, callback)
       {
             this.conn.query(`update TEACHER_RESPONSIBLE set teacher_id=null where class_name=? and teacher_id=?;
@@ -315,14 +267,12 @@ export class Class
 
       classSessionDetail(name, number, callback)
       {
-            this.conn.query(`select session.session_date,session.status,session.classroom_id,timetable.start_hour,timetable.end_hour,session.session_number_make_up_for
-            from session join timetable on session.timetable_id=timetable.id
-            where session.class_name=? and session.number=?`, [name, number], (err, res) =>
+            this.conn.query(`call getSessionDetail(?,?);`, [name, number], (err, res) =>
             {
                   if (err)
                         callback(null, err);
                   else
-                        callback(res, null);
+                        callback(res.length ? res.filter((elem, i) => i !== res.length - 1) : [], null);
             });
       }
 
@@ -495,9 +445,60 @@ export class Class
             });
       }
 
-      getSuitableRoomForNewClass(seats, callback)
+      getSuitableRoomForNewClass(seats, startDate, endDate, dow, startHour, endHour, callback)
       {
-            this.conn.query(`select id,max_seats from classroom where max_seats>=? order by id`, [seats], (err, res) =>
+            this.conn.query(`select id,max_seats from classroom where max_seats>=? and id not in(
+                  select classroom.id from classroom
+                  join session on session.classroom_id=classroom.id
+                  join timetable on timetable.id=session.timetable_id
+                  join class on class.name=session.class_name
+                  where class.status=true and not (class.start_date>? or class.end_date<?)
+                  and WEEKDAY(session.session_date)+1=?
+                  and not (timetable.start_hour>? or timetable.end_hour<?)
+            ) order by id`, [seats, endDate, startDate, dow, endHour, startHour], (err, res) =>
+            {
+                  if (err)
+                        callback(null, err);
+                  else
+                        callback(res, null);
+            });
+      }
+
+      createClass(name, start, end, supervisor, period, sessions, students, length, callback)
+      {
+            const sorted = period.slice().sort((elem1, elem2) => elem1.roomSize - elem2.roomSize);
+            const maxSeats = sorted[0].roomSize;
+            const params = [start, end, name, maxSeats, length * 4 * period.length];
+            const addedTeacher = [];
+            let sql = `insert into class values(?,?,?,true,?,?);`;
+            for (let i = 0; i < students.length; i++)
+            {
+                  sql += `insert into in_class values(?,?);`;
+                  params.push(students[i].id, name);
+            }
+            for (let i = 0; i < period.length; i++)
+            {
+                  if (!addedTeacher.includes(period[i].teacherID))
+                  {
+                        sql += `insert into teach values(?,?);`;
+                        params.push(period[i].teacherID, name);
+                        addedTeacher.push(period[i].teacherID);
+                  }
+            }
+            for (let i = 0; i < sessions.length; i++)
+            {
+                  const date = new Date(sessions[i]);
+                  const index = period.findIndex(elem => elem.dow === date.getDay());
+                  sql += `insert into session values(?,?,?,?,?,4,null,null);
+                  insert into teacher_responsible values(?,?,?,null,-1);
+                  insert into supervisor_responsible values(?,?,?,null);
+                  call addSessionToStudents(?,?);`;
+                  params.push(i + 1, name, period[index].id, period[index].room, sessions[i],
+                        i + 1, name, period[index].teacherID,
+                        i + 1, name, supervisor,
+                        name, i + 1);
+            }
+            this.conn.query(sql, params, (err, res) =>
             {
                   if (err)
                         callback(null, err);

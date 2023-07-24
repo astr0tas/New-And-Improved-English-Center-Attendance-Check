@@ -96,7 +96,7 @@ const Profile = () =>
             }
       }
 
-      const changeInfo = async (e) =>
+      const changeInfo = (e) =>
       {
             e.preventDefault();
             let isOk = true;

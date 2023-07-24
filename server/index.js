@@ -11,7 +11,7 @@ import staffRoutes from "./controller/staff.js";
 import adminRoutes from "./controller/admin.js";
 import generalRoutes from "./controller/general.js";
 
-import { updateSessionStatusRegularly } from './model/updateSessionStatus.js';
+import { updatStatusRegularly } from './model/updateStatus.js';
 
 export const FileStore = FileStoreFactory(session);
 
@@ -100,6 +100,6 @@ app.listen(8080, () =>
 {
       console.log("Server is listening on port 8080");
 
-      const conn = new updateSessionStatusRegularly();
+      const conn = new updatStatusRegularly();
       updateFunction(conn);
 });

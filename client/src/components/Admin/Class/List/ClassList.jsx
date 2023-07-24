@@ -12,32 +12,12 @@ import ClassCreate from '../Create/ClassCreate';
 
 const Class = (props) =>
 {
-      const [currentStudents, setCurrentStudents] = useState(0);
-      const [currentSessions, setCurrentSessions] = useState(0);
-
-      useEffect(() =>
-      {
-            axios.post(`http://${ domain }/admin/getCurrentStudent`, { params: { name: props.name } }, { headers: { 'Content-Type': 'application/json' } })
-                  .then(res =>
-                  {
-                        setCurrentStudents(res.data.currentStudents);
-                  })
-                  .catch(err => console.error(err));
-
-            axios.post(`http://${ domain }/admin/getCurrentSession`, { params: { name: props.name } }, { headers: { 'Content-Type': 'application/json' } })
-                  .then(res =>
-                  {
-                        setCurrentSessions(res.data.currentSessions);
-                  })
-                  .catch(err => console.error(err));
-      }, [props.name])
-
       return (
             <tr className={ `${ styles.hover }` } onClick={ () => { props.setListType(0); props.Navigate(`./detail/${ props.name }`); } }>
                   <td className='text-center align-middle'>{ props.i }</td>
                   <td className='text-center align-middle'>{ props.name }</td>
-                  <td className='text-center align-middle'>{ currentStudents }/{ props.initialStudents }</td>
-                  <td className='text-center align-middle'>{ currentSessions }/{ props.initialSessions }</td>
+                  <td className='text-center align-middle'>{ props.currentStudents }/{ props.initialStudents }</td>
+                  <td className='text-center align-middle'>{ props.currentSessions }/{ props.initialSessions }</td>
                   <td className='text-center align-middle'>{ props.start === null ? 'N/A' : DMY(props.start) }</td>
                   <td className='text-center align-middle'>{ props.end === null ? 'N/A' : DMY(props.end) }</td>
                   <td className='text-center align-middle' style={ { color: props.status === 0 ? 'red' : '#128400' } }>{ props.status === 0 ? 'Deactivated' : 'Active' }</td>
@@ -58,6 +38,8 @@ const ClassList = () =>
       const [createClassPopUp, setCreateClassPopUp] = useState(false);
       const containerRef = useRef(null);
 
+      const [render, setRender] = useState(false);
+
       let timer1;
 
       useEffect(() =>
@@ -71,14 +53,15 @@ const ClassList = () =>
                         const temp = [];
                         for (let i = 0; i < res.data.length; i++)
                               temp.push(<Class key={ i } i={ i + 1 } Navigate={ Navigate } setListType={ setListType }
-                                    initialStudents={ res.data[i].Max_students } initialSessions={ res.data[i].Initial_sessions } name={ res.data[i].Name }
-                                    start={ res.data[i].Start_date } end={ res.data[i].End_date } status={ res.data[i].Status } />);
+                                    initialStudents={ res.data[i][0].maxStudent } initialSessions={ res.data[i][0].initialSession }
+                                    name={ res.data[i][0].name } start={ res.data[i][0].startDate } end={ res.data[i][0].endDate }
+                                    status={ res.data[i][0].classStatus } currentStudents={ res.data[i][0].currentStudents } currentSessions={ res.data[i][0].currentSessions } />);
                         setTableContent(temp);
                   })
                   .catch(err => console.log(err));
 
             // eslint-disable-next-line
-      }, [name, Navigate, classState]);
+      }, [name, Navigate, classState, render]);
 
       const findClass = (e) =>
       {
@@ -112,6 +95,10 @@ const ClassList = () =>
                                     <input type="radio" id="deactivated" name="status" value={ 0 } className={ `me-1 ${ styles.hover } ${ styles.radios }` } onChange={ () => changeStatus(0) } checked={ classState === 0 } />
                                     <label htmlFor="deactivated" style={ { color: 'red' } }>Deactivated</label>
                               </div>
+                              <div className='d-flex align-items-center'>
+                                    <input type="radio" id="deactivated" name="status" value={ 2 } className={ `ms-3 me-1 ${ styles.hover } ${ styles.radios }` } onChange={ () => changeStatus(2) } checked={ classState === 2 } />
+                                    <label htmlFor="deactivated" style={ { color: 'gray' } }>Finished</label>
+                              </div>
                         </div>
                   </div>
                   <div className={ `flex-grow-1 w-100 overflow-auto mt-3 px-1 mb-3` } style={ { minHeight: tableContent.length ? '200px' : '65px' } }>
@@ -136,7 +123,7 @@ const ClassList = () =>
                         <button className="btn btn-primary" onClick={ () => setCreateClassPopUp(true) }>Add a class</button>
                   </div>
                   <ClassCreate Navigate={ Navigate } containerRef={ containerRef } createClassPopUp={ createClassPopUp }
-                        setCreateClassPopUp={ setCreateClassPopUp } />
+                        setCreateClassPopUp={ setCreateClassPopUp } setRender={ setRender } render={ render } />
             </div>
       )
 }

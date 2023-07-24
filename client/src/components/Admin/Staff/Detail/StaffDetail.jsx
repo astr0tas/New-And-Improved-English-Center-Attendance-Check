@@ -8,7 +8,7 @@ import { context } from '../../../../context';
 
 const Class = (props) =>
 {
-      const {  setListType } = useContext(context);
+      const { setListType } = useContext(context);
 
       return (
             <tr>
@@ -16,7 +16,12 @@ const Class = (props) =>
                   <td className='text-center'>{ props.name }</td>
                   <td className='text-center'>{ DMY(props.start) }</td>
                   <td className='text-center'>{ DMY(props.end) }</td>
-                  <td className='text-center' style={ { color: props.status === 0 ? 'red' : '#128400' } }>{ props.status === 0 ? 'Deactivated' : 'Active' }</td>
+                  <td className='text-center' style={ {
+                        color: props.status === 0 ? 'red' : (
+                              props.status === 1 ? '#128400' : 'gray')
+                  } }>{ props.status === 0 ? 'Deactivated' : (
+                        props.status === 1 ? 'Active' : 'Finished'
+                  ) }</td>
                   <td className='text-center'>
                         <button className='btn btn-sm btn-primary' onClick={ () =>
                         {
@@ -69,7 +74,7 @@ const StaffDetail = () =>
                                           const temp = [];
                                           for (let i = 0; i < res.data.length; i++)
                                                 temp.push(<Class key={ i } i={ i + 1 } Navigate={ Navigate } name={ res.data[i].name }
-                                                      start={ res.data[i].start_date } end={ res.data[i].end_date } status={ res.data[i].Status } />);
+                                                      start={ res.data[i].start_date } end={ res.data[i].end_date } status={ res.data[i].status } />);
                                           setClasses(temp);
                                     })
                                     .catch(err => console.log(err));
@@ -82,7 +87,7 @@ const StaffDetail = () =>
                                           const temp = [];
                                           for (let i = 0; i < res.data.length; i++)
                                                 temp.push(<Class key={ i } i={ i + 1 } Navigate={ Navigate } name={ res.data[i].name }
-                                                      start={ res.data[i].start_date } end={ res.data[i].end_date } status={ res.data[i].Status } />);
+                                                      start={ res.data[i].start_date } end={ res.data[i].end_date } status={ res.data[i].status } />);
                                           setClasses(temp);
                                     })
                                     .catch(err => console.log(err));
