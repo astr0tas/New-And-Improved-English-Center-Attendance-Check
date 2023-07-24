@@ -74,9 +74,11 @@ export class Staff
             });
       }
 
-      getTeacherClass(id, callback)
+      getTeacherClass(id, className, callback)
       {
-            this.conn.query(`select class.name,class.status,class.start_date,class.end_date from class join teach on teach.class_name=class.name where teacher_id=? order by class.status desc, class.start_date desc, class.name`, [id], (err, res) =>
+            this.conn.query(`select class.name,class.status,class.start_date,class.end_date 
+            from class join teach on teach.class_name=class.name
+            where teacher_id=? and class.name like ? order by class.status desc, class.start_date desc, class.name`, [id, className + '%'], (err, res) =>
             {
                   if (err)
                         callback(null, err);
@@ -85,11 +87,11 @@ export class Staff
             });
       }
 
-      getSupervisorClass(id, callback)
+      getSupervisorClass(id, className, callback)
       {
             this.conn.query(`select class.name,class.status,class.start_date,class.end_date from class where class.name in (
                   select distinct SUPERVISOR_RESPONSIBLE.class_name from SUPERVISOR_RESPONSIBLE where SUPERVISOR_RESPONSIBLE.Supervisor_ID=?
-            )`, [id], (err, res) =>
+            ) and class.name like ? order by class.status desc, class.start_date desc, class.name`, [id, className + '%'], (err, res) =>
             {
                   if (err)
                         callback(null, err);

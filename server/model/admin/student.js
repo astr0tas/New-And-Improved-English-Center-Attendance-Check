@@ -51,9 +51,11 @@ export class Student
             })
       }
 
-      getStudentClass(id, callback)
+      getStudentClass(id, className, callback)
       {
-            this.conn.query(`select class.name,class.status,class.start_date,class.end_date from class join in_class on in_class.class_name=class.name where student_id=? order by class.status desc, class.start_date desc, class.name`, [id], (err, res) =>
+            this.conn.query(`select class.name,class.status,class.start_date,class.end_date 
+            from class join in_class on in_class.class_name=class.name
+            where student_id=? and class.name like ? order by class.status desc, class.start_date desc, class.name`, [id, className + '%'], (err, res) =>
             {
                   if (err)
                         callback(null, err);

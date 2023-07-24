@@ -276,10 +276,10 @@ export class Class
             });
       }
 
-      getSessionStudent(name, callback)
+      getSessionStudent(name, studentName, callback)
       {
             this.conn.query(`select student.id,student.name from student
-            join IN_CLASS on IN_CLASS.student_id=student.id where IN_CLASS.class_name=? order by student.name`, [name], (err, res) =>
+            join IN_CLASS on IN_CLASS.student_id=student.id where IN_CLASS.class_name=? and student.name like ? order by student.name`, [name, '%' + studentName + '%'], (err, res) =>
             {
                   if (err)
                         callback(null, err);

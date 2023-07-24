@@ -294,7 +294,8 @@ adminRoutes.post('/classSessionDetail', (req, res) =>
 adminRoutes.post('/getSessionStudent', (req, res) =>
 {
       const name = req.body.params.name;
-      classModel.getSessionStudent(name, (result, err) =>
+      const studentName = req.body.params.studentName;
+      classModel.getSessionStudent(name, studentName, (result, err) =>
       {
             if (err)
             {
@@ -574,7 +575,8 @@ adminRoutes.post('/staffInfo', (req, res) =>
 adminRoutes.post('/getTeacherClass', (req, res) =>
 {
       const id = req.body.params.id;
-      staffModel.getTeacherClass(id, (result, err) =>
+      const className = req.body.params.className;
+      staffModel.getTeacherClass(id, className, (result, err) =>
       {
             if (err)
             {
@@ -589,7 +591,8 @@ adminRoutes.post('/getTeacherClass', (req, res) =>
 adminRoutes.post('/getSupervisorClass', (req, res) =>
 {
       const id = req.body.params.id;
-      staffModel.getSupervisorClass(id, (result, err) =>
+      const className = req.body.params.className;
+      staffModel.getSupervisorClass(id, className, (result, err) =>
       {
             if (err)
             {
@@ -642,7 +645,8 @@ adminRoutes.post('/studentInfo', (req, res) =>
 adminRoutes.post('/getStudentClass', (req, res) =>
 {
       const id = req.body.params.id;
-      studentModel.getStudentClass(id, (result, err) =>
+      const className = req.body.params.className;
+      studentModel.getStudentClass(id, className, (result, err) =>
       {
             if (err)
             {

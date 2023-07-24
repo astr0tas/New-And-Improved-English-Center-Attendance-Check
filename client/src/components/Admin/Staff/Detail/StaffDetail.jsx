@@ -5,6 +5,8 @@ import { useParams, NavLink } from 'react-router-dom';
 import { DMY } from '../../../../tools/dateFormat';
 import { useContext, useEffect, useState } from 'react';
 import { context } from '../../../../context';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 
 const Class = (props) =>
 {
@@ -17,10 +19,10 @@ const Class = (props) =>
                   <td className='text-center'>{ DMY(props.start) }</td>
                   <td className='text-center'>{ DMY(props.end) }</td>
                   <td className='text-center' style={ {
-                        color: props.status === 0 ? 'red' : (
-                              props.status === 1 ? '#128400' : 'gray')
-                  } }>{ props.status === 0 ? 'Deactivated' : (
-                        props.status === 1 ? 'Active' : 'Finished'
+                        color: props.status === 1 ? 'red' : (
+                              props.status === 2 ? '#128400' : 'gray')
+                  } }>{ props.status === 1 ? 'Deactivated' : (
+                        props.status === 2 ? 'Active' : 'Finished'
                   ) }</td>
                   <td className='text-center'>
                         <NavLink to={ `/class-list/detail/${ props.name }` }>
@@ -34,6 +36,46 @@ const Class = (props) =>
       )
 }
 
+const ClassList = (props) =>
+{
+      useEffect(() =>
+      {
+            if (props.type === 1)
+            {
+                  axios.post(`http://${ domain }/admin/getTeacherClass`, { params: { id: props.id, className: props.searchClass } }, { headers: { 'Content-Type': 'application/json' } })
+                        .then(res =>
+                        {
+                              const temp = [];
+                              for (let i = 0; i < res.data.length; i++)
+                                    temp.push(<Class key={ i } i={ i + 1 } name={ res.data[i].name }
+                                          start={ res.data[i].start_date } end={ res.data[i].end_date } status={ res.data[i].status } />);
+                              props.setClasses(temp);
+                        })
+                        .catch(err => console.log(err));
+            }
+            else if (props.type === 2)
+            {
+                  axios.post(`http://${ domain }/admin/getSupervisorClass`, { params: { id: props.id, className: props.searchClass } }, { headers: { 'Content-Type': 'application/json' } })
+                        .then(res =>
+                        {
+                              const temp = [];
+                              for (let i = 0; i < res.data.length; i++)
+                                    temp.push(<Class key={ i } i={ i + 1 } name={ res.data[i].name }
+                                          start={ res.data[i].start_date } end={ res.data[i].end_date } status={ res.data[i].status } />);
+                              props.setClasses(temp);
+                        })
+                        .catch(err => console.log(err));
+            }
+
+            // eslint-disable-next-line
+      }, [props.type, props.searchClass, props.id]);
+      return (
+            <>
+                  { props.classes }
+            </>
+      )
+}
+
 const StaffDetail = () =>
 {
       const [name, setName] = useState("N/A");
@@ -44,10 +86,12 @@ const StaffDetail = () =>
       const [birthday, setBirthday] = useState("N/A");
       const [birthplace, setBirthplace] = useState("N/A");
       const [image, setImage] = useState("");
-
+      const [type, setType] = useState(null);
       const id = useParams().id;
-
       const [classes, setClasses] = useState([]);
+      const [searchClass, setSearchClass] = useState('');
+
+      let timer;
 
       useEffect(() =>
       {
@@ -64,33 +108,7 @@ const StaffDetail = () =>
                         setBirthday(res.data.birthday);
                         setBirthplace(res.data.birthplace);
                         setImage(res.data.image === null ? require('../../../../images/profile.png') : `http://${ domain }/image/employee/${ res.data.image }`);
-
-                        if (res.data.type === 1)
-                        {
-                              axios.post(`http://${ domain }/admin/getTeacherClass`, { params: { id: id } }, { headers: { 'Content-Type': 'application/json' } })
-                                    .then(res =>
-                                    {
-                                          const temp = [];
-                                          for (let i = 0; i < res.data.length; i++)
-                                                temp.push(<Class key={ i } i={ i + 1 } name={ res.data[i].name }
-                                                      start={ res.data[i].start_date } end={ res.data[i].end_date } status={ res.data[i].status } />);
-                                          setClasses(temp);
-                                    })
-                                    .catch(err => console.log(err));
-                        }
-                        else
-                        {
-                              axios.post(`http://${ domain }/admin/getSupervisorClass`, { params: { id: id } }, { headers: { 'Content-Type': 'application/json' } })
-                                    .then(res =>
-                                    {
-                                          const temp = [];
-                                          for (let i = 0; i < res.data.length; i++)
-                                                temp.push(<Class key={ i } i={ i + 1 } name={ res.data[i].name }
-                                                      start={ res.data[i].start_date } end={ res.data[i].end_date } status={ res.data[i].status } />);
-                                          setClasses(temp);
-                                    })
-                                    .catch(err => console.log(err));
-                        }
+                        setType(res.data.type);
                   })
                   .catch(err => console.log(err));
       }, [id]);
@@ -132,8 +150,16 @@ const StaffDetail = () =>
                               </div>
                         </div>
                   </div>
-                  <div className='flex-grow-1 mb-3 mt-2 overflow-auto' style={ { minHeight: classes.length !== 0 ? '200px' : 'unset' } }>
-                        <table className="table table-hover table-info mx-auto" style={ { width: '95%' } }>
+                  <div className='mt-3 ms-2 position-relative'>
+                        <FontAwesomeIcon icon={ faMagnifyingGlass } className={ `position-absolute ${ styles.search }` } />
+                        <input type='text' placeholder='Find class' className={ `ps-4` } onChange={ (e) =>
+                        {
+                              clearTimeout(timer);
+                              timer = setTimeout(() => setSearchClass(e.target.value), 1000);
+                        } }></input>
+                  </div>
+                  <div className='flex-grow-1 mb-3 mt-2 overflow-auto px-2' style={ { minHeight: classes.length !== 0 ? '200px' : 'unset' } }>
+                        <table className="table table-hover table-info mx-auto w-100">
                               <thead style={ { position: "sticky", top: "0" } }>
                                     <tr>
                                           <th scope="col" className='col-1 text-center'>#</th>
@@ -145,7 +171,7 @@ const StaffDetail = () =>
                                     </tr>
                               </thead>
                               <tbody>
-                                    { classes }
+                                    <ClassList id={ id } searchClass={ searchClass } type={ type } classes={ classes } setClasses={ setClasses } />
                               </tbody>
                         </table>
                   </div>

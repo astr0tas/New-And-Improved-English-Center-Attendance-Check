@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, forwardRef, useImperativeHandle } from 'react';
 import styles from './SessionDetail.module.css';
-import {  useParams, NavLink } from 'react-router-dom';
+import { useParams, NavLink } from 'react-router-dom';
 import { domain } from '../../../../tools/domain';
 import axios from 'axios';
 import { DMDY } from '../../../../tools/dateFormat';
@@ -275,6 +275,35 @@ const Student = forwardRef((props, ref) =>
       )
 });
 
+const StudentList = (props) =>
+{
+      useEffect(() =>
+      {
+            axios.post(`http://${ domain }/admin/getSessionStudent`, { params: { name: props.name, studentName: props.searchStudent } }, { headers: { 'Content-Type': 'application/json' } })
+                  .then(res =>
+                  {
+                        if (res.data !== '')
+                        {
+                              const temp = [];
+                              for (let i = 0; i < res.data.length; i++)
+                                    temp.push(<Student key={ i } i={ i + 1 } ref={ el => props.childrenRefs.current[i] = el }
+                                          id={ res.data[i].id } name={ res.data[i].name }
+                                          className={ props.name } sessionNumber={ props.number } status={ props.status } />);
+                              props.setStudentList(temp);
+                        }
+                  })
+                  .catch(err => console.error(err));
+
+            // eslint-disable-next-line
+      }, [props.searchStudent, props.name])
+
+      return (
+            <>
+                  { props.studentList }
+            </>
+      )
+}
+
 const AdminClassSessionDetail = () =>
 {
       const name = useParams().name;
@@ -324,6 +353,9 @@ const AdminClassSessionDetail = () =>
       const [confirmChangeTeacher, setConfirmChangeTeacher] = useState(false);
       const [confirmChangeSupervisor, setConfirmChangeSupervisor] = useState(false);
       const [confirmChangeClassRoom, setConfirmChangeClassRoom] = useState(false);
+
+      const [searchStudent, setSearchStudent] = useState('');
+      let timer;
 
       const toggleStatus = (status) =>
       {
@@ -415,21 +447,6 @@ const AdminClassSessionDetail = () =>
                                           setRoomList(temp);
                                     })
                                     .catch(err => console.log(err));
-                        }
-                  })
-                  .catch(err => console.error(err));
-
-            axios.post(`http://${ domain }/admin/getSessionStudent`, { params: { name: name } }, { headers: { 'Content-Type': 'application/json' } })
-                  .then(res =>
-                  {
-                        if (res.data !== '')
-                        {
-                              const temp = [];
-                              for (let i = 0; i < res.data.length; i++)
-                                    temp.push(<Student key={ i } i={ i + 1 } ref={ el => childrenRefs.current[i] = el }
-                                          id={ res.data[i].id } name={ res.data[i].name }
-                                          className={ name } sessionNumber={ number } status={ status } />);
-                              setStudentList(temp);
                         }
                   })
                   .catch(err => console.error(err));
@@ -542,7 +559,15 @@ const AdminClassSessionDetail = () =>
                                     </div>
                               </div>
                         </div>
-                        <div className='flex-grow-1 w-100 overflow-auto mt-3 px-1' style={ { minHeight: studentList.length ? '250px' : '70px' } }>
+                        <div className='mt-3 ms-2 position-relative'>
+                              <FontAwesomeIcon icon={ faMagnifyingGlass } className={ `position-absolute ${ styles.search }` } />
+                              <input type='text' placeholder='Find student' className={ `ps-4` } onChange={ (e) =>
+                              {
+                                    clearTimeout(timer);
+                                    timer = setTimeout(() => setSearchStudent(e.target.value), 1000);
+                              } }></input>
+                        </div>
+                        <div className='flex-grow-1 w-100 overflow-auto mt-3 px-2' style={ { minHeight: studentList.length ? '250px' : '70px' } }>
                               <table className="table table-hover table-info">
                                     <thead style={ { position: "sticky", top: "0" } }>
                                           <tr>
@@ -553,7 +578,7 @@ const AdminClassSessionDetail = () =>
                                                       <div className="d-flex flex-column align-items-center justify-content-center">
                                                             <p className='mb-2'>On class</p>
                                                             {
-                                                                  studentList.length && (status === 1 || status === 2) &&
+                                                                  studentList.length !== 0 && (status === 1 || status === 2) &&
                                                                   <input name="allAttendance" type="radio"
                                                                         className={ `${ styles.hover }` } style={ { width: '1.3rem', height: '1.3rem' } }
                                                                         onChange={ () => toggleStatus(1) } ref={ radioOnClass }>
@@ -565,7 +590,7 @@ const AdminClassSessionDetail = () =>
                                                       <div className="d-flex flex-column align-items-center justify-content-center">
                                                             <p className='mb-2'>Late</p>
                                                             {
-                                                                  studentList.length && (status === 1 || status === 2) &&
+                                                                  studentList.length !== 0 && (status === 1 || status === 2) &&
                                                                   <input name="allAttendance" type="radio"
                                                                         className={ `${ styles.hover }` } style={ { width: '1.3rem', height: '1.3rem' } }
                                                                         onChange={ () => toggleStatus(2) } ref={ radioLate }>
@@ -577,7 +602,7 @@ const AdminClassSessionDetail = () =>
                                                       <div className="d-flex flex-column align-items-center justify-content-center">
                                                             <p className='mb-2'>Absent</p>
                                                             {
-                                                                  studentList.length && (status === 1 || status === 2) &&
+                                                                  studentList.length !== 0 && (status === 1 || status === 2) &&
                                                                   <input name="allAttendance" type="radio"
                                                                         className={ `${ styles.hover }` } style={ { width: '1.3rem', height: '1.3rem' } }
                                                                         onChange={ () => toggleStatus(3) } ref={ radioAbsent }>
@@ -589,7 +614,9 @@ const AdminClassSessionDetail = () =>
                                           </tr>
                                     </thead>
                                     <tbody>
-                                          { studentList }
+                                          <StudentList name={ name } number={ number } setStudentList={ setStudentList }
+                                                studentList={ studentList } childrenRefs={ childrenRefs } status={ status }
+                                                searchStudent={ searchStudent } setSearchStudent={ setSearchStudent } />
                                     </tbody>
                               </table>
                         </div>
@@ -599,10 +626,10 @@ const AdminClassSessionDetail = () =>
                         </div>
                         <div className='w-100 d-flex align-items-center justify-content-center mb-3'>
                               <NavLink to={ `/class-list/detail/${ name }` }>
-                              <button className='btn btn-secondary me-3'>Back</button>
-                              {
-                                    (status === 1 || status === 2) &&
-                                    <button className='btn btn-primary ms-3' onClick={ checkAttendance }>Confirm</button>
+                                    <button className='btn btn-secondary me-3'>Back</button>
+                                    {
+                                          (status === 1 || status === 2) &&
+                                          <button className='btn btn-primary ms-3' onClick={ checkAttendance }>Confirm</button>
                                     }
                               </NavLink>
                         </div>

@@ -5,6 +5,12 @@
       border-radius: 10px;
 }
 
+.search {
+      font-size: 1.2rem;
+      margin-top: 5px;
+      margin-left: 4px;
+}
+
 @media only screen and (min-width: 768px) {
       .image {
             width: 300px;

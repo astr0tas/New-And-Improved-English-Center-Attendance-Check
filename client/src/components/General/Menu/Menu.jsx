@@ -143,7 +143,7 @@ const Menu = () =>
                                           {
                                                 userType === 1 &&
                                                 <>
-                                                      <div className={ `${ activeTab.includes('/class-list') ? styles.activeTab : styles.hover } mb-3 d-flex align-items-center` } onClick={ () => { Navigate("/class-list"); setClassState(1); } }>
+                                                      <div className={ `${ activeTab.includes('/class-list') ? styles.activeTab : styles.hover } mb-3 d-flex align-items-center` } onClick={ () => { Navigate("/class-list"); setClassState(2); } }>
                                                             <span className={ `d-flex align-items-center p-0 ms-2` } style={ { fontSize: '1.5rem', whiteSpace: 'nowrap', color: 'black' } }><BsListColumnsReverse className={ `me-1` } />Classes</span>
                                                       </div>
                                                       <div className={ `${ activeTab.includes('/staff-list') ? styles.activeTab : styles.hover } mb-3 d-flex align-items-center` } onClick={ () => { setStaffType(0); Navigate("/staff-list"); } }>

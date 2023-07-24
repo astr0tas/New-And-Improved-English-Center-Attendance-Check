@@ -5,6 +5,8 @@ import { domain } from '../../../../tools/domain';
 import { NavLink, useParams } from 'react-router-dom';
 import { DMY } from '../../../../tools/dateFormat';
 import { context } from '../../../../context';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 
 const Class = (props) =>
 {
@@ -17,10 +19,10 @@ const Class = (props) =>
                   <td className='text-center'>{ DMY(props.start) }</td>
                   <td className='text-center'>{ DMY(props.end) }</td>
                   <td className='text-center' style={ {
-                        color: props.status === 0 ? 'red' : (
-                              props.status === 1 ? '#128400' : 'gray')
-                  } }>{ props.status === 0 ? 'Deactivated' : (
-                        props.status === 1 ? 'Active' : 'Finished'
+                        color: props.status === 1 ? 'red' : (
+                              props.status === 2 ? '#128400' : 'gray')
+                  } }>{ props.status === 1 ? 'Deactivated' : (
+                        props.status === 2 ? 'Active' : 'Finished'
                   ) }</td>
                   <td className='d-flex align-items-center justify-content-center flex-column flex-sm-row'>
                         <NavLink to={ `/class-list/detail/${ props.name }` }>
@@ -32,6 +34,31 @@ const Class = (props) =>
                         <button className='btn btn-sm btn-primary mx-sm-2 my-2 my-sm-0'>Stats</button>
                   </td>
             </tr>
+      )
+}
+
+const StudentClass = (props) =>
+{
+      useEffect(() =>
+      {
+            axios.post(`http://${ domain }/admin/getStudentClass`, { params: { id: props.id, className: props.searchClass } }, { headers: { 'Content-Type': 'application/json' } })
+                  .then(res =>
+                  {
+                        const temp = [];
+                        for (let i = 0; i < res.data.length; i++)
+                              temp.push(<Class key={ i } i={ i + 1 } name={ res.data[i].name }
+                                    start={ res.data[i].start_date } end={ res.data[i].end_date } status={ res.data[i].Status } />);
+                        props.setClasses(temp);
+                  })
+                  .catch(err => console.log(err));
+
+            // eslint-disable-next-line
+      }, [props.searchClass, props.id]);
+
+      return (
+            <>
+                  { props.classes }
+            </>
       )
 }
 
@@ -48,7 +75,9 @@ const StudentDetail = () =>
 
       const id = useParams().id;
 
+      const [searchClass, setSearchClass] = useState('');
       const [classes, setClasses] = useState([]);
+      let timer;
 
       useEffect(() =>
       {
@@ -65,17 +94,6 @@ const StudentDetail = () =>
                         setBirthday(res.data.birthday);
                         setBirthplace(res.data.birthplace);
                         setImage(res.data.image === null ? require('../../../../images/profile.png') : `http://${ domain }/image/student/${ res.data.image }`);
-                  })
-                  .catch(err => console.log(err));
-
-            axios.post(`http://${ domain }/admin/getStudentClass`, { params: { id: id } }, { headers: { 'Content-Type': 'application/json' } })
-                  .then(res =>
-                  {
-                        const temp = [];
-                        for (let i = 0; i < res.data.length; i++)
-                              temp.push(<Class key={ i } i={ i + 1 } name={ res.data[i].name }
-                                    start={ res.data[i].start_date } end={ res.data[i].end_date } status={ res.data[i].Status } />);
-                        setClasses(temp);
                   })
                   .catch(err => console.log(err));
       }, [id]);
@@ -117,8 +135,16 @@ const StudentDetail = () =>
                               </div>
                         </div>
                   </div>
-                  <div className='flex-grow-1 mb-3 mt-2 overflow-auto' style={ { minHeight: classes.length !== 0 ? '200px' : '40px' } }>
-                        <table className="table table-hover table-info mx-auto" style={ { width: '95%' } }>
+                  <div className='mt-3 ms-2 position-relative'>
+                        <FontAwesomeIcon icon={ faMagnifyingGlass } className={ `position-absolute ${ styles.search }` } />
+                        <input type='text' placeholder='Find class' className={ `ps-4` } onChange={ (e) =>
+                        {
+                              clearTimeout(timer);
+                              timer = setTimeout(() => setSearchClass(e.target.value), 1000);
+                        } }></input>
+                  </div>
+                  <div className='flex-grow-1 mb-3 mt-2 overflow-auto px-2' style={ { minHeight: classes.length !== 0 ? '200px' : '40px' } }>
+                        <table className="table table-hover table-info mx-auto w-100">
                               <thead style={ { position: "sticky", top: "0" } }>
                                     <tr>
                                           <th scope="col" className='col-1 text-center'>#</th>
@@ -130,7 +156,7 @@ const StudentDetail = () =>
                                     </tr>
                               </thead>
                               <tbody>
-                                    { classes }
+                                    <StudentClass id={ id } searchClass={ searchClass } classes={ classes } setClasses={ setClasses } />
                               </tbody>
                         </table>
                   </div>
