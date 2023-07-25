@@ -45,11 +45,16 @@ const Profile = () =>
       const [invalidSSN, setInvalidSSN] = useState(false);
       const [invalidPhone, setInvalidPhone] = useState(false);
       const [invalidEmail, setInvalidEmail] = useState(false);
+      const [invalidName, setInvalidName] = useState(false);
+      const [duplicateSSN, setDuplicateSSN] = useState(false);
+      const [duplicatePhone, setDuplicatePhone] = useState(false);
+      const [duplicateEmail, setDuplicateEmail] = useState(false);
 
       const [render, setRender] = useState(false);
 
       const popUpContainer = useRef(null);
       const [showpopup, setshowpopup] = useState(false);
+      const [errorPopUp, setErrorPopUp] = useState(false);
 
       const userType = useOutletContext();
 
@@ -86,6 +91,10 @@ const Profile = () =>
                   setIsWrong(false);
                   setInvalidEmail(false);
                   setIsYoung(false);
+                  setDuplicateEmail(false);
+                  setDuplicatePhone(false);
+                  setDuplicateSSN(false);
+                  setInvalidName(false);
                   setPassword("");
                   setRepassword("");
                   setNewAddress("");
@@ -108,6 +117,13 @@ const Profile = () =>
             return alphabetPattern.test(inputString);
       }
 
+      function hasNumericalCharacters(inputString)
+      {
+            const numbericalPattern = /[0-9]/;
+
+            return numbericalPattern.test(inputString);
+      }
+
       function isValidEmail(email)
       {
             const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -119,8 +135,8 @@ const Profile = () =>
             const input = new Date(inDate);
             const now = new Date();
 
-            return input.getFullYear()+18 < now.getFullYear() || (
-                  input.getFullYear()+18 === now.getFullYear() && (
+            return input.getFullYear() + 18 < now.getFullYear() || (
+                  input.getFullYear() + 18 === now.getFullYear() && (
                         input.getMonth() < now.getMonth() || (
                               input.getMonth() === now.getMonth() && input.getDate() <= now.getDate()
                         )
@@ -128,33 +144,51 @@ const Profile = () =>
             );
       }
 
-      const changeInfo = () =>
+      const changeInfo = async () =>
       {
             let isOk = true;
-            if (password !== repassword)
-            {
-                  setIsWrong(true);
-                  isOk = false;
-            }
-            if (newBirthday !== '' && !isValidAge(newBirthday))
-            {
-                  setIsYoung(true);
-                  isOk = false;
-            }
+
+            setIsWrong(password !== repassword);
+            isOk = !(password !== repassword) && isOk;
+
+            setIsYoung(newBirthday !== '' && !isValidAge(newBirthday));
+            isOk = !(newBirthday !== '' && !isValidAge(newBirthday)) && isOk;
+
+            setInvalidName(newName !== '' && hasNumericalCharacters(newName));
+            isOk = !(newName !== '' && hasNumericalCharacters(newName)) && isOk;
+
             if (newSSN !== '' && hasAlphabetCharacters(newSSN))
             {
                   setInvalidSSN(true);
                   isOk = false;
+            }
+            else if (newSSN !== '')
+            {
+                  const result = await axios.post(`http://${ domain }/isSSNDuplicate`, { params: { ssn: newSSN } }, { headers: { 'Content-Type': 'application/json' } });
+                  setDuplicateSSN(result.data);
+                  isOk = !result.data && isOk;
             }
             if (newPhone !== '' && hasAlphabetCharacters(newPhone))
             {
                   setInvalidPhone(true);
                   isOk = false;
             }
+            else if (newPhone !== '')
+            {
+                  const result = await axios.post(`http://${ domain }/isPhoneDuplicate`, { params: { phone: newPhone } }, { headers: { 'Content-Type': 'application/json' } });
+                  setDuplicatePhone(result.data);
+                  isOk = !result.data && isOk;
+            }
             if (newEmail !== '' && !isValidEmail(newEmail))
             {
                   setInvalidEmail(true);
                   isOk = false;
+            }
+            else if (newEmail !== '')
+            {
+                  const result = await axios.post(`http://${ domain }/isEmailDuplicate`, { params: { email: newEmail } }, { headers: { 'Content-Type': 'application/json' } });
+                  setDuplicateEmail(result.data);
+                  isOk = !result.data && isOk;
             }
             if (isOk)
             {
@@ -180,7 +214,11 @@ const Profile = () =>
                               triggerEdit(false);
                               setRender(!render);
                         })
-                        .catch(err => console.log(err));
+                        .catch(err =>
+                        {
+                              setErrorPopUp(true);
+                              console.error(err);
+                        });
             }
       }
 
@@ -204,6 +242,21 @@ const Profile = () =>
                               } }>Yes</button>
                         </Modal.Footer>
                   </Modal>
+
+                  <Modal show={ errorPopUp } onHide={ () => { setErrorPopUp(false); } } className={ `reAdjustModel hideBrowserScrollbar ${ styles.confirmModal }` } container={ popUpContainer.current }>
+                        <Modal.Header className='border border-0' closeButton>
+                        </Modal.Header>
+                        <Modal.Body className='border border-0 d-flex justify-content-center'>
+                              <h4 className='text-center'>An error has occurred!</h4>
+                        </Modal.Body>
+                        <Modal.Footer className='justify-content-center border border-0'>
+                              <button className={ `btn btn-primary me-2 me-md-4` } onClick={ () =>
+                              {
+                                    setErrorPopUp(false);
+                              } }>Okay</button>
+                        </Modal.Footer>
+                  </Modal>
+
                   <div className='d-flex flex-column align-items-center my-auto w-100'>
                         <img alt='profile' className={ `${ styles.img } mt-2 mt-md-4` } ref={ profileImg }></img>
                         {
@@ -241,7 +294,13 @@ const Profile = () =>
                         }
                         {
                               editMode &&
-                              <input placeholder='Enter your name' className='my-3' style={ { fontSize: '1.5rem', maxWidth: '250px' } } defaultValue={ name } type='text' onChange={ e => setNewName(e.target.value) }></input>
+                              <input placeholder='Enter your name' className='mt-3 mb-2' style={ { fontSize: '1.5rem', maxWidth: '250px' } } defaultValue={ name } type='text' onChange={ e => setNewName(e.target.value) }></input>
+                        }
+                        {
+                              invalidName &&
+                              <p className={ `${ styles.p } mb-2 text-center align-middle` }>
+                                    Your name must not contain numerical character(s)!
+                              </p>
                         }
                         <div className={ `${ styles.container } d-flex flex-column h-100 mb-3` }>
                               <div className={ `ms-auto me-3` }>
@@ -273,6 +332,12 @@ const Profile = () =>
                                           invalidSSN &&
                                           <p className={ `${ styles.p } mt-2 mb-0 text-center align-middle` }>
                                                 Your SSN must not contain alphabetical character(s)!
+                                          </p>
+                                    }
+                                    {
+                                          duplicateSSN &&
+                                          <p className={ `${ styles.p } mt-2 mb-0 text-center align-middle` }>
+                                                This SSN has already been used!
                                           </p>
                                     }
                                     <div className='d-flex align-items-center mt-2 justify-content-center'>
@@ -320,6 +385,12 @@ const Profile = () =>
                                                 Your email is invalid!
                                           </p>
                                     }
+                                    {
+                                          duplicateEmail &&
+                                          <p className={ `${ styles.p } mt-2 mb-0 text-center align-middle` }>
+                                                This email has already been used!
+                                          </p>
+                                    }
                                     <div className='d-flex align-items-center mt-2 justify-content-center'>
                                           <strong>Phone:&nbsp;&nbsp;</strong>
                                           {
@@ -335,6 +406,12 @@ const Profile = () =>
                                           invalidPhone &&
                                           <p className={ `${ styles.p } mt-2 mb-0 text-center align-middle` }>
                                                 Your phone number must not contain alphabetical character(s)!
+                                          </p>
+                                    }
+                                    {
+                                          duplicatePhone &&
+                                          <p className={ `${ styles.p } mt-2 mb-0 text-center align-middle` }>
+                                                This phone has already been used!
                                           </p>
                                     }
                                     <div className='d-flex align-items-center mt-2 mb-2 justify-content-center'>

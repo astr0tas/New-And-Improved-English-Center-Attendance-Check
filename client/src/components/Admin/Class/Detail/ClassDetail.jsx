@@ -34,7 +34,10 @@ const Student = (props) =>
                               <NavLink to={ `/student-list/detail/${ props.id }` }>
                                     <button className='btn btn-primary btn-sm me-2'>Detail</button>
                               </NavLink>
-                              <button className='btn btn-danger btn-sm ms-2' onClick={ removeStudent }>Remove</button>
+                              {
+                                    props.status !== 0 &&
+                                    <button className='btn btn-danger btn-sm ms-2' onClick={ removeStudent }>Remove</button>
+                              }
                         </div>
                   </td>
             </tr>
@@ -120,7 +123,10 @@ const Teacher = (props) =>
                               <NavLink to={ `/staff-list/detail/${ props.id }` }>
                                     <button className="btn btn-sm btn-primary">Detail</button>
                               </NavLink>
-                              <button className='btn btn-danger btn-sm ms-2' onClick={ removeTeacher }>Remove</button>
+                              {
+                                    props.status !== 0 &&
+                                    <button className='btn btn-danger btn-sm ms-2' onClick={ removeTeacher }>Remove</button>
+                              }
                         </div>
                   </td>
             </tr>
@@ -309,20 +315,17 @@ const ClassDetail = () =>
                         </div >
                         <div className="d-flex align-items-center mx-auto mb-3">
                               {
-                                    listType === 0 &&
-                                    <button className='btn btn-primary me-md-3 me-2' onClick={ addStudent }>Add student</button>
+                                    listType === 0 && status !== 0 &&
+                                    <button className='btn btn-primary' onClick={ addStudent }>Add student</button>
                               }
                               {
-                                    listType === 1 &&
-                                    <button className='btn btn-primary me-md-3 me-2' onClick={ () => setTeacherPopUp(true) }>Add teacher</button>
+                                    listType === 1 && status !== 0 &&
+                                    <button className='btn btn-primary' onClick={ () => setTeacherPopUp(true) }>Add teacher</button>
                               }
                               {
-                                    listType === 2 &&
-                                    <button className='btn btn-primary me-md-3 me-2' onClick={ () => setSessionPopUp(true) }>Add session</button>
+                                    listType === 2 && status !== 0 &&
+                                    <button className='btn btn-primary' onClick={ () => setSessionPopUp(true) }>Add session</button>
                               }
-                              <NavLink to={ './edit' }>
-                                    <button className='btn btn-secondary ms-md-3 ms-2'>Edit class</button>
-                              </NavLink>
                         </div>
                   </div>
                   <Modal show={ statusPopUp } onHide={ () => setStatusPopUp(false) } className={ `reAdjustModel hideBrowserScrollbar` } container={ containerRef.current }>
@@ -411,11 +414,11 @@ const ClassDetail = () =>
                   </Modal>
                   <AddStudent containerRef={ containerRef } setAddPopUp={ setAddPopUp } name={ name }
                         addPopUp={ addPopUp } currentStudent={ currentStudent } maxStudent={ maxStudent }
-                        render={ render } setRender={ setRender } />
+                        render={ render } setRender={ setRender } status={ status } />
                   <AddSession containerRef={ containerRef } setSessionPopUp={ setSessionPopUp } name={ name } currentSession={ currentSession }
                         sessionPopUp={ sessionPopUp } render={ render } setRender={ setRender } />
                   <AddTeacher containerRef={ containerRef } setTeacherPopUp={ setTeacherPopUp } name={ name }
-                        teacherPopUp={ teacherPopUp } render={ render } setRender={ setRender } />
+                        teacherPopUp={ teacherPopUp } render={ render } setRender={ setRender } status={ status } />
             </div >
       )
 }

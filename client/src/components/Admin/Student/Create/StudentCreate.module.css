@@ -1,0 +1,101 @@
+.customModal1,
+.confirmModal {
+      max-width: 80% !important;
+}
+
+.customModal2 {
+      max-width: 95% !important;
+}
+
+.confirmModal {
+      padding-top: 30vh !important;
+      padding-top: 30dvh !important;
+}
+
+.dialog {
+      max-width: 100% !important;
+      max-height: 75% !important;
+}
+
+.inputs {
+      border: 2px solid gray;
+      border-radius: 10px;
+      max-width: 250px;
+      height: 30px;
+      overflow: auto;
+      white-space: nowrap;
+}
+
+.hover:hover {
+      cursor: pointer;
+}
+
+.p {
+      font-size: 1rem;
+      color: red;
+}
+
+.search {
+      font-size: 1.2rem;
+      margin-top: 5px;
+      margin-left: 4px;
+}
+
+.inputs {
+      font-size: 1.2rem;
+      height: 40px;
+}
+
+@media only screen and (max-width:330px) {
+      .p {
+            font-size: 0.8rem;
+            color: red;
+      }
+}
+
+@media only screen and (min-width: 768px) {
+
+      .customModal1,
+      .confirmModal {
+            max-width: 50% !important;
+      }
+
+      .customModal2 {
+            max-width: 75% !important;
+      }
+}
+
+@media only screen and (min-width: 996px) {
+
+      .customModal1,
+      .confirmModal {
+            max-width: 40% !important;
+      }
+}
+
+@media only screen and (max-height:450px) {
+
+      .confirmModal1,
+      .customModal2,
+      .customModal {
+            padding-top: 0vh !important;
+            padding-top: 0dvh !important;
+      }
+
+      .dialog {
+            min-height: 100% !important;
+            max-height: 100% !important;
+      }
+}
+
+@media only screen and (min-width: 2400px) {
+
+      .customModal1,
+      .confirmModal {
+            max-width: 25% !important;
+      }
+
+      .customModal2 {
+            max-width: 50% !important;
+      }
+}

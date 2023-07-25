@@ -24,7 +24,7 @@
       cursor: pointer;
 }
 
-.activeTab>* {
+.activeTab>div>* {
       color: #0083FD !important;
 }
 

@@ -1,12 +1,13 @@
 import styles from './StudentList.module.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate, NavLink } from 'react-router-dom';
 import axios from 'axios';
 import { domain } from '../../../../tools/domain';
 import { DMY } from '../../../../tools/dateFormat';
 import '../../../../css/scroll.css';
+import StudentCreate from '../Create/StudentCreate';
 
 const Student = (props) =>
 {
@@ -55,6 +56,9 @@ const StudentList = () =>
       const [name, setName] = useState("");
       const Navigate = useNavigate();
 
+      const [addStudentPopUp, setAddStudentPopUp] = useState(false);
+      const container = useRef(null);
+
       let timer;
 
       const findStudent = (e) =>
@@ -84,7 +88,7 @@ const StudentList = () =>
       }, [render, name, Navigate])
 
       return (
-            <div className='w-100 d-flex flex-column overflow-auto flex-grow-1 mt-2 mb-2 hideBrowserScrollbar'>
+            <div className='w-100 d-flex flex-column overflow-auto flex-grow-1 mt-2 mb-2 hideBrowserScrollbar align-items-center' ref={ container }>
                   <div className='mt-2 ms-md-auto me-md-3 mx-auto position-relative'>
                         <FontAwesomeIcon icon={ faMagnifyingGlass } className={ `position-absolute ${ styles.search }` } />
                         <input type='text' placeholder='Find student' className={ `ps-4` } onChange={ findStudent }></input>
@@ -107,8 +111,10 @@ const StudentList = () =>
                         </table>
                   </div >
                   <div className="w-100 d-flex align-items-center justify-content-center mb-3">
-                        <button className='btn btn-primary' onClick={ () => Navigate('./create') }>Add a student</button>
+                        <button className='btn btn-primary' onClick={ () => setAddStudentPopUp(true) }>Add a student</button>
                   </div>
+
+                  <StudentCreate showPopUp={ addStudentPopUp } setShowPopUp={ setAddStudentPopUp } containerRef={ container } />
             </div>
       )
 }

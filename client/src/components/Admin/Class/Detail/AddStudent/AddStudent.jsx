@@ -14,6 +14,7 @@ const AddStudent = (props) =>
       const [studentAdded, setStudentAdded] = useState([]);
       const [confirmPopUp, setConfirmPopUp] = useState(false);
       const [isEmpty, setIsEmpty] = useState(false);
+      const [errorPopUp, setErrorPopUp] = useState(false);
 
       let timer;
 
@@ -179,8 +180,26 @@ const AddStudent = (props) =>
                                                 setStudentAdded([]);
                                                 props.setRender(!props.render);
                                           })
-                                          .catch(err => console.error(err));
+                                          .catch(err =>
+                                          {
+                                                setErrorPopUp(true);
+                                                console.error(err);
+                                          });
                               } }>YES</button>
+                        </Modal.Footer>
+                  </Modal>
+
+                  <Modal show={ errorPopUp } onHide={ () => { setErrorPopUp(false); } } className={ `reAdjustModel hideBrowserScrollbar ${ styles.confirmModal }` } container={ props.containerRef.current }>
+                        <Modal.Header className='border border-0' closeButton>
+                        </Modal.Header>
+                        <Modal.Body className='border border-0 d-flex justify-content-center'>
+                              <h4 className='text-center'>An error has occurred!</h4>
+                        </Modal.Body>
+                        <Modal.Footer className='justify-content-center border border-0'>
+                              <button className={ `btn btn-primary me-2 me-md-4` } onClick={ () =>
+                              {
+                                    setErrorPopUp(false);
+                              } }>Okay</button>
                         </Modal.Footer>
                   </Modal>
             </>

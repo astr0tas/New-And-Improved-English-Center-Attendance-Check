@@ -2,7 +2,7 @@ import styles from './Menu.module.css';
 import { VscAccount } from "react-icons/vsc";
 import { useEffect, useRef, useState, useContext } from 'react';
 import axios from 'axios';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { MdOutlineClass } from 'react-icons/md';
 import { AiOutlineHome, AiOutlinePoweroff } from 'react-icons/ai';
 import { isRefValid } from '../../../tools/refChecker';
@@ -15,12 +15,13 @@ import { context } from '../../../context';
 
 const Menu = () =>
 {
-      const Navigate = useNavigate();
       const navbar = useRef(null);
       const tabs = useRef(null);
       const navToggler = useRef(null);
+      const Navigate = useNavigate();
 
       const [showSidebar, setShowSidebar] = useState(true);
+      const [render, setRender] = useState(false);
 
       const [userType, setUserType] = useState(0);
 
@@ -118,7 +119,7 @@ const Menu = () =>
             };
 
             // eslint-disable-next-line react-hooks/exhaustive-deps
-      }, [Navigate]);
+      }, [Navigate, render]);
 
       return (
             <div className='w-100 h-100' style={ { backgroundColor: '#A8C5DA' } }>
@@ -128,30 +129,42 @@ const Menu = () =>
                               <div className={ `h-100 d-flex flex-column position-fixed ${ styles.navbar }` } style={ { backgroundColor: '#E6E6E6' } } ref={ navbar }>
                                     <div className={ `w-100 ${ styles.dummy }` } style={ { minHeight: '50px' } }></div>
                                     <div className={ `flex-grow-1 d-flex flex-column overflow-auto ${ styles.tabs } mt-md-3 hideBrowserScrollbar` } ref={ tabs }>
-                                          <div className={ `${ activeTab.includes('/profile') ? styles.activeTab : styles.hover } mb-3 d-flex align-items-center justify-content-center` } onClick={ () => { Navigate("/profile"); } }>
-                                                <span className={ `d-flex align-items-center justify-content-center p-0` } style={ { fontSize: '3.5rem', whiteSpace: 'nowrap', color: 'black' } }><VscAccount /></span>
-                                          </div>
-                                          <div className={ `${ activeTab.includes('/home') ? styles.activeTab : styles.hover } mb-3 d-flex align-items-center` } onClick={ () => { Navigate("/home"); } }>
-                                                <span className={ `d-flex align-items-center p-0 ms-2` } style={ { fontSize: '1.5rem', whiteSpace: 'nowrap', color: 'black' } }><AiOutlineHome className={ `me-1` } />Home</span>
-                                          </div>
+                                          <NavLink to={ "/profile" } className={ `${ activeTab.includes('/profile') ? styles.activeTab : styles.hover } text-decoration-none mb-3 d-flex align-items-center justify-content-center` } onClick={ () => setRender(!render) }>
+                                                <div>
+                                                      <span className={ `d-flex align-items-center justify-content-center p-0` } style={ { fontSize: '3.5rem', whiteSpace: 'nowrap', color: 'black' } }><VscAccount /></span>
+                                                </div>
+                                          </NavLink>
+                                          <NavLink to={ "/home" } className={ `${ activeTab.includes('/home') ? styles.activeTab : styles.hover } text-decoration-none mb-3 d-flex align-items-center` } onClick={ () => setRender(!render) }>
+                                                <div>
+                                                      <span className={ `d-flex align-items-center p-0 ms-2` } style={ { fontSize: '1.5rem', whiteSpace: 'nowrap', color: 'black' } }><AiOutlineHome className={ `me-1` } />Home</span>
+                                                </div>
+                                          </NavLink>
                                           {
                                                 userType !== 1 &&
-                                                <div className={ `${ activeTab.includes('/my-class-list') ? styles.activeTab : styles.hover } mb-3 d-flex align-items-center` } onClick={ () => { Navigate("/my-class-list"); } }>
-                                                      <span className={ `d-flex align-items-center p-0 ms-2` } style={ { fontSize: '1.5rem', whiteSpace: 'nowrap', color: 'black' } }><MdOutlineClass className={ `me-1` } />My classes</span>
-                                                </div>
+                                                <NavLink to={ "/my-class-list" } className={ `${ activeTab.includes('/my-class-list') ? styles.activeTab : styles.hover } text-decoration-none mb-3 d-flex align-items-center` } onClick={ () => setRender(!render) }>
+                                                      <div>
+                                                            <span className={ `d-flex align-items-center p-0 ms-2` } style={ { fontSize: '1.5rem', whiteSpace: 'nowrap', color: 'black' } }><MdOutlineClass className={ `me-1` } />My classes</span>
+                                                      </div>
+                                                </NavLink>
                                           }
                                           {
                                                 userType === 1 &&
                                                 <>
-                                                      <div className={ `${ activeTab.includes('/class-list') ? styles.activeTab : styles.hover } mb-3 d-flex align-items-center` } onClick={ () => { Navigate("/class-list"); setClassState(2); } }>
-                                                            <span className={ `d-flex align-items-center p-0 ms-2` } style={ { fontSize: '1.5rem', whiteSpace: 'nowrap', color: 'black' } }><BsListColumnsReverse className={ `me-1` } />Classes</span>
-                                                      </div>
-                                                      <div className={ `${ activeTab.includes('/staff-list') ? styles.activeTab : styles.hover } mb-3 d-flex align-items-center` } onClick={ () => { setStaffType(0); Navigate("/staff-list"); } }>
-                                                            <span className={ `d-flex align-items-center p-0 ms-2` } style={ { fontSize: '1.5rem', whiteSpace: 'nowrap', color: 'black' } }><BsListColumnsReverse className={ `me-1` } />Staffs</span>
-                                                      </div>
-                                                      <div className={ `${ activeTab.includes('/student-list') ? styles.activeTab : styles.hover } mb-3 d-flex align-items-center` } onClick={ () => { Navigate("/student-list"); } }>
-                                                            <span className={ `d-flex align-items-center p-0 ms-2` } style={ { fontSize: '1.5rem', whiteSpace: 'nowrap', color: 'black' } }><BsListColumnsReverse className={ `me-1` } />Students</span>
-                                                      </div>
+                                                      <NavLink to={ "/class-list" } className={ `${ activeTab.includes('/class-list') ? styles.activeTab : styles.hover } text-decoration-none mb-3 d-flex align-items-center` } onClick={ () => setRender(!render) }>
+                                                            <div onClick={ () => setClassState(2) }>
+                                                                  <span className={ `d-flex align-items-center p-0 ms-2` } style={ { fontSize: '1.5rem', whiteSpace: 'nowrap', color: 'black' } }><BsListColumnsReverse className={ `me-1` } />Classes</span>
+                                                            </div>
+                                                      </NavLink>
+                                                      <NavLink to={ "/staff-list" } className={ `${ activeTab.includes('/staff-list') ? styles.activeTab : styles.hover } text-decoration-none mb-3 d-flex align-items-center` } onClick={ () => setRender(!render) }>
+                                                            <div onClick={ () => setStaffType(0) }>
+                                                                  <span className={ `d-flex align-items-center p-0 ms-2` } style={ { fontSize: '1.5rem', whiteSpace: 'nowrap', color: 'black' } }><BsListColumnsReverse className={ `me-1` } />Staffs</span>
+                                                            </div>
+                                                      </NavLink>
+                                                      <NavLink to={ "/student-list" } className={ `${ activeTab.includes('/student-list') ? styles.activeTab : styles.hover } text-decoration-none mb-3 d-flex align-items-center` } onClick={ () => setRender(!render) }>
+                                                            <div>
+                                                                  <span className={ `d-flex align-items-center p-0 ms-2` } style={ { fontSize: '1.5rem', whiteSpace: 'nowrap', color: 'black' } }><BsListColumnsReverse className={ `me-1` } />Students</span>
+                                                            </div>
+                                                      </NavLink>
                                                 </>
                                           }
                                           <div className={ `${ styles.hover } mt-auto d-flex align-items-center` } onClick={ () =>

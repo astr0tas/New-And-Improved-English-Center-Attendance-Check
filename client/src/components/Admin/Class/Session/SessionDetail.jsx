@@ -353,6 +353,7 @@ const AdminClassSessionDetail = () =>
       const [confirmChangeTeacher, setConfirmChangeTeacher] = useState(false);
       const [confirmChangeSupervisor, setConfirmChangeSupervisor] = useState(false);
       const [confirmChangeClassRoom, setConfirmChangeClassRoom] = useState(false);
+      const [errorPopUp, setErrorPopUp] = useState(false);
 
       const [searchStudent, setSearchStudent] = useState('');
       let timer;
@@ -647,7 +648,11 @@ const AdminClassSessionDetail = () =>
                                     setShowPopUp1(false);
                                     axios.post(`http://${ domain }/admin/cancelSession`, { params: { name: name, number: number } }, { headers: { 'Content-Type': 'application/json' } })
                                           .then(res => setRender(!render))
-                                          .catch(err => console.error(err));
+                                          .catch(err =>
+                                          {
+                                                setErrorPopUp(true);
+                                                console.error(err);
+                                          });
                               } }>YES</button>
                         </Modal.Footer>
                   </Modal>
@@ -665,7 +670,11 @@ const AdminClassSessionDetail = () =>
                                     setShowPopUp4(false);
                                     axios.post(`http://${ domain }/admin/restoreSession`, { params: { name: name, number: number } }, { headers: { 'Content-Type': 'application/json' } })
                                           .then(res => setRender(!render))
-                                          .catch(err => console.error(err));
+                                          .catch(err =>
+                                          {
+                                                setErrorPopUp(true);
+                                                console.error(err);
+                                          });
                               } }>Yes</button>
                         </Modal.Footer>
                   </Modal>
@@ -724,7 +733,11 @@ const AdminClassSessionDetail = () =>
                                     setConfirmChangeClassRoom(false);
                                     axios.post(`http://${ domain }/admin/changeClassRoom`, { params: { name: name, number: number, room: newClassRoom } }, { headers: { 'Content-Type': 'application/json' } })
                                           .then(res => setRender(!render))
-                                          .catch(err => console.error(err));
+                                          .catch(err =>
+                                          {
+                                                setErrorPopUp(true);
+                                                console.error(err);
+                                          });
                               } }>Yes</button>
                         </Modal.Footer>
                   </Modal>
@@ -758,7 +771,11 @@ const AdminClassSessionDetail = () =>
                                           }
                                     }, { headers: { 'Content-Type': 'application/json' } })
                                           .then(res => setRender(!render))
-                                          .catch(err => console.error(err));
+                                          .catch(err =>
+                                          {
+                                                setErrorPopUp(true);
+                                                console.error(err);
+                                          });
                               } }>Yes</button>
                         </Modal.Footer>
                   </Modal>
@@ -787,8 +804,26 @@ const AdminClassSessionDetail = () =>
                                           }
                                     }, { headers: { 'Content-Type': 'application/json' } })
                                           .then(res => setRender(!render))
-                                          .catch(err => console.error(err));
+                                          .catch(err =>
+                                          {
+                                                setErrorPopUp(true);
+                                                console.error(err);
+                                          });
                               } }>Yes</button>
+                        </Modal.Footer>
+                  </Modal>
+
+                  <Modal show={ errorPopUp } onHide={ () => { setErrorPopUp(false); } } className={ `reAdjustModel hideBrowserScrollbar ${ styles.confirmModal }` } container={ containerRef.current }>
+                        <Modal.Header className='border border-0' closeButton>
+                        </Modal.Header>
+                        <Modal.Body className='border border-0 d-flex justify-content-center'>
+                              <h4 className='text-center'>An error has occurred!</h4>
+                        </Modal.Body>
+                        <Modal.Footer className='justify-content-center border border-0'>
+                              <button className={ `btn btn-primary me-2 me-md-4` } onClick={ () =>
+                              {
+                                    setErrorPopUp(false);
+                              } }>Okay</button>
                         </Modal.Footer>
                   </Modal>
             </div >

@@ -575,6 +575,9 @@ const ClassCreate = (props) =>
       const [addPeriodPopUp, setAddPeriodPopUp] = useState(false);
       const [addStudentPopUp, setAddStudentPopUp] = useState(false);
       const [addRoomPopUp, setAddRoomPopUp] = useState(false);
+      const [errorPopUp, setErrorPopUp] = useState(false);
+
+      let timer;
 
       useEffect(() =>
       {
@@ -729,15 +732,19 @@ const ClassCreate = (props) =>
                                           <input value={ name ? name : '' } className={ `${ styles.inputs } w-100` } onChange={ e =>
                                           {
                                                 setName(e.target.value);
-                                                axios.post(`http://${ domain }/admin/getDuplicateName`, { params: { name: e.target.value } }, { headers: { 'Content-Type': 'application/json' } })
-                                                      .then(res =>
-                                                      {
-                                                            if (res.data.length)
-                                                                  setNameDuplicate(true);
-                                                            else
-                                                                  setNameDuplicate(false);
-                                                      })
-                                                      .catch(err => console.log(err));
+                                                clearTimeout(timer);
+                                                timer = setTimeout(() =>
+                                                {
+                                                      axios.post(`http://${ domain }/admin/getDuplicateName`, { params: { name: e.target.value } }, { headers: { 'Content-Type': 'application/json' } })
+                                                            .then(res =>
+                                                            {
+                                                                  if (res.data.length)
+                                                                        setNameDuplicate(true);
+                                                                  else
+                                                                        setNameDuplicate(false);
+                                                            })
+                                                            .catch(err => console.log(err));
+                                                }, 1000);
                                           } } type="text"></input>
                                     </div>
                               </div>
@@ -963,7 +970,11 @@ const ClassCreate = (props) =>
                                           }
                                     }, { headers: { 'Content-Type': 'application/json' } })
                                           .then(res => props.setRender(!props.render))
-                                          .catch(err => console.log(err));
+                                          .catch(err =>
+                                          {
+                                                setErrorPopUp(true);
+                                                console.error(err);
+                                          });
                                     setName(null);
                                     setStartDate(null);
                                     setLength(null);
@@ -975,6 +986,21 @@ const ClassCreate = (props) =>
                               } }>Yes</button>
                         </Modal.Footer>
                   </Modal>
+
+                  <Modal show={ errorPopUp } onHide={ () => { setErrorPopUp(false); } } className={ `reAdjustModel hideBrowserScrollbar ${ styles.confirmModal }` } container={ props.containerRef.current }>
+                        <Modal.Header className='border border-0' closeButton>
+                        </Modal.Header>
+                        <Modal.Body className='border border-0 d-flex justify-content-center'>
+                              <h4 className='text-center'>An error has occurred!</h4>
+                        </Modal.Body>
+                        <Modal.Footer className='justify-content-center border border-0'>
+                              <button className={ `btn btn-primary me-2 me-md-4` } onClick={ () =>
+                              {
+                                    setErrorPopUp(false);
+                              } }>Okay</button>
+                        </Modal.Footer>
+                  </Modal>
+
                   <TeacherSelect addTeacherPopUp={ addTeacherPopUp } setAddTeacherPopUp={ setAddTeacherPopUp }
                         containerRef={ props.containerRef } dow={ teacherDow } setDow={ setTeacherDow }
                         startDate={ startDate } endDate={ endDate } period={ period } />
@@ -989,6 +1015,7 @@ const ClassCreate = (props) =>
                         containerRef={ props.containerRef } dow={ roomDow } setDow={ setRoomDow }
                         startDate={ startDate } endDate={ endDate }
                         period={ period } studentAdded={ studentAdded } />
+
             </>
       )
 }

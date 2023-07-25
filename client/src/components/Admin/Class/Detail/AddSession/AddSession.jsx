@@ -222,6 +222,7 @@ const AddSession = (props) =>
       const [isEmptyPeriod, setIsEmptyPeriod] = useState(false);
       const [isEmptyTeacher, setIsEmptyTeacher] = useState(false);
       const [isEmptySupervisor, setIsEmptySupervisor] = useState(false);
+      const [errorPopUp, setErrorPopUp] = useState(false);
 
       const handleData = () =>
       {
@@ -536,7 +537,7 @@ const AddSession = (props) =>
                         <Modal.Header className='border border-0' closeButton>
                         </Modal.Header>
                         <Modal.Body className='border border-0 d-flex justify-content-center'>
-                              <h4 className='text-center'>Are you sure you want to add this session?</h4>
+                              <h4 className='text-center'>Are you sure you want to create this session?</h4>
                         </Modal.Body>
                         <Modal.Footer className='justify-content-center border border-0'>
                               <button className={ `btn btn-danger me-2 me-md-4` } onClick={ () =>
@@ -574,8 +575,25 @@ const AddSession = (props) =>
                                                 setSessionList(null);
                                                 props.setRender(!props.render);
                                           })
-                                          .catch(err => console.error(err));
+                                          .catch(err =>
+                                          {
+                                                setErrorPopUp(true);
+                                                console.error(err);
+                                          });
                               } }>YES</button>
+                        </Modal.Footer>
+                  </Modal>
+                  <Modal show={ errorPopUp } onHide={ () => { setErrorPopUp(false); } } className={ `reAdjustModel hideBrowserScrollbar ${ styles.confirmModal }` } container={ props.containerRef.current }>
+                        <Modal.Header className='border border-0' closeButton>
+                        </Modal.Header>
+                        <Modal.Body className='border border-0 d-flex justify-content-center'>
+                              <h4 className='text-center'>An error has occurred!</h4>
+                        </Modal.Body>
+                        <Modal.Footer className='justify-content-center border border-0'>
+                              <button className={ `btn btn-primary me-2 me-md-4` } onClick={ () =>
+                              {
+                                    setErrorPopUp(false);
+                              } }>Okay</button>
                         </Modal.Footer>
                   </Modal>
                   <TeacherSelect addTeacherPopUp={ addTeacherPopUp } setAddTeacherPopUp={ setAddTeacherPopUp } name={ props.name }

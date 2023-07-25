@@ -224,6 +224,51 @@ generalRoutes.post('/updateProfile', multer().fields([
       });
 });
 
+generalRoutes.post('/isSSNDuplicate', (req, res) =>
+{
+      const ssn = req.body.params.ssn;
+      profileModel.isSSNDuplicate(ssn, (result, err) =>
+      {
+            if (err)
+            {
+                  console.log(err);
+                  res.status(500).send({ message: 'Server internal error!' });
+            }
+            else
+                  res.status(200).send(result);
+      });
+});
+
+generalRoutes.post('/isPhoneDuplicate', (req, res) =>
+{
+      const phone = req.body.params.phone;
+      profileModel.isPhoneDuplicate(phone, (result, err) =>
+      {
+            if (err)
+            {
+                  console.log(err);
+                  res.status(500).send({ message: 'Server internal error!' });
+            }
+            else
+                  res.status(200).send(result);
+      });
+});
+
+generalRoutes.post('/isEmailDuplicate', (req, res) =>
+{
+      const email = req.body.params.email;
+      profileModel.isEmailDuplicate(email, (result, err) =>
+      {
+            if (err)
+            {
+                  console.log(err);
+                  res.status(500).send({ message: 'Server internal error!' });
+            }
+            else
+                  res.status(200).send(result);
+      });
+});
+
 const adminHomeModel = new AdminHome();
 
 const staffHomeModel = new StaffHome();

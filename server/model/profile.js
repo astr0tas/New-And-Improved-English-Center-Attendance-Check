@@ -101,4 +101,37 @@ export class Profile
             else
                   callback("Nothing is updated!", null);
       }
+
+      isSSNDuplicate(ssn, callback)
+      {
+            this.conn.query(`select ssn from employee where ssn=?`, [ssn], (err, res) =>
+            {
+                  if (err)
+                        callback(null, err);
+                  else
+                        callback(res.length?true:false, null);
+            });
+      }
+
+      isPhoneDuplicate(phone, callback)
+      {
+            this.conn.query(`select phone from employee where phone=?`, [phone], (err, res) =>
+            {
+                  if (err)
+                        callback(null, err);
+                  else
+                        callback(res.length ? true : false, null);
+            });
+      }
+
+      isEmailDuplicate(email, callback)
+      {
+            this.conn.query(`select email from employee where email=?`, [email], (err, res) =>
+            {
+                  if (err)
+                        callback(null, err);
+                  else
+                        callback(res.length ? true : false, null);
+            });
+      }
 }

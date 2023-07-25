@@ -205,10 +205,12 @@ export class Class
             insert into teacher_responsible values(?,?,?,null,-1);
             insert into supervisor_responsible values(?,?,?,null);
             call addSessionToStudents(?,?);
+            update class set end_date=? where end_date<? and name=?;
             `, [session, name, timetable, room, date, makeUpFor, makeUpFor === null ? null : name,
                   session, name, teacher,
                   session, name, supervisor,
-                  name, session], (err, res) =>
+                  name, session,
+                  date, date, name], (err, res) =>
             {
                   if (err)
                         callback(null, err);
