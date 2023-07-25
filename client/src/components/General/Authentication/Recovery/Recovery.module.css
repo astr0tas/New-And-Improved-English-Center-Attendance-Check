@@ -28,6 +28,19 @@
       display: flex;
 }
 
+.confirmModal {
+      padding-top: 20vh !important;
+      padding-top: 20dvh !important;
+}
+
+@media only screen and (min-width: 768px) {
+
+      .confirmModal {
+            padding-top: 40vh !important;
+            padding-top: 40dvh !important;
+      }
+}
+
 @media only screen and (max-width:330px) {
       .p {
             font-size: 0.8rem;

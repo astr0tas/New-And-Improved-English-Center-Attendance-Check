@@ -63,4 +63,28 @@ export class Student
                         callback(res, null);
             })
       }
+
+      getClassForNewStudent(name, classList, callback)
+      {
+            if (classList.length === 0)
+            {
+                  this.conn.query(`call getClassList(?,2);`, [name + '%'], (err, res) =>
+                  {
+                        if (err)
+                              callback(null, err);
+                        else
+                              callback(res.length ? res.filter((elem, i) => i !== res.length - 1) : [], null);
+                  })
+            }
+            else
+            {
+                  let sql = '';
+                  const params = [];
+                  for (let i = 0; i < classList.length; i++)
+                  {
+                        sql += 'call preparationProc(?);';
+                        params.push(classList[i]);
+                  }
+            }
+      }
 }

@@ -57,11 +57,21 @@
       color: red;
 }
 
+.confirmModal {
+      padding-top: 20vh !important;
+      padding-top: 20dvh !important;
+}
+
 @media only screen and (min-width: 768px) {
       .img {
             min-width: 400px;
             max-width: 500px;
             width: 40%;
+      }
+
+      .confirmModal {
+            padding-top: 30vh !important;
+            padding-top: 30dvh !important;
       }
 }
 

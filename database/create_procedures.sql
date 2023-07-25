@@ -325,3 +325,14 @@ begin
     end if;
 end//
 delimiter ;
+
+drop procedure if exists preparationProc;
+delimiter //
+create procedure preparationProc(
+	in className varchar(100)
+)
+begin
+	create table if not exists tempClassName(name varchar(100));
+    insert into tempClassName values(className);
+end//
+delimiter ;

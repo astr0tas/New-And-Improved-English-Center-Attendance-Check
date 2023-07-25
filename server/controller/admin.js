@@ -658,4 +658,20 @@ adminRoutes.post('/getStudentClass', (req, res) =>
       })
 });
 
+adminRoutes.post('/getClassForNewStudent', (req, res) =>
+{
+      const name = req.body.params.name;
+      const classList=req.body.params.classList
+      studentModel.getClassForNewStudent(name, classList, (result, err) =>
+      {
+            if (err)
+            {
+                  console.log(err);
+                  res.status(500).send({ message: 'Server internal error!' });
+            }
+            else
+                  res.status(200).send(result);
+      })
+});
+
 export default adminRoutes;

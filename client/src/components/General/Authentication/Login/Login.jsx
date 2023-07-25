@@ -1,11 +1,12 @@
 import styles from './Login.module.css';
-import { useEffect, useState, useContext } from 'react';
+import { useEffect, useState, useContext, useRef } from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 import { AiOutlineCloseCircle } from 'react-icons/ai';
 import React from 'react';
 import { domain } from '../../../../tools/domain';
 import { context } from '../../../../context';
+import { Modal } from 'react-bootstrap';
 
 const Login = () =>
 {
@@ -16,6 +17,9 @@ const Login = () =>
       const [isWrong, setIsWrong] = useState(false);
       const [isMissing, setIsMissing] = useState(false);
       const { chosenRole, setChosenRole } = useContext(context);
+
+      const [errorPopUp, setErrorPopUp] = useState(false);
+      const popUpContainer = useRef(null);
 
       const formChange = (event) =>
       {
@@ -53,7 +57,11 @@ const Login = () =>
                                     setIsWrong(true);
                               }
                         })
-                        .catch(error => console.log(error));
+                        .catch(error =>
+                        {
+                              console.log(error);
+                              setErrorPopUp(true);
+                        });
             }
       }
 
@@ -73,7 +81,7 @@ const Login = () =>
       return (
             <>
                   <div className={ `${ styles.background }` }></div>
-                  <div className={ `container-fluid d-flex h-100 flex-column` }>
+                  <div className={ `container-fluid d-flex h-100 flex-column align-items-center` } ref={ popUpContainer }>
                         {
                               chosenRole === 0 &&
                               <form onSubmit={ formSubmit } className={ `${ styles.form } bg-light d-flex flex-column align-items-center justify-content-around fs-5 align-self-start mx-auto my-auto` }>
@@ -141,6 +149,19 @@ const Login = () =>
                                     </div>
                               </form>
                         }
+                        <Modal show={ errorPopUp } onHide={ () => { setErrorPopUp(false); } } className={ `reAdjustModel hideBrowserScrollbar ${ styles.confirmModal }` } container={ popUpContainer.current }>
+                              <Modal.Header className='border border-0' closeButton>
+                              </Modal.Header>
+                              <Modal.Body className='border border-0 d-flex justify-content-center'>
+                                    <h4 className='text-center'>An error has occurred!</h4>
+                              </Modal.Body>
+                              <Modal.Footer className='justify-content-center border border-0'>
+                                    <button className={ `btn btn-primary me-2 me-md-4` } onClick={ () =>
+                                    {
+                                          setErrorPopUp(false);
+                                    } }>Okay</button>
+                              </Modal.Footer>
+                        </Modal>
                   </div>
             </>
       );

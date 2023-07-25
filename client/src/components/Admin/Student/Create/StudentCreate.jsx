@@ -7,6 +7,9 @@ import { AiOutlineCloseCircle } from 'react-icons/ai';
 import { NavLink } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
+import { domain } from '../../../../tools/domain';
+import axios from 'axios';
+import { DMY } from '../../../../tools/dateFormat';
 
 const ClassSelect = (props) =>
 {
@@ -26,8 +29,38 @@ const ClassSelect = (props) =>
 
       useEffect(() =>
       {
+            if (props.showPopUp)
+            {
+                  axios.post(`http://${ domain }/admin/getClassForNewStudent`, { params: { classList: props.classList, name: searchName } }, { headers: { 'Content-Type': 'application/json' } })
+                        .then(res =>
+                        {
+                              const temp = [];
+                              for (let i = 0; i < res.data.length; i++)
+                                    temp.push(<tr key={ i }>
+                                          <td className='text-center align-middle'>{ i + 1 }</td>
+                                          <td className='text-center align-middle'>{ res.data[i][0].name }</td>
+                                          <td className='text-center align-middle'>{ DMY(res.data[i][0].startDate) }</td>
+                                          <td className='text-center align-middle'>{ DMY(res.data[i][0].endDate) }</td>
+                                          <td className='text-center align-middle' style={ { color: res.data[i][0].currentStudents === res.data[i][0].maxStudent ? 'red' : '#128400' } }>{ res.data[i][0].currentStudents } / { res.data[i][0].maxStudent }</td>
+                                          <td className='text-center align-middle'>
+                                                <div className='d-flex align-items-center justify-content-center'>
+                                                      <input type='checkbox' className={ `${ styles.hover } me-2` }
+                                                            style={ { height: '1.3rem', width: '1.3rem' } }
+                                                            checked={ props.classList.length !== 0 && !!props.classList.find(elem => elem === res.data[i][0].name) }
+                                                            onChange={ e => configList(e, res.data[i][0].name) }></input>
+                                                      <NavLink to={ `/class-list/detail/${ res.data[i][0].name }` } className={ `ms-2` }>
+                                                            <button className='btn btn-sm btn-primary'>Detail</button>
+                                                      </NavLink>
+                                                </div>
+                                          </td>
+                                    </tr >);
+                              setTableContent(temp);
+                        })
+                        .catch(err => console.error(err));
+            }
 
-      }, [props.showPopUp, props.classList]);
+            // eslint-disable-next-line
+      }, [props.showPopUp, props.classList, render]);
 
       return (
             <Modal show={ props.showPopUp } onHide={ () => { props.setShowPopUp(false); setSearchName(''); } }
@@ -198,6 +231,7 @@ const StudentCreate = (props) =>
             setInvalidSSN(false);
             setInvalidName(false);
             setInvalidPhone(false);
+            setClassList([]);
       }
 
 

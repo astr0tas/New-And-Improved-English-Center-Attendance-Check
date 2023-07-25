@@ -221,7 +221,7 @@ export class Class
 
       removeTeacherFromClass(name, id, callback)
       {
-            this.conn.query(`update TEACHER_RESPONSIBLE set teacher_id=null where class_name=? and teacher_id=?;
+            this.conn.query(`update TEACHER_RESPONSIBLE set teacher_id=null,teacher_note=null,teacher_status=-1 where class_name=? and teacher_id=?;
             delete from teach where teacher_id=? and class_name=?;
             update session set status=5 where class_name=? and number in(
                   select Session_number from TEACHER_RESPONSIBLE where Class_name=? and Teacher_ID is null
