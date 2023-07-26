@@ -243,6 +243,7 @@ const StaffCreate = (props) =>
       const clearOut = () =>
       {
             props.setShowPopUp(false);
+            setID(null);
             setImage(null);
             setName(null);
             setPhone(null);
@@ -251,6 +252,7 @@ const StaffCreate = (props) =>
             setBirthplace(null);
             setEmail(null);
             setAddress(null);
+            setUsername(null);
             setIsEmptyDate(false);
             setIsEmptyEmail(false);
             setIsEmptySSN(false);
@@ -261,6 +263,14 @@ const StaffCreate = (props) =>
             setInvalidSSN(false);
             setInvalidName(false);
             setInvalidPhone(false);
+            setDuplicateSSN(false);
+            setDuplicatePhone(false);
+            setDuplicateEmail(false);
+            setEmptyUsername(false);
+            setDuplicateUsername(false);
+            setInvalidUsername(false);
+            setEmptyAddress(false);
+            setEmptyBirthplace(false);
       }
 
 
@@ -273,7 +283,7 @@ const StaffCreate = (props) =>
                         </Modal.Header>
                         <Modal.Body>
                               <div className="d-flex flex-column align-items-center">
-                                    <img alt='profile' className={ `${ styles.img } mt-2 mt-md-4` } ref={ profileImg }></img>
+                                    <img alt='profile' className={ `${ styles.img } mt-2 mt-md-4 p-0` } ref={ profileImg }></img>
                                     <label className={ `btn btn-sm btn-light border border-dark mt-3 mx-auto mb-3` } ref={ image_input }>
                                           <input type='file' className='d-none' onChange={ e =>
                                           {
@@ -290,7 +300,7 @@ const StaffCreate = (props) =>
                                           <strong>Name</strong>
                                     </div>
                                     <div className='col d-flex align-items-center justify-content-center justify-content-sm-start'>
-                                          <input type='text' className={ `${ styles.inputs } w-100` } onChange={ e =>
+                                          <input placeholder='Enter name' type='text' className={ `${ styles.inputs } w-100` } onChange={ e =>
                                           {
                                                 if (e.target.value === '') setName(null);
                                                 else setName(e.target.value);
@@ -328,7 +338,7 @@ const StaffCreate = (props) =>
                                           <strong>SSN</strong>
                                     </div>
                                     <div className='col d-flex align-items-center justify-content-center justify-content-sm-start'>
-                                          <input type='text' className={ `${ styles.inputs } w-100` } onChange={ e =>
+                                          <input placeholder='Enter SSN' type='text' className={ `${ styles.inputs } w-100` } onChange={ e =>
                                           {
                                                 if (e.target.value === '') setSSN(null);
                                                 else setSSN(e.target.value);
@@ -379,7 +389,7 @@ const StaffCreate = (props) =>
                                           <strong>Birthdate</strong>
                                     </div>
                                     <div className='col d-flex align-items-center justify-content-center justify-content-sm-start'>
-                                          <input className={ `${ styles.inputs } w-100` } type="date" onChange={ e =>
+                                          <input placeholder='Enter birthdate' className={ `${ styles.inputs } w-100` } type="date" onChange={ e =>
                                           {
                                                 if (e.target.value === '')
                                                 {
@@ -421,7 +431,7 @@ const StaffCreate = (props) =>
                                           <strong>Birthplace</strong>
                                     </div>
                                     <div className='col d-flex align-items-center justify-content-center justify-content-sm-start'>
-                                          <input type='text' className={ `${ styles.inputs } w-100` } onChange={ e =>
+                                          <input placeholder='Enter birthplace' type='text' className={ `${ styles.inputs } w-100` } onChange={ e =>
                                           {
                                                 if (e.target.value === '') setBirthplace(null);
                                                 else setBirthplace(e.target.value);
@@ -446,7 +456,7 @@ const StaffCreate = (props) =>
                                           <strong>Address</strong>
                                     </div>
                                     <div className='col d-flex align-items-center justify-content-center justify-content-sm-start'>
-                                          <input type='text' className={ `${ styles.inputs } w-100` } onChange={ e =>
+                                          <input placeholder='Enter address' type='text' className={ `${ styles.inputs } w-100` } onChange={ e =>
                                           {
                                                 if (e.target.value === '') setAddress(null);
                                                 else setAddress(e.target.value);
@@ -471,7 +481,7 @@ const StaffCreate = (props) =>
                                           <strong>Phone number</strong>
                                     </div>
                                     <div className='col d-flex align-items-center justify-content-center justify-content-sm-start'>
-                                          <input type='text' className={ `${ styles.inputs } w-100` } onChange={ e =>
+                                          <input placeholder='Enter phone number' type='text' className={ `${ styles.inputs } w-100` } onChange={ e =>
                                           {
                                                 if (e.target.value === '') setPhone(null);
                                                 else setPhone(e.target.value);
@@ -522,7 +532,7 @@ const StaffCreate = (props) =>
                                           <strong>Email</strong>
                                     </div>
                                     <div className='col d-flex align-items-center justify-content-center justify-content-sm-start'>
-                                          <input type='email' className={ `${ styles.inputs } w-100` } onChange={ e =>
+                                          <input placeholder='Enter email' type='email' className={ `${ styles.inputs } w-100` } onChange={ e =>
                                           {
                                                 if (e.target.value === '') setEmail(null);
                                                 else setEmail(e.target.value);
@@ -573,7 +583,7 @@ const StaffCreate = (props) =>
                                           <strong>Username</strong>
                                     </div>
                                     <div className='col d-flex align-items-center justify-content-center justify-content-sm-start'>
-                                          <input type='text' className={ `${ styles.inputs } w-100` } onChange={ e =>
+                                          <input placeholder='Enter username' type='text' className={ `${ styles.inputs } w-100` } onChange={ e =>
                                           {
                                                 if (e.target.value === '') setUsername(null);
                                                 else setUsername(e.target.value);

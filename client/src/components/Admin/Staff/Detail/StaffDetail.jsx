@@ -3,10 +3,11 @@ import axios from 'axios';
 import { domain } from '../../../../tools/domain';
 import { useParams, NavLink } from 'react-router-dom';
 import { DMY } from '../../../../tools/dateFormat';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState, useRef } from 'react';
 import { context } from '../../../../context';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
+import StaffEdit from '../Edit/StaffEdit';
 
 const Class = (props) =>
 {
@@ -93,6 +94,10 @@ const StaffDetail = () =>
 
       let timer;
 
+      const [render, setRender] = useState(false);
+      const [editStaffPopUp, setEditStaffPopUp] = useState(false);
+      const containerRef = useRef(null);
+
       useEffect(() =>
       {
             axios.post(`http://${ domain }/admin/staffInfo`, { params: { id: id } }, { headers: { 'Content-Type': 'application/json' } })
@@ -111,11 +116,11 @@ const StaffDetail = () =>
                         setType(res.data.type);
                   })
                   .catch(err => console.log(err));
-      }, [id]);
+      }, [id, render]);
 
       return (
-            <div className="w-100 d-flex flex-column overflow-auto flex-grow-1 mt-2 mb-2">
-                  <div className="d-flex justify-content-md-around flex-column flex-md-row mt-3 align-items-center">
+            <div className="w-100 d-flex flex-column overflow-auto flex-grow-1 mt-2 mb-2 align-items-center" ref={ containerRef }>
+                  <div className="d-flex justify-content-md-around flex-column flex-md-row mt-3 align-items-center w-100">
                         <div className="d-flex flex-column mb-3 mt-2">
                               <img src={ image } alt='' className={ `${ styles.image }` }></img>
                         </div>
@@ -150,7 +155,7 @@ const StaffDetail = () =>
                               </div>
                         </div>
                   </div>
-                  <div className='mt-3 ms-2 position-relative'>
+                  <div className='mt-3 ps-2 position-relative w-100'>
                         <FontAwesomeIcon icon={ faMagnifyingGlass } className={ `position-absolute ${ styles.search }` } />
                         <input type='text' placeholder='Find class' className={ `ps-4` } onChange={ (e) =>
                         {
@@ -158,7 +163,7 @@ const StaffDetail = () =>
                               timer = setTimeout(() => setSearchClass(e.target.value), 1000);
                         } }></input>
                   </div>
-                  <div className='flex-grow-1 mb-3 mt-2 overflow-auto px-2' style={ { minHeight: classes.length !== 0 ? '200px' : 'unset' } }>
+                  <div className='flex-grow-1 mb-3 mt-2 overflow-auto px-2 w-100' style={ { minHeight: classes.length !== 0 ? '200px' : 'unset' } }>
                         <table className="table table-hover table-info mx-auto w-100">
                               <thead style={ { position: "sticky", top: "0" } }>
                                     <tr>
@@ -175,14 +180,14 @@ const StaffDetail = () =>
                               </tbody>
                         </table>
                   </div>
-                  <div className='d-flex align-items-center w-100 justify-content-center mb-3'>
+                  <div className='d-flex align-items-center w-100 justify-content-center mb-3 w-100'>
                         <NavLink to={ '/staff-list' }>
                               <button className='btn btn-secondary me-3 me-sm-4'>Back</button>
                         </NavLink>
-                        <NavLink to={ './edit' }>
-                              <button className='btn btn-primary ms-3 ms-sm-4'>Change info</button>
-                        </NavLink>
+                        <button className='btn btn-primary ms-3 ms-sm-4' onClick={ () => setEditStaffPopUp(true) }>Change info</button>
                   </div>
+
+                  <StaffEdit showPopUp={ editStaffPopUp } setShowPopUp={ setEditStaffPopUp } render={ render } setRender={ setRender } containerRef={ containerRef } id={ id } staffType={ type } />
             </div>
       )
 }

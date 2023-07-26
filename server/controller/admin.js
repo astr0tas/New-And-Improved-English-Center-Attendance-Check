@@ -739,6 +739,71 @@ adminRoutes.post('/createStaff', multer().fields([
       })
 });
 
+adminRoutes.post('/updateStaff', multer().fields([
+      { name: 'id' },
+      { name: 'ssn' },
+      { name: 'name' },
+      { name: 'address' },
+      { name: 'birthdate' },
+      { name: 'birthplace' },
+      { name: 'email' },
+      { name: 'phone' },
+      { name: 'password' },
+      { name: 'type' },
+      { name: 'image', maxCount: 1 },
+]), (req, res) =>
+{
+      const { id, ssn, name, address, birthdate, birthplace, email, phone, password, type } = req.body;
+
+      let imagePath = null;
+      if (req.files['image'] !== null && req.files['image'] !== undefined)
+      {
+            const imageFile = req.files['image'][0];
+            // Get the target directory to store the image
+            const directory = path.join(path.dirname(path.dirname(fileURLToPath(import.meta.url))), 'model', 'image', 'employee', type === 1 ? 'admin' : 'staff', id);
+            // Create the uploads folder if it doesn't exist
+            if (!fs.existsSync(directory))
+                  fs.mkdirSync(directory, { recursive: true });
+            // Generate a unique filename
+            const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+            const extname = path.extname(imageFile.originalname);
+            const filename = 'image-' + uniqueSuffix + extname;
+            // Retrieve the name of the existing image, if it exists
+            const existingImageName = fs.readdirSync(directory).find(file => /^image-\d+-\d+\.(png|jpg|jpeg)$/.test(file));
+            // Delete the pre-existing image, if it exists
+            if (existingImageName)
+            {
+                  const preExistingImagePath = path.join(directory, existingImageName);
+                  fs.unlinkSync(preExistingImagePath);
+            }
+            // Move the uploaded file to the destination folder
+            const filePath = path.join(directory, filename);
+            fs.writeFileSync(filePath, imageFile.buffer);
+
+            imagePath = (type === 1 ? 'admin' : 'staff') + '/' + id + '/' + filename;
+      }
+
+      staffModel.createStaff(id,
+            name === 'null' ? null : name,
+            ssn === 'null' ? null : ssn,
+            address === 'null' ? null : address,
+            phone === 'null' ? null : phone,
+            birthdate === 'null' ? null : birthdate,
+            birthplace === 'null' ? null : birthplace,
+            email === 'null' ? null : email,
+            imagePath,
+            password === 'null' ? null : password, (result, err) =>
+      {
+            if (err)
+            {
+                  console.log(err);
+                  res.status(500).send({ message: 'Server internal error!' });
+            }
+            else
+                  res.status(200).send({ message: 'Staff info successfully updated!' });
+      })
+});
+
 
 const studentModel = new Student();
 
@@ -903,6 +968,68 @@ adminRoutes.post('/createStudent', multer().fields([
             }
             else
                   res.status(200).send({ message: 'Student successfully created!' });
+      })
+});
+
+adminRoutes.post('/updateStudent', multer().fields([
+      { name: 'id' },
+      { name: 'ssn' },
+      { name: 'name' },
+      { name: 'address' },
+      { name: 'birthdate' },
+      { name: 'birthplace' },
+      { name: 'email' },
+      { name: 'phone' },
+      { name: 'image', maxCount: 1 },
+]), (req, res) =>
+{
+      const { id, ssn, name, address, birthdate, birthplace, email, phone } = req.body;
+
+      let imagePath = null;
+      if (req.files['image'] !== null && req.files['image'] !== undefined)
+      {
+            const imageFile = req.files['image'][0];
+            // Get the target directory to store the image
+            const directory = path.join(path.dirname(path.dirname(fileURLToPath(import.meta.url))), 'model', 'image', 'student', id);
+            // Create the uploads folder if it doesn't exist
+            if (!fs.existsSync(directory))
+                  fs.mkdirSync(directory, { recursive: true });
+            // Generate a unique filename
+            const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+            const extname = path.extname(imageFile.originalname);
+            const filename = 'image-' + uniqueSuffix + extname;
+            // Retrieve the name of the existing image, if it exists
+            const existingImageName = fs.readdirSync(directory).find(file => /^image-\d+-\d+\.(png|jpg|jpeg)$/.test(file));
+            // Delete the pre-existing image, if it exists
+            if (existingImageName)
+            {
+                  const preExistingImagePath = path.join(directory, existingImageName);
+                  fs.unlinkSync(preExistingImagePath);
+            }
+            // Move the uploaded file to the destination folder
+            const filePath = path.join(directory, filename);
+            fs.writeFileSync(filePath, imageFile.buffer);
+
+            imagePath = id + '/' + filename;
+      }
+
+      studentModel.updateStudent(id,
+            name === 'null' ? null : name,
+            ssn === 'null' ? null : ssn,
+            address === 'null' ? null : address,
+            phone === 'null' ? null : phone,
+            birthdate === 'null' ? null : birthdate,
+            birthplace === 'null' ? null : birthplace,
+            email === 'null' ? null : email,
+            imagePath, (result, err) =>
+      {
+            if (err)
+            {
+                  console.log(err);
+                  res.status(500).send({ message: 'Server internal error!' });
+            }
+            else
+                  res.status(200).send({ message: 'Student info successfully updated!' });
       })
 });
 

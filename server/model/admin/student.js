@@ -115,7 +115,72 @@ export class Student
                   if (err)
                         callback(null, err);
                   else
-                        callback(res.length ? true : false, null);
+                        callback(res, null);
             })
+      }
+
+      updateStudent(id, name, ssn, address, phone, birthdate, birthplace, email, image, callback)
+      {
+            let sql = '';
+            const params = [];
+
+            if (name)
+            {
+                  sql += `update student set name=? where id=?`;
+                  params.push(name, id);
+            }
+
+            if (ssn)
+            {
+                  sql += `update student set ssn=? where id=?`;
+                  params.push(ssn, id);
+            }
+
+            if (address)
+            {
+                  sql += `update student set address=? where id=?`;
+                  params.push(address, id);
+            }
+
+            if (phone)
+            {
+                  sql += `update student set phone=? where id=?`;
+                  params.push(phone, id);
+            }
+
+            if (birthdate)
+            {
+                  sql += `update student set birthdate=? where id=?`;
+                  params.push(birthdate, id);
+            }
+
+            if (birthplace)
+            {
+                  sql += `update student set birthplace=? where id=?`;
+                  params.push(birthplace, id);
+            }
+
+            if (email)
+            {
+                  sql += `update student set email=? where id=?`;
+                  params.push(email, id);
+            }
+
+            if (image)
+            {
+                  sql += `update student set image=? where id=?`;
+                  params.push(image, id);
+            }
+
+            if (sql === '')
+                  callback('Nothing to update', null);
+            else
+                  this.conn.query(sql, params, (err, res) =>
+                  {
+                        if (err)
+                              callback(null, err);
+                        else
+                              callback(res, null);
+                  })
       }
 }

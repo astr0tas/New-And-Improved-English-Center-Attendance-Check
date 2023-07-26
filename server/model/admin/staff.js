@@ -52,11 +52,11 @@ export class Staff
 
       getInfo(id, callback)
       {
-            this.conn.query(`select employee.id,ssn,name,phone,email,address,image,birthday,birthplace from employee join teacher on teacher.id=employee.id where employee.id=?`, [id], (err1, res1) =>
+            this.conn.query(`select employee.id,ssn,name,phone,email,address,image,birthday,birthplace,username from employee join teacher on teacher.id=employee.id where employee.id=?`, [id], (err1, res1) =>
             {
                   if (err1 || !res1.length)
                   {
-                        this.conn.query(`select employee.id,ssn,name,phone,email,address,image,birthday,birthplace from employee join supervisor on supervisor.id=employee.id where employee.id=?`, [id], (err2, res2) =>
+                        this.conn.query(`select employee.id,ssn,name,phone,email,address,image,birthday,birthplace,username from employee join supervisor on supervisor.id=employee.id where employee.id=?`, [id], (err2, res2) =>
                         {
                               if (err2 || !res2.length)
                                     callback(null, "No staff found!");
@@ -166,5 +166,76 @@ export class Staff
                   else
                         callback(res.length ? true : false, null);
             })
+      }
+
+      createStaff(id, name, ssn, address, phone, birthdate, birthplace, email, image, password, callback)
+      {
+            let sql = '';
+            const params = [];
+
+            if (name)
+            {
+                  sql += `update employee set name=? where id=?`;
+                  params.push(name, id);
+            }
+
+            if (ssn)
+            {
+                  sql += `update employee set ssn=? where id=?`;
+                  params.push(ssn, id);
+            }
+
+            if (address)
+            {
+                  sql += `update employee set address=? where id=?`;
+                  params.push(address, id);
+            }
+
+            if (phone)
+            {
+                  sql += `update employee set phone=? where id=?`;
+                  params.push(phone, id);
+            }
+
+            if (birthdate)
+            {
+                  sql += `update employee set birthdate=? where id=?`;
+                  params.push(birthdate, id);
+            }
+
+            if (birthplace)
+            {
+                  sql += `update employee set birthplace=? where id=?`;
+                  params.push(birthplace, id);
+            }
+
+            if (email)
+            {
+                  sql += `update employee set email=? where id=?`;
+                  params.push(email, id);
+            }
+
+            if (image)
+            {
+                  sql += `update employee set image=? where id=?`;
+                  params.push(image, id);
+            }
+
+            if (password)
+            {
+                  sql += `update employee set password=? where id=?`;
+                  params.push(password, id);
+            }
+
+            if (sql === '')
+                  callback('Nothing to update', null);
+            else
+                  this.conn.query(sql, params, (err, res) =>
+                  {
+                        if (err)
+                              callback(null, err);
+                        else
+                              callback(res, null);
+                  })
       }
 }

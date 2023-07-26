@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState, useRef } from 'react';
 import styles from './StudentDetail.module.css';
 import axios from 'axios';
 import { domain } from '../../../../tools/domain';
@@ -7,6 +7,7 @@ import { DMY } from '../../../../tools/dateFormat';
 import { context } from '../../../../context';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
+import StudentEdit from '../Edit/StudentEdit';
 
 const Class = (props) =>
 {
@@ -79,6 +80,10 @@ const StudentDetail = () =>
       const [classes, setClasses] = useState([]);
       let timer;
 
+      const [render, setRender] = useState(false);
+      const [editStudentPopUp, setEditStudentPopUp] = useState(false);
+      const containerRef = useRef(null);
+
       useEffect(() =>
       {
             axios.post(`http://${ domain }/admin/studentInfo`, { params: { id: id } }, { headers: { 'Content-Type': 'application/json' } })
@@ -96,11 +101,11 @@ const StudentDetail = () =>
                         setImage(res.data.image === null ? require('../../../../images/profile.png') : `http://${ domain }/image/student/${ res.data.image }`);
                   })
                   .catch(err => console.log(err));
-      }, [id]);
+      }, [id, render]);
 
       return (
-            <div className="w-100 d-flex flex-column overflow-auto flex-grow-1 mt-2 mb-2">
-                  <div className="d-flex justify-content-md-around flex-column flex-md-row mt-3 align-items-center">
+            <div className="w-100 d-flex flex-column overflow-auto flex-grow-1 mt-2 mb-2 align-items-center" ref={ containerRef }>
+                  <div className="d-flex justify-content-md-around flex-column flex-md-row mt-3 align-items-center w-100">
                         <div className="d-flex flex-column mb-3 mt-2">
                               <img src={ image } alt='' className={ `${ styles.image }` }></img>
                         </div>
@@ -135,7 +140,7 @@ const StudentDetail = () =>
                               </div>
                         </div>
                   </div>
-                  <div className='mt-3 ms-2 position-relative'>
+                  <div className='mt-3 ps-2 position-relative w-100'>
                         <FontAwesomeIcon icon={ faMagnifyingGlass } className={ `position-absolute ${ styles.search }` } />
                         <input type='text' placeholder='Find class' className={ `ps-4` } onChange={ (e) =>
                         {
@@ -143,7 +148,7 @@ const StudentDetail = () =>
                               timer = setTimeout(() => setSearchClass(e.target.value), 1000);
                         } }></input>
                   </div>
-                  <div className='flex-grow-1 mb-3 mt-2 overflow-auto px-2' style={ { minHeight: classes.length !== 0 ? '200px' : '40px' } }>
+                  <div className='flex-grow-1 mb-3 mt-2 overflow-auto px-2 w-100' style={ { minHeight: classes.length !== 0 ? '200px' : '40px' } }>
                         <table className="table table-hover table-info mx-auto w-100">
                               <thead style={ { position: "sticky", top: "0" } }>
                                     <tr>
@@ -160,14 +165,13 @@ const StudentDetail = () =>
                               </tbody>
                         </table>
                   </div>
-                  <div className='d-flex align-items-center w-100 justify-content-center mb-3'>
+                  <div className='d-flex align-items-center w-100 justify-content-center mb-3 w-100'>
                         <NavLink to={ '/student-list' }>
                               <button className='btn btn-secondary me-3 me-sm-4'>Back</button>
                         </NavLink>
-                        <NavLink to={ './edit' }>
-                              <button className='btn btn-primary ms-3 ms-sm-4'>Change info</button>
-                        </NavLink>
+                        <button className='btn btn-primary ms-3 ms-sm-4' onClick={ () => setEditStudentPopUp(true) }>Change info</button>
                   </div>
+                  <StudentEdit showPopUp={ editStudentPopUp } setShowPopUp={ setEditStudentPopUp } render={ render } setRender={ setRender } containerRef={ containerRef } id={ id } />
             </div>
       )
 }
