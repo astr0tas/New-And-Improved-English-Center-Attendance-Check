@@ -8,7 +8,8 @@ export class Staff
                   host: "localhost",
                   user: "englishcenter",
                   password: "englishcenter123",
-                  database: "english_center"
+                  database: "english_center",
+                  multipleStatements: true
             });
       }
 
@@ -98,5 +99,72 @@ export class Staff
                   else
                         callback(res, null);
             });
+      }
+
+      isDuplicatedEmail(email, callback)
+      {
+            this.conn.query(`select email from employee where email=?`, [email], (err, res) =>
+            {
+                  if (err)
+                        callback(null, err);
+                  else
+                        callback(res.length ? true : false, null);
+            })
+      }
+
+      isDuplicatedPhone(phone, callback)
+      {
+            this.conn.query(`select phone from employee where phone=?`, [phone], (err, res) =>
+            {
+                  if (err)
+                        callback(null, err);
+                  else
+                        callback(res.length ? true : false, null);
+            })
+      }
+
+      isDuplicatedSSN(ssn, callback)
+      {
+            this.conn.query(`select ssn from employee where ssn=?`, [ssn], (err, res) =>
+            {
+                  if (err)
+                        callback(null, err);
+                  else
+                        callback(res.length ? true : false, null);
+            })
+      }
+
+      isStaffDuplicatedUsername(username, callback)
+      {
+            this.conn.query(`select username from employee where username=?`, [username], (err, res) =>
+            {
+                  if (err)
+                        callback(null, err);
+                  else
+                        callback(res.length ? true : false, null);
+            })
+      }
+
+      getIDForNewStaff(type, callback)
+      {
+            this.conn.query(`call getIDForNewStaff(?);`, [type], (err, res) =>
+            {
+                  if (err)
+                        callback(null, err);
+                  else
+                        callback(res.length ? res.filter((elem, i) => i !== res.length - 1) : [], null);
+            })
+      }
+
+      createStaff(id, name, ssn, address, phone, birthdate, birthplace, email, image, type, username, callback)
+      {
+            this.conn.query(`insert into employee values(?,?,?,?,?,?,?,?,?,?,?);
+            insert into ${ type === 1 ? 'teacher' : 'supervisor' } values(?);`, [id, ssn, name, phone, username, phone, birthdate, birthplace, email, address, image, id], (err, res) =>
+            {
+                  if (err)
+                        callback(null, err);
+                  else
+                        callback(res.length ? true : false, null);
+            })
       }
 }

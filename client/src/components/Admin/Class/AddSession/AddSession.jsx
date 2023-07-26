@@ -1,10 +1,10 @@
 import styles from './AddSession.module.css';
 import { useState, useEffect } from "react";
 import axios from 'axios';
-import { domain } from "../../../../../tools/domain";
+import { domain } from "../../../../tools/domain";
 import { Modal } from 'react-bootstrap';
-import '../../../../../css/scroll.css';
-import '../../../../../css/modal.css';
+import '../../../../css/scroll.css';
+import '../../../../css/modal.css';
 import { AiOutlineCloseCircle } from 'react-icons/ai';
 import { Dropdown } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';

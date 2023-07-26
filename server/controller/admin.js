@@ -2,6 +2,10 @@ import express from "express";
 import { Class } from '../model/admin/class.js';
 import { Staff } from "../model/admin/staff.js";
 import { Student } from "../model/admin/student.js";
+import path from 'path';
+import { fileURLToPath } from 'url';
+import multer from "multer";
+import fs from 'fs';
 
 const adminRoutes = express.Router();
 
@@ -604,6 +608,137 @@ adminRoutes.post('/getSupervisorClass', (req, res) =>
       })
 });
 
+adminRoutes.post('/isStaffDuplicatedSSN', (req, res) =>
+{
+      const ssn = req.body.params.ssn;
+      staffModel.isDuplicatedSSN(ssn, (result, err) =>
+      {
+            if (err)
+            {
+                  console.log(err);
+                  res.status(500).send({ message: 'Server internal error!' });
+            }
+            else
+                  res.status(200).send(result);
+      })
+});
+
+adminRoutes.post('/isStaffDuplicatedPhone', (req, res) =>
+{
+      const phone = req.body.params.phone;
+      staffModel.isDuplicatedPhone(phone, (result, err) =>
+      {
+            if (err)
+            {
+                  console.log(err);
+                  res.status(500).send({ message: 'Server internal error!' });
+            }
+            else
+                  res.status(200).send(result);
+      })
+});
+
+adminRoutes.post('/isStaffDuplicatedEmail', (req, res) =>
+{
+      const email = req.body.params.email;
+      staffModel.isDuplicatedEmail(email, (result, err) =>
+      {
+            if (err)
+            {
+                  console.log(err);
+                  res.status(500).send({ message: 'Server internal error!' });
+            }
+            else
+                  res.status(200).send(result);
+      })
+});
+
+adminRoutes.post('/isStaffDuplicatedUsername', (req, res) =>
+{
+      const username = req.body.params.username;
+      staffModel.isStaffDuplicatedUsername(username, (result, err) =>
+      {
+            if (err)
+            {
+                  console.log(err);
+                  res.status(500).send({ message: 'Server internal error!' });
+            }
+            else
+                  res.status(200).send(result);
+      })
+});
+
+adminRoutes.post('/getIDForNewStaff', (req, res) =>
+{
+      const type = req.body.params.type;
+      staffModel.getIDForNewStaff(type, (result, err) =>
+      {
+            if (err)
+            {
+                  console.log(err);
+                  res.status(500).send({ message: 'Server internal error!' });
+            }
+            else
+                  res.status(200).send(result);
+      })
+});
+
+adminRoutes.post('/createStaff', multer().fields([
+      { name: 'id' },
+      { name: 'ssn' },
+      { name: 'name' },
+      { name: 'address' },
+      { name: 'birthdate' },
+      { name: 'birthplace' },
+      { name: 'email' },
+      { name: 'phone' },
+      { name: 'type' },
+      { name: 'username' },
+      { name: 'image', maxCount: 1 },
+]), (req, res) =>
+{
+      const { id, ssn, name, address, birthdate, birthplace, email, phone, type, username } = req.body;
+
+      let imagePath = null;
+      if (req.files['image'] !== null && req.files['image'] !== undefined)
+      {
+            const imageFile = req.files['image'][0];
+            // Get the target directory to store the image
+            const directory = path.join(path.dirname(path.dirname(fileURLToPath(import.meta.url))), 'model', 'image', 'employee', type === 1 ? 'admin' : 'staff', id);
+            // Create the uploads folder if it doesn't exist
+            if (!fs.existsSync(directory))
+                  fs.mkdirSync(directory, { recursive: true });
+            // Generate a unique filename
+            const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+            const extname = path.extname(imageFile.originalname);
+            const filename = 'image-' + uniqueSuffix + extname;
+            // Retrieve the name of the existing image, if it exists
+            const existingImageName = fs.readdirSync(directory).find(file => /^image-\d+-\d+\.(png|jpg|jpeg)$/.test(file));
+            // Delete the pre-existing image, if it exists
+            if (existingImageName)
+            {
+                  const preExistingImagePath = path.join(directory, existingImageName);
+                  fs.unlinkSync(preExistingImagePath);
+            }
+            // Move the uploaded file to the destination folder
+            const filePath = path.join(directory, filename);
+            fs.writeFileSync(filePath, imageFile.buffer);
+
+            imagePath = (type === 1 ? 'admin' : 'staff') + '/' + id + '/' + filename;
+      }
+
+      staffModel.createStaff(id, name, ssn, address, phone, birthdate, birthplace, email, imagePath, type === '1' ? 1 : 2, username, (result, err) =>
+      {
+            if (err)
+            {
+                  console.log(err);
+                  res.status(500).send({ message: 'Server internal error!' });
+            }
+            else
+                  res.status(200).send({ message: 'Staff successfully created!' });
+      })
+});
+
 
 const studentModel = new Student();
 
@@ -658,11 +793,10 @@ adminRoutes.post('/getStudentClass', (req, res) =>
       })
 });
 
-adminRoutes.post('/getClassForNewStudent', (req, res) =>
+adminRoutes.post('/isStudentDuplicatedSSN', (req, res) =>
 {
-      const name = req.body.params.name;
-      const classList=req.body.params.classList
-      studentModel.getClassForNewStudent(name, classList, (result, err) =>
+      const ssn = req.body.params.ssn;
+      studentModel.isDuplicatedSSN(ssn, (result, err) =>
       {
             if (err)
             {
@@ -671,6 +805,104 @@ adminRoutes.post('/getClassForNewStudent', (req, res) =>
             }
             else
                   res.status(200).send(result);
+      })
+});
+
+adminRoutes.post('/isStudentDuplicatedPhone', (req, res) =>
+{
+      const phone = req.body.params.phone;
+      studentModel.isDuplicatedPhone(phone, (result, err) =>
+      {
+            if (err)
+            {
+                  console.log(err);
+                  res.status(500).send({ message: 'Server internal error!' });
+            }
+            else
+                  res.status(200).send(result);
+      })
+});
+
+adminRoutes.post('/isStudentDuplicatedEmail', (req, res) =>
+{
+      const email = req.body.params.email;
+      studentModel.isDuplicatedEmail(email, (result, err) =>
+      {
+            if (err)
+            {
+                  console.log(err);
+                  res.status(500).send({ message: 'Server internal error!' });
+            }
+            else
+                  res.status(200).send(result);
+      })
+});
+
+adminRoutes.get('/getIDForNewStudent', (req, res) =>
+{
+      studentModel.getIDForNewStudent((result, err) =>
+      {
+            if (err)
+            {
+                  console.log(err);
+                  res.status(500).send({ message: 'Server internal error!' });
+            }
+            else
+                  res.status(200).send(result);
+      })
+});
+
+adminRoutes.post('/createStudent', multer().fields([
+      { name: 'id' },
+      { name: 'ssn' },
+      { name: 'name' },
+      { name: 'address' },
+      { name: 'birthdate' },
+      { name: 'birthplace' },
+      { name: 'email' },
+      { name: 'phone' },
+      { name: 'image', maxCount: 1 },
+]), (req, res) =>
+{
+      const { id, ssn, name, address, birthdate, birthplace, email, phone } = req.body;
+
+      let imagePath = null;
+      if (req.files['image'] !== null && req.files['image'] !== undefined)
+      {
+            const imageFile = req.files['image'][0];
+            // Get the target directory to store the image
+            const directory = path.join(path.dirname(path.dirname(fileURLToPath(import.meta.url))), 'model', 'image', 'student', id);
+            // Create the uploads folder if it doesn't exist
+            if (!fs.existsSync(directory))
+                  fs.mkdirSync(directory, { recursive: true });
+            // Generate a unique filename
+            const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+            const extname = path.extname(imageFile.originalname);
+            const filename = 'image-' + uniqueSuffix + extname;
+            // Retrieve the name of the existing image, if it exists
+            const existingImageName = fs.readdirSync(directory).find(file => /^image-\d+-\d+\.(png|jpg|jpeg)$/.test(file));
+            // Delete the pre-existing image, if it exists
+            if (existingImageName)
+            {
+                  const preExistingImagePath = path.join(directory, existingImageName);
+                  fs.unlinkSync(preExistingImagePath);
+            }
+            // Move the uploaded file to the destination folder
+            const filePath = path.join(directory, filename);
+            fs.writeFileSync(filePath, imageFile.buffer);
+
+            imagePath = id + '/' + filename;
+      }
+
+      studentModel.createStudent(id, name, ssn, address === 'null' ? null : address, phone, birthdate, birthplace === 'null' ? null : birthplace, email, imagePath, (result, err) =>
+      {
+            if (err)
+            {
+                  console.log(err);
+                  res.status(500).send({ message: 'Server internal error!' });
+            }
+            else
+                  res.status(200).send({ message: 'Student successfully created!' });
       })
 });
 

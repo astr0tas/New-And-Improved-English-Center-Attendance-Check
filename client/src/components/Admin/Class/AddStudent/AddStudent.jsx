@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from 'axios';
-import { domain } from "../../../../../tools/domain";
+import { domain } from "../../../../tools/domain";
 import { Modal } from 'react-bootstrap';
 import styles from './AddStudent.module.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';

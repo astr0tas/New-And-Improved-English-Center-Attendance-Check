@@ -117,11 +117,11 @@ const Profile = () =>
             return alphabetPattern.test(inputString);
       }
 
-      function hasNumericalCharacters(inputString)
+      function isNameInvalid(inputString)
       {
-            const numbericalPattern = /[0-9]/;
+            const pattern = /[0-9\\~!@#$%^&*()_+`|;:'"<>,.?\n\t\r\b]/;
 
-            return numbericalPattern.test(inputString);
+            return pattern.test(inputString);
       }
 
       function isValidEmail(email)
@@ -154,8 +154,8 @@ const Profile = () =>
             setIsYoung(newBirthday !== '' && !isValidAge(newBirthday));
             isOk = !(newBirthday !== '' && !isValidAge(newBirthday)) && isOk;
 
-            setInvalidName(newName !== '' && hasNumericalCharacters(newName));
-            isOk = !(newName !== '' && hasNumericalCharacters(newName)) && isOk;
+            setInvalidName(newName !== '' && isNameInvalid(newName));
+            isOk = !(newName !== '' && isNameInvalid(newName)) && isOk;
 
             if (newSSN !== '' && hasAlphabetCharacters(newSSN))
             {
@@ -165,6 +165,7 @@ const Profile = () =>
             else if (newSSN !== '')
             {
                   const result = await axios.post(`http://${ domain }/isSSNDuplicate`, { params: { ssn: newSSN } }, { headers: { 'Content-Type': 'application/json' } });
+                  setInvalidSSN(false);
                   setDuplicateSSN(result.data);
                   isOk = !result.data && isOk;
             }
@@ -176,6 +177,7 @@ const Profile = () =>
             else if (newPhone !== '')
             {
                   const result = await axios.post(`http://${ domain }/isPhoneDuplicate`, { params: { phone: newPhone } }, { headers: { 'Content-Type': 'application/json' } });
+                  setInvalidPhone(false);
                   setDuplicatePhone(result.data);
                   isOk = !result.data && isOk;
             }
@@ -187,6 +189,7 @@ const Profile = () =>
             else if (newEmail !== '')
             {
                   const result = await axios.post(`http://${ domain }/isEmailDuplicate`, { params: { email: newEmail } }, { headers: { 'Content-Type': 'application/json' } });
+                  setInvalidEmail(false);
                   setDuplicateEmail(result.data);
                   isOk = !result.data && isOk;
             }
@@ -299,7 +302,7 @@ const Profile = () =>
                         {
                               invalidName &&
                               <p className={ `${ styles.p } mb-2 text-center align-middle` }>
-                                    Your name must not contain numerical character(s)!
+                                    Your name must not contain non-alphabetical character(s)!
                               </p>
                         }
                         <div className={ `${ styles.container } d-flex flex-column h-100 mb-3` }>

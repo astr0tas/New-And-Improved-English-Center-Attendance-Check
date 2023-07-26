@@ -114,7 +114,7 @@ const StudentList = () =>
                         <button className='btn btn-primary' onClick={ () => setAddStudentPopUp(true) }>Add a student</button>
                   </div>
 
-                  <StudentCreate showPopUp={ addStudentPopUp } setShowPopUp={ setAddStudentPopUp } containerRef={ container } />
+                  <StudentCreate showPopUp={ addStudentPopUp } setShowPopUp={ setAddStudentPopUp } containerRef={ container } render={ render } setRender={ setRender } />
             </div>
       )
 }

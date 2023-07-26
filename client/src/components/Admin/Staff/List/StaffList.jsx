@@ -10,6 +10,7 @@ import { AiOutlineUser } from 'react-icons/ai';
 import { isRefValid } from '../../../../tools/refChecker';
 import { context } from '../../../../context';
 import '../../../../css/scroll.css';
+import StaffCreate from '../Create/StaffCreate';
 
 const Staff = (props) =>
 {
@@ -65,6 +66,9 @@ const StaffList = () =>
 
       const opt1 = useRef(null);
       const opt2 = useRef(null);
+
+      const container = useRef(null);
+      const [addTeacherPopUp, setAddTeacherPopUp] = useState(false);
 
       let timer;
 
@@ -129,7 +133,7 @@ const StaffList = () =>
       }, [render, name, Navigate, staffType, setStaffType])
 
       return (
-            <div className='w-100 d-flex flex-column overflow-auto flex-grow-1 mt-2 mb-2 hideBrowserScrollbar'>
+            <div className='w-100 d-flex flex-column overflow-auto flex-grow-1 mt-2 mb-2 hideBrowserScrollbar align-items-center' ref={ container }>
                   { staffType === 0 &&
                         <div className='w-100 h-100 d-flex flex-column flex-md-row overflow-auto align-items-center justify-content-md-around'>
                               <div className={ `d-flex flex-column my-auto align-items-center ${ styles.choose } justify-content-center mb-4 mb-md-0 mt-4 mt-md-0` } ref={ opt1 }>
@@ -144,8 +148,8 @@ const StaffList = () =>
                   }
                   { staffType !== 0 &&
                         <>
-                              <div className='d-flex align-items-center justify-content-center justify-content-md-between mt-2'>
-                                    <strong className={ `ms-md-3 mb-0 ${ styles.back } me-3 me-md-0 mt-2` } onClick={ () => setStaffType(0) }>Back</strong>
+                              <div className='d-flex align-items-center justify-content-center justify-content-md-between mt-2 w-100 flex-column flex-sm-row'>
+                                    <strong className={ `ms-md-3 mb-0 ${ styles.back } me-sm-3 me-md-0 mb-2 mb-sm-0` } onClick={ () => setStaffType(0) }>Back</strong>
                                     <div className='me-md-3 position-relative'>
                                           <FontAwesomeIcon icon={ faMagnifyingGlass } className={ `position-absolute ${ styles.search }` } />
                                           <input type='text' placeholder='Find staff' className={ `ps-4` } onChange={ findStaff }></input>
@@ -170,10 +174,11 @@ const StaffList = () =>
                                     </table>
                               </div>
                               <div className="w-100 d-flex align-items-center justify-content-center mb-3">
-                                    <button className='btn btn-primary' onClick={ () => Navigate('./create') }>Add a { staffType === 1 ? 'teacher' : 'supervisor' }</button>
+                              <button className='btn btn-primary' onClick={ () => setAddTeacherPopUp(true) }>Add a { staffType === 1 ? 'teacher' : 'supervisor' }</button>
                               </div>
                         </>
                   }
+                  <StaffCreate showPopUp={ addTeacherPopUp } setShowPopUp={ setAddTeacherPopUp } containerRef={ container } render={ render } setRender={ setRender } staffType={ staffType } />
             </div >
       )
 }

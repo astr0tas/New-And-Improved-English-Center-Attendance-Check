@@ -326,13 +326,45 @@ begin
 end//
 delimiter ;
 
-drop procedure if exists preparationProc;
+drop procedure if exists getIDForNewStudent;
 delimiter //
-create procedure preparationProc(
-	in className varchar(100)
+create procedure getIDForNewStudent(
 )
 begin
-	create table if not exists tempClassName(name varchar(100));
-    insert into tempClassName values(className);
+	declare counter int;
+    select count(*)into counter from student;
+    set counter=counter+1;
+    if counter<10 then
+		select concat('STUDENT0',counter) as id;
+    else
+		select concat('STUDENT',counter) as id;
+    end if;
+end//
+delimiter ;
+
+drop procedure if exists getIDForNewStaff;
+delimiter //
+create procedure getIDForNewStaff(
+	in staffType int
+)
+begin
+	declare counter int;
+    if staffType=1 then
+		select count(*)into counter from teacher;
+        set counter=counter+1;
+		if counter<10 then
+			select concat('TEACHER0',counter) as id;
+		else
+			select concat('TEACHER',counter) as id;
+		end if;
+    else
+		select count(*)into counter from supervisor;
+        set counter=counter+1;
+		if counter<10 then
+			select concat('SUPERVISOR0',counter) as id;
+		else
+			select concat('SUPERVISOR',counter) as id;
+		end if;
+    end if;
 end//
 delimiter ;

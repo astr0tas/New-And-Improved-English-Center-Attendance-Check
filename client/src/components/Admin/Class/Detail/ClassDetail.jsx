@@ -10,9 +10,9 @@ import { context } from '../../../../context';
 import { AiOutlineClockCircle } from 'react-icons/ai';
 import { DMDY } from '../../../../tools/dateFormat';
 import '../../../../css/scroll.css';
-import AddStudent from './AddStudent/AddStudent';
-import AddSession from './AddSession/AddSession';
-import AddTeacher from './AddTeacher/AddTeacher';
+import AddStudent from '../AddStudent/AddStudent';
+import AddSession from '../AddSession/AddSession';
+import AddTeacher from '../AddTeacher/AddTeacher';
 
 const Student = (props) =>
 {

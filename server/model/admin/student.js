@@ -64,27 +64,58 @@ export class Student
             })
       }
 
-      getClassForNewStudent(name, classList, callback)
+      isDuplicatedEmail(email, callback)
       {
-            if (classList.length === 0)
+            this.conn.query(`select email from student where email=?`, [email], (err, res) =>
             {
-                  this.conn.query(`call getClassList(?,2);`, [name + '%'], (err, res) =>
-                  {
-                        if (err)
-                              callback(null, err);
-                        else
-                              callback(res.length ? res.filter((elem, i) => i !== res.length - 1) : [], null);
-                  })
-            }
-            else
+                  if (err)
+                        callback(null, err);
+                  else
+                        callback(res.length ? true : false, null);
+            })
+      }
+
+      isDuplicatedPhone(phone, callback)
+      {
+            this.conn.query(`select phone from student where phone=?`, [phone], (err, res) =>
             {
-                  let sql = '';
-                  const params = [];
-                  for (let i = 0; i < classList.length; i++)
-                  {
-                        sql += 'call preparationProc(?);';
-                        params.push(classList[i]);
-                  }
-            }
+                  if (err)
+                        callback(null, err);
+                  else
+                        callback(res.length ? true : false, null);
+            })
+      }
+
+      isDuplicatedSSN(ssn, callback)
+      {
+            this.conn.query(`select ssn from student where ssn=?`, [ssn], (err, res) =>
+            {
+                  if (err)
+                        callback(null, err);
+                  else
+                        callback(res.length ? true : false, null);
+            })
+      }
+
+      getIDForNewStudent(callback)
+      {
+            this.conn.query(`call getIDForNewStudent();`, [], (err, res) =>
+            {
+                  if (err)
+                        callback(null, err);
+                  else
+                        callback(res.length ? res.filter((elem, i) => i !== res.length - 1) : [], null);
+            })
+      }
+
+      createStudent(id, name, ssn, address, phone, birthdate, birthplace, email, image, callback)
+      {
+            this.conn.query(`insert into student values(?,?,?,?,?,?,?,?,?);`, [id, name, phone, birthdate, birthplace, email, address, ssn, image], (err, res) =>
+            {
+                  if (err)
+                        callback(null, err);
+                  else
+                        callback(res.length ? true : false, null);
+            })
       }
 }
