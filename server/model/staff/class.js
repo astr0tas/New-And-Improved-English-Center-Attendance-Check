@@ -8,7 +8,8 @@ export class Class
                   host: "localhost",
                   user: "englishcenter",
                   password: "englishcenter123",
-                  database: "english_center"
+                  database: "english_center",
+                  multipleStatements: true
             });
       }
 
@@ -27,5 +28,29 @@ export class Class
                         }
                   });
             }
+      }
+
+      classList(name, limit, userType, offset, status, id, callback)
+      {
+            if (userType === 2)
+                  this.conn.query(`call getTeacherClass(?,?,?,?,?);`, [name, status, id, offset, limit], (err, res) =>
+                  {
+                        if (err)
+                              callback(null, err);
+                        else
+                        {
+                              callback(res.length ? res.filter((elem, i) => i !== res.length - 1) : [], null);
+                        }
+                  });
+            else if (userType === 3)
+                  this.conn.query(`call getSupervisorClass(?,?,?,?,?);`, [name, status, id, offset, limit], (err, res) =>
+                  {
+                        if (err)
+                              callback(null, err);
+                        else
+                        {
+                              callback(res.length ? res.filter((elem, i) => i !== res.length - 1) : [], null);
+                        }
+                  });
       }
 }

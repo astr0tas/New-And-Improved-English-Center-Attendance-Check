@@ -302,7 +302,7 @@ const Profile = () =>
                         {
                               invalidName &&
                               <p className={ `${ styles.p } mb-2 text-center align-middle` }>
-                                    Your name must not contain non-alphabetical character(s)!
+                                    Your name must not contain non-alphabeticalc character(s)!
                               </p>
                         }
                         <div className={ `${ styles.container } d-flex flex-column h-100 mb-3` }>

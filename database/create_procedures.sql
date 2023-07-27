@@ -166,7 +166,7 @@ begin
     declare currentSessions int;
 	
 	DECLARE done INT DEFAULT FALSE;
-	declare reader cursor for select name from class where name like concat('%',searchName,'%') and status=searchStatus order by start_date desc, name;
+	declare reader cursor for select name from class where name like concat(searchName,'%') and status=searchStatus order by start_date desc, name;
 	DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
     
     open reader;
@@ -204,6 +204,124 @@ begin
 	
 	DECLARE done INT DEFAULT FALSE;
 	declare reader cursor for select number from session where class_name=className order by number;
+	DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+    
+    open reader;
+        read_loop: loop
+			fetch reader into numberLoop;
+            IF done THEN
+				LEAVE read_loop;
+			END IF;
+            
+            set sessionDate=null,startHour=null,endHour=null,sessionStatus=null,sessionClassroomID=null,
+            sessionTeacherID=null,sessionTeacherName=null,
+            sessionSupervisorID=null,sessionSupervisorName=null;
+                        
+            select session_date,start_hour,end_hour,status,classroom_id into sessionDate,startHour,endHour,sessionStatus,sessionClassroomID from session 
+            join timetable on timetable.id=session.timetable_id where class_name=className and number=numberLoop;
+                        
+            select employee.id,employee.name into sessionTeacherID,sessionTeacherName from employee
+            join teacher on teacher.id=employee.id
+            join teacher_responsible on teacher_responsible.teacher_id=teacher.id
+            where teacher_responsible.session_number=numberLoop and teacher_responsible.class_name=className;
+            
+            set done=false;
+                        
+            select employee.id,employee.name into sessionSupervisorID,sessionSupervisorName from employee
+            join supervisor on supervisor.id=employee.id
+            join supervisor_responsible on supervisor_responsible.supervisor_id=supervisor.id
+            where supervisor_responsible.session_number=numberLoop and supervisor_responsible.class_name=className;
+            
+            set done=false;
+                        
+            select numberLoop as number,sessionDate,startHour,endHour,sessionStatus,sessionClassroomID,sessionTeacherID,sessionTeacherName,sessionSupervisorID,sessionSupervisorName;
+        end loop;
+	close reader;
+end//
+delimiter ;
+
+drop procedure if exists getTeacherSession;
+delimiter //
+create procedure getTeacherSession(
+	in className varchar(100),
+    in TeacherID varchar(15)
+)
+begin
+	declare numberLoop int;
+    declare sessionDate date;
+    declare startHour time;
+    declare endHour time;
+    declare sessionStatus int;
+    declare sessionClassroomID varchar(15);
+    declare sessionTeacherID varchar(15);
+    declare sessionSupervisorID varchar(15);
+    declare sessionTeacherName varchar(100);
+    declare sessionSupervisorName varchar(100);
+	
+	DECLARE done INT DEFAULT FALSE;
+	declare reader cursor for select number
+    from session
+    join teacher_responsible on teacher_responsible.session_number=session.number and teacher_responsible.class_name=session.class_name
+    where session.class_name=className and teacher_responsible.teacher_id=TeacherID order by number;
+	DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+    
+    open reader;
+        read_loop: loop
+			fetch reader into numberLoop;
+            IF done THEN
+				LEAVE read_loop;
+			END IF;
+            
+            set sessionDate=null,startHour=null,endHour=null,sessionStatus=null,sessionClassroomID=null,
+            sessionTeacherID=null,sessionTeacherName=null,
+            sessionSupervisorID=null,sessionSupervisorName=null;
+                        
+            select session_date,start_hour,end_hour,status,classroom_id into sessionDate,startHour,endHour,sessionStatus,sessionClassroomID from session 
+            join timetable on timetable.id=session.timetable_id where class_name=className and number=numberLoop;
+                        
+            select employee.id,employee.name into sessionTeacherID,sessionTeacherName from employee
+            join teacher on teacher.id=employee.id
+            join teacher_responsible on teacher_responsible.teacher_id=teacher.id
+            where teacher_responsible.session_number=numberLoop and teacher_responsible.class_name=className;
+            
+            set done=false;
+                        
+            select employee.id,employee.name into sessionSupervisorID,sessionSupervisorName from employee
+            join supervisor on supervisor.id=employee.id
+            join supervisor_responsible on supervisor_responsible.supervisor_id=supervisor.id
+            where supervisor_responsible.session_number=numberLoop and supervisor_responsible.class_name=className;
+            
+            set done=false;
+                        
+            select numberLoop as number,sessionDate,startHour,endHour,sessionStatus,sessionClassroomID,sessionTeacherID,sessionTeacherName,sessionSupervisorID,sessionSupervisorName;
+        end loop;
+	close reader;
+end//
+delimiter ;
+
+drop procedure if exists getSupervisorSession;
+delimiter //
+create procedure getSupervisorSession(
+	in className varchar(100),
+    in SupervisorID varchar(15)
+)
+begin
+	declare numberLoop int;
+    declare sessionDate date;
+    declare startHour time;
+    declare endHour time;
+    declare sessionStatus int;
+    declare sessionClassroomID varchar(15);
+    declare sessionTeacherID varchar(15);
+    declare sessionSupervisorID varchar(15);
+    declare sessionTeacherName varchar(100);
+    declare sessionSupervisorName varchar(100);
+	
+	DECLARE done INT DEFAULT FALSE;
+	declare reader cursor for select number
+    from session
+    join supervisor_responsible on supervisor_responsible.session_number=session.number and supervisor_responsible.class_name=session.class_name
+    where session.class_name=className and supervisor_responsible.supervisor_id=SupervisorID order by number;
 	DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
     
     open reader;
@@ -366,5 +484,94 @@ begin
 			select concat('SUPERVISOR',counter) as id;
 		end if;
     end if;
+end//
+delimiter ;
+
+drop procedure if exists getTeacherClass;
+delimiter //
+create procedure getTeacherClass(
+	in searchName varchar(100),
+    in searchStatus int,
+    in teacherID varchar(15),
+    in inOffset int,
+	in inLimit int
+)
+begin
+	declare nameLoop varchar(100);
+    declare startDate date;
+    declare endDate date;
+    declare maxStudent int;
+    declare initialSession int;
+    declare currentStudents int;
+    declare currentSessions int;
+    declare counter int;
+    
+	DECLARE done INT DEFAULT FALSE;
+	declare reader cursor for select name
+    from class
+    join teach on teach.class_name=class.name
+    where teach.teacher_id=teacherID and name like concat(searchName,'%') and status=searchStatus order by start_date desc, name limit inLimit offset inOffset;
+	DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+    
+    select count(name) into counter from class join teach on teach.class_name=class.name where teach.teacher_id=teacherID and name like concat(searchName,'%') and status=searchStatus order by start_date desc, name;
+    
+    open reader;
+        read_loop: loop
+			fetch reader into nameLoop;
+            IF done THEN
+				LEAVE read_loop;
+			END IF;
+            set startDate=null,endDate=null,maxStudent=null,initialSession=null,currentStudents=null,currentSessions=null;
+            select start_date,end_date,max_students,Initial_sessions into startDate,endDate,maxStudent,initialSession from class where name=nameLoop;
+            select count(in_class.class_name) into currentStudents from class join in_class on in_class.class_name=class.name where name=nameLoop;
+            select count(session.class_name) into currentSessions from class join session on session.class_name=class.name where name=nameLoop;
+            select nameLoop as name,startDate,endDate,maxStudent,initialSession,currentStudents,currentSessions,counter;
+        end loop;
+	close reader;
+end//
+delimiter ;
+
+drop procedure if exists getSupervisorClass;
+delimiter //
+create procedure getSupervisorClass(
+	in searchName varchar(100),
+    in searchStatus int,
+    in supervisorID varchar(15),
+    in inOffset int,
+	in inLimit int
+)
+begin
+	declare nameLoop varchar(100);
+    declare startDate date;
+    declare endDate date;
+    declare maxStudent int;
+    declare initialSession int;
+    declare currentStudents int;
+    declare currentSessions int;
+    declare counter int;
+    
+	DECLARE done INT DEFAULT FALSE;
+	declare reader cursor for select distinct name
+    from class
+    join SUPERVISOR_RESPONSIBLE on SUPERVISOR_RESPONSIBLE.class_name=class.name
+    where SUPERVISOR_RESPONSIBLE.supervisor_id=supervisorID and name like concat(searchName,'%') and status=searchStatus order by start_date desc, name limit inLimit offset inOffset;
+	DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+    
+    select count(distinct name) into counter
+    from class join SUPERVISOR_RESPONSIBLE on SUPERVISOR_RESPONSIBLE.class_name=class.name where SUPERVISOR_RESPONSIBLE.supervisor_id=supervisorID and name like concat(searchName,'%') and status=searchStatus order by start_date desc, name;
+    
+    open reader;
+        read_loop: loop
+			fetch reader into nameLoop;
+            IF done THEN
+				LEAVE read_loop;
+			END IF;
+            set startDate=null,endDate=null,maxStudent=null,initialSession=null,currentStudents=null,currentSessions=null;
+            select start_date,end_date,max_students,Initial_sessions into startDate,endDate,maxStudent,initialSession from class where name=nameLoop;
+            select count(in_class.class_name) into currentStudents from class join in_class on in_class.class_name=class.name where name=nameLoop;
+            select count(session.class_name) into currentSessions from class join session on session.class_name=class.name where name=nameLoop;
+            select nameLoop as name,startDate,endDate,maxStudent,initialSession,currentStudents,currentSessions,counter;
+        end loop;
+	close reader;
 end//
 delimiter ;

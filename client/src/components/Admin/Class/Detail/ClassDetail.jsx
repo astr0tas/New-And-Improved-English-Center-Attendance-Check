@@ -175,7 +175,7 @@ const ClassDetail = () =>
 
       useEffect(() =>
       {
-            axios.post(`http://${ domain }/admin/classInfo`, { params: { name: name } }, { headers: { 'Content-Type': 'application/json' } })
+            axios.post(`http://${ domain }/classInfo`, { params: { name: name } }, { headers: { 'Content-Type': 'application/json' } })
                   .then(res =>
                   {
                         setStatus(res.data[0][0].status);
@@ -190,7 +190,7 @@ const ClassDetail = () =>
 
             if (listType === 0)
             {
-                  axios.post(`http://${ domain }/admin/classStudent`, { params: { name: name } }, { headers: { 'Content-Type': 'application/json' } })
+                  axios.post(`http://${ domain }/classStudent`, { params: { name: name } }, { headers: { 'Content-Type': 'application/json' } })
                         .then(res =>
                         {
                               const temp = [];
@@ -218,7 +218,7 @@ const ClassDetail = () =>
             }
             else if (listType === 2)
             {
-                  axios.post(`http://${ domain }/admin/classSession`, { params: { name: name } }, { headers: { 'Content-Type': 'application/json' } })
+                  axios.post(`http://${ domain }/classSession`, { params: { name: name } }, { headers: { 'Content-Type': 'application/json' } })
                         .then(res =>
                         {
                               const temp = [];
@@ -247,8 +247,8 @@ const ClassDetail = () =>
                               </div>
                               <div className='d-flex align-items-center'>
                                     <strong className='mb-3'>Status:&nbsp;&nbsp;</strong>
-                                    <p className='mb-3' style={ { color: status === 2 ? '#128400' : (status === 1 ? 'red' : 'gray') } }>{
-                                          status === 2 ? 'Active' : (status === 1 ? 'Deactivated' : 'Finished')
+                                    <p className='mb-3' style={ { color: status === 2 ? '#128400' : (status === 1 ? 'red' : (status===0?'gray':'black')) } }>{
+                                          status === 2 ? 'Active' : (status === 1 ? 'Deactivated' : (status === 0 ? 'Finished' : 'N/A'))
                                     }</p>
                                     { status !== 0 && <button className={ `${ status === 2 ? 'btn-danger' : 'btn-success' } btn btn-sm mb-3 ms-3` } onClick={ () => setStatusPopUp(true) }>{ status === 2 ? 'Deactivate' : 'Activate' }</button> }
                               </div>

@@ -3,6 +3,7 @@ import { Authentication } from "../model/authentication.js";
 import { Profile } from "../model/profile.js";
 import { AdminHome } from "../model/admin/home.js";
 import { StaffHome } from '../model/staff/home.js';
+import { Class } from '../model/class.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import multer from "multer";
@@ -272,5 +273,53 @@ generalRoutes.post('/isEmailDuplicate', (req, res) =>
 const adminHomeModel = new AdminHome();
 
 const staffHomeModel = new StaffHome();
+
+const generalClassModel = new Class();
+generalRoutes.post('/classInfo', (req, res) =>
+{
+      const name = req.body.params.name;
+      generalClassModel.getInfo(name, (result, err) =>
+      {
+            if (err)
+            {
+                  console.log(err);
+                  res.status(500).send({ message: 'Server internal error!' });
+            }
+            else
+                  res.status(200).send(result);
+      })
+});
+
+generalRoutes.post('/classStudent', (req, res) =>
+{
+      const name = req.body.params.name;
+      generalClassModel.classStudent(name, (result, err) =>
+      {
+            if (err)
+            {
+                  console.log(err);
+                  res.status(500).send({ message: 'Server internal error!' });
+            }
+            else
+                  res.status(200).send(result);
+      })
+});
+
+generalRoutes.post('/classSession', (req, res) =>
+{
+      const name = req.body.params.name;
+      const id = req.session.userID ? req.session.userID : null;
+      const type = req.session.userType ? req.session.userType : null;
+      generalClassModel.classSession(name, id,type,(result, err) =>
+      {
+            if (err)
+            {
+                  console.log(err);
+                  res.status(500).send({ message: 'Server internal error!' });
+            }
+            else
+                  res.status(200).send(result);
+      })
+});
 
 export default generalRoutes;

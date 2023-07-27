@@ -32,51 +32,6 @@ adminRoutes.post('/classList', (req, res) =>
       })
 });
 
-adminRoutes.post('/classInfo', (req, res) =>
-{
-      const name = req.body.params.name;
-      classModel.getInfo(name, (result, err) =>
-      {
-            if (err)
-            {
-                  console.log(err);
-                  res.status(500).send({ message: 'Server internal error!' });
-            }
-            else
-                  res.status(200).send(result);
-      })
-});
-
-adminRoutes.post('/classStudent', (req, res) =>
-{
-      const name = req.body.params.name;
-      classModel.classStudent(name, (result, err) =>
-      {
-            if (err)
-            {
-                  console.log(err);
-                  res.status(500).send({ message: 'Server internal error!' });
-            }
-            else
-                  res.status(200).send(result);
-      })
-});
-
-adminRoutes.post('/classSession', (req, res) =>
-{
-      const name = req.body.params.name;
-      classModel.classSession(name, (result, err) =>
-      {
-            if (err)
-            {
-                  console.log(err);
-                  res.status(500).send({ message: 'Server internal error!' });
-            }
-            else
-                  res.status(200).send(result);
-      })
-});
-
 adminRoutes.post('/classTeacher', (req, res) =>
 {
       const name = req.body.params.name;

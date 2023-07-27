@@ -43,42 +43,6 @@ export class Class
             })
       }
 
-      getInfo(name, callback)
-      {
-            this.conn.query(`select start_date,end_date,max_students,initial_sessions,status from class where name=?;
-            select count(in_class.class_name) as currentStudents from class join in_class on in_class.class_name=class.name where name=?;
-            select count(session.class_name) as currentSessions from class join session on session.class_name=class.name where name=?;`, [name, name, name], (err, res) =>
-            {
-                  if (err)
-                        callback(null, err);
-                  else
-                        callback(res, null);
-            });
-      }
-
-      classSession(name, callback)
-      {
-            this.conn.query(`call getSessionList(?);`, [name], (err, res) =>
-            {
-                  if (err)
-                        callback(null, err);
-                  else
-                        callback(res.length ? res.filter((elem, i) => i !== res.length - 1) : [], null);
-            });
-      }
-
-      classStudent(name, callback)
-      {
-            this.conn.query(`select student.name,student.phone,student.id,student.email,student.ssn from student join in_class on in_class.student_id=student.id 
-            where in_class.class_name=? order by TRIM(SUBSTRING_INDEX(student.name, ' ', -1))`, [name], (err, res) =>
-            {
-                  if (err)
-                        callback(null, err);
-                  else
-                        callback(res, null);
-            });
-      }
-
       classTeacher(name, teacherName, date, timetable, callback)
       {
             if (date === null || timetable === null)

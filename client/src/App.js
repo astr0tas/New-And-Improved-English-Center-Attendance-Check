@@ -78,8 +78,8 @@ function App()
               {/* Staff routes */ }
               <Route>
                 <Route path='my-class-list' element={ <MyClassList /> } />
-                <Route path=':name' element={ <MyClassDetail /> } />
-                <Route path=':number' element={ <MyClassSession /> } />
+                <Route path='my-class-list/:name' element={ <MyClassDetail /> } />
+                <Route path='my-class-list/:name/:number' element={ <MyClassSession /> } />
               </Route>
 
             </Route>

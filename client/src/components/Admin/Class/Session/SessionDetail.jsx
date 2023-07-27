@@ -3,7 +3,7 @@ import styles from './SessionDetail.module.css';
 import { useParams, NavLink } from 'react-router-dom';
 import { domain } from '../../../../tools/domain';
 import axios from 'axios';
-import { DMDY } from '../../../../tools/dateFormat';
+import { DMDY, YMD } from '../../../../tools/dateFormat';
 import '../../../../css/scroll.css';
 import '../../../../css/modal.css';
 import { Modal } from 'react-bootstrap';
@@ -23,7 +23,7 @@ const TeacherSelect = (props) =>
       {
             if (props.changeTeacherPopUp)
             {
-                  axios.post(`http://${ domain }/admin/classTeacher`, { params: { name: props.name, teacherName: searchTeacher } }, { headers: { 'Content-Type': 'application/json' } })
+                  axios.post(`http://${ domain }/admin/classTeacher`, { params: { name: props.name, teacherName: searchTeacher, date: YMD(props.date), timetable: props.timetable } }, { headers: { 'Content-Type': 'application/json' } })
                         .then(res =>
                         {
                               const temp = [];
@@ -743,7 +743,7 @@ const AdminClassSessionDetail = () =>
                   </Modal>
 
                   <TeacherSelect changeTeacherPopUp={ changeTeacherPopUp } setChangeTeacherPopUp={ setChangeTeacherPopUp } name={ name } setConfirmChangeTeacher={ setConfirmChangeTeacher }
-                        containerRef={ containerRef } newTeacher={ newTeacher } setNewTeacher={ setNewTeacher } teacherID={ teacherID } />
+                        containerRef={ containerRef } newTeacher={ newTeacher } setNewTeacher={ setNewTeacher } teacherID={ teacherID } date={ date } timetable={ [start, end] } />
                   <SupervisorSelect changeSupervisorPopUp={ changeSupervisorPopUp } setChangeSupervisorPopUp={ setChangeSupervisorPopUp } name={ name } setConfirmChangeSupervisor={ setConfirmChangeSupervisor }
                         containerRef={ containerRef } newSupervisor={ newSupervisor } setNewSupervisor={ setNewSupervisor } supervisorID={ supervisorID } />
 

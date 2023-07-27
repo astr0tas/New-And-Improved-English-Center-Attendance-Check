@@ -2,10 +2,6 @@ DROP SCHEMA IF EXISTS ENGLISH_CENTER;
 CREATE SCHEMA ENGLISH_CENTER;
 USE ENGLISH_CENTER;
 
-select * from employee;
-select * from teacher;
-select * from supervisor;
-
 CREATE TABLE EMPLOYEE (
   ID VARCHAR(15),
   SSN VARCHAR(12) UNIQUE NOT NULL,

@@ -1,0 +1,21 @@
+.search {
+      font-size: 1.2rem;
+      margin-top: 5px;
+      margin-left: 4px;
+}
+
+.searchInput {
+      max-width: 150px;
+}
+
+.search {
+      font-size: 1.2rem;
+      margin-top: 5px;
+      margin-left: 4px;
+}
+
+@media only screen and (min-width: 320px) {
+      .searchInput {
+            max-width: 200px;
+      }
+}
