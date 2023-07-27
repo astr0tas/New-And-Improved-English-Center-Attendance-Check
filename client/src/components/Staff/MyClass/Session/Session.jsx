@@ -1,5 +1,5 @@
 import styles from './Session.module.css';
-import { useParams, NavLink } from 'react-router-dom';
+import { useParams, NavLink, useOutletContext } from 'react-router-dom';
 import { domain } from '../../../../tools/domain';
 import axios from 'axios';
 import { DMDY, YMD } from '../../../../tools/dateFormat';
@@ -121,6 +121,8 @@ const MyClassSession = () =>
       const name = useParams().name;
       const number = useParams().number.split(' ')[1];
 
+      const userType = useOutletContext();
+
       document.title = `Class ${ name } Session ${ number }`;
 
       const [room, setRoom] = useState("N/A");
@@ -155,8 +157,25 @@ const MyClassSession = () =>
 
       const [errorPopUp, setErrorPopUp] = useState(false);
 
+      const [disableFeature, setDisableFeature] = useState(true);
+
       const [searchStudent, setSearchStudent] = useState('');
       let timer;
+
+      const isValidDate = (date) =>
+      {
+            if (date)
+            {
+                  const currentDate = new Date();
+                  const eightDaysAgo = new Date();
+                  eightDaysAgo.setDate(eightDaysAgo.getDate() - 8);
+
+                  const inputDateObj = new Date(date);
+
+                  return inputDateObj >= eightDaysAgo && inputDateObj <= currentDate;
+            }
+            return false;
+      }
 
       const toggleStatus = (status) =>
       {
@@ -223,6 +242,11 @@ const MyClassSession = () =>
                         setSupervisorID(res.data[0][0].sessionSupervisorID);
                         setSupervisorName(res.data[0][0].sessionSupervisorName ? res.data[0][0].sessionSupervisorName : 'N/A');
                         setSupervisorImage(res.data[0][0].sessionSupervisorImage ? `http://${ domain }/image/employee/${ res.data[0][0].sessionSupervisorImage }` : require('../../../../images/profile.png'));
+
+                        if (res.data[0][0].sessionStatus)
+                              if ((res.data[0][0].sessionStatus === 1 && (userType === 2 || userType === 3)) ||
+                                    (res.data[0][0].sessionStatus === 2 && userType === 3 && isValidDate(res.data[0][0].sessionDate)))
+                                    setDisableFeature(false);
                   })
                   .catch(err => console.error(err));
 
@@ -233,6 +257,7 @@ const MyClassSession = () =>
             if (isRefValid(radioAbsent))
                   radioAbsent.current.checked = false;
 
+            // eslint-disable-next-line
       }, [number, name, render, status]);
 
       return (
@@ -272,34 +297,39 @@ const MyClassSession = () =>
                                     <div className='d-flex flex-column align-items-center mt-3'>
                                           <h4>{ teacherName }</h4>
                                           <img className={ `${ styles.images }` } alt='' src={ teacherImage }></img>
-                                          <div className='d-flex align-items-center justify-content-center mt-2 mb-2'>
-                                                <div className='d-flex flex-column align-items-center me-4'>
-                                                      <label htmlFor='teacherOnClass' style={ { color: '#128400' } }>On class</label>
-                                                      <input name='teacherAttendance' id='teacherOnClass' type='radio'
-                                                            style={ { width: '1.3rem', height: '1.3rem' } } className={ `${ (status === 1 || status === 2) ? styles.hover : '' } ` }
-                                                            checked={ teacherStatus === 1 } onChange={ () => setTeacherStatus(1) } disabled={ !(status === 1 || status === 2) }></input>
-                                                </div>
-                                                <div className='d-flex flex-column align-items-center'>
-                                                      <label htmlFor='teacherLate' style={ { color: 'orange' } }>Late</label>
-                                                      <input name='teacherAttendance' id='teacherLate' type='radio'
-                                                            style={ { width: '1.3rem', height: '1.3rem' } } className={ `${ (status === 1 || status === 2) ? styles.hover : '' }` }
-                                                            checked={ teacherStatus === 2 } onChange={ () => setTeacherStatus(2) } disabled={ !(status === 1 || status === 2) }></input>
-                                                </div>
-                                                <div className='d-flex flex-column align-items-center ms-4'>
-                                                      <label htmlFor='teacherAbsent' style={ { color: 'red' } }>Absent</label>
-                                                      <input name='teacherAttendance' id='teacherAbsent' type='radio'
-                                                            style={ { width: '1.3rem', height: '1.3rem' } } className={ `${ (status === 1 || status === 2) ? styles.hover : '' }` }
-                                                            checked={ teacherStatus === 3 } onChange={ () => setTeacherStatus(3) } disabled={ !(status === 1 || status === 2) }></input>
-                                                </div>
-                                          </div>
-                                          <label htmlFor='teacherNote'>Note</label>
-                                          <input type='text' id='teacherNote' className='w-100' value={ teacherNote ? teacherNote : '' } onChange={ e =>
                                           {
-                                                if (e.target.value !== '')
-                                                      setTeacherNote(e.target.value);
-                                                else
-                                                      setTeacherNote(null);
-                                          } } disabled={ !(status === 1 || status === 2) }></input>
+                                                userType === 3 &&
+                                                <>
+                                                      <div className='d-flex align-items-center justify-content-center mt-2 mb-2'>
+                                                            <div className='d-flex flex-column align-items-center me-4'>
+                                                                  <label htmlFor='teacherOnClass' style={ { color: '#128400' } }>On class</label>
+                                                                  <input name='teacherAttendance' id='teacherOnClass' type='radio'
+                                                                        style={ { width: '1.3rem', height: '1.3rem' } } className={ `${ (status === 1 || status === 2) ? styles.hover : '' } ` }
+                                                                        checked={ teacherStatus === 1 } onChange={ () => setTeacherStatus(1) } disabled={ !(status === 1 || status === 2) }></input>
+                                                            </div>
+                                                            <div className='d-flex flex-column align-items-center'>
+                                                                  <label htmlFor='teacherLate' style={ { color: 'orange' } }>Late</label>
+                                                                  <input name='teacherAttendance' id='teacherLate' type='radio'
+                                                                        style={ { width: '1.3rem', height: '1.3rem' } } className={ `${ (status === 1 || status === 2) ? styles.hover : '' }` }
+                                                                        checked={ teacherStatus === 2 } onChange={ () => setTeacherStatus(2) } disabled={ !(status === 1 || status === 2) }></input>
+                                                            </div>
+                                                            <div className='d-flex flex-column align-items-center ms-4'>
+                                                                  <label htmlFor='teacherAbsent' style={ { color: 'red' } }>Absent</label>
+                                                                  <input name='teacherAttendance' id='teacherAbsent' type='radio'
+                                                                        style={ { width: '1.3rem', height: '1.3rem' } } className={ `${ (status === 1 || status === 2) ? styles.hover : '' }` }
+                                                                        checked={ teacherStatus === 3 } onChange={ () => setTeacherStatus(3) } disabled={ !(status === 1 || status === 2) }></input>
+                                                            </div>
+                                                      </div>
+                                                      <label htmlFor='teacherNote'>Note</label>
+                                                      <input type='text' id='teacherNote' className='w-100' value={ teacherNote ? teacherNote : '' } onChange={ e =>
+                                                      {
+                                                            if (e.target.value !== '')
+                                                                  setTeacherNote(e.target.value);
+                                                            else
+                                                                  setTeacherNote(null);
+                                                      } } disabled={ !(status === 1 || status === 2) }></input>
+                                                </>
+                                          }
                                     </div>
                                     <div className='d-flex flex-column align-items-center mt-3'>
                                           <h4>{ supervisorName }</h4>
@@ -367,15 +397,18 @@ const MyClassSession = () =>
                                     </tbody>
                               </table>
                         </div>
-                        <div className='w-100 d-flex flex-column align-items-center mb-3 mt-2'>
-                              <label htmlFor='classNote' style={ { fontWeight: 'bold' } }>Note for class&nbsp;&nbsp;</label>
-                              <input id='classNote' type='text' style={ { width: '250px' } } disabled={ !(status === 1 || status === 2) }></input>
-                        </div>
+
+                        { userType === 3 &&
+                              <div className='w-100 d-flex flex-column align-items-center mb-3 mt-2'>
+                                    <label htmlFor='classNote' style={ { fontWeight: 'bold' } }>Note for class&nbsp;&nbsp;</label>
+                                    <input id='classNote' type='text' style={ { width: '250px' } } disabled={ !(status === 1 || status === 2) }></input>
+                              </div>
+                        }
                         <div className='w-100 d-flex align-items-center justify-content-center mb-3'>
                               <NavLink to={ `/my-class-list/detail/${ name }` }>
                                     <button className='btn btn-secondary me-3'>Back</button>
                                     {
-                                          (status === 1 || status === 2) &&
+                                          disableFeature &&
                                           <button className='btn btn-primary ms-3' onClick={ checkAttendance }>Confirm</button>
                                     }
                               </NavLink>
