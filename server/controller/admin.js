@@ -234,55 +234,6 @@ adminRoutes.post('/addTeacherToClass', (req, res) =>
       })
 });
 
-adminRoutes.post('/classSessionDetail', (req, res) =>
-{
-      const name = req.body.params.name;
-      const number = req.body.params.number;
-      classModel.classSessionDetail(name, number, (result, err) =>
-      {
-            if (err)
-            {
-                  console.log(err);
-                  res.status(500).send({ message: 'Server internal error!' });
-            }
-            else
-                  res.status(200).send(result);
-      })
-});
-
-adminRoutes.post('/getSessionStudent', (req, res) =>
-{
-      const name = req.body.params.name;
-      const studentName = req.body.params.studentName;
-      classModel.getSessionStudent(name, studentName, (result, err) =>
-      {
-            if (err)
-            {
-                  console.log(err);
-                  res.status(500).send({ message: 'Server internal error!' });
-            }
-            else
-                  res.status(200).send(result);
-      })
-});
-
-adminRoutes.post('/getStudentSessionAttendace', (req, res) =>
-{
-      const className = req.body.params.className;
-      const sessionNumber = req.body.params.sessionNumber;
-      const id = req.body.params.id;
-      classModel.getStudentSessionAttendace(className, sessionNumber, id, (result, err) =>
-      {
-            if (err)
-            {
-                  console.log(err);
-                  res.status(500).send({ message: 'Server internal error!' });
-            }
-            else
-                  res.status(200).send(result);
-      })
-});
-
 adminRoutes.post('/checkAttendance', (req, res) =>
 {
       const name = req.body.params.name;

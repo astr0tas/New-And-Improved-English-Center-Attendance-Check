@@ -1,5 +1,5 @@
 import './App.css';
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, NavLink, Route, Routes } from "react-router-dom";
 
 // General routes
 import Login from './components/General/Authentication/Login/Login';
@@ -34,7 +34,7 @@ const NotFound = () =>
       <p className='text-center' style={ { fontSize: '10rem' } }>404</p>
       <h1 className='text-center' style={ { fontSize: '2rem' } }>Ooops, page not found</h1>
       <p className='mb-0 text-center'>The page you are looking for does not exist on the server or an error has occurred.</p>
-      <p className='text-center'>Go back or choose a new direction!</p>
+      <p className='text-center'>Go back to <NavLink to='/home'>Home</NavLink> page</p>
     </div>
   )
 }
@@ -78,8 +78,8 @@ function App()
               {/* Staff routes */ }
               <Route>
                 <Route path='my-class-list' element={ <MyClassList /> } />
-                <Route path='my-class-list/:name' element={ <MyClassDetail /> } />
-                <Route path='my-class-list/:name/:number' element={ <MyClassSession /> } />
+                <Route path='my-class-list/detail/:name' element={ <MyClassDetail /> } />
+                <Route path='my-class-list/detail/:name/:number' element={ <MyClassSession /> } />
               </Route>
 
             </Route>

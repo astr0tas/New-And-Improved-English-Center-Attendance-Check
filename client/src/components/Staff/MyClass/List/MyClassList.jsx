@@ -12,13 +12,13 @@ const Card = (props) =>
 {
       return (
             <div className={ `card border border-dark` } style={ { width: '250px' } }>
-                  <img className="card-img-top" src={ require('../../../../images/english-class.png') } alt=""></img>
+                  <img className="card-img-top" src={ require('../../../../images/english-class.jpg') } alt=""></img>
                   <div className="align-items-center d-flex flex-column mb-2 mt-2">
                         <h5>Classname: { props.name }</h5>
                         <p>Period: { props.start ? DMY(props.start) : 'N/A' } - { props.end ? DMY(props.end) : 'N/A' }</p>
                         <p>Students: { props.currentStudent ? props.currentStudent : 'N/A' } / { props.maxStudent ? props.maxStudent : 'N/A' }</p>
                         <p>Sessions: { props.currentSession ? props.currentSession : 'N/A' } / { props.initialSession ? props.initialSession : 'N/A' }</p>
-                        <NavLink to={ `./${ props.name }` }>
+                        <NavLink to={ `./detail/${ props.name }` }>
                               <button className="btn btn-primary btn-sm">Detail</button>
                         </NavLink>
                   </div>
@@ -46,22 +46,29 @@ const Active = (props) =>
                   axios.post(`http://${ domain }/staff/classList`, { params: { name: searchName, limit: props.limit, userType: props.userType, offset: localOffset, status: 2 } }, { headers: { 'Content-Type': 'application/json' }, withCredentials: true })
                         .then(res =>
                         {
-                              if (counter === -1)
-                                    setCounter(res.data[0][0].counter)
-                              if (props.limit + offset >= counter)
-                                    setDisableNextButton(true);
-                              else if (props.limit + offset < counter)
-                                    setDisableNextButton(false);
-                              const temp = [];
-                              for (let i = 0; i < res.data.length; i++)
-                                    temp.push(<Card key={ i } name={ res.data[i][0].name } start={ res.data[i][0].startDate } end={ res.data[i][0].endDate }
-                                          maxStudent={ res.data[i][0].maxStudent } currentStudent={ res.data[i][0].currentStudents }
-                                          initialSession={ res.data[i][0].initialSession } currentSession={ res.data[i][0].currentSessions } />);
-                              setClassList(temp);
+                              if (res.status === 200)
+                              {
+                                    if (counter === -1)
+                                          setCounter(res.data[0][0].counter)
+                                    if (props.limit + offset >= counter)
+                                          setDisableNextButton(true);
+                                    else if (props.limit + offset < counter)
+                                          setDisableNextButton(false);
+                                    const temp = [];
+                                    for (let i = 0; i < res.data.length; i++)
+                                          temp.push(<Card key={ i } name={ res.data[i][0].name } start={ res.data[i][0].startDate } end={ res.data[i][0].endDate }
+                                                maxStudent={ res.data[i][0].maxStudent } currentStudent={ res.data[i][0].currentStudents }
+                                                initialSession={ res.data[i][0].initialSession } currentSession={ res.data[i][0].currentSessions } />);
+                                    setClassList(temp);
+                              }
+                              else
+                                    setClassList([]);
                         })
                         .catch(err => console.error(err));
             }
-      }, [searchName, offset, props.limit, props.userType, counter]);
+
+            // eslint-disable-next-line
+      }, [searchName, offset, props.limit, props.userType]);
 
       return (
             <div className='w-100 h-100 d-flex flex-column mt-5 mb-5' style={ { maxHeight: classList.length ? '450px' : '100px' } }>
@@ -110,22 +117,29 @@ const Deactivated = (props) =>
                   axios.post(`http://${ domain }/staff/classList`, { params: { name: searchName, limit: props.limit, userType: props.userType, offset: localOffset, status: 1 } }, { headers: { 'Content-Type': 'application/json' }, withCredentials: true })
                         .then(res =>
                         {
-                              if (counter === -1)
-                                    setCounter(res.data[0][0].counter)
-                              if (props.limit + offset >= counter)
-                                    setDisableNextButton(true);
-                              else if (props.limit + offset < counter)
-                                    setDisableNextButton(false);
-                              const temp = [];
-                              for (let i = 0; i < res.data.length; i++)
-                                    temp.push(<Card key={ i } name={ res.data[i][0].name } start={ res.data[i][0].startDate } end={ res.data[i][0].endDate }
-                                          maxStudent={ res.data[i][0].maxStudent } currentStudent={ res.data[i][0].currentStudents }
-                                          initialSession={ res.data[i][0].initialSession } currentSession={ res.data[i][0].currentSessions } />);
-                              setClassList(temp);
+                              if (res.status === 200)
+                              {
+                                    if (counter === -1)
+                                          setCounter(res.data[0][0].counter)
+                                    if (props.limit + offset >= counter)
+                                          setDisableNextButton(true);
+                                    else if (props.limit + offset < counter)
+                                          setDisableNextButton(false);
+                                    const temp = [];
+                                    for (let i = 0; i < res.data.length; i++)
+                                          temp.push(<Card key={ i } name={ res.data[i][0].name } start={ res.data[i][0].startDate } end={ res.data[i][0].endDate }
+                                                maxStudent={ res.data[i][0].maxStudent } currentStudent={ res.data[i][0].currentStudents }
+                                                initialSession={ res.data[i][0].initialSession } currentSession={ res.data[i][0].currentSessions } />);
+                                    setClassList(temp);
+                              }
+                              else
+                                    setClassList([]);
                         })
                         .catch(err => console.error(err));
             }
-      }, [searchName, offset, props.limit, props.userType, counter]);
+
+            // eslint-disable-next-line
+      }, [searchName, offset, props.limit, props.userType]);
 
       return (
             <div className='w-100 h-100 d-flex flex-column mt-5 mb-5' style={ { maxHeight: classList.length ? '450px' : '100px' } }>
@@ -147,7 +161,7 @@ const Deactivated = (props) =>
                         { classList }
                   </div>
                   <div className="mt-4 d-flex align-items-center justify-content-center">
-                        <button className="btn btn-outline-secondary btn-sm me-2" disabled={ classList.length&&offset === 0 } onClick={ () => setOffset(offset - props.limit) }>&lt;</button>
+                        <button className="btn btn-outline-secondary btn-sm me-2" disabled={ classList.length && offset === 0 } onClick={ () => setOffset(offset - props.limit) }>&lt;</button>
                         <button className="btn btn-outline-secondary btn-sm ms-2" onClick={ () => setOffset(offset + props.limit) } disabled={ classList.length && disableNextButton }>&gt;</button>
                   </div>
             </div>
@@ -174,22 +188,29 @@ const Finished = (props) =>
                   axios.post(`http://${ domain }/staff/classList`, { params: { name: searchName, limit: props.limit, userType: props.userType, offset: localOffset, status: 0 } }, { headers: { 'Content-Type': 'application/json' }, withCredentials: true })
                         .then(res =>
                         {
-                              if (counter === -1)
-                                    setCounter(res.data[0][0].counter)
-                              if (props.limit + offset >= counter)
-                                    setDisableNextButton(true);
-                              else if (props.limit + offset < counter)
-                                    setDisableNextButton(false);
-                              const temp = [];
-                              for (let i = 0; i < res.data.length; i++)
-                                    temp.push(<Card key={ i } name={ res.data[i][0].name } start={ res.data[i][0].startDate } end={ res.data[i][0].endDate }
-                                          maxStudent={ res.data[i][0].maxStudent } currentStudent={ res.data[i][0].currentStudents }
-                                          initialSession={ res.data[i][0].initialSession } currentSession={ res.data[i][0].currentSessions } />);
-                              setClassList(temp);
+                              if (res.status === 200)
+                              {
+                                    if (counter === -1)
+                                          setCounter(res.data[0][0].counter)
+                                    if (props.limit + offset >= counter)
+                                          setDisableNextButton(true);
+                                    else if (props.limit + offset < counter)
+                                          setDisableNextButton(false);
+                                    const temp = [];
+                                    for (let i = 0; i < res.data.length; i++)
+                                          temp.push(<Card key={ i } name={ res.data[i][0].name } start={ res.data[i][0].startDate } end={ res.data[i][0].endDate }
+                                                maxStudent={ res.data[i][0].maxStudent } currentStudent={ res.data[i][0].currentStudents }
+                                                initialSession={ res.data[i][0].initialSession } currentSession={ res.data[i][0].currentSessions } />);
+                                    setClassList(temp);
+                              }
+                              else
+                                    setClassList([]);
                         })
                         .catch(err => console.error(err));
             }
-      }, [searchName, offset, props.limit, props.userType, counter]);
+
+            // eslint-disable-next-line
+      }, [searchName, offset, props.limit, props.userType]);
 
       return (
             <div className='w-100 h-100 d-flex flex-column mt-5' style={ { maxHeight: classList.length ? '450px' : '100px' } }>

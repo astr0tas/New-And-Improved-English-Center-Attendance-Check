@@ -15,11 +15,11 @@ const Class = (props) =>
 
       return (
             <tr>
-                  <td className='text-center'>{ props.i }</td>
-                  <td className='text-center'>{ props.name }</td>
-                  <td className='text-center'>{ DMY(props.start) }</td>
-                  <td className='text-center'>{ DMY(props.end) }</td>
-                  <td className='text-center' style={ {
+                  <td className='text-center align-middle'>{ props.i }</td>
+                  <td className='text-center align-middle'>{ props.name }</td>
+                  <td className='text-center align-middle'>{ DMY(props.start) }</td>
+                  <td className='text-center align-middle'>{ DMY(props.end) }</td>
+                  <td className='text-center align-middle' style={ {
                         color: props.status === 1 ? 'red' : (
                               props.status === 2 ? '#128400' : 'gray')
                   } }>{ props.status === 1 ? 'Deactivated' : (
@@ -152,12 +152,12 @@ const StudentDetail = () =>
                         <table className="table table-hover table-info mx-auto w-100">
                               <thead style={ { position: "sticky", top: "0" } }>
                                     <tr>
-                                          <th scope="col" className='col-1 text-center'>#</th>
-                                          <th scope="col" className='col-4 text-center'>Name</th>
-                                          <th scope="col" className='col-2 text-center'>Start date</th>
-                                          <th scope="col" className='col-2 text-center'>End date</th>
-                                          <th scope="col" className='col-1 text-center'>Status</th>
-                                          <th scope="col" className='col-2 text-center'>Action</th>
+                                          <th scope="col" className='col-1 text-center align-middle'>#</th>
+                                          <th scope="col" className='col-4 text-center align-middle'>Name</th>
+                                          <th scope="col" className='col-2 text-center align-middle'>Start date</th>
+                                          <th scope="col" className='col-2 text-center align-middle'>End date</th>
+                                          <th scope="col" className='col-1 text-center align-middle'>Status</th>
+                                          <th scope="col" className='col-2 text-center align-middle'>Action</th>
                                     </tr>
                               </thead>
                               <tbody>

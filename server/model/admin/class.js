@@ -231,40 +231,6 @@ export class Class
             });
       }
 
-      classSessionDetail(name, number, callback)
-      {
-            this.conn.query(`call getSessionDetail(?,?);`, [name, number], (err, res) =>
-            {
-                  if (err)
-                        callback(null, err);
-                  else
-                        callback(res.length ? res.filter((elem, i) => i !== res.length - 1) : [], null);
-            });
-      }
-
-      getSessionStudent(name, studentName, callback)
-      {
-            this.conn.query(`select student.id,student.name from student
-            join IN_CLASS on IN_CLASS.student_id=student.id where IN_CLASS.class_name=? and student.name like ? order by student.name`, [name, '%' + studentName + '%'], (err, res) =>
-            {
-                  if (err)
-                        callback(null, err);
-                  else
-                        callback(res, null);
-            });
-      }
-
-      getStudentSessionAttendace(className, sessionNumber, id, callback)
-      {
-            this.conn.query(`select status,note from STUDENT_ATTENDANCE where session_number=? and class_name=? and student_id=?`, [sessionNumber, className, id], (err, res) =>
-            {
-                  if (err)
-                        callback(null, err);
-                  else
-                        callback(res, null);
-            });
-      }
-
       checkAttendance(name, number, students, teacher, callback)
       {
             let sql = "update TEACHER_RESPONSIBLE set teacher_status=?,teacher_note=? where teacher_id=? and class_name=? and session_number=?;";

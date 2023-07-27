@@ -9,6 +9,8 @@ import { context } from '../../../../context';
 import { AiOutlineClockCircle } from 'react-icons/ai';
 import { DMDY } from '../../../../tools/dateFormat';
 import '../../../../css/scroll.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 
 const Student = (props) =>
 {
@@ -58,6 +60,11 @@ const Session = (props) =>
                   } }>{ status }</td>
                   <td className='text-center align-middle'>{ props.teacherName ? props.teacherName : 'N/A' }</td>
                   <td className='text-center align-middle'>{ props.supervisorName ? props.supervisorName : 'N/A' }</td>
+                  <td className='text-center align-middle'>
+                        <NavLink to={ `./Session ${ props.number }` }>
+                              <button className='btn btn-sm btn-primary'>Detail</button>
+                        </NavLink>
+                  </td>
             </tr>
       )
 }
@@ -81,6 +88,10 @@ const MyClassDetail = () =>
 
       document.title = `Class ${ name }`;
 
+      let timer;
+
+      const [searchStudent, setSearchStudent] = useState('');
+
       useEffect(() =>
       {
             axios.post(`http://${ domain }/classInfo`, { params: { name: name } }, { headers: { 'Content-Type': 'application/json' } })
@@ -98,7 +109,7 @@ const MyClassDetail = () =>
 
             if (listType === 0)
             {
-                  axios.post(`http://${ domain }/classStudent`, { params: { name: name } }, { headers: { 'Content-Type': 'application/json' } })
+                  axios.post(`http://${ domain }/classStudent`, { params: { name: name, studentName: searchStudent } }, { headers: { 'Content-Type': 'application/json' } })
                         .then(res =>
                         {
                               const temp = [];
@@ -125,12 +136,14 @@ const MyClassDetail = () =>
                         })
                         .catch(err => console.error(err));
             }
+
+            // eslint-disable-next-line
       }, [name, render, listType]);
 
       return (
             <div className="w-100 h-100 d-flex flex-column align-items-center">
                   <div className="w-100 d-flex flex-column overflow-auto hideBrowserScrollbar mt-2 mb-2 flex-grow-1">
-                        <NavLink to={ '/class-list' } style={ { textDecoration: 'none' } }>
+                        <NavLink to={ '/my-class-list' } style={ { textDecoration: 'none' } }>
                               <strong className={ `ms-md-3 mb-0 me-md-0 mx-auto mt-2 ${ styles.back }` }>Back</strong>
                         </NavLink>
                         <div className='mx-auto'>
@@ -159,6 +172,17 @@ const MyClassDetail = () =>
                               <button className={ `mx-sm-3 my-1 btn ${ listType === 0 ? 'btn-primary' : 'btn-secondary' }` } onClick={ () => setListType(0) }>Student</button>
                               <button className={ `mx-sm-3 my-1 btn ${ listType === 2 ? 'btn-primary' : 'btn-secondary' }` } onClick={ () => setListType(2) }>Session</button>
                         </div>
+                        { listType === 0 &&
+                              <div className='mt-3 ms-2 position-relative'>
+                                    <FontAwesomeIcon icon={ faMagnifyingGlass } className={ `position-absolute ${ styles.search }` } />
+                                    <input value={ searchStudent } type='text' placeholder='Find student' className={ `ps-4` } onChange={ (e) =>
+                                    {
+                                          clearTimeout(timer);
+                                          setSearchStudent(e.target.value);
+                                          timer = setTimeout(() => setRender(!render), 1000);
+                                    } }></input>
+                              </div>
+                        }
                         <div className={ `flex-grow-1 w-100 overflow-auto mt-3 px-1 mb-3` } style={ { minHeight: content.length ? '250px' : '65px' } }>
                               <table className="table table-hover table-info">
                                     <thead style={ { position: "sticky", top: "0" } }>
@@ -180,8 +204,9 @@ const MyClassDetail = () =>
                                                             <th scope="col" className='col-3 text-center align-middle'>Time</th>
                                                             <th scope="col" className='col-1 text-center align-middle'>Room</th>
                                                             <th scope="col" className='col-1 text-center align-middle'>Status</th>
-                                                            <th scope="col" className='col-3 text-center align-middle'>Teacher</th>
-                                                            <th scope="col" className='col-3 text-center align-middle'>Supervisor</th>
+                                                            <th scope="col" className='col-2 text-center align-middle'>Teacher</th>
+                                                            <th scope="col" className='col-2 text-center align-middle'>Supervisor</th>
+                                                            <th scope="col" className='col-2 text-center align-middle'>Action</th>
                                                       </>
                                                 }
                                           </tr>

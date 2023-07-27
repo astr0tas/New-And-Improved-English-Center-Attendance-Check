@@ -16,3 +16,7 @@
       margin-top: 5px;
       margin-left: 4px;
 }
+
+.searchInput {
+      max-width: 150px;
+}

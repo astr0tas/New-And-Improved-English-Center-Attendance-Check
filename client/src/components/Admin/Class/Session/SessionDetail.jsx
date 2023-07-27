@@ -213,7 +213,7 @@ const Student = forwardRef((props, ref) =>
 
       useEffect(() =>
       {
-            axios.post(`http://${ domain }/admin/getStudentSessionAttendace`, { params: { className: props.className, sessionNumber: props.sessionNumber, id: props.id } }, { headers: { 'Content-Type': 'application/json' } })
+            axios.post(`http://${ domain }/getStudentSessionAttendace`, { params: { className: props.className, sessionNumber: props.sessionNumber, id: props.id } }, { headers: { 'Content-Type': 'application/json' } })
                   .then(res =>
                   {
                         if (res.data.length)
@@ -279,7 +279,7 @@ const StudentList = (props) =>
 {
       useEffect(() =>
       {
-            axios.post(`http://${ domain }/admin/getSessionStudent`, { params: { name: props.name, studentName: props.searchStudent } }, { headers: { 'Content-Type': 'application/json' } })
+            axios.post(`http://${ domain }/getSessionStudent`, { params: { name: props.name, studentName: props.searchStudent } }, { headers: { 'Content-Type': 'application/json' } })
                   .then(res =>
                   {
                         if (res.data !== '')
@@ -412,7 +412,7 @@ const AdminClassSessionDetail = () =>
 
       useEffect(() =>
       {
-            axios.post(`http://${ domain }/admin/classSessionDetail`, { params: { name: name, number: number } }, { headers: { 'Content-Type': 'application/json' } })
+            axios.post(`http://${ domain }/classSessionDetail`, { params: { name: name, number: number } }, { headers: { 'Content-Type': 'application/json' } })
                   .then(res =>
                   {
                         setDate(res.data[0][0].sessionDate);
@@ -683,7 +683,7 @@ const AdminClassSessionDetail = () =>
                         <Modal.Header className='border border-0' closeButton>
                         </Modal.Header>
                         <Modal.Body className='border border-0 d-flex justify-content-center'>
-                              <h4 className='text-center'>Teach has not been checked!</h4>
+                              <h4 className='text-center'>Teacher has not been checked!</h4>
                         </Modal.Body>
                         <Modal.Footer className='justify-content-center border border-0'>
                               <button className={ `btn btn-primary` } onClick={ () => setShowPopUp2(false) }>Yes</button>

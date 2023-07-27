@@ -74,10 +74,44 @@ export class Class
             }
       }
 
-      classStudent(name, callback)
+      classStudent(name, studentName, callback)
       {
             this.conn.query(`select student.name,student.phone,student.id,student.email,student.ssn from student join in_class on in_class.student_id=student.id 
-            where in_class.class_name=? order by TRIM(SUBSTRING_INDEX(student.name, ' ', -1))`, [name], (err, res) =>
+            where in_class.class_name=? and student.name like ? order by TRIM(SUBSTRING_INDEX(student.name, ' ', -1))`, [name, '%' + studentName + '%'], (err, res) =>
+            {
+                  if (err)
+                        callback(null, err);
+                  else
+                        callback(res, null);
+            });
+      }
+
+      classSessionDetail(name, number, callback)
+      {
+            this.conn.query(`call getSessionDetail(?,?);`, [name, number], (err, res) =>
+            {
+                  if (err)
+                        callback(null, err);
+                  else
+                        callback(res.length ? res.filter((elem, i) => i !== res.length - 1) : [], null);
+            });
+      }
+
+      getSessionStudent(name, studentName, callback)
+      {
+            this.conn.query(`select student.id,student.name from student
+            join IN_CLASS on IN_CLASS.student_id=student.id where IN_CLASS.class_name=? and student.name like ? order by student.name`, [name, '%' + studentName + '%'], (err, res) =>
+            {
+                  if (err)
+                        callback(null, err);
+                  else
+                        callback(res, null);
+            });
+      }
+
+      getStudentSessionAttendace(className, sessionNumber, id, callback)
+      {
+            this.conn.query(`select status,note from STUDENT_ATTENDANCE where session_number=? and class_name=? and student_id=?`, [sessionNumber, className, id], (err, res) =>
             {
                   if (err)
                         callback(null, err);

@@ -293,7 +293,8 @@ generalRoutes.post('/classInfo', (req, res) =>
 generalRoutes.post('/classStudent', (req, res) =>
 {
       const name = req.body.params.name;
-      generalClassModel.classStudent(name, (result, err) =>
+      const studentName = req.body.params.studentName;
+      generalClassModel.classStudent(name, studentName, (result, err) =>
       {
             if (err)
             {
@@ -311,6 +312,55 @@ generalRoutes.post('/classSession', (req, res) =>
       const id = req.session.userID ? req.session.userID : null;
       const type = req.session.userType ? req.session.userType : null;
       generalClassModel.classSession(name, id,type,(result, err) =>
+      {
+            if (err)
+            {
+                  console.log(err);
+                  res.status(500).send({ message: 'Server internal error!' });
+            }
+            else
+                  res.status(200).send(result);
+      })
+});
+
+generalRoutes.post('/classSessionDetail', (req, res) =>
+{
+      const name = req.body.params.name;
+      const number = req.body.params.number;
+      generalClassModel.classSessionDetail(name, number, (result, err) =>
+      {
+            if (err)
+            {
+                  console.log(err);
+                  res.status(500).send({ message: 'Server internal error!' });
+            }
+            else
+                  res.status(200).send(result);
+      })
+});
+
+generalRoutes.post('/getSessionStudent', (req, res) =>
+{
+      const name = req.body.params.name;
+      const studentName = req.body.params.studentName;
+      generalClassModel.getSessionStudent(name, studentName, (result, err) =>
+      {
+            if (err)
+            {
+                  console.log(err);
+                  res.status(500).send({ message: 'Server internal error!' });
+            }
+            else
+                  res.status(200).send(result);
+      })
+});
+
+generalRoutes.post('/getStudentSessionAttendace', (req, res) =>
+{
+      const className = req.body.params.className;
+      const sessionNumber = req.body.params.sessionNumber;
+      const id = req.body.params.id;
+      generalClassModel.getStudentSessionAttendace(className, sessionNumber, id, (result, err) =>
       {
             if (err)
             {

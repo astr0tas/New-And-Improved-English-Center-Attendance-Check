@@ -13,6 +13,8 @@ import '../../../../css/scroll.css';
 import AddStudent from '../AddStudent/AddStudent';
 import AddSession from '../AddSession/AddSession';
 import AddTeacher from '../AddTeacher/AddTeacher';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 
 const Student = (props) =>
 {
@@ -165,6 +167,10 @@ const ClassDetail = () =>
 
       document.title = `Class ${ name }`;
 
+      let timer;
+
+      const [searchStudent, setSearchStudent] = useState('');
+
       const addStudent = () =>
       {
             if (currentStudent === maxStudent)
@@ -190,14 +196,14 @@ const ClassDetail = () =>
 
             if (listType === 0)
             {
-                  axios.post(`http://${ domain }/classStudent`, { params: { name: name } }, { headers: { 'Content-Type': 'application/json' } })
+                  axios.post(`http://${ domain }/classStudent`, { params: { name: name, studentName: searchStudent } }, { headers: { 'Content-Type': 'application/json' } })
                         .then(res =>
                         {
                               const temp = [];
                               for (let i = 0; i < res.data.length; i++)
                                     temp.push(<Student key={ i } i={ i + 1 } id={ res.data[i].id } render={ render } setRender={ setRender }
                                           name={ res.data[i].name } phone={ res.data[i].phone } email={ res.data[i].email }
-                                          ssn={ res.data[i].ssn } setRemoveStudentTarget={ setRemoveStudentTarget } setRemoveStudentPopUp={ setRemoveStudentPopUp } />);
+                                          ssn={ res.data[i].ssn } setRemoveStudentTarget={ setRemoveStudentTarget } setRemoveStudentPopUp={ setRemoveStudentPopUp }  />);
                               setContent(temp);
                         })
                         .catch(err => console.error(err));
@@ -231,6 +237,8 @@ const ClassDetail = () =>
                         })
                         .catch(err => console.error(err));
             }
+
+            // eslint-disable-next-line
       }, [name, render, listType]);
 
       return (
@@ -247,7 +255,7 @@ const ClassDetail = () =>
                               </div>
                               <div className='d-flex align-items-center'>
                                     <strong className='mb-3'>Status:&nbsp;&nbsp;</strong>
-                                    <p className='mb-3' style={ { color: status === 2 ? '#128400' : (status === 1 ? 'red' : (status===0?'gray':'black')) } }>{
+                                    <p className='mb-3' style={ { color: status === 2 ? '#128400' : (status === 1 ? 'red' : (status === 0 ? 'gray' : 'black')) } }>{
                                           status === 2 ? 'Active' : (status === 1 ? 'Deactivated' : (status === 0 ? 'Finished' : 'N/A'))
                                     }</p>
                                     { status !== 0 && <button className={ `${ status === 2 ? 'btn-danger' : 'btn-success' } btn btn-sm mb-3 ms-3` } onClick={ () => setStatusPopUp(true) }>{ status === 2 ? 'Deactivate' : 'Activate' }</button> }
@@ -267,6 +275,17 @@ const ClassDetail = () =>
                               <button className={ `mx-sm-3 my-1 btn ${ listType === 1 ? 'btn-primary' : 'btn-secondary' }` } onClick={ () => setListType(1) }>Teacher</button>
                               <button className={ `mx-sm-3 my-1 btn ${ listType === 2 ? 'btn-primary' : 'btn-secondary' }` } onClick={ () => setListType(2) }>Session</button>
                         </div>
+                        { listType === 0 &&
+                              <div className='mt-3 ms-2 position-relative'>
+                                    <FontAwesomeIcon icon={ faMagnifyingGlass } className={ `position-absolute ${ styles.search }` } />
+                                    <input value={ searchStudent } type='text' placeholder='Find student' className={ `ps-4` } onChange={ (e) =>
+                                    {
+                                          clearTimeout(timer);
+                                          setSearchStudent(e.target.value);
+                                          timer = setTimeout(() => setRender(!render), 1000);
+                                    } }></input>
+                              </div>
+                        }
                         <div className={ `flex-grow-1 w-100 overflow-auto mt-3 px-1 mb-3` } style={ { minHeight: content.length ? '250px' : '65px' } }>
                               <table className="table table-hover table-info">
                                     <thead style={ { position: "sticky", top: "0" } }>
@@ -316,16 +335,17 @@ const ClassDetail = () =>
                         <div className="d-flex align-items-center mx-auto mb-3">
                               {
                                     listType === 0 && status !== 0 &&
-                                    <button className='btn btn-primary' onClick={ addStudent }>Add student</button>
+                                    <button className='btn btn-primary me-2' onClick={ addStudent }>Add student</button>
                               }
                               {
                                     listType === 1 && status !== 0 &&
-                                    <button className='btn btn-primary' onClick={ () => setTeacherPopUp(true) }>Add teacher</button>
+                                    <button className='btn btn-primary me-2' onClick={ () => setTeacherPopUp(true) }>Add teacher</button>
                               }
                               {
                                     listType === 2 && status !== 0 &&
-                                    <button className='btn btn-primary' onClick={ () => setSessionPopUp(true) }>Add session</button>
+                                    <button className='btn btn-primary me-2' onClick={ () => setSessionPopUp(true) }>Add session</button>
                               }
+                              <button className='btn btn-secondary ms-2'>Stats</button>
                         </div>
                   </div>
                   <Modal show={ statusPopUp } onHide={ () => setStatusPopUp(false) } className={ `reAdjustModel hideBrowserScrollbar` } container={ containerRef.current }>

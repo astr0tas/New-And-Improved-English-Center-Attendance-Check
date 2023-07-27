@@ -86,11 +86,29 @@ const Menu = () =>
                         if (!res.data.message[0])
                               Navigate("/");
                         else
+                        {
                               setUserType(res.data.message[1]);
+                              if (res.data.message[1] === 1)
+                              {
+                                    if (!window.location.pathname.includes('/profile')
+                                          && !window.location.pathname.includes('/home')
+                                          && !window.location.pathname.includes('/class-list')
+                                          && !window.location.pathname.includes('/student-list')
+                                          && !window.location.pathname.includes('/staff-list'))
+                                          Navigate('not-found');
+                              }
+                              else
+                              {
+                                    if (!window.location.pathname.includes('/profile')
+                                          && !window.location.pathname.includes('/home')
+                                          && !window.location.pathname.includes('/my-class-list'))
+                                          Navigate('not-found');
+                              }
+                              setActiveTab(window.location.pathname);
+                        }
                   })
                   .catch(error => console.log(error));
 
-            setActiveTab(window.location.pathname);
 
             trackWidth();
 
