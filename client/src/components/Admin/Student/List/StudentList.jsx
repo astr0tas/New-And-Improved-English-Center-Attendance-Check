@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, NavLink } from 'react-router-dom';
-import axios from 'axios';
+import request from '../../../../tools/request';
 import { domain } from '../../../../tools/domain';
 import { DMY } from '../../../../tools/dateFormat';
 import '../../../../css/scroll.css';
@@ -74,10 +74,11 @@ const StudentList = () =>
 
       useEffect(() =>
       {
-            axios.post(`http://${ domain }/admin/studentList`, { params: { name: name } }, { headers: { 'Content-Type': 'application/json' } })
+            request.post(`http://${ domain }/admin/studentList`, { params: { name: name } }, { headers: { 'Content-Type': 'application/json' } })
                   .then(res =>
                   {
                         const temp = [];
+                        if (res.status === 200)
                         for (let i = 0; i < res.data.length; i++)
                               temp.push(<Student key={ i } i={ i + 1 } id={ res.data[i].id }
                                     name={ res.data[i].name } phone={ res.data[i].phone } birthdate={ res.data[i].birthday }

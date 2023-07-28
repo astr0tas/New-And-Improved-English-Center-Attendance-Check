@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { useNavigate, NavLink } from 'react-router-dom';
-import axios from 'axios';
+import request from '../../../../tools/request';
 import { domain } from '../../../../tools/domain';
 import { DMY } from '../../../../tools/dateFormat';
 import { AiOutlineUser } from 'react-icons/ai';
@@ -109,14 +109,15 @@ const StaffList = () =>
             }
 
             if (staffType !== 0)
-                  axios.post(`http://${ domain }/admin/staffList`, { params: { name: name, type: staffType } }, { headers: { 'Content-Type': 'application/json' } })
+                  request.post(`http://${ domain }/admin/staffList`, { params: { name: name, type: staffType } }, { headers: { 'Content-Type': 'application/json' } })
                         .then(res =>
                         {
                               const temp = [];
-                              for (let i = 0; i < res.data.length; i++)
-                                    temp.push(<Staff key={ i } i={ i + 1 } id={ res.data[i].id }
-                                          name={ res.data[i].name } phone={ res.data[i].phone } birthdate={ res.data[i].birthday }
-                                          email={ res.data[i].email } ssn={ res.data[i].ssn } address={ res.data[i].address } Navigate={ Navigate } />);
+                              if (res.status === 200)
+                                    for (let i = 0; i < res.data.length; i++)
+                                          temp.push(<Staff key={ i } i={ i + 1 } id={ res.data[i].id }
+                                                name={ res.data[i].name } phone={ res.data[i].phone } birthdate={ res.data[i].birthday }
+                                                email={ res.data[i].email } ssn={ res.data[i].ssn } address={ res.data[i].address } Navigate={ Navigate } />);
                               setTableContent(temp);
                         })
                         .catch(err => console.log(err));
@@ -174,7 +175,7 @@ const StaffList = () =>
                                     </table>
                               </div>
                               <div className="w-100 d-flex align-items-center justify-content-center mb-3">
-                              <button className='btn btn-primary' onClick={ () => setAddTeacherPopUp(true) }>Add a { staffType === 1 ? 'teacher' : 'supervisor' }</button>
+                                    <button className='btn btn-primary' onClick={ () => setAddTeacherPopUp(true) }>Add a { staffType === 1 ? 'teacher' : 'supervisor' }</button>
                               </div>
                         </>
                   }

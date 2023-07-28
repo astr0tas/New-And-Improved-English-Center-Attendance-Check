@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import styles from './MyClassList.module.css';
-import axios from 'axios';
+import request from '../../../../tools/request';
 import { domain } from '../../../../tools/domain';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
@@ -43,7 +43,7 @@ const Active = (props) =>
                   const localOffset = offset;
                   if (localOffset % props.limit !== 0)
                         setOffset(localOffset - localOffset % props.limit);
-                  axios.post(`http://${ domain }/staff/classList`, { params: { name: searchName, limit: props.limit, userType: props.userType, offset: localOffset, status: 2 } }, { headers: { 'Content-Type': 'application/json' }, withCredentials: true })
+                  request.post(`http://${ domain }/staff/classList`, { params: { name: searchName, limit: props.limit, userType: props.userType, offset: localOffset, status: 2 } }, { headers: { 'Content-Type': 'application/json' }, withCredentials: true })
                         .then(res =>
                         {
                               if (res.status === 200)
@@ -114,7 +114,7 @@ const Deactivated = (props) =>
                   const localOffset = offset;
                   if (localOffset % props.limit !== 0)
                         setOffset(localOffset - localOffset % props.limit);
-                  axios.post(`http://${ domain }/staff/classList`, { params: { name: searchName, limit: props.limit, userType: props.userType, offset: localOffset, status: 1 } }, { headers: { 'Content-Type': 'application/json' }, withCredentials: true })
+                  request.post(`http://${ domain }/staff/classList`, { params: { name: searchName, limit: props.limit, userType: props.userType, offset: localOffset, status: 1 } }, { headers: { 'Content-Type': 'application/json' }, withCredentials: true })
                         .then(res =>
                         {
                               if (res.status === 200)
@@ -185,7 +185,7 @@ const Finished = (props) =>
                   const localOffset = offset;
                   if (localOffset % props.limit !== 0)
                         setOffset(localOffset - localOffset % props.limit);
-                  axios.post(`http://${ domain }/staff/classList`, { params: { name: searchName, limit: props.limit, userType: props.userType, offset: localOffset, status: 0 } }, { headers: { 'Content-Type': 'application/json' }, withCredentials: true })
+                  request.post(`http://${ domain }/staff/classList`, { params: { name: searchName, limit: props.limit, userType: props.userType, offset: localOffset, status: 0 } }, { headers: { 'Content-Type': 'application/json' }, withCredentials: true })
                         .then(res =>
                         {
                               if (res.status === 200)

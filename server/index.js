@@ -6,6 +6,9 @@ import FileStoreFactory from 'session-file-store';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { domain } from "./domain.js";
+import { key, updateKey } from './AESKeyGenerator.js';
+import NodeRSA from "node-rsa";
+import { IDValidation } from './IDValidation.js';
 
 import staffRoutes from "./controller/staff.js";
 import adminRoutes from "./controller/admin.js";
@@ -14,6 +17,9 @@ import generalRoutes from "./controller/general.js";
 import { updatStatusRegularly } from './model/updateStatus.js';
 
 export const FileStore = FileStoreFactory(session);
+
+const validation = new IDValidation();
+let timer;
 
 const app = express();
 app.use(cors({
@@ -53,7 +59,7 @@ app.use((req, res, next) =>
             // Allow undefined or null Content-Type
             if (contentType !== undefined && contentType !== null)
             {
-                  return res.status(400).send({message:'Invalid Content-Type'});
+                  return res.status(400).send({ message: 'Invalid Content-Type' });
             }
       }
       else
@@ -61,7 +67,7 @@ app.use((req, res, next) =>
             // Verify the Content-Type header for other request methods (only POST requests are used in this project)
             if (contentType !== 'application/json' && !contentType.includes('multipart/form-data'))
             {
-                  return res.status(400).send({message:'Invalid Content-Type'});
+                  return res.status(400).send({ message: 'Invalid Content-Type' });
             }
       }
 
@@ -75,6 +81,35 @@ app.use((req, res, next) =>
 
       // If all verification steps pass, proceed to the API endpoint
       next();
+});
+
+app.post('/getKey', (req, res) =>
+{
+      console.log('Key fetched!');
+      if (!req.session.userID)
+            res.status(403).send({ message: 'No key for you!' });
+      else
+            validation.validateID(req.session.userID, (result, err) =>
+            {
+                  if (err)
+                  {
+                        console.log(err);
+                        res.status(500).send({ message: 'Server internal error!' });
+                  }
+                  else
+                  {
+                        if (result)
+                        {
+                              clearTimeout(timer);
+                              const keys = new NodeRSA(req.body.params.key, 'public', { encryptionScheme: 'pkcs1' });
+                              const encryptedKey = keys.encrypt(key, 'base64');
+                              res.status(200).send({ key: encryptedKey });
+                              timer = updateKey();
+                        }
+                        else
+                              res.status(403).send({ message: 'No key for you!' });
+                  }
+            });
 });
 
 app.use('/admin', adminRoutes);
@@ -93,7 +128,7 @@ const updateFunction = (conn) =>
             else
                   console.log('Sessions status updated!');
       });
-      setTimeout(() => updateFunction(conn), 15000);
+      setTimeout(() => updateFunction(conn), 30000);
 }
 
 app.listen(8080, () =>

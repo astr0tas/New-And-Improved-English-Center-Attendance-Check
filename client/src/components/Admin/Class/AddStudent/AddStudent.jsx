@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from 'axios';
+import request from '../../../../tools/request';
 import { domain } from "../../../../tools/domain";
 import { Modal } from 'react-bootstrap';
 import styles from './AddStudent.module.css';
@@ -46,28 +46,29 @@ const AddStudent = (props) =>
       {
             if (props.addPopUp)
             {
-                  axios.post(`http://${ domain }/admin/getStudentNotFromClass`, { params: { className: props.name, studentName: searchStudent } }, { headers: { 'Content-Type': 'application/json' } })
+                  request.post(`http://${ domain }/admin/getStudentNotFromClass`, { params: { className: props.name, studentName: searchStudent } }, { headers: { 'Content-Type': 'application/json' } })
                         .then(res =>
                         {
                               const temp = [];
-                              for (let i = 0; i < res.data.length; i++)
-                                    temp.push(
-                                          <tr key={ i }>
-                                                <td className='text-center align-middle'>{ i + 1 }</td>
-                                                <td className='text-center align-middle'>{ res.data[i].name }</td>
-                                                <td className='text-center align-middle'>{ res.data[i].ssn }</td>
-                                                <td className='text-center align-middle'>{ res.data[i].phone }</td>
-                                                <td className='text-center align-middle'>{ res.data[i].email }</td>
-                                                <td className='text-center align-middle'>
-                                                      <div className="d-flex align-items-center justify-content-center">
-                                                            <input type='checkbox' onChange={ e => configList(e, res.data[i].id) } style={ { width: '1.2rem', height: '1.2rem' } } className={ `${ styles.hover } me-2` }></input>
-                                                            <NavLink to={ `/student-list/detail/${ res.data[i].id }` }>
-                                                                  <button className="ms-2 btn-sm btn btn-primary">Detail</button>
-                                                            </NavLink>
-                                                      </div>
-                                                </td>
-                                          </tr >
-                                    );
+                              if (res.status === 200)
+                                    for (let i = 0; i < res.data.length; i++)
+                                          temp.push(
+                                                <tr key={ i }>
+                                                      <td className='text-center align-middle'>{ i + 1 }</td>
+                                                      <td className='text-center align-middle'>{ res.data[i].name }</td>
+                                                      <td className='text-center align-middle'>{ res.data[i].ssn }</td>
+                                                      <td className='text-center align-middle'>{ res.data[i].phone }</td>
+                                                      <td className='text-center align-middle'>{ res.data[i].email }</td>
+                                                      <td className='text-center align-middle'>
+                                                            <div className="d-flex align-items-center justify-content-center">
+                                                                  <input type='checkbox' onChange={ e => configList(e, res.data[i].id) } style={ { width: '1.2rem', height: '1.2rem' } } className={ `${ styles.hover } me-2` }></input>
+                                                                  <NavLink to={ `/student-list/detail/${ res.data[i].id }` }>
+                                                                        <button className="ms-2 btn-sm btn btn-primary">Detail</button>
+                                                                  </NavLink>
+                                                            </div>
+                                                      </td>
+                                                </tr >
+                                          );
                               setStudentListContent(temp);
                         })
                         .catch(err => console.error(err));
@@ -174,11 +175,14 @@ const AddStudent = (props) =>
                                     setConfirmPopUp(false);
                                     props.setAddPopUp(false);
 
-                                    axios.post(`http://${ domain }/admin/addStudentToClass`, { params: { name: props.name, students: studentAdded } }, { headers: { 'Content-Type': 'application/json' } })
+                                    request.post(`http://${ domain }/admin/addStudentToClass`, { params: { name: props.name, students: studentAdded } }, { headers: { 'Content-Type': 'application/json' } })
                                           .then(res =>
                                           {
-                                                setStudentAdded([]);
-                                                props.setRender(!props.render);
+                                                if (res.status === 200)
+                                                {
+                                                      setStudentAdded([]);
+                                                      props.setRender(!props.render);
+                                                }
                                           })
                                           .catch(err =>
                                           {

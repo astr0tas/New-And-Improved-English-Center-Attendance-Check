@@ -71,7 +71,7 @@ export class Student
                   if (err)
                         callback(null, err);
                   else
-                        callback(res.length ? true : false, null);
+                        callback(res, null);
             })
       }
 
@@ -82,7 +82,7 @@ export class Student
                   if (err)
                         callback(null, err);
                   else
-                        callback(res.length ? true : false, null);
+                        callback(res, null);
             })
       }
 
@@ -93,7 +93,7 @@ export class Student
                   if (err)
                         callback(null, err);
                   else
-                        callback(res.length ? true : false, null);
+                        callback(res, null);
             })
       }
 

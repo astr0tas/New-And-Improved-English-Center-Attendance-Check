@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState, useRef } from 'react';
 import styles from './StudentDetail.module.css';
-import axios from 'axios';
+import request from '../../../../tools/request';
 import { domain } from '../../../../tools/domain';
 import { NavLink, useParams } from 'react-router-dom';
 import { DMY } from '../../../../tools/dateFormat';
@@ -42,13 +42,14 @@ const StudentClass = (props) =>
 {
       useEffect(() =>
       {
-            axios.post(`http://${ domain }/admin/getStudentClass`, { params: { id: props.id, className: props.searchClass } }, { headers: { 'Content-Type': 'application/json' } })
+            request.post(`http://${ domain }/admin/getStudentClass`, { params: { id: props.id, className: props.searchClass } }, { headers: { 'Content-Type': 'application/json' } })
                   .then(res =>
                   {
                         const temp = [];
-                        for (let i = 0; i < res.data.length; i++)
-                              temp.push(<Class key={ i } i={ i + 1 } name={ res.data[i].name }
-                                    start={ res.data[i].start_date } end={ res.data[i].end_date } status={ res.data[i].Status } />);
+                        if (res.status === 200)
+                              for (let i = 0; i < res.data.length; i++)
+                                    temp.push(<Class key={ i } i={ i + 1 } name={ res.data[i].name }
+                                          start={ res.data[i].start_date } end={ res.data[i].end_date } status={ res.data[i].Status } />);
                         props.setClasses(temp);
                   })
                   .catch(err => console.log(err));
@@ -86,7 +87,7 @@ const StudentDetail = () =>
 
       useEffect(() =>
       {
-            axios.post(`http://${ domain }/admin/studentInfo`, { params: { id: id } }, { headers: { 'Content-Type': 'application/json' } })
+            request.post(`http://${ domain }/admin/studentInfo`, { params: { id: id } }, { headers: { 'Content-Type': 'application/json' } })
                   .then(res =>
                   {
                         document.title = `Student ${ res.data.name }`;

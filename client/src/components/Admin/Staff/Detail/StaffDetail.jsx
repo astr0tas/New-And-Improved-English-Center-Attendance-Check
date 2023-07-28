@@ -1,5 +1,5 @@
 import styles from './StaffDetail.module.css';
-import axios from 'axios';
+import request from '../../../../tools/request';
 import { domain } from '../../../../tools/domain';
 import { useParams, NavLink } from 'react-router-dom';
 import { DMY } from '../../../../tools/dateFormat';
@@ -46,26 +46,28 @@ const ClassList = (props) =>
       {
             if (props.type === 1)
             {
-                  axios.post(`http://${ domain }/admin/getTeacherClass`, { params: { id: props.id, className: props.searchClass } }, { headers: { 'Content-Type': 'application/json' } })
+                  request.post(`http://${ domain }/admin/getTeacherClass`, { params: { id: props.id, className: props.searchClass } }, { headers: { 'Content-Type': 'application/json' } })
                         .then(res =>
                         {
                               const temp = [];
-                              for (let i = 0; i < res.data.length; i++)
-                                    temp.push(<Class key={ i } i={ i + 1 } name={ res.data[i].name }
-                                          start={ res.data[i].start_date } end={ res.data[i].end_date } status={ res.data[i].status } />);
+                              if (res.status === 200)
+                                    for (let i = 0; i < res.data.length; i++)
+                                          temp.push(<Class key={ i } i={ i + 1 } name={ res.data[i].name }
+                                                start={ res.data[i].start_date } end={ res.data[i].end_date } status={ res.data[i].status } />);
                               props.setClasses(temp);
                         })
                         .catch(err => console.log(err));
             }
             else if (props.type === 2)
             {
-                  axios.post(`http://${ domain }/admin/getSupervisorClass`, { params: { id: props.id, className: props.searchClass } }, { headers: { 'Content-Type': 'application/json' } })
+                  request.post(`http://${ domain }/admin/getSupervisorClass`, { params: { id: props.id, className: props.searchClass } }, { headers: { 'Content-Type': 'application/json' } })
                         .then(res =>
                         {
                               const temp = [];
-                              for (let i = 0; i < res.data.length; i++)
-                                    temp.push(<Class key={ i } i={ i + 1 } name={ res.data[i].name }
-                                          start={ res.data[i].start_date } end={ res.data[i].end_date } status={ res.data[i].status } />);
+                              if (res.status === 200)
+                                    for (let i = 0; i < res.data.length; i++)
+                                          temp.push(<Class key={ i } i={ i + 1 } name={ res.data[i].name }
+                                                start={ res.data[i].start_date } end={ res.data[i].end_date } status={ res.data[i].status } />);
                               props.setClasses(temp);
                         })
                         .catch(err => console.log(err));
@@ -103,20 +105,22 @@ const StaffDetail = () =>
 
       useEffect(() =>
       {
-            axios.post(`http://${ domain }/admin/staffInfo`, { params: { id: id } }, { headers: { 'Content-Type': 'application/json' } })
+            request.post(`http://${ domain }/admin/staffInfo`, { params: { id: id } }, { headers: { 'Content-Type': 'application/json' } })
                   .then(res =>
                   {
-                        document.title = `${ res.data.type === 1 ? 'Teacher' : 'Supervisor' } ${ res.data.name }`;
-
-                        setName(res.data.name);
-                        setSSN(res.data.ssn);
-                        setPhone(res.data.phone);
-                        setEmail(res.data.email);
-                        setAddress(res.data.address);
-                        setBirthday(res.data.birthday);
-                        setBirthplace(res.data.birthplace);
-                        setImage(res.data.image === null ? require('../../../../images/profile.png') : `http://${ domain }/image/employee/${ res.data.image }`);
-                        setType(res.data.type);
+                        if (res.status === 200)
+                        {
+                              document.title = `${ res.data.type === 1 ? 'Teacher' : 'Supervisor' } ${ res.data.name }`;
+                              setName(res.data.name);
+                              setSSN(res.data.ssn);
+                              setPhone(res.data.phone);
+                              setEmail(res.data.email);
+                              setAddress(res.data.address);
+                              setBirthday(res.data.birthday);
+                              setBirthplace(res.data.birthplace);
+                              setImage(res.data.image === null ? require('../../../../images/profile.png') : `http://${ domain }/image/employee/${ res.data.image }`);
+                              setType(res.data.type);
+                        }
                   })
                   .catch(err => console.log(err));
       }, [id, render]);

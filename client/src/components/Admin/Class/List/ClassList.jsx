@@ -7,7 +7,7 @@ import { useNavigate, NavLink } from 'react-router-dom';
 import { domain } from '../../../../tools/domain';
 import { context } from '../../../../context';
 import '../../../../css/scroll.css';
-import axios from 'axios';
+import request from '../../../../tools/request';
 import ClassCreate from '../Create/ClassCreate';
 
 const Class = (props) =>
@@ -78,18 +78,19 @@ const ClassList = () =>
 
       useEffect(() =>
       {
-            axios.post(`http://${ domain }/admin/classList`, { params: { name: name, status: classState } },
+            request.post(`http://${ domain }/admin/classList`, { params: { name: name, status: classState } },
                   {
                         headers: { 'Content-Type': 'application/json' }
                   })
                   .then(res =>
                   {
                         const temp = [];
-                        for (let i = 0; i < res.data.length; i++)
-                              temp.push(<Class key={ i } i={ i + 1 } Navigate={ Navigate } setListType={ setListType }
-                                    initialStudents={ res.data[i][0].maxStudent } initialSessions={ res.data[i][0].initialSession }
-                                    name={ res.data[i][0].name } start={ res.data[i][0].startDate } end={ res.data[i][0].endDate }
-                                    status={ res.data[i][0].classStatus } currentStudents={ res.data[i][0].currentStudents } currentSessions={ res.data[i][0].currentSessions } />);
+                        if (res.status === 200)
+                              for (let i = 0; i < res.data.length; i++)
+                                    temp.push(<Class key={ i } i={ i + 1 } Navigate={ Navigate } setListType={ setListType }
+                                          initialStudents={ res.data[i][0].maxStudent } initialSessions={ res.data[i][0].initialSession }
+                                          name={ res.data[i][0].name } start={ res.data[i][0].startDate } end={ res.data[i][0].endDate }
+                                          status={ res.data[i][0].classStatus } currentStudents={ res.data[i][0].currentStudents } currentSessions={ res.data[i][0].currentSessions } />);
                         setTableContent(temp);
                   })
                   .catch(err => console.log(err));

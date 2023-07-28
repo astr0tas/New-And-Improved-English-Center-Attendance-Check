@@ -7,6 +7,25 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import multer from "multer";
 import fs from 'fs';
+import CryptoJS from 'crypto-js';
+import { key } from '../AESKeyGenerator.js';
+
+function encryptWithAES(data)
+{
+      if (data === null || data === undefined || data === '' || data === 'null' || data === 'undefined') return null;
+      const string = JSON.stringify(data);
+      const result = CryptoJS.AES.encrypt(JSON.stringify(string), key).toString();
+      return result;
+}
+
+function decryptWithAES(data)
+{
+      if (data === null || data === undefined || data === '' || data === 'null' || data === 'undefined') return null;
+      const bytes = CryptoJS.AES.decrypt(data, key);
+      const decryptedData = bytes.toString(CryptoJS.enc.Utf8);
+      if (decryptedData === null || decryptedData === undefined || decryptedData === '' || decryptedData === 'null' || decryptedData === 'undefined') return null;
+      return JSON.parse(decryptedData);
+}
 
 const generalRoutes = express.Router();
 
@@ -165,7 +184,12 @@ generalRoutes.get('/profile', (req, res) =>
                   res.status(500).send({ message: 'Server internal error!' });
             }
             else
-                  res.status(200).send(result[0]);
+            {
+                  if (!result.length)
+                        res.status(200).send(encryptWithAES({ message: 'No info found!' }));
+                  else
+                        res.status(200).send(encryptWithAES(result[0]));
+            }
       });
 });
 
@@ -183,7 +207,16 @@ generalRoutes.post('/updateProfile', multer().fields([
 ]), (req, res) =>
 {
       const id = req.session.userID;
-      const { ssn, name, address, birthday, birthplace, email, phone, password, userType } = req.body;
+
+      const name = decryptWithAES(req.body.name);
+      const address = decryptWithAES(req.body.address);
+      const birthday = decryptWithAES(req.body.birthday);
+      const birthplace = decryptWithAES(req.body.birthplace);
+      const email = decryptWithAES(req.body.email);
+      const phone = decryptWithAES(req.body.phone);
+      const password = decryptWithAES(req.body.password);
+      const userType = decryptWithAES(req.body.userType);
+      const ssn = decryptWithAES(req.body.ssn);
 
       let imagePath = null;
       if (req.files['image'] !== null && req.files['image'] !== undefined)
@@ -220,13 +253,14 @@ generalRoutes.post('/updateProfile', multer().fields([
                   res.status(500).send({ message: 'Server internal error!' });
             }
             else
-                  res.status(200).send({ message: 'Personal Info updated successfully!' });
+                  res.status(200).send(encryptWithAES({ message: 'Personal Info updated successfully!' }));
       });
 });
 
 generalRoutes.post('/isSSNDuplicate', (req, res) =>
 {
-      const ssn = req.body.params.ssn;
+      const data = decryptWithAES(req.body.data);
+      const ssn = data.params.ssn;
       profileModel.isSSNDuplicate(ssn, (result, err) =>
       {
             if (err)
@@ -235,13 +269,19 @@ generalRoutes.post('/isSSNDuplicate', (req, res) =>
                   res.status(500).send({ message: 'Server internal error!' });
             }
             else
-                  res.status(200).send(result);
+            {
+                  if (!result.length)
+                        res.status(204).send(encryptWithAES({message:'No duplication!'}));
+                  else
+                        res.status(200).send(encryptWithAES({ message: 'Duplication detected!' }));
+            }
       });
 });
 
 generalRoutes.post('/isPhoneDuplicate', (req, res) =>
 {
-      const phone = req.body.params.phone;
+      const data = decryptWithAES(req.body.data);
+      const phone = data.params.phone;
       profileModel.isPhoneDuplicate(phone, (result, err) =>
       {
             if (err)
@@ -250,13 +290,19 @@ generalRoutes.post('/isPhoneDuplicate', (req, res) =>
                   res.status(500).send({ message: 'Server internal error!' });
             }
             else
-                  res.status(200).send(result);
+            {
+                  if (!result.length)
+                        res.status(204).send(encryptWithAES({ message: 'No duplication!' }));
+                  else
+                        res.status(200).send(encryptWithAES({ message: 'Duplication detected!' }));
+            }
       });
 });
 
 generalRoutes.post('/isEmailDuplicate', (req, res) =>
 {
-      const email = req.body.params.email;
+      const data = decryptWithAES(req.body.data);
+      const email = data.params.email;
       profileModel.isEmailDuplicate(email, (result, err) =>
       {
             if (err)
@@ -265,14 +311,20 @@ generalRoutes.post('/isEmailDuplicate', (req, res) =>
                   res.status(500).send({ message: 'Server internal error!' });
             }
             else
-                  res.status(200).send(result);
+            {
+                  if (!result.length)
+                        res.status(204).send(encryptWithAES({ message: 'No duplication!' }));
+                  else
+                        res.status(200).send(encryptWithAES({ message: 'Duplication detected!' }));
+            }
       });
 });
 
 const generalClassModel = new Class();
 generalRoutes.post('/classInfo', (req, res) =>
 {
-      const name = req.body.params.name;
+      const data = decryptWithAES(req.body.data);
+      const name = data.params.name;
       generalClassModel.getInfo(name, (result, err) =>
       {
             if (err)
@@ -281,14 +333,20 @@ generalRoutes.post('/classInfo', (req, res) =>
                   res.status(500).send({ message: 'Server internal error!' });
             }
             else
-                  res.status(200).send(result);
+            {
+                  if (!result.length)
+                        res.status(204).send(encryptWithAES({ message: 'No info found!' }));
+                  else
+                        res.status(200).send(encryptWithAES(result));
+            }
       })
 });
 
 generalRoutes.post('/classStudent', (req, res) =>
 {
-      const name = req.body.params.name;
-      const studentName = req.body.params.studentName;
+      const data = decryptWithAES(req.body.data);
+      const name = data.params.name;
+      const studentName = data.params.studentName;
       generalClassModel.classStudent(name, studentName, (result, err) =>
       {
             if (err)
@@ -297,13 +355,19 @@ generalRoutes.post('/classStudent', (req, res) =>
                   res.status(500).send({ message: 'Server internal error!' });
             }
             else
-                  res.status(200).send(result);
+            {
+                  if (!result.length)
+                        res.status(204).send(encryptWithAES({ message: 'No student found!' }));
+                  else
+                        res.status(200).send(encryptWithAES(result));
+            }
       })
 });
 
 generalRoutes.post('/classSession', (req, res) =>
 {
-      const name = req.body.params.name;
+      const data = decryptWithAES(req.body.data);
+      const name = data.params.name;
       const id = req.session.userID ? req.session.userID : null;
       const type = req.session.userType ? req.session.userType : null;
       generalClassModel.classSession(name, id, type, (result, err) =>
@@ -314,14 +378,20 @@ generalRoutes.post('/classSession', (req, res) =>
                   res.status(500).send({ message: 'Server internal error!' });
             }
             else
-                  res.status(200).send(result);
+            {
+                  if (!result.length)
+                        res.status(204).send(encryptWithAES({ message: 'No info found!' }));
+                  else
+                        res.status(200).send(encryptWithAES(result));
+            }
       })
 });
 
 generalRoutes.post('/classSessionDetail', (req, res) =>
 {
-      const name = req.body.params.name;
-      const number = req.body.params.number;
+      const data = decryptWithAES(req.body.data);
+      const name = data.params.name;
+      const number = data.params.number;
       generalClassModel.classSessionDetail(name, number, (result, err) =>
       {
             if (err)
@@ -330,14 +400,20 @@ generalRoutes.post('/classSessionDetail', (req, res) =>
                   res.status(500).send({ message: 'Server internal error!' });
             }
             else
-                  res.status(200).send(result);
+            {
+                  if (!result.length)
+                        res.status(204).send(encryptWithAES({ message: 'No info found!' }));
+                  else
+                        res.status(200).send(encryptWithAES(result));
+            }
       })
 });
 
 generalRoutes.post('/getSessionStudent', (req, res) =>
 {
-      const name = req.body.params.name;
-      const studentName = req.body.params.studentName;
+      const data = decryptWithAES(req.body.data);
+      const name = data.params.name;
+      const studentName = data.params.studentName;
       generalClassModel.getSessionStudent(name, studentName, (result, err) =>
       {
             if (err)
@@ -346,15 +422,21 @@ generalRoutes.post('/getSessionStudent', (req, res) =>
                   res.status(500).send({ message: 'Server internal error!' });
             }
             else
-                  res.status(200).send(result);
+            {
+                  if (!result.length)
+                        res.status(204).send(encryptWithAES({ message: 'No student found!' }));
+                  else
+                        res.status(200).send(encryptWithAES(result));
+            }
       })
 });
 
 generalRoutes.post('/getStudentSessionAttendace', (req, res) =>
 {
-      const className = req.body.params.className;
-      const sessionNumber = req.body.params.sessionNumber;
-      const id = req.body.params.id;
+      const data = decryptWithAES(req.body.data);
+      const className = data.params.className;
+      const sessionNumber = data.params.sessionNumber;
+      const id = data.params.id;
       generalClassModel.getStudentSessionAttendace(className, sessionNumber, id, (result, err) =>
       {
             if (err)
@@ -363,18 +445,24 @@ generalRoutes.post('/getStudentSessionAttendace', (req, res) =>
                   res.status(500).send({ message: 'Server internal error!' });
             }
             else
-                  res.status(200).send(result);
+            {
+                  if (!result.length)
+                        res.status(204).send(encryptWithAES({ message: 'No info found!' }));
+                  else
+                        res.status(200).send(encryptWithAES(result));
+            }
       })
 });
 
 generalRoutes.post('/checkAttendance', (req, res) =>
 {
-      const name = req.body.params.name;
-      const number = req.body.params.number;
-      const students = req.body.params.students;
-      const teacher = req.body.params.teacher;
-      const userType = req.body.params.userType ? req.body.params.userType : 1;
-      const supervisor = req.body.params.supervisor ? req.body.params.supervisor : null;
+      const data = decryptWithAES(req.body.data);
+      const name = data.params.name;
+      const number = data.params.number;
+      const students = data.params.students;
+      const teacher = data.params.teacher;
+      const userType = data.params.userType ? data.params.userType : 1;
+      const supervisor = data.params.supervisor ? data.params.supervisor : null;
       generalClassModel.checkAttendance(name, number, students, teacher, userType, supervisor, (result, err) =>
       {
             if (err)
@@ -383,7 +471,7 @@ generalRoutes.post('/checkAttendance', (req, res) =>
                   res.status(500).send({ message: 'Server internal error!' });
             }
             else
-                  res.status(200).send(result);
+                  res.status(200).send(encryptWithAES({ message: 'Attendance checked successful!' }));
       })
 });
 
@@ -392,7 +480,7 @@ generalRoutes.get('/getTodaySession', (req, res) =>
 {
       const userID = req.session.userID;
       const userType = req.session.userType;
-      homeModel.getTodaySession(userID,userType, (result, err) =>
+      homeModel.getTodaySession(userID, userType, (result, err) =>
       {
             if (err)
             {
@@ -400,7 +488,12 @@ generalRoutes.get('/getTodaySession', (req, res) =>
                   res.status(500).send({ message: 'Server internal error!' });
             }
             else
-                  res.status(200).send(result);
+            {
+                  if (!res.length)
+                        res.status(204).send(encryptWithAES({ message: 'No session found!' }));
+                  else
+                        res.status(200).send(encryptWithAES(result));
+            }
       })
 });
 
@@ -416,7 +509,12 @@ generalRoutes.get('/getMissedSession', (req, res) =>
                   res.status(500).send({ message: 'Server internal error!' });
             }
             else
-                  res.status(200).send(result);
+            {
+                  if (!res.length)
+                        res.status(204).send(encryptWithAES({ message: 'No session found!' }));
+                  else
+                        res.status(200).send(encryptWithAES(result));
+            }
       })
 });
 

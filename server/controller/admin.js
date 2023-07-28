@@ -6,6 +6,25 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import multer from "multer";
 import fs from 'fs';
+import CryptoJS from 'crypto-js';
+import { key } from '../AESKeyGenerator.js';
+
+function encryptWithAES(data)
+{
+      if (data === null || data === undefined || data === '' || data === 'null' || data === 'undefined') return null;
+      const string = JSON.stringify(data);
+      const result = CryptoJS.AES.encrypt(JSON.stringify(string), key).toString();
+      return result;
+}
+
+function decryptWithAES(data)
+{
+      if (data === null || data === undefined || data === '' || data === 'null' || data === 'undefined') return null;
+      const bytes = CryptoJS.AES.decrypt(data, key);
+      const decryptedData = bytes.toString(CryptoJS.enc.Utf8);
+      if (decryptedData === null || decryptedData === undefined || decryptedData === '' || decryptedData === 'null' || decryptedData === 'undefined') return null;
+      return JSON.parse(decryptedData);
+}
 
 const adminRoutes = express.Router();
 
@@ -13,8 +32,9 @@ const classModel = new Class();
 
 adminRoutes.post('/classList', (req, res) =>
 {
-      const name = req.body.params.name;
-      const status = req.body.params.status;
+      const data = decryptWithAES(req.body.data);
+      const name = data.params.name;
+      const status = data.params.status;
       classModel.getList(name, status, (result, err) =>
       {
             if (err)
@@ -25,19 +45,20 @@ adminRoutes.post('/classList', (req, res) =>
             else
             {
                   if (!result.length)
-                        res.status(204).send({ message: 'No class found in the database!' });
+                        res.status(204).send(encryptWithAES({ message: 'No class found!' }));
                   else
-                        res.status(200).send(result);
+                        res.status(200).send(encryptWithAES(result));
             }
       })
 });
 
 adminRoutes.post('/classTeacher', (req, res) =>
 {
-      const name = req.body.params.name;
-      const teacherName = req.body.params.teacherName;
-      const date = req.body.params.date;
-      const timetable = req.body.params.timetable;
+      const data = decryptWithAES(req.body.data);
+      const name = data.params.name;
+      const teacherName = data.params.teacherName;
+      const date = data.params.date;
+      const timetable = data.params.timetable;
       classModel.classTeacher(name,
             (teacherName === undefined || teacherName === null) ? '' : teacherName,
             (date === undefined || date === null) ? null : date,
@@ -50,14 +71,20 @@ adminRoutes.post('/classTeacher', (req, res) =>
                         res.status(500).send({ message: 'Server internal error!' });
                   }
                   else
-                        res.status(200).send(result);
+                  {
+                        if (!result.length)
+                              res.status(204).send(encryptWithAES({ message: 'No teacher found!' }));
+                        else
+                              res.status(200).send(encryptWithAES(result));
+                  }
             })
 });
 
 adminRoutes.post('/toggleStatus', (req, res) =>
 {
-      const name = req.body.params.name;
-      const status = req.body.params.status;
+      const data = decryptWithAES(req.body.data);
+      const name = data.params.name;
+      const status = data.params.status;
       classModel.toggleStatus(name, status, (result, err) =>
       {
             if (err)
@@ -66,14 +93,15 @@ adminRoutes.post('/toggleStatus', (req, res) =>
                   res.status(500).send({ message: 'Server internal error!' });
             }
             else
-                  res.status(200).send({ message: 'Class status update successfully!' });
+                  res.status(200).send(encryptWithAES({ message: 'Class status update successfully!' }));
       })
 });
 
 adminRoutes.post('/removeStudentFromClass', (req, res) =>
 {
-      const name = req.body.params.name;
-      const id = req.body.params.id;
+      const data = decryptWithAES(req.body.data);
+      const name = data.params.name;
+      const id = data.params.id;
       classModel.removeStudentFromClass(name, id, (result, err) =>
       {
             if (err)
@@ -82,14 +110,15 @@ adminRoutes.post('/removeStudentFromClass', (req, res) =>
                   res.status(500).send({ message: 'Server internal error!' });
             }
             else
-                  res.status(200).send({ message: 'Student removed successfully!' });
+                  res.status(200).send(encryptWithAES({ message: 'Student removed successfully!' }));
       })
 });
 
 adminRoutes.post('/getStudentNotFromClass', (req, res) =>
 {
-      const className = req.body.params.className;
-      const studentName = req.body.params.studentName;
+      const data = decryptWithAES(req.body.data);
+      const className = data.params.className;
+      const studentName = data.params.studentName;
       classModel.getStudentNotFromClass(className, studentName, (result, err) =>
       {
             if (err)
@@ -98,14 +127,20 @@ adminRoutes.post('/getStudentNotFromClass', (req, res) =>
                   res.status(500).send({ message: 'Server internal error!' });
             }
             else
-                  res.status(200).send(result);
+            {
+                  if (!result.length)
+                        res.status(204).send(encryptWithAES({ message: 'No student found!' }));
+                  else
+                        res.status(200).send(encryptWithAES(result));
+            }
       })
 });
 
 adminRoutes.post('/addStudentToClass', (req, res) =>
 {
-      const name = req.body.params.name;
-      const students = req.body.params.students;
+      const data = decryptWithAES(req.body.data);
+      const name = data.params.name;
+      const students = data.params.students;
       classModel.addStudentToClass(name, students, (result, err) =>
       {
             if (err)
@@ -114,13 +149,14 @@ adminRoutes.post('/addStudentToClass', (req, res) =>
                   res.status(500).send({ message: 'Server internal error!' });
             }
             else
-                  res.status(200).send({ message: 'Student(s) added successfully!' });
+                  res.status(200).send(encryptWithAES({ message: 'Student(s) added successfully!' }));
       })
 });
 
 adminRoutes.post('/getSuitableRoom', (req, res) =>
 {
-      const name = req.body.params.name;
+      const data = decryptWithAES(req.body.data);
+      const name = data.params.name;
       classModel.getSuitableRoom(name, (result, err) =>
       {
             if (err)
@@ -129,14 +165,20 @@ adminRoutes.post('/getSuitableRoom', (req, res) =>
                   res.status(500).send({ message: 'Server internal error!' });
             }
             else
-                  res.status(200).send(result);
+            {
+                  if (!result.length)
+                        res.status(204).send(encryptWithAES({ message: 'No class room found!' }));
+                  else
+                        res.status(200).send(encryptWithAES(result));
+            }
       })
 });
 
 adminRoutes.post('/getTimetable', (req, res) =>
 {
-      const room = req.body.params.room;
-      const date = req.body.params.date;
+      const data = decryptWithAES(req.body.data);
+      const room = data.params.room;
+      const date = data.params.date;
       classModel.getTimetable(room, date, (result, err) =>
       {
             if (err)
@@ -145,13 +187,19 @@ adminRoutes.post('/getTimetable', (req, res) =>
                   res.status(500).send({ message: 'Server internal error!' });
             }
             else
-                  res.status(200).send(result);
+            {
+                  if (!result.length)
+                        res.status(204).send(encryptWithAES({ message: 'No timetable found!' }));
+                  else
+                        res.status(200).send(encryptWithAES(result));
+            }
       })
 });
 
 adminRoutes.post('/getClassCanceledMissingSession', (req, res) =>
 {
-      const name = req.body.params.name;
+      const data = decryptWithAES(req.body.data);
+      const name = data.params.name;
       classModel.getClassCanceledMissingSession(name, (result, err) =>
       {
             if (err)
@@ -160,20 +208,26 @@ adminRoutes.post('/getClassCanceledMissingSession', (req, res) =>
                   res.status(500).send({ message: 'Server internal error!' });
             }
             else
-                  res.status(200).send(result);
+            {
+                  if (!result.length)
+                        res.status(204).send(encryptWithAES({ message: 'No session found!' }));
+                  else
+                        res.status(200).send(encryptWithAES(result));
+            }
       })
 });
 
 adminRoutes.post('/addSessionToClass', (req, res) =>
 {
-      const name = req.body.params.name;
-      const room = req.body.params.room;
-      const session = req.body.params.session;
-      const date = req.body.params.date;
-      const timetable = req.body.params.timetable;
-      const makeUpFor = req.body.params.makeUpFor;
-      const teacher = req.body.params.teacher;
-      const supervisor = req.body.params.supervisor;
+      const data = decryptWithAES(req.body.data);
+      const name = data.params.name;
+      const room = data.params.room;
+      const session = data.params.session;
+      const date = data.params.date;
+      const timetable = data.params.timetable;
+      const makeUpFor = data.params.makeUpFor;
+      const teacher = data.params.teacher;
+      const supervisor = data.params.supervisor;
       classModel.addSessionToClass(name, room, session, date, timetable, makeUpFor, supervisor, teacher, (result, err) =>
       {
             if (err)
@@ -182,14 +236,15 @@ adminRoutes.post('/addSessionToClass', (req, res) =>
                   res.status(500).send({ message: 'Server internal error!' });
             }
             else
-                  res.status(200).send({ message: 'Session added successfully!' });
+                  res.status(200).send(encryptWithAES({ message: 'Session added successfully!' }));
       })
 });
 
 adminRoutes.post('/removeTeacherFromClass', (req, res) =>
 {
-      const name = req.body.params.name;
-      const id = req.body.params.id;
+      const data = decryptWithAES(req.body.data);
+      const name = data.params.name;
+      const id = data.params.id;
       classModel.removeTeacherFromClass(name, id, (result, err) =>
       {
             if (err)
@@ -198,14 +253,15 @@ adminRoutes.post('/removeTeacherFromClass', (req, res) =>
                   res.status(500).send({ message: 'Server internal error!' });
             }
             else
-                  res.status(200).send({ message: 'Teacher removed successfully!' });
+                  res.status(200).send(encryptWithAES({ message: 'Teacher removed successfully!' }));
       })
 });
 
 adminRoutes.post('/getTeacherNotInClass', (req, res) =>
 {
-      const name = req.body.params.name;
-      const className = req.body.params.className;
+      const data = decryptWithAES(req.body.data);
+      const name = data.params.name;
+      const className = data.params.className;
       classModel.getTeacherNotInClass(name, className, (result, err) =>
       {
             if (err)
@@ -214,14 +270,20 @@ adminRoutes.post('/getTeacherNotInClass', (req, res) =>
                   res.status(500).send({ message: 'Server internal error!' });
             }
             else
-                  res.status(200).send(result);
+            {
+                  if (!result.length)
+                        res.status(204).send(encryptWithAES({ message: 'No teacher found!' }));
+                  else
+                        res.status(200).send(encryptWithAES(result));
+            }
       })
 });
 
 adminRoutes.post('/addTeacherToClass', (req, res) =>
 {
-      const name = req.body.params.name;
-      const teachers = req.body.params.teachers;
+      const data = decryptWithAES(req.body.data);
+      const name = data.params.name;
+      const teachers = data.params.teachers;
       classModel.addTeacherToClass(name, teachers, (result, err) =>
       {
             if (err)
@@ -230,14 +292,15 @@ adminRoutes.post('/addTeacherToClass', (req, res) =>
                   res.status(500).send({ message: 'Server internal error!' });
             }
             else
-                  res.status(200).send({ message: 'Teacher(s) added successfully!' });
+                  res.status(200).send(encryptWithAES({ message: 'Teacher(s) added successfully!' }));
       })
 });
 
 adminRoutes.post('/cancelSession', (req, res) =>
 {
-      const name = req.body.params.name;
-      const number = req.body.params.number;
+      const data = decryptWithAES(req.body.data);
+      const name = data.params.name;
+      const number = data.params.number;
       classModel.cancelSession(name, number, (result, err) =>
       {
             if (err)
@@ -246,14 +309,15 @@ adminRoutes.post('/cancelSession', (req, res) =>
                   res.status(500).send({ message: 'Server internal error!' });
             }
             else
-                  res.status(200).send({ message: 'Session cancelled successfully!' });
+                  res.status(200).send(encryptWithAES({ message: 'Session cancelled successfully!' }));
       })
 });
 
 adminRoutes.post('/restoreSession', (req, res) =>
 {
-      const name = req.body.params.name;
-      const number = req.body.params.number;
+      const data = decryptWithAES(req.body.data);
+      const name = data.params.name;
+      const number = data.params.number;
       classModel.restoreSession(name, number, (result, err) =>
       {
             if (err)
@@ -262,15 +326,16 @@ adminRoutes.post('/restoreSession', (req, res) =>
                   res.status(500).send({ message: 'Server internal error!' });
             }
             else
-                  res.status(200).send({ message: 'Session restored successfully!' });
+                  res.status(200).send(encryptWithAES({ message: 'Session restored successfully!' }));
       })
 });
 
 adminRoutes.post('/changeTeacher', (req, res) =>
 {
-      const name = req.body.params.name;
-      const number = req.body.params.number;
-      const teacher = req.body.params.teacher;
+      const data = decryptWithAES(req.body.data);
+      const name = data.params.name;
+      const number = data.params.number;
+      const teacher = data.params.teacher;
       classModel.changeTeacher(name, number, teacher, (result, err) =>
       {
             if (err)
@@ -279,15 +344,17 @@ adminRoutes.post('/changeTeacher', (req, res) =>
                   res.status(500).send({ message: 'Server internal error!' });
             }
             else
-                  res.status(200).send({ message: 'Teacher changed successfully!' });
+                  res.status(200).send(encryptWithAES({ message: 'Teacher changed successfully!' }));
       })
 });
 
 adminRoutes.post('/changeSupervisor', (req, res) =>
 {
-      const name = req.body.params.name;
-      const number = req.body.params.number;
-      const supervisor = req.body.params.supervisor;
+
+      const data = decryptWithAES(req.body.data);
+      const name = data.params.name;
+      const number = data.params.number;
+      const supervisor = data.params.supervisor;
       classModel.changeSupervisor(name, number, supervisor, (result, err) =>
       {
             if (err)
@@ -296,15 +363,16 @@ adminRoutes.post('/changeSupervisor', (req, res) =>
                   res.status(500).send({ message: 'Server internal error!' });
             }
             else
-                  res.status(200).send({ message: 'Supervisor changed successfully!' });
+                  res.status(200).send(encryptWithAES({ message: 'Supervisor changed successfully!' }));
       })
 });
 
 adminRoutes.post('/changeClassRoom', (req, res) =>
 {
-      const name = req.body.params.name;
-      const number = req.body.params.number;
-      const room = req.body.params.room;
+      const data = decryptWithAES(req.body.data);
+      const name = data.params.name;
+      const number = data.params.number;
+      const room = data.params.room;
       classModel.changeClassRoom(name, number, room, (result, err) =>
       {
             if (err)
@@ -313,7 +381,7 @@ adminRoutes.post('/changeClassRoom', (req, res) =>
                   res.status(500).send({ message: 'Server internal error!' });
             }
             else
-                  res.status(200).send({ message: 'Session class room changed successfully!' });
+                  res.status(200).send(encryptWithAES({ message: 'Session class room changed successfully!' }));
       })
 });
 
@@ -327,18 +395,19 @@ adminRoutes.get('/getPeriods', (req, res) =>
                   res.status(500).send({ message: 'Server internal error!' });
             }
             else
-                  res.status(200).send(result);
+                  res.status(200).send(encryptWithAES(result));
       })
 });
 
 adminRoutes.post('/getSuitableTeacher', (req, res) =>
 {
-      const teacherName = req.body.params.teacherName;
-      const startDate = req.body.params.start;
-      const endDate = req.body.params.end;
-      const dow = req.body.params.period.dow;
-      const startHour = req.body.params.period.start;
-      const endHour = req.body.params.period.end;
+      const data = decryptWithAES(req.body.data);
+      const teacherName = data.params.teacherName;
+      const startDate = data.params.start;
+      const endDate = data.params.end;
+      const dow = data.params.period.dow;
+      const startHour = data.params.period.start;
+      const endHour = data.params.period.end;
       classModel.getSuitableTeacher(teacherName, startDate, endDate, dow, startHour, endHour, (result, err) =>
       {
             if (err)
@@ -347,13 +416,19 @@ adminRoutes.post('/getSuitableTeacher', (req, res) =>
                   res.status(500).send({ message: 'Server internal error!' });
             }
             else
-                  res.status(200).send(result);
+            {
+                  if (!result.length)
+                        res.status(204).send(encryptWithAES({ message: 'No teacher found!' }));
+                  else
+                        res.status(200).send(encryptWithAES(result));
+            }
       })
 });
 
 adminRoutes.post('/getDuplicateName', (req, res) =>
 {
-      const name = req.body.params.name;
+      const data = decryptWithAES(req.body.data);
+      const name = data.params.name;
       classModel.getDuplicateName(name, (result, err) =>
       {
             if (err)
@@ -362,16 +437,22 @@ adminRoutes.post('/getDuplicateName', (req, res) =>
                   res.status(500).send({ message: 'Server internal error!' });
             }
             else
-                  res.status(200).send(result);
+            {
+                  if (!result.length)
+                        res.status(204).send(encryptWithAES({ message: 'No duplication!' }));
+                  else
+                        res.status(200).send(encryptWithAES({ message: 'Duplication detected!' }));
+            }
       })
 });
 
 adminRoutes.post('/getSuitableStudent', (req, res) =>
 {
-      const name = req.body.params.name;
-      const startDate = req.body.params.start;
-      const endDate = req.body.params.end;
-      const period = req.body.params.period;
+      const data = decryptWithAES(req.body.data);
+      const name = data.params.name;
+      const startDate = data.params.start;
+      const endDate = data.params.end;
+      const period = data.params.period;
       classModel.getSuitableStudent(name, startDate, endDate, period, (result, err) =>
       {
             if (err)
@@ -380,18 +461,24 @@ adminRoutes.post('/getSuitableStudent', (req, res) =>
                   res.status(500).send({ message: 'Server internal error!' });
             }
             else
-                  res.status(200).send(result);
+            {
+                  if (!result.length)
+                        res.status(204).send(encryptWithAES({ message: 'No student found!' }));
+                  else
+                        res.status(200).send(encryptWithAES(result));
+            }
       })
 });
 
 adminRoutes.post('/getSuitableRoomForNewClass', (req, res) =>
 {
-      const seats = req.body.params.seats;
-      const startDate = req.body.params.start;
-      const endDate = req.body.params.end;
-      const dow = req.body.params.period.dow;
-      const startHour = req.body.params.period.start;
-      const endHour = req.body.params.period.end;
+      const data = decryptWithAES(req.body.data);
+      const seats = data.params.seats;
+      const startDate = data.params.start;
+      const endDate = data.params.end;
+      const dow = data.params.period.dow;
+      const startHour = data.params.period.start;
+      const endHour = data.params.period.end;
       classModel.getSuitableRoomForNewClass(seats, startDate, endDate, dow, startHour, endHour, (result, err) =>
       {
             if (err)
@@ -400,20 +487,26 @@ adminRoutes.post('/getSuitableRoomForNewClass', (req, res) =>
                   res.status(500).send({ message: 'Server internal error!' });
             }
             else
-                  res.status(200).send(result);
+            {
+                  if (!result.length)
+                        res.status(204).send(encryptWithAES({ message: 'No room found!' }));
+                  else
+                        res.status(200).send(encryptWithAES(result));
+            }
       })
 });
 
 adminRoutes.post('/createClass', (req, res) =>
 {
-      const name = req.body.params.name;
-      const start = req.body.params.start;
-      const end = req.body.params.end;
-      const supervisor = req.body.params.supervisor;
-      const period = req.body.params.period;
-      const sessions = req.body.params.sessionList;
-      const students = req.body.params.students;
-      const length = req.body.params.courseLength;
+      const data = decryptWithAES(req.body.data);
+      const name = data.params.name;
+      const start = data.params.start;
+      const end = data.params.end;
+      const supervisor = data.params.supervisor;
+      const period = data.params.period;
+      const sessions = data.params.sessionList;
+      const students = data.params.students;
+      const length = data.params.courseLength;
       classModel.createClass(name, start, end, supervisor, period, sessions, students, length, (result, err) =>
       {
             if (err)
@@ -422,7 +515,7 @@ adminRoutes.post('/createClass', (req, res) =>
                   res.status(500).send({ message: 'Server internal error!' });
             }
             else
-                  res.status(200).send(result);
+                  res.status(200).send(encryptWithAES({ message: 'Class created successfully!' }));
       })
 });
 
@@ -430,8 +523,9 @@ const staffModel = new Staff();
 
 adminRoutes.post('/staffList', (req, res) =>
 {
-      const name = req.body.params.name;
-      const type = req.body.params.type;
+      const data = decryptWithAES(req.body.data);
+      const name = data.params.name;
+      const type = data.params.type;
       staffModel.getList(name, type, (result, err) =>
       {
             if (err)
@@ -442,16 +536,17 @@ adminRoutes.post('/staffList', (req, res) =>
             else
             {
                   if (!result.length)
-                        res.status(204).send({ message: 'No staff found in the database!' });
+                        res.status(204).send(encryptWithAES({ message: 'No staff found!' }));
                   else
-                        res.status(200).send(result);
+                        res.status(200).send(encryptWithAES(result));
             }
       })
 });
 
 adminRoutes.post('/staffInfo', (req, res) =>
 {
-      const id = req.body.params.id;
+      const data = decryptWithAES(req.body.data);
+      const id = data.params.id;
       staffModel.getInfo(id, (result, err) =>
       {
             if (err)
@@ -460,14 +555,20 @@ adminRoutes.post('/staffInfo', (req, res) =>
                   res.status(500).send({ message: 'Server internal error!' });
             }
             else
-                  res.status(200).send(result[0]);
+            {
+                  if (!result.length)
+                        res.status(204).send(encryptWithAES({ message: 'No info found!' }));
+                  else
+                        res.status(200).send(encryptWithAES(result[0]));
+            }
       })
 });
 
 adminRoutes.post('/getTeacherClass', (req, res) =>
 {
-      const id = req.body.params.id;
-      const className = req.body.params.className;
+      const data = decryptWithAES(req.body.data);
+      const id = data.params.id;
+      const className = data.params.className;
       staffModel.getTeacherClass(id, className, (result, err) =>
       {
             if (err)
@@ -476,14 +577,20 @@ adminRoutes.post('/getTeacherClass', (req, res) =>
                   res.status(500).send({ message: 'Server internal error!' });
             }
             else
-                  res.status(200).send(result);
+            {
+                  if (!result.length)
+                        res.status(204).send(encryptWithAES({ message: 'No teacher found!' }));
+                  else
+                        res.status(200).send(encryptWithAES(result));
+            }
       })
 });
 
 adminRoutes.post('/getSupervisorClass', (req, res) =>
 {
-      const id = req.body.params.id;
-      const className = req.body.params.className;
+      const data = decryptWithAES(req.body.data);
+      const id = data.params.id;
+      const className = data.params.className;
       staffModel.getSupervisorClass(id, className, (result, err) =>
       {
             if (err)
@@ -492,13 +599,19 @@ adminRoutes.post('/getSupervisorClass', (req, res) =>
                   res.status(500).send({ message: 'Server internal error!' });
             }
             else
-                  res.status(200).send(result);
+            {
+                  if (!result.length)
+                        res.status(204).send(encryptWithAES({ message: 'No supervisor found!' }));
+                  else
+                        res.status(200).send(encryptWithAES(result));
+            }
       })
 });
 
 adminRoutes.post('/isStaffDuplicatedSSN', (req, res) =>
 {
-      const ssn = req.body.params.ssn;
+      const data = decryptWithAES(req.body.data);
+      const ssn = data.params.ssn;
       staffModel.isDuplicatedSSN(ssn, (result, err) =>
       {
             if (err)
@@ -507,13 +620,19 @@ adminRoutes.post('/isStaffDuplicatedSSN', (req, res) =>
                   res.status(500).send({ message: 'Server internal error!' });
             }
             else
-                  res.status(200).send(result);
+            {
+                  if (!result.length)
+                        res.status(204).send(encryptWithAES({ message: 'No duplication!' }));
+                  else
+                        res.status(200).send(encryptWithAES({ message: 'Duplication detected!' }));
+            }
       })
 });
 
 adminRoutes.post('/isStaffDuplicatedPhone', (req, res) =>
 {
-      const phone = req.body.params.phone;
+      const data = decryptWithAES(req.body.data);
+      const phone = data.params.phone;
       staffModel.isDuplicatedPhone(phone, (result, err) =>
       {
             if (err)
@@ -522,13 +641,19 @@ adminRoutes.post('/isStaffDuplicatedPhone', (req, res) =>
                   res.status(500).send({ message: 'Server internal error!' });
             }
             else
-                  res.status(200).send(result);
+            {
+                  if (!result.length)
+                        res.status(204).send(encryptWithAES({ message: 'No duplication!' }));
+                  else
+                        res.status(200).send(encryptWithAES({ message: 'Duplication detected!' }));
+            }
       })
 });
 
 adminRoutes.post('/isStaffDuplicatedEmail', (req, res) =>
 {
-      const email = req.body.params.email;
+      const data = decryptWithAES(req.body.data);
+      const email = data.params.email;
       staffModel.isDuplicatedEmail(email, (result, err) =>
       {
             if (err)
@@ -537,13 +662,19 @@ adminRoutes.post('/isStaffDuplicatedEmail', (req, res) =>
                   res.status(500).send({ message: 'Server internal error!' });
             }
             else
-                  res.status(200).send(result);
+            {
+                  if (!result.length)
+                        res.status(204).send(encryptWithAES({ message: 'No duplication!' }));
+                  else
+                        res.status(200).send(encryptWithAES({ message: 'Duplication detected!' }));
+            }
       })
 });
 
 adminRoutes.post('/isStaffDuplicatedUsername', (req, res) =>
 {
-      const username = req.body.params.username;
+      const data = decryptWithAES(req.body.data);
+      const username = data.params.username;
       staffModel.isStaffDuplicatedUsername(username, (result, err) =>
       {
             if (err)
@@ -552,13 +683,19 @@ adminRoutes.post('/isStaffDuplicatedUsername', (req, res) =>
                   res.status(500).send({ message: 'Server internal error!' });
             }
             else
-                  res.status(200).send(result);
+            {
+                  if (result.length)
+                        res.status(200).send(encryptWithAES({ message: 'Duplication detected!' }));
+                  else
+                        res.status(204).send(encryptWithAES({ message: 'No duplication!' }));
+            }
       })
 });
 
 adminRoutes.post('/getIDForNewStaff', (req, res) =>
 {
-      const type = req.body.params.type;
+      const data = decryptWithAES(req.body.data);
+      const type = data.params.type;
       staffModel.getIDForNewStaff(type, (result, err) =>
       {
             if (err)
@@ -567,7 +704,12 @@ adminRoutes.post('/getIDForNewStaff', (req, res) =>
                   res.status(500).send({ message: 'Server internal error!' });
             }
             else
-                  res.status(200).send(result);
+            {
+                  if (result.length)
+                        res.status(200).send(encryptWithAES(result));
+                  else
+                        res.status(204).send(encryptWithAES({ message: 'Can not get new ID!' }));
+            }
       })
 });
 
@@ -585,14 +727,23 @@ adminRoutes.post('/createStaff', multer().fields([
       { name: 'image', maxCount: 1 },
 ]), (req, res) =>
 {
-      const { id, ssn, name, address, birthdate, birthplace, email, phone, type, username } = req.body;
+      const id = decryptWithAES(req.body.id);
+      const ssn = decryptWithAES(req.body.ssn);
+      const name = decryptWithAES(req.body.name);
+      const address = decryptWithAES(req.body.address);
+      const birthdate = decryptWithAES(req.body.birthdate);
+      const birthplace = decryptWithAES(req.body.birthplace);
+      const email = decryptWithAES(req.body.email);
+      const phone = decryptWithAES(req.body.phone);
+      const username = decryptWithAES(req.body.username);
+      const type = decryptWithAES(req.body.type);
 
       let imagePath = null;
       if (req.files['image'] !== null && req.files['image'] !== undefined)
       {
             const imageFile = req.files['image'][0];
             // Get the target directory to store the image
-            const directory = path.join(path.dirname(path.dirname(fileURLToPath(import.meta.url))), 'model', 'image', 'employee', type === 1 ? 'admin' : 'staff', id);
+            const directory = path.join(path.dirname(path.dirname(fileURLToPath(import.meta.url))), 'model', 'image', 'employee', 'staff', id);
             // Create the uploads folder if it doesn't exist
             if (!fs.existsSync(directory))
                   fs.mkdirSync(directory, { recursive: true });
@@ -612,10 +763,10 @@ adminRoutes.post('/createStaff', multer().fields([
             const filePath = path.join(directory, filename);
             fs.writeFileSync(filePath, imageFile.buffer);
 
-            imagePath = (type === 1 ? 'admin' : 'staff') + '/' + id + '/' + filename;
+            imagePath = 'staff' + '/' + id + '/' + filename;
       }
 
-      staffModel.createStaff(id, name, ssn, address, phone, birthdate, birthplace, email, imagePath, type === '1' ? 1 : 2, username, (result, err) =>
+      staffModel.createStaff(id, name, ssn, address, phone, birthdate, birthplace, email, imagePath, type, username, (result, err) =>
       {
             if (err)
             {
@@ -623,7 +774,7 @@ adminRoutes.post('/createStaff', multer().fields([
                   res.status(500).send({ message: 'Server internal error!' });
             }
             else
-                  res.status(200).send({ message: 'Staff successfully created!' });
+                  res.status(200).send(encryptWithAES({ message: 'Staff successfully created!' }));
       })
 });
 
@@ -641,14 +792,22 @@ adminRoutes.post('/updateStaff', multer().fields([
       { name: 'image', maxCount: 1 },
 ]), (req, res) =>
 {
-      const { id, ssn, name, address, birthdate, birthplace, email, phone, password, type } = req.body;
+      const id = decryptWithAES(req.body.id);
+      const ssn = decryptWithAES(req.body.ssn);
+      const name = decryptWithAES(req.body.name);
+      const address = decryptWithAES(req.body.address);
+      const birthdate = decryptWithAES(req.body.birthdate);
+      const birthplace = decryptWithAES(req.body.birthplace);
+      const email = decryptWithAES(req.body.email);
+      const phone = decryptWithAES(req.body.phone);
+      const password = decryptWithAES(req.body.password);
 
       let imagePath = null;
       if (req.files['image'] !== null && req.files['image'] !== undefined)
       {
             const imageFile = req.files['image'][0];
             // Get the target directory to store the image
-            const directory = path.join(path.dirname(path.dirname(fileURLToPath(import.meta.url))), 'model', 'image', 'employee', type === 1 ? 'admin' : 'staff', id);
+            const directory = path.join(path.dirname(path.dirname(fileURLToPath(import.meta.url))), 'model', 'image', 'employee','staff', id);
             // Create the uploads folder if it doesn't exist
             if (!fs.existsSync(directory))
                   fs.mkdirSync(directory, { recursive: true });
@@ -668,19 +827,10 @@ adminRoutes.post('/updateStaff', multer().fields([
             const filePath = path.join(directory, filename);
             fs.writeFileSync(filePath, imageFile.buffer);
 
-            imagePath = (type === 1 ? 'admin' : 'staff') + '/' + id + '/' + filename;
+            imagePath = 'staff' + '/' + id + '/' + filename;
       }
 
-      staffModel.createStaff(id,
-            name === 'null' ? null : name,
-            ssn === 'null' ? null : ssn,
-            address === 'null' ? null : address,
-            phone === 'null' ? null : phone,
-            birthdate === 'null' ? null : birthdate,
-            birthplace === 'null' ? null : birthplace,
-            email === 'null' ? null : email,
-            imagePath,
-            password === 'null' ? null : password, (result, err) =>
+      staffModel.updateStaff(id, name, ssn, address, phone, birthdate, birthplace, email, imagePath, password, (result, err) =>
       {
             if (err)
             {
@@ -688,7 +838,7 @@ adminRoutes.post('/updateStaff', multer().fields([
                   res.status(500).send({ message: 'Server internal error!' });
             }
             else
-                  res.status(200).send({ message: 'Staff info successfully updated!' });
+                  res.status(200).send(encryptWithAES({ message: 'Staff info successfully updated!' }));
       })
 });
 
@@ -697,7 +847,8 @@ const studentModel = new Student();
 
 adminRoutes.post('/studentList', (req, res) =>
 {
-      const name = req.body.params.name;
+      const data = decryptWithAES(req.body.data);
+      const name = data.params.name;
       studentModel.getList(name, (result, err) =>
       {
             if (err)
@@ -708,16 +859,17 @@ adminRoutes.post('/studentList', (req, res) =>
             else
             {
                   if (!result.length)
-                        res.status(204).send({ message: 'No student found in the database!' });
+                        res.status(204).send(encryptWithAES({ message: 'No student found!' }));
                   else
-                        res.status(200).send(result);
+                        res.status(200).send(encryptWithAES(result));
             }
       })
 });
 
 adminRoutes.post('/studentInfo', (req, res) =>
 {
-      const id = req.body.params.id;
+      const data = decryptWithAES(req.body.data);
+      const id = data.params.id;
       studentModel.studentInfo(id, (result, err) =>
       {
             if (err)
@@ -726,14 +878,20 @@ adminRoutes.post('/studentInfo', (req, res) =>
                   res.status(500).send({ message: 'Server internal error!' });
             }
             else
-                  res.status(200).send(result[0]);
+            {
+                  if (!result.length)
+                        res.status(204).send(encryptWithAES({ message: 'No info found!' }));
+                  else
+                        res.status(200).send(encryptWithAES(result[0]));
+            }
       })
 });
 
 adminRoutes.post('/getStudentClass', (req, res) =>
 {
-      const id = req.body.params.id;
-      const className = req.body.params.className;
+      const data = decryptWithAES(req.body.data);
+      const id = data.params.id;
+      const className = data.params.className;
       studentModel.getStudentClass(id, className, (result, err) =>
       {
             if (err)
@@ -742,13 +900,19 @@ adminRoutes.post('/getStudentClass', (req, res) =>
                   res.status(500).send({ message: 'Server internal error!' });
             }
             else
-                  res.status(200).send(result);
+            {
+                  if (!result.length)
+                        res.status(204).send(encryptWithAES({ message: 'No class found!' }));
+                  else
+                        res.status(200).send(encryptWithAES(result));
+            }
       })
 });
 
 adminRoutes.post('/isStudentDuplicatedSSN', (req, res) =>
 {
-      const ssn = req.body.params.ssn;
+      const data = decryptWithAES(req.body.data);
+      const ssn = data.params.ssn;
       studentModel.isDuplicatedSSN(ssn, (result, err) =>
       {
             if (err)
@@ -757,13 +921,19 @@ adminRoutes.post('/isStudentDuplicatedSSN', (req, res) =>
                   res.status(500).send({ message: 'Server internal error!' });
             }
             else
-                  res.status(200).send(result);
+            {
+                  if (!result.length)
+                        res.status(204).send(encryptWithAES({ message: 'No Duplication!' }));
+                  else
+                        res.status(200).send(encryptWithAES({ message: 'Duplication detected!' }));
+            }
       })
 });
 
 adminRoutes.post('/isStudentDuplicatedPhone', (req, res) =>
 {
-      const phone = req.body.params.phone;
+      const data = decryptWithAES(req.body.data);
+      const phone = data.params.phone;
       studentModel.isDuplicatedPhone(phone, (result, err) =>
       {
             if (err)
@@ -772,13 +942,19 @@ adminRoutes.post('/isStudentDuplicatedPhone', (req, res) =>
                   res.status(500).send({ message: 'Server internal error!' });
             }
             else
-                  res.status(200).send(result);
+            {
+                  if (!result.length)
+                        res.status(204).send(encryptWithAES({ message: 'No Duplication!' }));
+                  else
+                        res.status(200).send(encryptWithAES({ message: 'Duplication detected!' }));
+            }
       })
 });
 
 adminRoutes.post('/isStudentDuplicatedEmail', (req, res) =>
 {
-      const email = req.body.params.email;
+      const data = decryptWithAES(req.body.data);
+      const email = data.params.email;
       studentModel.isDuplicatedEmail(email, (result, err) =>
       {
             if (err)
@@ -787,7 +963,12 @@ adminRoutes.post('/isStudentDuplicatedEmail', (req, res) =>
                   res.status(500).send({ message: 'Server internal error!' });
             }
             else
-                  res.status(200).send(result);
+            {
+                  if (!result.length)
+                        res.status(204).send(encryptWithAES({ message: 'No Duplication!' }));
+                  else
+                        res.status(200).send(encryptWithAES({ message: 'Duplication detected!' }));
+            }
       })
 });
 
@@ -801,7 +982,12 @@ adminRoutes.get('/getIDForNewStudent', (req, res) =>
                   res.status(500).send({ message: 'Server internal error!' });
             }
             else
-                  res.status(200).send(result);
+            {
+                  if (!result.length)
+                        res.status(204).send(encryptWithAES({ message: 'Can not get new ID!' }));
+                  else
+                        res.status(200).send(encryptWithAES(result));
+            }
       })
 });
 
@@ -817,7 +1003,14 @@ adminRoutes.post('/createStudent', multer().fields([
       { name: 'image', maxCount: 1 },
 ]), (req, res) =>
 {
-      const { id, ssn, name, address, birthdate, birthplace, email, phone } = req.body;
+      const id = decryptWithAES(req.body.id);
+      const ssn = decryptWithAES(req.body.ssn);
+      const name = decryptWithAES(req.body.name);
+      const address = decryptWithAES(req.body.address);
+      const birthdate = decryptWithAES(req.body.birthdate);
+      const birthplace = decryptWithAES(req.body.birthplace);
+      const email = decryptWithAES(req.body.email);
+      const phone = decryptWithAES(req.body.phone);
 
       let imagePath = null;
       if (req.files['image'] !== null && req.files['image'] !== undefined)
@@ -855,7 +1048,7 @@ adminRoutes.post('/createStudent', multer().fields([
                   res.status(500).send({ message: 'Server internal error!' });
             }
             else
-                  res.status(200).send({ message: 'Student successfully created!' });
+                  res.status(200).send(encryptWithAES({ message: 'Student successfully created!' }));
       })
 });
 
@@ -871,7 +1064,14 @@ adminRoutes.post('/updateStudent', multer().fields([
       { name: 'image', maxCount: 1 },
 ]), (req, res) =>
 {
-      const { id, ssn, name, address, birthdate, birthplace, email, phone } = req.body;
+      const id = decryptWithAES(req.body.id);
+      const ssn = decryptWithAES(req.body.ssn);
+      const name = decryptWithAES(req.body.name);
+      const address = decryptWithAES(req.body.address);
+      const birthdate = decryptWithAES(req.body.birthdate);
+      const birthplace = decryptWithAES(req.body.birthplace);
+      const email = decryptWithAES(req.body.email);
+      const phone = decryptWithAES(req.body.phone);
 
       let imagePath = null;
       if (req.files['image'] !== null && req.files['image'] !== undefined)
@@ -901,15 +1101,7 @@ adminRoutes.post('/updateStudent', multer().fields([
             imagePath = id + '/' + filename;
       }
 
-      studentModel.updateStudent(id,
-            name === 'null' ? null : name,
-            ssn === 'null' ? null : ssn,
-            address === 'null' ? null : address,
-            phone === 'null' ? null : phone,
-            birthdate === 'null' ? null : birthdate,
-            birthplace === 'null' ? null : birthplace,
-            email === 'null' ? null : email,
-            imagePath, (result, err) =>
+      studentModel.updateStudent(id, name, ssn, address, phone, birthdate, birthplace, email, imagePath, (result, err) =>
       {
             if (err)
             {
@@ -917,7 +1109,7 @@ adminRoutes.post('/updateStudent', multer().fields([
                   res.status(500).send({ message: 'Server internal error!' });
             }
             else
-                  res.status(200).send({ message: 'Student info successfully updated!' });
+                  res.status(200).send(encryptWithAES({ message: 'Student info successfully updated!' }));
       })
 });
 

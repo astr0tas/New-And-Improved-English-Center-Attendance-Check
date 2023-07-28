@@ -7,6 +7,8 @@ import { AiOutlineCloseCircle } from 'react-icons/ai';
 import { domain } from '../../../../tools/domain';
 import axios from 'axios';
 import { isRefValid } from '../../../../tools/refChecker';
+import request from '../../../../tools/request';
+import { encrypt } from '../../../../tools/encryption';
 
 const StudentCreate = (props) =>
 {
@@ -59,14 +61,14 @@ const StudentCreate = (props) =>
             }
       }, [props.showPopUp, image]);
 
-      function hasAlphabetCharacters(inputString)
+      function isContainOnlyNumeric(inputString)
       {
-            const alphabetPattern = /[a-zA-Z]/;
+            const pattern = /[a-zA-Z\\~!@#$%^&*()_+`|;:'"<>,.?\n\t\r\b]/;
 
-            return alphabetPattern.test(inputString);
+            return pattern.test(inputString);
       }
 
-      function isNameInvalid(inputString)
+      function isContainOnlyAlphabet(inputString)
       {
             const pattern = /[0-9\\~!@#$%^&*()_+`|;:'"<>,.?\n\t\r\b]/;
 
@@ -101,7 +103,7 @@ const StudentCreate = (props) =>
                   setIsEmptyName(true);
                   isOk = false;
             }
-            else if (isNameInvalid(name))
+            else if (isContainOnlyAlphabet(name))
             {
                   setIsEmptyName(false);
                   setInvalidName(true);
@@ -133,7 +135,7 @@ const StudentCreate = (props) =>
                   setIsEmptySSN(true);
                   isOk = false;
             }
-            else if (hasAlphabetCharacters(ssn))
+            else if (isContainOnlyNumeric(ssn))
             {
                   setIsEmptySSN(false);
                   setInvalidSSN(true);
@@ -141,11 +143,20 @@ const StudentCreate = (props) =>
             }
             else
             {
-                  const result = await axios.post(`http://${ domain }/admin/isStudentDuplicatedSSN`, { params: { ssn: ssn } }, { headers: { 'Content-Type': 'application/json' } });
-                  setIsEmptySSN(false);
-                  setInvalidSSN(false);
-                  setDuplicateSSN(result.data);
-                  isOk = !result.data && isOk;
+                  await request.post(`http://${ domain }/admin/isStudentDuplicatedSSN`, { params: { ssn: ssn } }, { headers: { 'Content-Type': 'application/json' } })
+                        .then(res =>
+                        {
+                              setIsEmptySSN(false);
+                              setInvalidSSN(false);
+                              if (res.status === 200)
+                              {
+                                    setDuplicateSSN(true);
+                                    isOk = false;
+                              }
+                              else
+                                    setDuplicateSSN(false);
+                        })
+                        .catch(err => console.error(err));
             }
             if (!email)
             {
@@ -160,18 +171,27 @@ const StudentCreate = (props) =>
             }
             else
             {
-                  const result = await axios.post(`http://${ domain }/admin/isStudentDuplicatedEmail`, { params: { email: email } }, { headers: { 'Content-Type': 'application/json' } });
-                  setIsEmptyEmail(false);
-                  setInvalidEmail(false);
-                  setDuplicateEmail(result.data);
-                  isOk = !result.data && isOk;
+                  await request.post(`http://${ domain }/admin/isStudentDuplicatedEmail`, { params: { ssn: ssn } }, { headers: { 'Content-Type': 'application/json' } })
+                        .then(res =>
+                        {
+                              setIsEmptyEmail(false);
+                              setInvalidEmail(false);
+                              if (res.status === 200)
+                              {
+                                    setDuplicateEmail(true);
+                                    isOk = false;
+                              }
+                              else
+                                    setDuplicateEmail(false);
+                        })
+                        .catch(err => console.error(err));
             }
             if (!phone)
             {
                   setIsEmptyPhone(true);
                   isOk = false;
             }
-            else if (hasAlphabetCharacters(phone))
+            else if (isContainOnlyNumeric(phone))
             {
                   setIsEmptyPhone(false);
                   setInvalidPhone(true);
@@ -179,15 +199,24 @@ const StudentCreate = (props) =>
             }
             else
             {
-                  const result = await axios.post(`http://${ domain }/admin/isStudentDuplicatedPhone`, { params: { phone: phone } }, { headers: { 'Content-Type': 'application/json' } });
-                  setIsEmptyPhone(false);
-                  setInvalidPhone(false);
-                  setDuplicatePhone(result.data);
-                  isOk = !result.data && isOk;
+                  await request.post(`http://${ domain }/admin/isStudentDuplicatedPhone`, { params: { ssn: ssn } }, { headers: { 'Content-Type': 'application/json' } })
+                        .then(res =>
+                        {
+                              setIsEmptyPhone(false);
+                              setInvalidPhone(false);
+                              if (res.status === 200)
+                              {
+                                    setDuplicatePhone(true);
+                                    isOk = false;
+                              }
+                              else
+                                    setDuplicatePhone(false);
+                        })
+                        .catch(err => console.error(err));
             }
             if (isOk)
             {
-                  const result = await axios.get(`http://${ domain }/admin/getIDForNewStudent`);
+                  const result = await request.get(`http://${ domain }/admin/getIDForNewStudent`);
                   setID(result.data[0][0].id);
                   setConfirmPopUp(true);
             }
@@ -314,7 +343,7 @@ const StudentCreate = (props) =>
                                                 marginBottom: '16px'
                                           } } className={ `${ styles.p }` } />
                                           <p className={ `${ styles.p }` }>
-                                                SSN field must not contain alphabetical character(s)!
+                                                SSN field must not contain non-numerical character(s)!
                                           </p>
                                     </div>
                               }
@@ -431,7 +460,7 @@ const StudentCreate = (props) =>
                                                 marginBottom: '16px'
                                           } } className={ `${ styles.p }` } />
                                           <p className={ `${ styles.p }` }>
-                                                Phone number field must not contain alphabetical character(s)!
+                                                Phone number field must not contain non-numerical character(s)!
                                           </p>
                                     </div>
                               }
@@ -516,24 +545,27 @@ const StudentCreate = (props) =>
                               {
                                     setConfirmPopUp(false);
                               } }>No</button>
-                              <button className={ `btn btn-primary me-2 me-md-4` } onClick={ () =>
+                              <button className={ `btn btn-primary me-2 me-md-4` } onClick={ async () =>
                               {
                                     const formdata = new FormData();
-                                    formdata.append('id', id);
-                                    formdata.append('name', name);
-                                    formdata.append('phone', phone);
-                                    formdata.append('ssn', ssn);
-                                    formdata.append('birthdate', birthdate);
-                                    formdata.append('birthplace', birthplace);
-                                    formdata.append('address', address);
-                                    formdata.append('email', email);
+                                    formdata.append('id', id ? await encrypt(id) : null);
+                                    formdata.append('name', name ? await encrypt(name) : null);
+                                    formdata.append('phone', phone ? await encrypt(phone) : null);
+                                    formdata.append('ssn', ssn ? await encrypt(ssn) : null);
+                                    formdata.append('birthdate', birthdate ? await encrypt(birthdate) : null);
+                                    formdata.append('birthplace', birthplace ? await encrypt(birthplace) : null);
+                                    formdata.append('address', address ? await encrypt(address) : null);
+                                    formdata.append('email', email ? await encrypt(email) : null);
                                     formdata.append('image', image);
                                     axios.post(`http://${ domain }/admin/createStudent`, formdata, { headers: { 'Content-Type': 'multipart/form-data' } })
                                           .then(res =>
                                           {
-                                                setConfirmPopUp(false);
-                                                clearOut();
-                                                props.setRender(!props.render);
+                                                if (res.status === 200)
+                                                {
+                                                      setConfirmPopUp(false);
+                                                      clearOut();
+                                                      props.setRender(!props.render);
+                                                }
                                           })
                                           .catch(err =>
                                           {

@@ -8,6 +8,8 @@ import { domain } from '../../../../tools/domain';
 import axios from 'axios';
 import { isRefValid } from '../../../../tools/refChecker';
 import { YMD } from '../../../../tools/dateFormat';
+import request from '../../../../tools/request';
+import { encrypt } from '../../../../tools/encryption';
 
 const StudentEdit = (props) =>
 {
@@ -48,31 +50,34 @@ const StudentEdit = (props) =>
       {
             if (props.showPopUp)
             {
-                  axios.post(`http://${ domain }/admin/studentInfo`, { params: { id: props.id } }, { headers: { 'Content-Type': 'application/json' } })
+                  request.post(`http://${ domain }/admin/studentInfo`, { params: { id: props.id } }, { headers: { 'Content-Type': 'application/json' } })
                         .then(res =>
                         {
-                              setOldName(res.data.name);
-                              setOldSSN(res.data.SSN);
-                              setOldPhone(res.data.phone);
-                              setOldEmail(res.data.email);
-                              setOldAddress(res.data.address);
-                              setOldBirthdate(YMD(res.data.birthday));
-                              setOldBirthplace(res.data.birthplace);
-                              setOldImage(res.data.image === null ? require('../../../../images/profile.png') : `http://${ domain }/image/student/${ res.data.image }`);
-                              if (!image && isRefValid(profileImg))
-                                    profileImg.current.src = res.data.image === null ? require('../../../../images/profile.png') : `http://${ domain }/image/student/${ res.data.image }`;
-                              else if (image)
+                              if (res.status === 200)
                               {
-                                    const file = image;
-                                    const reader = new FileReader();
-                                    reader.readAsArrayBuffer(file);
-                                    reader.onload = () =>
+                                    setOldName(res.data.name);
+                                    setOldSSN(res.data.SSN);
+                                    setOldPhone(res.data.phone);
+                                    setOldEmail(res.data.email);
+                                    setOldAddress(res.data.address);
+                                    setOldBirthdate(YMD(res.data.birthday));
+                                    setOldBirthplace(res.data.birthplace);
+                                    setOldImage(res.data.image === null ? require('../../../../images/profile.png') : `http://${ domain }/image/student/${ res.data.image }`);
+                                    if (!image && isRefValid(profileImg))
+                                          profileImg.current.src = res.data.image === null ? require('../../../../images/profile.png') : `http://${ domain }/image/student/${ res.data.image }`;
+                                    else if (image)
                                     {
-                                          const blob = new Blob([reader.result], { type: file.type });
-                                          const url = URL.createObjectURL(blob);
-                                          if (isRefValid(profileImg))
-                                                profileImg.current.src = url;
-                                    };
+                                          const file = image;
+                                          const reader = new FileReader();
+                                          reader.readAsArrayBuffer(file);
+                                          reader.onload = () =>
+                                          {
+                                                const blob = new Blob([reader.result], { type: file.type });
+                                                const url = URL.createObjectURL(blob);
+                                                if (isRefValid(profileImg))
+                                                      profileImg.current.src = url;
+                                          };
+                                    }
                               }
                         })
                         .catch(err => console.log(err));
@@ -81,14 +86,14 @@ const StudentEdit = (props) =>
             // eslint-disable-next-line
       }, [props.showPopUp, props.id]);
 
-      function hasAlphabetCharacters(inputString)
+      function isContainOnlyNumeric(inputString)
       {
-            const alphabetPattern = /[a-zA-Z]/;
+            const pattern = /[a-zA-Z\\~!@#$%^&*()_+`|;:'"<>,.?\n\t\r\b]/;
 
-            return alphabetPattern.test(inputString);
+            return pattern.test(inputString);
       }
 
-      function isNameInvalid(inputString)
+      function isContainOnlyAlphabet(inputString)
       {
             const pattern = /[0-9\\~!@#$%^&*()_+`|;:'"<>,.?\n\t\r\b]/;
 
@@ -118,7 +123,7 @@ const StudentEdit = (props) =>
       const updateStudent = async () =>
       {
             let isOk = true;
-            if (name && isNameInvalid(name))
+            if (name && isContainOnlyAlphabet(name))
             {
                   setInvalidName(true);
                   isOk = false;
@@ -132,17 +137,26 @@ const StudentEdit = (props) =>
             }
             else
                   setInvalidDate(false);
-            if (ssn && hasAlphabetCharacters(ssn))
+            if (ssn && isContainOnlyNumeric(ssn))
             {
                   setInvalidSSN(true);
                   isOk = false;
             }
             else
             {
-                  const result = await axios.post(`http://${ domain }/admin/isStudentDuplicatedSSN`, { params: { ssn: ssn } }, { headers: { 'Content-Type': 'application/json' } });
-                  setInvalidSSN(false);
-                  setDuplicateSSN(result.data);
-                  isOk = !result.data && isOk;
+                  await request.post(`http://${ domain }/admin/isStudentDuplicatedSSN`, { params: { ssn: ssn } }, { headers: { 'Content-Type': 'application/json' } })
+                        .then(res =>
+                        {
+                              setInvalidSSN(false);
+                              if (res.status === 200)
+                              {
+                                    setDuplicateSSN(true);
+                                    isOk = false;
+                              }
+                              else
+                                    setDuplicateSSN(false);
+                        })
+                        .catch(err => console.error(err));
             }
             if (email && !isValidEmail(email))
             {
@@ -151,22 +165,40 @@ const StudentEdit = (props) =>
             }
             else
             {
-                  const result = await axios.post(`http://${ domain }/admin/isStudentDuplicatedEmail`, { params: { email: email } }, { headers: { 'Content-Type': 'application/json' } });
-                  setInvalidEmail(false);
-                  setDuplicateEmail(result.data);
-                  isOk = !result.data && isOk;
+                  await request.post(`http://${ domain }/admin/isStudentDuplicatedEmail`, { params: { ssn: ssn } }, { headers: { 'Content-Type': 'application/json' } })
+                        .then(res =>
+                        {
+                              setInvalidEmail(false);
+                              if (res.status === 200)
+                              {
+                                    setDuplicateEmail(true);
+                                    isOk = false;
+                              }
+                              else
+                                    setDuplicateEmail(false);
+                        })
+                        .catch(err => console.error(err));
             }
-            if (phone && hasAlphabetCharacters(phone))
+            if (phone && isContainOnlyNumeric(phone))
             {
                   setInvalidPhone(true);
                   isOk = false;
             }
             else
             {
-                  const result = await axios.post(`http://${ domain }/admin/isStudentDuplicatedPhone`, { params: { phone: phone } }, { headers: { 'Content-Type': 'application/json' } });
-                  setInvalidPhone(false);
-                  setDuplicatePhone(result.data);
-                  isOk = !result.data && isOk;
+                  await request.post(`http://${ domain }/admin/isStudentDuplicatedPhone`, { params: { ssn: ssn } }, { headers: { 'Content-Type': 'application/json' } })
+                        .then(res =>
+                        {
+                              setInvalidPhone(false);
+                              if (res.status === 200)
+                              {
+                                    setDuplicatePhone(true);
+                                    isOk = false;
+                              }
+                              else
+                                    setDuplicatePhone(false);
+                        })
+                        .catch(err => console.error(err));
             }
             setConfirmPopUp(isOk);
       }
@@ -276,7 +308,7 @@ const StudentEdit = (props) =>
                                                 marginBottom: '16px'
                                           } } className={ `${ styles.p }` } />
                                           <p className={ `${ styles.p }` }>
-                                                SSN field must not contain alphabetical character(s)!
+                                                SSN field must not contain non-numerical character(s)!
                                           </p>
                                     </div>
                               }
@@ -367,7 +399,7 @@ const StudentEdit = (props) =>
                                                 marginBottom: '16px'
                                           } } className={ `${ styles.p }` } />
                                           <p className={ `${ styles.p }` }>
-                                                Phone number field must not contain alphabetical character(s)!
+                                                Phone number field must not contain non-numerical character(s)!
                                           </p>
                                     </div>
                               }
@@ -439,24 +471,27 @@ const StudentEdit = (props) =>
                               {
                                     setConfirmPopUp(false);
                               } }>No</button>
-                              <button className={ `btn btn-primary me-2 me-md-4` } onClick={ () =>
+                              <button className={ `btn btn-primary me-2 me-md-4` } onClick={ async () =>
                               {
                                     const formdata = new FormData();
-                                    formdata.append('id', props.id);
-                                    formdata.append('name', name);
-                                    formdata.append('phone', phone);
-                                    formdata.append('ssn', ssn);
-                                    formdata.append('birthdate', birthdate);
-                                    formdata.append('birthplace', birthplace);
-                                    formdata.append('address', address);
-                                    formdata.append('email', email);
+                                    formdata.append('id', props.id ? await encrypt(props.id) : null);
+                                    formdata.append('name', name ? await encrypt(name) : null);
+                                    formdata.append('phone', phone ? await encrypt(phone) : null);
+                                    formdata.append('ssn', ssn ? await encrypt(ssn) : null);
+                                    formdata.append('birthdate', birthdate ? await encrypt(birthdate) : null);
+                                    formdata.append('birthplace', birthplace ? await encrypt(birthplace) : null);
+                                    formdata.append('address', address ? await encrypt(address) : null);
+                                    formdata.append('email', email ? await encrypt(email) : null);
                                     formdata.append('image', image);
                                     axios.post(`http://${ domain }/admin/updateStudent`, formdata, { headers: { 'Content-Type': 'multipart/form-data' } })
                                           .then(res =>
                                           {
-                                                setConfirmPopUp(false);
-                                                clearOut();
-                                                props.setRender(!props.render);
+                                                if (res.status === 200)
+                                                {
+                                                      setConfirmPopUp(false);
+                                                      clearOut();
+                                                      props.setRender(!props.render);
+                                                }
                                           })
                                           .catch(err =>
                                           {

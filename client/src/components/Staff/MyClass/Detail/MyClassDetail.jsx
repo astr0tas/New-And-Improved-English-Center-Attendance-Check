@@ -1,7 +1,7 @@
 import styles from './MyClassDetail.module.css';
 import { useParams, NavLink } from 'react-router-dom';
 import { useContext, useEffect, useState } from 'react';
-import axios from 'axios';
+import request from '../../../../tools/request';
 import { DMY } from '../../../../tools/dateFormat';
 import { domain } from '../../../../tools/domain';
 import '../../../../css/modal.css';
@@ -94,44 +94,49 @@ const MyClassDetail = () =>
 
       useEffect(() =>
       {
-            axios.post(`http://${ domain }/classInfo`, { params: { name: name } }, { headers: { 'Content-Type': 'application/json' } })
+            request.post(`http://${ domain }/classInfo`, { params: { name: name } }, { headers: { 'Content-Type': 'application/json' } })
                   .then(res =>
                   {
-                        setStatus(res.data[0][0].status);
-                        setStart(res.data[0][0].start_date);
-                        setEnd(res.data[0][0].end_date);
-                        setMaxStudent(res.data[0][0].max_students);
-                        setInitialSession(res.data[0][0].initial_sessions);
-                        setCurrentStudent(res.data[1][0].currentStudents);
-                        setCurrentSession(res.data[2][0].currentSessions);
+                        if (res.status === 200)
+                        {
+                              setStatus(res.data[0][0].status);
+                              setStart(res.data[0][0].start_date);
+                              setEnd(res.data[0][0].end_date);
+                              setMaxStudent(res.data[0][0].max_students);
+                              setInitialSession(res.data[0][0].initial_sessions);
+                              setCurrentStudent(res.data[1][0].currentStudents);
+                              setCurrentSession(res.data[2][0].currentSessions);
+                        }
                   })
                   .catch(err => console.log(err));
 
             if (listType === 0)
             {
-                  axios.post(`http://${ domain }/classStudent`, { params: { name: name, studentName: searchStudent } }, { headers: { 'Content-Type': 'application/json' } })
+                  request.post(`http://${ domain }/classStudent`, { params: { name: name, studentName: searchStudent } }, { headers: { 'Content-Type': 'application/json' } })
                         .then(res =>
                         {
                               const temp = [];
-                              for (let i = 0; i < res.data.length; i++)
-                                    temp.push(<Student key={ i } i={ i + 1 } id={ res.data[i].id } render={ render } setRender={ setRender }
-                                          name={ res.data[i].name } phone={ res.data[i].phone } email={ res.data[i].email }
-                                          ssn={ res.data[i].ssn } />);
+                              if (res.status === 200)
+                                    for (let i = 0; i < res.data.length; i++)
+                                          temp.push(<Student key={ i } i={ i + 1 } id={ res.data[i].id } render={ render } setRender={ setRender }
+                                                name={ res.data[i].name } phone={ res.data[i].phone } email={ res.data[i].email }
+                                                ssn={ res.data[i].ssn } />);
                               setContent(temp);
                         })
                         .catch(err => console.error(err));
             }
             else if (listType === 2)
             {
-                  axios.post(`http://${ domain }/classSession`, { params: { name: name } }, { headers: { 'Content-Type': 'application/json' }, withCredentials: true })
+                  request.post(`http://${ domain }/classSession`, { params: { name: name } }, { headers: { 'Content-Type': 'application/json' }, withCredentials: true })
                         .then(res =>
                         {
                               const temp = [];
-                              for (let i = 0; i < res.data.length; i++)
-                                    temp.push(<Session key={ i } number={ res.data[i][0].number } name={ name } room={ res.data[i][0].sessionClassroomID }
-                                          start={ res.data[i][0].startHour } end={ res.data[i][0].endHour } session_date={ res.data[i][0].sessionDate } status={ res.data[i][0].sessionStatus }
-                                          teacherName={ res.data[i][0].sessionTeacherName } teacherID={ res.data[i][0].sessionTeacherID }
-                                          supervisorName={ res.data[i][0].sessionSupervisorName } supervisorID={ res.data[i][0].sessionSupervisorID } />);
+                              if (res.status === 200)
+                                    for (let i = 0; i < res.data.length; i++)
+                                          temp.push(<Session key={ i } number={ res.data[i][0].number } name={ name } room={ res.data[i][0].sessionClassroomID }
+                                                start={ res.data[i][0].startHour } end={ res.data[i][0].endHour } session_date={ res.data[i][0].sessionDate } status={ res.data[i][0].sessionStatus }
+                                                teacherName={ res.data[i][0].sessionTeacherName } teacherID={ res.data[i][0].sessionTeacherID }
+                                                supervisorName={ res.data[i][0].sessionSupervisorName } supervisorID={ res.data[i][0].sessionSupervisorID } />);
                               setContent(temp);
                         })
                         .catch(err => console.error(err));

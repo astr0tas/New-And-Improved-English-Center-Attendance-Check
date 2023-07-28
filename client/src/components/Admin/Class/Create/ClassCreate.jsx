@@ -1,6 +1,6 @@
 import styles from './ClassCreate.module.css';
 import { Modal } from 'react-bootstrap';
-import axios from 'axios';
+import request from '../../../../tools/request';
 import { domain } from "../../../../tools/domain";
 import { useEffect, useState } from 'react';
 import { Dropdown } from 'react-bootstrap';
@@ -47,21 +47,22 @@ const PeriodSelect = (props) =>
       {
             if (props.addPeriodPopUp && props.dow)
             {
-                  axios.get(`http://${ domain }/admin/getPeriods`)
+                  request.get(`http://${ domain }/admin/getPeriods`)
                         .then(res =>
                         {
                               const temp = [];
-                              for (let i = 0; i < res.data.length; i++)
-                                    temp.push(<tr key={ i }>
-                                          <td className='text-center align-middle'>{ i + 1 }</td>
-                                          <td className='text-center align-middle'>{ res.data[i].Start_hour } - { res.data[i].End_hour }</td>
-                                          <td className='text-center align-middle'>
-                                                <input type='checkbox' className={ `${ styles.hover }` }
-                                                      style={ { width: '1.3rem', height: '1.3rem' } }
-                                                      checked={ props.period.length && !!props.period.find(element => element.dow === parseInt(props.dow.split(',')[0]) && element.id === res.data[i].ID) }
-                                                      onChange={ e => toggle(e, res.data[i].ID, res.data[i].Start_hour, res.data[i].End_hour) }></input>
-                                          </td>
-                                    </tr>);
+                              if (res.status === 200)
+                                    for (let i = 0; i < res.data.length; i++)
+                                          temp.push(<tr key={ i }>
+                                                <td className='text-center align-middle'>{ i + 1 }</td>
+                                                <td className='text-center align-middle'>{ res.data[i].Start_hour } - { res.data[i].End_hour }</td>
+                                                <td className='text-center align-middle'>
+                                                      <input type='checkbox' className={ `${ styles.hover }` }
+                                                            style={ { width: '1.3rem', height: '1.3rem' } }
+                                                            checked={ props.period.length && !!props.period.find(element => element.dow === parseInt(props.dow.split(',')[0]) && element.id === res.data[i].ID) }
+                                                            onChange={ e => toggle(e, res.data[i].ID, res.data[i].Start_hour, res.data[i].End_hour) }></input>
+                                                </td>
+                                          </tr>);
                               setPeriodList(temp);
                         })
                         .catch(err => console.log(err));
@@ -141,7 +142,7 @@ const TeacherSelect = (props) =>
             {
                   // The query to get data for the request is not every sufficient because teachers might be assign
                   // to multiple continous sessions in a day without having a break (I can't figure out a way for this because of my tiny brain)
-                  axios.post(`http://${ domain }/admin/getSuitableTeacher`, {
+                  request.post(`http://${ domain }/admin/getSuitableTeacher`, {
                         params: {
                               teacherName: searchTeacher,
                               start: props.startDate,
@@ -152,26 +153,27 @@ const TeacherSelect = (props) =>
                         .then(res =>
                         {
                               const temp = [];
-                              for (let i = 0; i < res.data.length; i++)
-                              {
-                                    temp.push(<tr key={ i }>
-                                          <td className='text-center align-middle'>{ i + 1 }</td>
-                                          <td className='text-center align-middle'>{ res.data[i].name }</td>
-                                          <td className='text-center align-middle'>{ res.data[i].phone }</td>
-                                          <td className='text-center align-middle'>{ res.data[i].email }</td>
-                                          <td className='text-center align-middle'>
-                                                <div className='d-flex flex-column flex-sm-row align-items-center justify-content-center'>
-                                                      <input className={ `me-sm-2 mb-1 mb-sm-0 ${ styles.hover }` } type='radio' style={ { width: '1.3rem', height: '1.3rem' } }
-                                                            onChange={ () => addTeacher(res.data[i].id, res.data[i].name, parseInt(props.dow.split(',')[0])) }
-                                                            checked={ !!props.period.find(elem => elem.dow === parseInt(props.dow.split(',')[0]) && elem.teacherID === res.data[i].id) }
-                                                            name={ props.dow.split(',')[1] }></input>
-                                                      <NavLink to={ `/staff-list/detail/${ res.data[i].id }` }>
-                                                            <button className='btn btn-sm btn-primary ms-sm-2'>Detail</button>
-                                                      </NavLink>
-                                                </div>
-                                          </td>
-                                    </tr>);
-                              }
+                              if (res.status === 200)
+                                    for (let i = 0; i < res.data.length; i++)
+                                    {
+                                          temp.push(<tr key={ i }>
+                                                <td className='text-center align-middle'>{ i + 1 }</td>
+                                                <td className='text-center align-middle'>{ res.data[i].name }</td>
+                                                <td className='text-center align-middle'>{ res.data[i].phone }</td>
+                                                <td className='text-center align-middle'>{ res.data[i].email }</td>
+                                                <td className='text-center align-middle'>
+                                                      <div className='d-flex flex-column flex-sm-row align-items-center justify-content-center'>
+                                                            <input className={ `me-sm-2 mb-1 mb-sm-0 ${ styles.hover }` } type='radio' style={ { width: '1.3rem', height: '1.3rem' } }
+                                                                  onChange={ () => addTeacher(res.data[i].id, res.data[i].name, parseInt(props.dow.split(',')[0])) }
+                                                                  checked={ !!props.period.find(elem => elem.dow === parseInt(props.dow.split(',')[0]) && elem.teacherID === res.data[i].id) }
+                                                                  name={ props.dow.split(',')[1] }></input>
+                                                            <NavLink to={ `/staff-list/detail/${ res.data[i].id }` }>
+                                                                  <button className='btn btn-sm btn-primary ms-sm-2'>Detail</button>
+                                                            </NavLink>
+                                                      </div>
+                                                </td>
+                                          </tr>);
+                                    }
                               setTeacherListContent(temp);
                         })
                         .catch(err => console.error(err));
@@ -253,27 +255,28 @@ const SupervisorSelect = (props) =>
       {
             if (props.addSupervisorPopUp)
             {
-                  axios.post(`http://${ domain }/admin/staffList`, { params: { name: searchSupervisor, type: 2 } }, { headers: { 'Content-Type': 'application/json' } })
+                  request.post(`http://${ domain }/admin/staffList`, { params: { name: searchSupervisor, type: 2 } }, { headers: { 'Content-Type': 'application/json' } })
                         .then(res =>
                         {
                               const temp = [];
-                              for (let i = 0; i < res.data.length; i++)
-                                    temp.push(<tr key={ i }>
-                                          <td className='text-center align-middle'>{ i + 1 }</td>
-                                          <td className='text-center align-middle'>{ res.data[i].name }</td>
-                                          <td className='text-center align-middle'>{ res.data[i].phone }</td>
-                                          <td className='text-center align-middle'>{ res.data[i].email }</td>
-                                          <td className='text-center align-middle'>
-                                                <div className='d-flex flex-column flex-sm-row align-items-center justify-content-center'>
-                                                      <input className={ `me-sm-2 mb-1 mb-sm-0 ${ styles.hover }` } type='radio' style={ { width: '1.3rem', height: '1.3rem' } }
-                                                            name='supervisorSelector' onChange={ () => { props.setSupervisor(res.data[i].id); props.setSupervisorName(res.data[i].name); } }
-                                                            checked={ res.data[i].id === props.supervisor }></input>
-                                                      <NavLink to={ `/staff-list/detail/${ res.data[i].id }` }>
-                                                            <button className='btn btn-sm btn-primary ms-sm-2'>Detail</button>
-                                                      </NavLink>
-                                                </div>
-                                          </td>
-                                    </tr>);
+                              if (res.status === 200)
+                                    for (let i = 0; i < res.data.length; i++)
+                                          temp.push(<tr key={ i }>
+                                                <td className='text-center align-middle'>{ i + 1 }</td>
+                                                <td className='text-center align-middle'>{ res.data[i].name }</td>
+                                                <td className='text-center align-middle'>{ res.data[i].phone }</td>
+                                                <td className='text-center align-middle'>{ res.data[i].email }</td>
+                                                <td className='text-center align-middle'>
+                                                      <div className='d-flex flex-column flex-sm-row align-items-center justify-content-center'>
+                                                            <input className={ `me-sm-2 mb-1 mb-sm-0 ${ styles.hover }` } type='radio' style={ { width: '1.3rem', height: '1.3rem' } }
+                                                                  name='supervisorSelector' onChange={ () => { props.setSupervisor(res.data[i].id); props.setSupervisorName(res.data[i].name); } }
+                                                                  checked={ res.data[i].id === props.supervisor }></input>
+                                                            <NavLink to={ `/staff-list/detail/${ res.data[i].id }` }>
+                                                                  <button className='btn btn-sm btn-primary ms-sm-2'>Detail</button>
+                                                            </NavLink>
+                                                      </div>
+                                                </td>
+                                          </tr>);
                               setSupervisorListContent(temp);
                         })
                         .catch(err => console.error(err));
@@ -352,7 +355,7 @@ const AddStudent = (props) =>
       {
             if (props.addPopUp && props.period.length !== 0)
             {
-                  axios.post(`http://${ domain }/admin/getSuitableStudent`, {
+                  request.post(`http://${ domain }/admin/getSuitableStudent`, {
                         params: {
                               name: searchStudent,
                               start: props.startDate,
@@ -363,27 +366,28 @@ const AddStudent = (props) =>
                         .then(res =>
                         {
                               const temp = [];
-                              for (let i = 0; i < res.data.length; i++)
-                                    temp.push(
-                                          <tr key={ i }>
-                                                <td className='text-center align-middle'>{ i + 1 }</td>
-                                                <td className='text-center align-middle'>{ res.data[i].name }</td>
-                                                <td className='text-center align-middle'>{ res.data[i].ssn }</td>
-                                                <td className='text-center align-middle'>{ res.data[i].phone }</td>
-                                                <td className='text-center align-middle'>{ res.data[i].email }</td>
-                                                <td className='text-center align-middle'>
-                                                      <div className="d-flex align-items-center justify-content-center">
-                                                            <input type='checkbox'
-                                                                  onChange={ e => configList(e, res.data[i].id, res.data[i].name) }
-                                                                  style={ { width: '1.2rem', height: '1.2rem' } } className={ `${ styles.hover } me-2` }
-                                                                  checked={ props.studentAdded.length !== 0 && !!props.studentAdded.find(elem => elem.id === res.data[i].id) }></input>
-                                                            <NavLink to={ `/student-list/detail/${ res.data[i].id }` }>
-                                                                  <button className="ms-2 btn-sm btn btn-primary">Detail</button>
-                                                            </NavLink>
-                                                      </div>
-                                                </td>
-                                          </tr >
-                                    );
+                              if (res.status === 200)
+                                    for (let i = 0; i < res.data.length; i++)
+                                          temp.push(
+                                                <tr key={ i }>
+                                                      <td className='text-center align-middle'>{ i + 1 }</td>
+                                                      <td className='text-center align-middle'>{ res.data[i].name }</td>
+                                                      <td className='text-center align-middle'>{ res.data[i].ssn }</td>
+                                                      <td className='text-center align-middle'>{ res.data[i].phone }</td>
+                                                      <td className='text-center align-middle'>{ res.data[i].email }</td>
+                                                      <td className='text-center align-middle'>
+                                                            <div className="d-flex align-items-center justify-content-center">
+                                                                  <input type='checkbox'
+                                                                        onChange={ e => configList(e, res.data[i].id, res.data[i].name) }
+                                                                        style={ { width: '1.2rem', height: '1.2rem' } } className={ `${ styles.hover } me-2` }
+                                                                        checked={ props.studentAdded.length !== 0 && !!props.studentAdded.find(elem => elem.id === res.data[i].id) }></input>
+                                                                  <NavLink to={ `/student-list/detail/${ res.data[i].id }` }>
+                                                                        <button className="ms-2 btn-sm btn btn-primary">Detail</button>
+                                                                  </NavLink>
+                                                            </div>
+                                                      </td>
+                                                </tr >
+                                          );
                               setStudentListContent(temp);
                         })
                         .catch(err => console.error(err));
@@ -465,7 +469,7 @@ const RoomSelect = (props) =>
       {
             if (props.addRoomPopUp && props.studentAdded.length && props.dow)
             {
-                  axios.post(`http://${ domain }/admin/getSuitableRoomForNewClass`, {
+                  request.post(`http://${ domain }/admin/getSuitableRoomForNewClass`, {
                         params: {
                               seats: props.studentAdded.length,
                               start: props.startDate,
@@ -476,18 +480,19 @@ const RoomSelect = (props) =>
                         .then(res =>
                         {
                               const temp = [];
-                              for (let i = 0; i < res.data.length; i++)
-                                    temp.push(<tr key={ i }>
-                                          <td className='text-center align-middle'>{ i + 1 }</td>
-                                          <td className='text-center align-middle'>{ res.data[i].id }</td>
-                                          <td className='text-center align-middle'>{ res.data[i].max_seats }</td>
-                                          <td className='text-center align-middle'>
-                                                <input className={ `me-sm-2 mb-1 mb-sm-0 ${ styles.hover }` } type='radio' style={ { width: '1.3rem', height: '1.3rem' } }
-                                                      onChange={ () => addRoom(res.data[i].id, parseInt(props.dow.split(',')[0]), res.data[i].max_seats) }
-                                                      checked={ !!props.period.find(elem => elem.dow === parseInt(props.dow.split(',')[0]) && elem.room === res.data[i].id) }
-                                                      name={ props.dow.split(',')[1] }></input>
-                                          </td>
-                                    </tr>);
+                              if (res.status === 200)
+                                    for (let i = 0; i < res.data.length; i++)
+                                          temp.push(<tr key={ i }>
+                                                <td className='text-center align-middle'>{ i + 1 }</td>
+                                                <td className='text-center align-middle'>{ res.data[i].id }</td>
+                                                <td className='text-center align-middle'>{ res.data[i].max_seats }</td>
+                                                <td className='text-center align-middle'>
+                                                      <input className={ `me-sm-2 mb-1 mb-sm-0 ${ styles.hover }` } type='radio' style={ { width: '1.3rem', height: '1.3rem' } }
+                                                            onChange={ () => addRoom(res.data[i].id, parseInt(props.dow.split(',')[0]), res.data[i].max_seats) }
+                                                            checked={ !!props.period.find(elem => elem.dow === parseInt(props.dow.split(',')[0]) && elem.room === res.data[i].id) }
+                                                            name={ props.dow.split(',')[1] }></input>
+                                                </td>
+                                          </tr>);
                               setRoomListContent(temp);
                         })
                         .catch(err => console.log(err));
@@ -736,10 +741,10 @@ const ClassCreate = (props) =>
                                                 clearTimeout(timer);
                                                 timer = setTimeout(() =>
                                                 {
-                                                      axios.post(`http://${ domain }/admin/getDuplicateName`, { params: { name: e.target.value } }, { headers: { 'Content-Type': 'application/json' } })
+                                                      request.post(`http://${ domain }/admin/getDuplicateName`, { params: { name: e.target.value } }, { headers: { 'Content-Type': 'application/json' } })
                                                             .then(res =>
                                                             {
-                                                                  if (res.data.length)
+                                                                  if (res.status === 200)
                                                                         setNameDuplicate(true);
                                                                   else
                                                                         setNameDuplicate(false);
@@ -958,7 +963,7 @@ const ClassCreate = (props) =>
                               {
                                     setConfirmPopUp(false);
                                     props.setCreateClassPopUp(false);
-                                    axios.post(`http://${ domain }/admin/createClass`, {
+                                    request.post(`http://${ domain }/admin/createClass`, {
                                           params: {
                                                 period: period,
                                                 start: startDate,
@@ -970,7 +975,11 @@ const ClassCreate = (props) =>
                                                 courseLength: length
                                           }
                                     }, { headers: { 'Content-Type': 'application/json' } })
-                                          .then(res => props.setRender(!props.render))
+                                          .then(res =>
+                                          {
+                                                if (res.status === 200)
+                                                      props.setRender(!props.render);
+                                          })
                                           .catch(err =>
                                           {
                                                 setErrorPopUp(true);

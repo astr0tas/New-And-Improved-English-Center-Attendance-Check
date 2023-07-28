@@ -9,6 +9,8 @@ import { domain } from '../../../tools/domain';
 import { DMY, YMD } from '../../../tools/dateFormat';
 import { useOutletContext } from 'react-router-dom';
 import axios from 'axios';
+import request from '../../../tools/request';
+import { encrypt } from '../../../tools/encryption';
 
 const Profile = () =>
 {
@@ -60,23 +62,26 @@ const Profile = () =>
 
       useEffect(() =>
       {
-            axios.get(`http://${ domain }/profile`, {
+            request.get(`http://${ domain }/profile`, {
                   withCredentials: true
             })
                   .then(res =>
                   {
-                        setName(res.data.name);
-                        setSSN(res.data.ssn);
-                        setEmail(res.data.email);
-                        setPhone(res.data.phone);
-                        setAddress(res.data.address);
-                        setBirthplace(res.data.birthplace);
-                        setUsername(res.data.username);
-                        setBirthday(DMY(res.data.birthday));
+                        if (res.status === 200)
+                        {
+                              setName(res.data.name);
+                              setSSN(res.data.ssn);
+                              setEmail(res.data.email);
+                              setPhone(res.data.phone);
+                              setAddress(res.data.address);
+                              setBirthplace(res.data.birthplace);
+                              setUsername(res.data.username);
+                              setBirthday(DMY(res.data.birthday));
 
-                        setImage(res.data.image === null ? require('../../../images/profile.png') : `http://${ domain }/image/employee/${ res.data.image }`);
-                        if (isRefValid(profileImg))
-                              profileImg.current.src = res.data.image === null ? require('../../../images/profile.png') : `http://${ domain }/image/employee/${ res.data.image }`;
+                              setImage(res.data.image === null ? require('../../../images/profile.png') : `http://${ domain }/image/employee/${ res.data.image }`);
+                              if (isRefValid(profileImg))
+                                    profileImg.current.src = res.data.image === null ? require('../../../images/profile.png') : `http://${ domain }/image/employee/${ res.data.image }`;
+                        }
                   })
                   .catch(err => console.log(err));
       }, [render]);
@@ -110,14 +115,14 @@ const Profile = () =>
             }
       }
 
-      function hasAlphabetCharacters(inputString)
+      function isContainOnlyNumeric(inputString)
       {
-            const alphabetPattern = /[a-zA-Z]/;
+            const pattern = /[a-zA-Z\\~!@#$%^&*()_+`|;:'"<>,.?\n\t\r\b]/;
 
-            return alphabetPattern.test(inputString);
+            return pattern.test(inputString);
       }
 
-      function isNameInvalid(inputString)
+      function isContainOnlyAlphabet(inputString)
       {
             const pattern = /[0-9\\~!@#$%^&*()_+`|;:'"<>,.?\n\t\r\b]/;
 
@@ -154,32 +159,50 @@ const Profile = () =>
             setIsYoung(newBirthday !== '' && !isValidAge(newBirthday));
             isOk = !(newBirthday !== '' && !isValidAge(newBirthday)) && isOk;
 
-            setInvalidName(newName !== '' && isNameInvalid(newName));
-            isOk = !(newName !== '' && isNameInvalid(newName)) && isOk;
+            setInvalidName(newName !== '' && isContainOnlyAlphabet(newName));
+            isOk = !(newName !== '' && isContainOnlyAlphabet(newName)) && isOk;
 
-            if (newSSN !== '' && hasAlphabetCharacters(newSSN))
+            if (newSSN !== '' && isContainOnlyNumeric(newSSN))
             {
                   setInvalidSSN(true);
                   isOk = false;
             }
             else if (newSSN !== '')
             {
-                  const result = await axios.post(`http://${ domain }/isSSNDuplicate`, { params: { ssn: newSSN } }, { headers: { 'Content-Type': 'application/json' } });
-                  setInvalidSSN(false);
-                  setDuplicateSSN(result.data);
-                  isOk = !result.data && isOk;
+                  await request.post(`http://${ domain }/isSSNDuplicate`, { params: { ssn: newSSN } }, { headers: { 'Content-Type': 'application/json' } })
+                        .then(res =>
+                        {
+                              setInvalidSSN(false);
+                              if (res.status === 200)
+                              {
+                                    setDuplicateSSN(true);
+                                    isOk = false;
+                              }
+                              else
+                                    setDuplicateSSN(false);
+                        })
+                        .catch(err => console.log(err));
             }
-            if (newPhone !== '' && hasAlphabetCharacters(newPhone))
+            if (newPhone !== '' && isContainOnlyNumeric(newPhone))
             {
                   setInvalidPhone(true);
                   isOk = false;
             }
             else if (newPhone !== '')
             {
-                  const result = await axios.post(`http://${ domain }/isPhoneDuplicate`, { params: { phone: newPhone } }, { headers: { 'Content-Type': 'application/json' } });
-                  setInvalidPhone(false);
-                  setDuplicatePhone(result.data);
-                  isOk = !result.data && isOk;
+                  await request.post(`http://${ domain }/isPhoneDuplicate`, { params: { ssn: newSSN } }, { headers: { 'Content-Type': 'application/json' } })
+                        .then(res =>
+                        {
+                              setInvalidPhone(false);
+                              if (res.status === 200)
+                              {
+                                    setDuplicatePhone(true);
+                                    isOk = false;
+                              }
+                              else
+                                    setDuplicatePhone(false);
+                        })
+                        .catch(err => console.log(err));
             }
             if (newEmail !== '' && !isValidEmail(newEmail))
             {
@@ -188,23 +211,32 @@ const Profile = () =>
             }
             else if (newEmail !== '')
             {
-                  const result = await axios.post(`http://${ domain }/isEmailDuplicate`, { params: { email: newEmail } }, { headers: { 'Content-Type': 'application/json' } });
-                  setInvalidEmail(false);
-                  setDuplicateEmail(result.data);
-                  isOk = !result.data && isOk;
+                  await request.post(`http://${ domain }/isEmailDuplicate`, { params: { ssn: newSSN } }, { headers: { 'Content-Type': 'application/json' } })
+                        .then(res =>
+                        {
+                              setInvalidEmail(false);
+                              if (res.status === 200)
+                              {
+                                    setDuplicateEmail(true);
+                                    isOk = false;
+                              }
+                              else
+                                    setDuplicateEmail(false);
+                        })
+                        .catch(err => console.log(err));
             }
             if (isOk)
             {
                   const formdata = new FormData();
-                  formdata.append('ssn', newSSN === '' ? null : newSSN);
-                  formdata.append('name', newName === '' ? null : newName);
-                  formdata.append('address', newAddress === '' ? null : newAddress);
-                  formdata.append('birthday', newBirthday === '' ? null : newBirthday);
-                  formdata.append('birthplace', newBirthplace === '' ? null : newBirthplace);
-                  formdata.append('email', newEmail === '' ? null : newEmail);
-                  formdata.append('phone', newPhone === '' ? null : newPhone);
-                  formdata.append('password', password === '' ? null : password);
-                  formdata.append('userType', userType);
+                  formdata.append('ssn', newSSN === '' ? null : await encrypt(newSSN));
+                  formdata.append('name', newName === '' ? null : await encrypt(newName));
+                  formdata.append('address', newAddress === '' ? null : await encrypt(newAddress));
+                  formdata.append('birthday', newBirthday === '' ? null : await encrypt(newBirthday));
+                  formdata.append('birthplace', newBirthplace === '' ? null : await encrypt(newBirthplace));
+                  formdata.append('email', newEmail === '' ? null : await encrypt(newEmail));
+                  formdata.append('phone', newPhone === '' ? null : await encrypt(newPhone));
+                  formdata.append('password', password === '' ? null : await encrypt(password));
+                  formdata.append('userType', await encrypt(userType));
                   formdata.append('image', newImage);
                   axios.post(`http://${ domain }/updateProfile`, formdata, {
                         withCredentials: true,
@@ -214,8 +246,11 @@ const Profile = () =>
                   })
                         .then(res =>
                         {
-                              triggerEdit(false);
-                              setRender(!render);
+                              if (res.status === 200)
+                              {
+                                    triggerEdit(false);
+                                    setRender(!render);
+                              }
                         })
                         .catch(err =>
                         {
@@ -328,13 +363,13 @@ const Profile = () =>
                                           }
                                           {
                                                 editMode && <input placeholder='Enter your SSN' className={ `${ styles.inputs }` } type='text'
-                                                      defaultValue={ ssn } onChange={ e => setNewSSN(e.target.value) }></input>
+                                                      defaultValue={ ssn } onChange={ e => setNewSSN(e.target.value) } maxLength={ 12 }></input>
                                           }
                                     </div>
                                     {
                                           invalidSSN &&
                                           <p className={ `${ styles.p } mt-2 mb-0 text-center align-middle` }>
-                                                Your SSN must not contain alphabetical character(s)!
+                                                Your SSN must not contain non-numerical character(s)!
                                           </p>
                                     }
                                     {
@@ -401,14 +436,14 @@ const Profile = () =>
                                                 <p className='mb-0'>{ phone }</p>
                                           }
                                           {
-                                                editMode && <input placeholder='Enter your phone' className={ `${ styles.inputs }` } type='text'
+                                                editMode && <input placeholder='Enter your phone' className={ `${ styles.inputs }` } type='text' maxLength={ 10 }
                                                       defaultValue={ phone } onChange={ e => setNewPhone(e.target.value) }></input>
                                           }
                                     </div>
                                     {
                                           invalidPhone &&
                                           <p className={ `${ styles.p } mt-2 mb-0 text-center align-middle` }>
-                                                Your phone number must not contain alphabetical character(s)!
+                                                Your phone number must not contain non-numerical character(s)!
                                           </p>
                                     }
                                     {

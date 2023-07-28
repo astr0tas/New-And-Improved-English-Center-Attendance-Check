@@ -1,6 +1,6 @@
 import styles from './AddSession.module.css';
 import { useState, useEffect } from "react";
-import axios from 'axios';
+import request from '../../../../tools/request';
 import { domain } from "../../../../tools/domain";
 import { Modal } from 'react-bootstrap';
 import '../../../../css/scroll.css';
@@ -23,27 +23,28 @@ const TeacherSelect = (props) =>
       {
             if (props.addTeacherPopUp && props.date !== null && props.timetable !== null)
             {
-                  axios.post(`http://${ domain }/admin/classTeacher`, { params: { name: props.name, teacherName: searchTeacher, date: props.date, timetable: props.timetable.split(',')[1].split(' - ') } }, { headers: { 'Content-Type': 'application/json' } })
+                  request.post(`http://${ domain }/admin/classTeacher`, { params: { name: props.name, teacherName: searchTeacher, date: props.date, timetable: props.timetable.split(',')[1].split(' - ') } }, { headers: { 'Content-Type': 'application/json' } })
                         .then(res =>
                         {
                               const temp = [];
-                              for (let i = 0; i < res.data.length; i++)
-                                    temp.push(<tr key={ i }>
-                                          <td className='text-center align-middle'>{ i + 1 }</td>
-                                          <td className='text-center align-middle'>{ res.data[i].name }</td>
-                                          <td className='text-center align-middle'>{ res.data[i].phone }</td>
-                                          <td className='text-center align-middle'>{ res.data[i].email }</td>
-                                          <td className='text-center align-middle'>
-                                                <div className='d-flex flex-column flex-sm-row align-items-center justify-content-center'>
-                                                      <input className={ `me-sm-2 mb-1 mb-sm-0 ${ styles.hover }` } type='radio' style={ { width: '1.3rem', height: '1.3rem' } }
-                                                            name='teacherSelector' onChange={ () => { props.setTeacher(res.data[i].id); props.setTeacherName(res.data[i].name); } }
-                                                            checked={ res.data[i].id === props.teacher }></input>
-                                                      <NavLink to={ `/staff-list/detail/${ res.data[i].id }` }>
-                                                            <button className='btn btn-sm btn-primary ms-sm-2'>Detail</button>
-                                                      </NavLink>
-                                                </div>
-                                          </td>
-                                    </tr>);
+                              if (res.status === 200)
+                                    for (let i = 0; i < res.data.length; i++)
+                                          temp.push(<tr key={ i }>
+                                                <td className='text-center align-middle'>{ i + 1 }</td>
+                                                <td className='text-center align-middle'>{ res.data[i].name }</td>
+                                                <td className='text-center align-middle'>{ res.data[i].phone }</td>
+                                                <td className='text-center align-middle'>{ res.data[i].email }</td>
+                                                <td className='text-center align-middle'>
+                                                      <div className='d-flex flex-column flex-sm-row align-items-center justify-content-center'>
+                                                            <input className={ `me-sm-2 mb-1 mb-sm-0 ${ styles.hover }` } type='radio' style={ { width: '1.3rem', height: '1.3rem' } }
+                                                                  name='teacherSelector' onChange={ () => { props.setTeacher(res.data[i].id); props.setTeacherName(res.data[i].name); } }
+                                                                  checked={ res.data[i].id === props.teacher }></input>
+                                                            <NavLink to={ `/staff-list/detail/${ res.data[i].id }` }>
+                                                                  <button className='btn btn-sm btn-primary ms-sm-2'>Detail</button>
+                                                            </NavLink>
+                                                      </div>
+                                                </td>
+                                          </tr>);
                               setTeacherListContent(temp);
                         })
                         .catch(err => console.error(err));
@@ -115,27 +116,28 @@ const SupervisorSelect = (props) =>
       {
             if (props.addSupervisorPopUp)
             {
-                  axios.post(`http://${ domain }/admin/staffList`, { params: { name: searchSupervisor, type: 2 } }, { headers: { 'Content-Type': 'application/json' } })
+                  request.post(`http://${ domain }/admin/staffList`, { params: { name: searchSupervisor, type: 2 } }, { headers: { 'Content-Type': 'application/json' } })
                         .then(res =>
                         {
                               const temp = [];
-                              for (let i = 0; i < res.data.length; i++)
-                                    temp.push(<tr key={ i }>
-                                          <td className='text-center align-middle'>{ i + 1 }</td>
-                                          <td className='text-center align-middle'>{ res.data[i].name }</td>
-                                          <td className='text-center align-middle'>{ res.data[i].phone }</td>
-                                          <td className='text-center align-middle'>{ res.data[i].email }</td>
-                                          <td className='text-center align-middle'>
-                                                <div className='d-flex flex-column flex-sm-row align-items-center justify-content-center'>
-                                                      <input className={ `me-sm-2 mb-1 mb-sm-0 ${ styles.hover }` } type='radio' style={ { width: '1.3rem', height: '1.3rem' } }
-                                                            name='supervisorSelector' onChange={ () => { props.setSupervisor(res.data[i].id); props.setSupervisorName(res.data[i].name); } }
-                                                            checked={ res.data[i].id === props.supervisor }></input>
-                                                      <NavLink to={ `/staff-list/detail/${ res.data[i].id }` }>
-                                                            <button className='btn btn-sm btn-primary ms-sm-2'>Detail</button>
-                                                      </NavLink>
-                                                </div>
-                                          </td>
-                                    </tr>);
+                              if (res.status === 200)
+                                    for (let i = 0; i < res.data.length; i++)
+                                          temp.push(<tr key={ i }>
+                                                <td className='text-center align-middle'>{ i + 1 }</td>
+                                                <td className='text-center align-middle'>{ res.data[i].name }</td>
+                                                <td className='text-center align-middle'>{ res.data[i].phone }</td>
+                                                <td className='text-center align-middle'>{ res.data[i].email }</td>
+                                                <td className='text-center align-middle'>
+                                                      <div className='d-flex flex-column flex-sm-row align-items-center justify-content-center'>
+                                                            <input className={ `me-sm-2 mb-1 mb-sm-0 ${ styles.hover }` } type='radio' style={ { width: '1.3rem', height: '1.3rem' } }
+                                                                  name='supervisorSelector' onChange={ () => { props.setSupervisor(res.data[i].id); props.setSupervisorName(res.data[i].name); } }
+                                                                  checked={ res.data[i].id === props.supervisor }></input>
+                                                            <NavLink to={ `/staff-list/detail/${ res.data[i].id }` }>
+                                                                  <button className='btn btn-sm btn-primary ms-sm-2'>Detail</button>
+                                                            </NavLink>
+                                                      </div>
+                                                </td>
+                                          </tr>);
                               setSupervisorListContent(temp);
                         })
                         .catch(err => console.error(err));
@@ -280,41 +282,44 @@ const AddSession = (props) =>
       {
             if (props.sessionPopUp)
             {
-                  axios.post(`http://${ domain }/admin/getSuitableRoom`, { params: { name: props.name } }, { headers: { 'Content-Type': 'application/json' } })
+                  request.post(`http://${ domain }/admin/getSuitableRoom`, { params: { name: props.name } }, { headers: { 'Content-Type': 'application/json' } })
                         .then(res =>
                         {
                               const temp = [];
-                              for (let i = 0; i < res.data.length; i++)
-                                    temp.push(<Dropdown.Item key={ i } eventKey={ [res.data[i].id, `${ res.data[i].id } - ${ res.data[i].max_seats }`] }>
-                                          { res.data[i].id }&nbsp;-&nbsp;{ res.data[i].max_seats }
-                                    </Dropdown.Item>);
+                              if (res.status === 200)
+                                    for (let i = 0; i < res.data.length; i++)
+                                          temp.push(<Dropdown.Item key={ i } eventKey={ [res.data[i].id, `${ res.data[i].id } - ${ res.data[i].max_seats }`] }>
+                                                { res.data[i].id }&nbsp;-&nbsp;{ res.data[i].max_seats }
+                                          </Dropdown.Item>);
                               setRoomList(temp);
                         })
                         .catch(err => console.log(err));
 
                   if (room && date)
                   {
-                        axios.post(`http://${ domain }/admin/getTimetable`, { params: { room: room.split(',')[0], date: date } }, { headers: { 'Content-Type': 'application/json' } })
+                        request.post(`http://${ domain }/admin/getTimetable`, { params: { room: room.split(',')[0], date: date } }, { headers: { 'Content-Type': 'application/json' } })
                               .then(res =>
                               {
                                     const temp = [];
-                                    for (let i = 0; i < res.data.length; i++)
-                                          temp.push(<Dropdown.Item key={ i } eventKey={ [res.data[i].id, `${ res.data[i].start_hour } - ${ res.data[i].end_hour }`] }>
-                                                { res.data[i].start_hour }&nbsp;-&nbsp;{ res.data[i].end_hour }
-                                          </Dropdown.Item>);
+                                    if (res.status === 200)
+                                          for (let i = 0; i < res.data.length; i++)
+                                                temp.push(<Dropdown.Item key={ i } eventKey={ [res.data[i].id, `${ res.data[i].start_hour } - ${ res.data[i].end_hour }`] }>
+                                                      { res.data[i].start_hour }&nbsp;-&nbsp;{ res.data[i].end_hour }
+                                                </Dropdown.Item>);
                                     setTimetableList(temp);
                               })
                               .catch(err => console.log(err));
                   }
 
-                  axios.post(`http://${ domain }/admin/getClassCanceledMissingSession`, { params: { name: props.name } }, { headers: { 'Content-Type': 'application/json' } })
+                  request.post(`http://${ domain }/admin/getClassCanceledMissingSession`, { params: { name: props.name } }, { headers: { 'Content-Type': 'application/json' } })
                         .then(res =>
                         {
                               const temp = [];
-                              for (let i = 0; i < res.data.length; i++)
-                                    temp.push(<Dropdown.Item key={ i } eventKey={ res.data[i].number }>
-                                          Session { res.data[i].number }
-                                    </Dropdown.Item>);
+                              if (res.status === 200)
+                                    for (let i = 0; i < res.data.length; i++)
+                                          temp.push(<Dropdown.Item key={ i } eventKey={ res.data[i].number }>
+                                                Session { res.data[i].number }
+                                          </Dropdown.Item>);
                               setSessionList(temp);
                         })
                         .catch(err => console.log(err));
@@ -548,7 +553,7 @@ const AddSession = (props) =>
                               {
                                     setConfirmPopUp(false);
                                     props.setSessionPopUp(false);
-                                    axios.post(`http://${ domain }/admin/addSessionToClass`, {
+                                    request.post(`http://${ domain }/admin/addSessionToClass`, {
                                           params: {
                                                 name: props.name,
                                                 room: room.split(',')[0],
@@ -562,18 +567,21 @@ const AddSession = (props) =>
                                     }, { headers: { 'Content-Type': 'application/json' } })
                                           .then(res =>
                                           {
-                                                setTeacher(null);
-                                                setSupervisor(null);
-                                                setRoom(null);
-                                                setDate(null);
-                                                setTimetable(null);
-                                                setMakeUpSession(null);
-                                                setTeacherName(null);
-                                                setTimetableList(null);
-                                                setSupervisorName(null);
-                                                setRoomList(null);
-                                                setSessionList(null);
-                                                props.setRender(!props.render);
+                                                if (res.status === 200)
+                                                {
+                                                      setTeacher(null);
+                                                      setSupervisor(null);
+                                                      setRoom(null);
+                                                      setDate(null);
+                                                      setTimetable(null);
+                                                      setMakeUpSession(null);
+                                                      setTeacherName(null);
+                                                      setTimetableList(null);
+                                                      setSupervisorName(null);
+                                                      setRoomList(null);
+                                                      setSessionList(null);
+                                                      props.setRender(!props.render);
+                                                }
                                           })
                                           .catch(err =>
                                           {

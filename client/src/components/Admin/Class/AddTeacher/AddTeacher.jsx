@@ -1,6 +1,6 @@
 import styles from './AddTeacher.module.css';
 import { useState, useEffect } from "react";
-import axios from 'axios';
+import request from '../../../../tools/request';
 import { domain } from '../../../../tools/domain';
 import { Modal } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -30,25 +30,26 @@ const AddTeacher = (props) =>
       {
             if (props.teacherPopUp)
             {
-                  axios.post(`http://${ domain }/admin/getTeacherNotInClass`, { params: { name: searchTeacher, className: props.name } }, { headers: { 'Content-Type': 'application/json' } })
+                  request.post(`http://${ domain }/admin/getTeacherNotInClass`, { params: { name: searchTeacher, className: props.name } }, { headers: { 'Content-Type': 'application/json' } })
                         .then(res =>
                         {
                               const temp = [];
-                              for (let i = 0; i < res.data.length; i++)
-                                    temp.push(<tr key={ i }>
-                                          <td className='align-middle text-center'>{ i + 1 }</td>
-                                          <td className='align-middle text-center'>{ res.data[i].name }</td>
-                                          <td className='align-middle text-center'>{ res.data[i].phone }</td>
-                                          <td className='align-middle text-center'>{ res.data[i].email }</td>
-                                          <td className='align-middle text-center'>
-                                                <div className='d-flex align-items-center justify-content-center'>
-                                                      <input type='checkbox' style={ { width: '1.2rem', height: '1.2rem' } } onChange={ e => configList(e, res.data[i].id) } className={ `${ styles.hover } me-2` }></input>
-                                                      <NavLink to={ `/staff-list/detail/${ res.data[i].id }` }>
-                                                            <button className='btn btn-sm btn-primary'>Detail</button>
-                                                      </NavLink>
-                                                </div>
-                                          </td>
-                                    </tr >);
+                              if (res.status === 200)
+                                    for (let i = 0; i < res.data.length; i++)
+                                          temp.push(<tr key={ i }>
+                                                <td className='align-middle text-center'>{ i + 1 }</td>
+                                                <td className='align-middle text-center'>{ res.data[i].name }</td>
+                                                <td className='align-middle text-center'>{ res.data[i].phone }</td>
+                                                <td className='align-middle text-center'>{ res.data[i].email }</td>
+                                                <td className='align-middle text-center'>
+                                                      <div className='d-flex align-items-center justify-content-center'>
+                                                            <input type='checkbox' style={ { width: '1.2rem', height: '1.2rem' } } onChange={ e => configList(e, res.data[i].id) } className={ `${ styles.hover } me-2` }></input>
+                                                            <NavLink to={ `/staff-list/detail/${ res.data[i].id }` }>
+                                                                  <button className='btn btn-sm btn-primary'>Detail</button>
+                                                            </NavLink>
+                                                      </div>
+                                                </td>
+                                          </tr >);
                               setTeacherListContent(temp);
                         })
                         .catch(err => console.error(err));
@@ -135,11 +136,14 @@ const AddTeacher = (props) =>
                               {
                                     setConfirmPopUp(false);
                                     props.setTeacherPopUp(false);
-                                    axios.post(`http://${ domain }/admin/addTeacherToClass`, { params: { name: props.name, teachers: teacherAdded } }, { headers: { 'Content-Type': 'application/json' } })
+                                    request.post(`http://${ domain }/admin/addTeacherToClass`, { params: { name: props.name, teachers: teacherAdded } }, { headers: { 'Content-Type': 'application/json' } })
                                           .then(res =>
                                           {
-                                                setTeacherAdded([]);
-                                                props.setRender(!props.render);
+                                                if (res.status === 200)
+                                                {
+                                                      setTeacherAdded([]);
+                                                      props.setRender(!props.render);
+                                                }
                                           })
                                           .catch(err =>
                                           {

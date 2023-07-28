@@ -108,7 +108,7 @@ export class Staff
                   if (err)
                         callback(null, err);
                   else
-                        callback(res.length ? true : false, null);
+                        callback(res, null);
             })
       }
 
@@ -119,7 +119,7 @@ export class Staff
                   if (err)
                         callback(null, err);
                   else
-                        callback(res.length ? true : false, null);
+                        callback(res, null);
             })
       }
 
@@ -130,7 +130,7 @@ export class Staff
                   if (err)
                         callback(null, err);
                   else
-                        callback(res.length ? true : false, null);
+                        callback(res, null);
             })
       }
 
@@ -141,7 +141,7 @@ export class Staff
                   if (err)
                         callback(null, err);
                   else
-                        callback(res.length ? true : false, null);
+                        callback(res, null);
             })
       }
 
@@ -164,11 +164,11 @@ export class Staff
                   if (err)
                         callback(null, err);
                   else
-                        callback(res.length ? true : false, null);
+                        callback(res, null);
             })
       }
 
-      createStaff(id, name, ssn, address, phone, birthdate, birthplace, email, image, password, callback)
+      updateStaff(id, name, ssn, address, phone, birthdate, birthplace, email, image, password, callback)
       {
             let sql = '';
             const params = [];

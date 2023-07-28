@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, forwardRef, useImperativeHandle } from 're
 import styles from './SessionDetail.module.css';
 import { useParams, NavLink } from 'react-router-dom';
 import { domain } from '../../../../tools/domain';
-import axios from 'axios';
+import request from '../../../../tools/request';
 import { DMDY, YMD } from '../../../../tools/dateFormat';
 import '../../../../css/scroll.css';
 import '../../../../css/modal.css';
@@ -23,27 +23,28 @@ const TeacherSelect = (props) =>
       {
             if (props.changeTeacherPopUp)
             {
-                  axios.post(`http://${ domain }/admin/classTeacher`, { params: { name: props.name, teacherName: searchTeacher, date: YMD(props.date), timetable: props.timetable } }, { headers: { 'Content-Type': 'application/json' } })
+                  request.post(`http://${ domain }/admin/classTeacher`, { params: { name: props.name, teacherName: searchTeacher, date: YMD(props.date), timetable: props.timetable } }, { headers: { 'Content-Type': 'application/json' } })
                         .then(res =>
                         {
                               const temp = [];
-                              for (let i = 0; i < res.data.length; i++)
-                                    temp.push(<tr key={ i }>
-                                          <td className='text-center align-middle'>{ i + 1 }</td>
-                                          <td className='text-center align-middle'>{ res.data[i].name }</td>
-                                          <td className='text-center align-middle'>{ res.data[i].phone }</td>
-                                          <td className='text-center align-middle'>{ res.data[i].email }</td>
-                                          <td className='text-center align-middle'>
-                                                <div className='d-flex flex-column flex-sm-row align-items-center justify-content-center'>
-                                                      <input className={ `me-sm-2 mb-1 mb-sm-0 ${ styles.hover }` } type='radio' style={ { width: '1.3rem', height: '1.3rem' } }
-                                                            name='teacherSelector' onChange={ () => props.setNewTeacher(res.data[i].id) }
-                                                            checked={ props.newTeacher === res.data[i].id }></input>
-                                                      <NavLink to={ `/staff-list/detail/${ res.data[i].id }` }>
-                                                            <button className='btn btn-sm btn-primary ms-sm-2'>Detail</button>
-                                                      </NavLink>
-                                                </div>
-                                          </td>
-                                    </tr>);
+                              if (res.status === 200)
+                                    for (let i = 0; i < res.data.length; i++)
+                                          temp.push(<tr key={ i }>
+                                                <td className='text-center align-middle'>{ i + 1 }</td>
+                                                <td className='text-center align-middle'>{ res.data[i].name }</td>
+                                                <td className='text-center align-middle'>{ res.data[i].phone }</td>
+                                                <td className='text-center align-middle'>{ res.data[i].email }</td>
+                                                <td className='text-center align-middle'>
+                                                      <div className='d-flex flex-column flex-sm-row align-items-center justify-content-center'>
+                                                            <input className={ `me-sm-2 mb-1 mb-sm-0 ${ styles.hover }` } type='radio' style={ { width: '1.3rem', height: '1.3rem' } }
+                                                                  name='teacherSelector' onChange={ () => props.setNewTeacher(res.data[i].id) }
+                                                                  checked={ props.newTeacher === res.data[i].id }></input>
+                                                            <NavLink to={ `/staff-list/detail/${ res.data[i].id }` }>
+                                                                  <button className='btn btn-sm btn-primary ms-sm-2'>Detail</button>
+                                                            </NavLink>
+                                                      </div>
+                                                </td>
+                                          </tr>);
                               setTeacherListContent(temp);
                         })
                         .catch(err => console.error(err));
@@ -114,27 +115,28 @@ const SupervisorSelect = (props) =>
       {
             if (props.changeSupervisorPopUp)
             {
-                  axios.post(`http://${ domain }/admin/staffList`, { params: { name: searchSupervisor, type: 2 } }, { headers: { 'Content-Type': 'application/json' } })
+                  request.post(`http://${ domain }/admin/staffList`, { params: { name: searchSupervisor, type: 2 } }, { headers: { 'Content-Type': 'application/json' } })
                         .then(res =>
                         {
                               const temp = [];
-                              for (let i = 0; i < res.data.length; i++)
-                                    temp.push(<tr key={ i }>
-                                          <td className='text-center align-middle'>{ i + 1 }</td>
-                                          <td className='text-center align-middle'>{ res.data[i].name }</td>
-                                          <td className='text-center align-middle'>{ res.data[i].phone }</td>
-                                          <td className='text-center align-middle'>{ res.data[i].email }</td>
-                                          <td className='text-center align-middle'>
-                                                <div className='d-flex flex-column flex-sm-row align-items-center justify-content-center'>
-                                                      <input className={ `me-sm-2 mb-1 mb-sm-0 ${ styles.hover }` } type='radio' style={ { width: '1.3rem', height: '1.3rem' } }
-                                                            name='supervisorSelector' onChange={ () => props.setNewSupervisor(res.data[i].id) }
-                                                            checked={ props.newSupervisor === res.data[i].id }></input>
-                                                      <NavLink to={ `/staff-list/detail/${ res.data[i].id }` }>
-                                                            <button className='btn btn-sm btn-primary ms-sm-2' >Detail</button>
-                                                      </NavLink>
-                                                </div>
-                                          </td>
-                                    </tr>);
+                              if (res.status === 200)
+                                    for (let i = 0; i < res.data.length; i++)
+                                          temp.push(<tr key={ i }>
+                                                <td className='text-center align-middle'>{ i + 1 }</td>
+                                                <td className='text-center align-middle'>{ res.data[i].name }</td>
+                                                <td className='text-center align-middle'>{ res.data[i].phone }</td>
+                                                <td className='text-center align-middle'>{ res.data[i].email }</td>
+                                                <td className='text-center align-middle'>
+                                                      <div className='d-flex flex-column flex-sm-row align-items-center justify-content-center'>
+                                                            <input className={ `me-sm-2 mb-1 mb-sm-0 ${ styles.hover }` } type='radio' style={ { width: '1.3rem', height: '1.3rem' } }
+                                                                  name='supervisorSelector' onChange={ () => props.setNewSupervisor(res.data[i].id) }
+                                                                  checked={ props.newSupervisor === res.data[i].id }></input>
+                                                            <NavLink to={ `/staff-list/detail/${ res.data[i].id }` }>
+                                                                  <button className='btn btn-sm btn-primary ms-sm-2' >Detail</button>
+                                                            </NavLink>
+                                                      </div>
+                                                </td>
+                                          </tr>);
                               setSupervisorListContent(temp);
                         })
                         .catch(err => console.error(err));
@@ -213,10 +215,10 @@ const Student = forwardRef((props, ref) =>
 
       useEffect(() =>
       {
-            axios.post(`http://${ domain }/getStudentSessionAttendace`, { params: { className: props.className, sessionNumber: props.sessionNumber, id: props.id } }, { headers: { 'Content-Type': 'application/json' } })
+            request.post(`http://${ domain }/getStudentSessionAttendace`, { params: { className: props.className, sessionNumber: props.sessionNumber, id: props.id } }, { headers: { 'Content-Type': 'application/json' } })
                   .then(res =>
                   {
-                        if (res.data.length)
+                        if (res.status === 200)
                         {
                               setStudentStatus(res.data[0].status);
                               setStudentNote(res.data[0].note);
@@ -279,10 +281,10 @@ const StudentList = (props) =>
 {
       useEffect(() =>
       {
-            axios.post(`http://${ domain }/getSessionStudent`, { params: { name: props.name, studentName: props.searchStudent } }, { headers: { 'Content-Type': 'application/json' } })
+            request.post(`http://${ domain }/getSessionStudent`, { params: { name: props.name, studentName: props.searchStudent } }, { headers: { 'Content-Type': 'application/json' } })
                   .then(res =>
                   {
-                        if (res.data !== '')
+                        if (res.status === 200)
                         {
                               const temp = [];
                               for (let i = 0; i < res.data.length; i++)
@@ -400,7 +402,7 @@ const AdminClassSessionDetail = () =>
             }
             if (isOK)
             {
-                  axios.post(`http://${ domain }/checkAttendance`,
+                  request.post(`http://${ domain }/checkAttendance`,
                         {
                               params: {
                                     name: name,
@@ -413,7 +415,8 @@ const AdminClassSessionDetail = () =>
                         { headers: { 'Content-Type': 'application/json' } })
                         .then(res =>
                         {
-                              setShowPopUp5(true);
+                              if (res.status === 200)
+                                    setShowPopUp5(true);
                         })
                         .catch(err => console.log(err));
             }
@@ -421,43 +424,47 @@ const AdminClassSessionDetail = () =>
 
       useEffect(() =>
       {
-            axios.post(`http://${ domain }/classSessionDetail`, { params: { name: name, number: number } }, { headers: { 'Content-Type': 'application/json' } })
+            request.post(`http://${ domain }/classSessionDetail`, { params: { name: name, number: number } }, { headers: { 'Content-Type': 'application/json' } })
                   .then(res =>
                   {
-                        setDate(res.data[0][0].sessionDate);
-                        setRoom(res.data[0][0].sessionClassroomID ? res.data[0][0].sessionClassroomID : 'N/A');
-                        setStart(res.data[0][0].startHour);
-                        setEnd(res.data[0][0].endHour);
-                        setStatus(res.data[0][0].sessionStatus ? res.data[0][0].sessionStatus : 'N/A');
-                        setMakeUp(res.data[0][0].sessionNumberMakeUpFor);
-
-                        setTeacherID(res.data[0][0].sessionTeacherID);
-                        setTeacherName(res.data[0][0].sessionTeacherName ? res.data[0][0].sessionTeacherName : 'N/A');
-                        setTeacherImage(res.data[0][0].sessionTeacherImage ? `http://${ domain }/image/employee/${ res.data[0][0].sessionTeacherImage }` : require('../../../../images/profile.png'));
-                        setTeacherStatus(res.data[0][0].sessionTeacherStatus);
-                        setTeacherNote(res.data[0][0].sessionTeacherNote);
-                        setNewTeacher(res.data[0][0].sessionTeacherID);
-
-                        setSupervisorID(res.data[0][0].sessionSupervisorID);
-                        setSupervisorName(res.data[0][0].sessionSupervisorName ? res.data[0][0].sessionSupervisorName : 'N/A');
-                        setSupervisorImage(res.data[0][0].sessionSupervisorImage ? `http://${ domain }/image/employee/${ res.data[0][0].sessionSupervisorImage }` : require('../../../../images/profile.png'));
-                        setNewSupervisor(res.data[0][0].sessionSupervisorID);
-                        setClassNote(res.data[0][0].sessionSupervisorNote);
-                        
-                        if (res.data[0][0].sessionStatus === 4)
+                        if (res.status === 200)
                         {
-                              axios.post(`http://${ domain }/admin/getSuitableRoom`, { params: { name: name } }, { headers: { 'Content-Type': 'application/json' } })
-                                    .then(respone =>
-                                    {
-                                          const temp = [];
-                                          for (let i = 0; i < respone.data.length; i++)
-                                                if (respone.data[i].id !== res.data.classroom_id)
-                                                      temp.push(<Dropdown.Item key={ i } eventKey={ respone.data[i].id }>
-                                                            { respone.data[i].id }&nbsp;-&nbsp;{ respone.data[i].max_seats }
-                                                      </Dropdown.Item>);
-                                          setRoomList(temp);
-                                    })
-                                    .catch(err => console.log(err));
+                              setDate(res.data[0][0].sessionDate);
+                              setRoom(res.data[0][0].sessionClassroomID ? res.data[0][0].sessionClassroomID : 'N/A');
+                              setStart(res.data[0][0].startHour);
+                              setEnd(res.data[0][0].endHour);
+                              setStatus(res.data[0][0].sessionStatus ? res.data[0][0].sessionStatus : 'N/A');
+                              setMakeUp(res.data[0][0].sessionNumberMakeUpFor);
+
+                              setTeacherID(res.data[0][0].sessionTeacherID);
+                              setTeacherName(res.data[0][0].sessionTeacherName ? res.data[0][0].sessionTeacherName : 'N/A');
+                              setTeacherImage(res.data[0][0].sessionTeacherImage ? `http://${ domain }/image/employee/${ res.data[0][0].sessionTeacherImage }` : require('../../../../images/profile.png'));
+                              setTeacherStatus(res.data[0][0].sessionTeacherStatus);
+                              setTeacherNote(res.data[0][0].sessionTeacherNote);
+                              setNewTeacher(res.data[0][0].sessionTeacherID);
+
+                              setSupervisorID(res.data[0][0].sessionSupervisorID);
+                              setSupervisorName(res.data[0][0].sessionSupervisorName ? res.data[0][0].sessionSupervisorName : 'N/A');
+                              setSupervisorImage(res.data[0][0].sessionSupervisorImage ? `http://${ domain }/image/employee/${ res.data[0][0].sessionSupervisorImage }` : require('../../../../images/profile.png'));
+                              setNewSupervisor(res.data[0][0].sessionSupervisorID);
+                              setClassNote(res.data[0][0].sessionSupervisorNote);
+
+                              if (res.data[0][0].sessionStatus === 4)
+                              {
+                                    request.post(`http://${ domain }/admin/getSuitableRoom`, { params: { name: name } }, { headers: { 'Content-Type': 'application/json' } })
+                                          .then(respone =>
+                                          {
+                                                const temp = [];
+                                                if (respone.status === 200)
+                                                      for (let i = 0; i < respone.data.length; i++)
+                                                            if (respone.data[i].id !== res.data.classroom_id)
+                                                                  temp.push(<Dropdown.Item key={ i } eventKey={ respone.data[i].id }>
+                                                                        { respone.data[i].id }&nbsp;-&nbsp;{ respone.data[i].max_seats }
+                                                                  </Dropdown.Item>);
+                                                setRoomList(temp);
+                                          })
+                                          .catch(err => console.log(err));
+                              }
                         }
                   })
                   .catch(err => console.error(err));
@@ -658,8 +665,12 @@ const AdminClassSessionDetail = () =>
                               <button className={ `btn btn-danger ms-2 ms-md-4` } onClick={ () =>
                               {
                                     setShowPopUp1(false);
-                                    axios.post(`http://${ domain }/admin/cancelSession`, { params: { name: name, number: number } }, { headers: { 'Content-Type': 'application/json' } })
-                                          .then(res => setRender(!render))
+                                    request.post(`http://${ domain }/admin/cancelSession`, { params: { name: name, number: number } }, { headers: { 'Content-Type': 'application/json' } })
+                                          .then(res =>
+                                          {
+                                                if (res.status === 200)
+                                                      setRender(!render);
+                                          })
                                           .catch(err =>
                                           {
                                                 setErrorPopUp(true);
@@ -680,8 +691,12 @@ const AdminClassSessionDetail = () =>
                               <button className={ `btn btn-danger ms-2 ms-md-4` } onClick={ () =>
                               {
                                     setShowPopUp4(false);
-                                    axios.post(`http://${ domain }/admin/restoreSession`, { params: { name: name, number: number } }, { headers: { 'Content-Type': 'application/json' } })
-                                          .then(res => setRender(!render))
+                                    request.post(`http://${ domain }/admin/restoreSession`, { params: { name: name, number: number } }, { headers: { 'Content-Type': 'application/json' } })
+                                          .then(res =>
+                                          {
+                                                if (res.status === 200)
+                                                      setRender(!render);
+                                          })
                                           .catch(err =>
                                           {
                                                 setErrorPopUp(true);
@@ -743,8 +758,12 @@ const AdminClassSessionDetail = () =>
                               <button className={ `btn btn-primary ms-2 ms-md-4` } onClick={ () =>
                               {
                                     setConfirmChangeClassRoom(false);
-                                    axios.post(`http://${ domain }/admin/changeClassRoom`, { params: { name: name, number: number, room: newClassRoom } }, { headers: { 'Content-Type': 'application/json' } })
-                                          .then(res => setRender(!render))
+                                    request.post(`http://${ domain }/admin/changeClassRoom`, { params: { name: name, number: number, room: newClassRoom } }, { headers: { 'Content-Type': 'application/json' } })
+                                          .then(res =>
+                                          {
+                                                if (res.status === 200)
+                                                      setRender(!render);
+                                          })
                                           .catch(err =>
                                           {
                                                 setErrorPopUp(true);
@@ -775,14 +794,18 @@ const AdminClassSessionDetail = () =>
                                     setNewTeacher(null);
                                     setConfirmChangeTeacher(false);
                                     setChangeTeacherPopUp(false);
-                                    axios.post(`http://${ domain }/admin/changeTeacher`, {
+                                    request.post(`http://${ domain }/admin/changeTeacher`, {
                                           params: {
                                                 name: name,
                                                 number: number,
                                                 teacher: newTeacher
                                           }
                                     }, { headers: { 'Content-Type': 'application/json' } })
-                                          .then(res => setRender(!render))
+                                          .then(res =>
+                                          {
+                                                if (res.status === 200)
+                                                      setRender(!render);
+                                          })
                                           .catch(err =>
                                           {
                                                 setErrorPopUp(true);
@@ -808,14 +831,18 @@ const AdminClassSessionDetail = () =>
                                     setNewSupervisor(null);
                                     setConfirmChangeSupervisor(false);
                                     setChangeSupervisorPopUp(false);
-                                    axios.post(`http://${ domain }/admin/changeSupervisor`, {
+                                    request.post(`http://${ domain }/admin/changeSupervisor`, {
                                           params: {
                                                 name: name,
                                                 number: number,
                                                 supervisor: newSupervisor
                                           }
                                     }, { headers: { 'Content-Type': 'application/json' } })
-                                          .then(res => setRender(!render))
+                                          .then(res =>
+                                          {
+                                                if (res.status === 200)
+                                                      setRender(!render);
+                                          })
                                           .catch(err =>
                                           {
                                                 setErrorPopUp(true);

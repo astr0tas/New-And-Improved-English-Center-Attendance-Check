@@ -1,6 +1,6 @@
 import styles from './Home.module.css';
 import { NavLink, useOutletContext } from 'react-router-dom';
-import axios from 'axios';
+import request from '../../../tools/request';
 import { domain } from '../../../tools/domain';
 import { useEffect, useState } from 'react';
 import '../../../css/scroll.css';
@@ -13,67 +13,69 @@ const Staff = (props) =>
 
       useEffect(() =>
       {
-            axios.get(`http://${ domain }/getTodaySession`, { withCredentials: true })
+            request.get(`http://${ domain }/getTodaySession`, { withCredentials: true })
                   .then(res =>
                   {
                         const temp = [];
-                        for (let i = 0; i < res.data.length; i++)
-                              temp.push(<tr key={ i }>
-                                    <td className='align-middle text-center'>{ i + 1 }</td>
-                                    <td className='align-middle text-center'>{ res.data[i].name }</td>
-                                    <td className='align-middle text-center'>Session { res.data[i].number }</td>
-                                    <td className='align-middle text-center'>{ res.data[i].start_hour }</td>
-                                    <td className='align-middle text-center'>{ res.data[i].end_hour }</td>
-                                    <td className='align-middle text-center' style={ {
-                                          color: res.data[i].status === 1 ? '#128400' : (
-                                                res.data[i].status === 2 ? 'gray' : (
-                                                      res.data[i].status === 4 ? 'blue' : 'black'
+                        if (res.status === 200)
+                              for (let i = 0; i < res.data.length; i++)
+                                    temp.push(<tr key={ i }>
+                                          <td className='align-middle text-center'>{ i + 1 }</td>
+                                          <td className='align-middle text-center'>{ res.data[i].name }</td>
+                                          <td className='align-middle text-center'>Session { res.data[i].number }</td>
+                                          <td className='align-middle text-center'>{ res.data[i].start_hour }</td>
+                                          <td className='align-middle text-center'>{ res.data[i].end_hour }</td>
+                                          <td className='align-middle text-center' style={ {
+                                                color: res.data[i].status === 1 ? '#128400' : (
+                                                      res.data[i].status === 2 ? 'gray' : (
+                                                            res.data[i].status === 4 ? 'blue' : 'black'
+                                                      )
                                                 )
-                                          )
-                                    } }>{ res.data[i].status === 1 ? 'On going' : (
-                                          res.data[i].status === 2 ? 'Finished' : (
-                                                res.data[i].status === 4 ? 'Scheduled' : 'N/A'
-                                          )
-                                    ) }</td>
-                                    <td className='align-middle text-center'>
-                                          <NavLink to={ `/my-class-list/detail/${ res.data[i].name }/Session ${ res.data[i].number }` }>
-                                                <button className='btn btn-sm btn-primary'>Detail</button>
-                                          </NavLink>
-                                    </td>
-                              </tr>);
+                                          } }>{ res.data[i].status === 1 ? 'On going' : (
+                                                res.data[i].status === 2 ? 'Finished' : (
+                                                      res.data[i].status === 4 ? 'Scheduled' : 'N/A'
+                                                )
+                                          ) }</td>
+                                          <td className='align-middle text-center'>
+                                                <NavLink to={ `/my-class-list/detail/${ res.data[i].name }/Session ${ res.data[i].number }` }>
+                                                      <button className='btn btn-sm btn-primary'>Detail</button>
+                                                </NavLink>
+                                          </td>
+                                    </tr>);
                         setToday(temp);
                   })
                   .catch(err => console.log(err));
 
-            axios.get(`http://${ domain }/getMissedSession`, { withCredentials: true })
+            request.get(`http://${ domain }/getMissedSession`, { withCredentials: true })
                   .then(res =>
                   {
                         const temp = [];
-                        for (let i = 0; i < res.data.length; i++)
-                              temp.push(<tr key={ i }>
-                                    <td className='align-middle text-center'>{ i + 1 }</td>
-                                    <td className='align-middle text-center'>{ res.data[i].name }</td>
-                                    <td className='align-middle text-center'>Session { res.data[i].number }</td>
-                                    <td className='align-middle text-center'>{ DMY(res.data[i].session_date) }</td>
-                                    <td className='align-middle text-center'>{ res.data[i].start_hour }</td>
-                                    <td className='align-middle text-center'>{ res.data[i].end_hour }</td>
-                                    <td className='align-middle text-center'>
-                                          {
-                                                props.userType === 3 &&
-                                                <NavLink to={ `/my-class-list/detail/${ res.data[i].name }/Session ${ res.data[i].number }` }>
-                                                      <button className='btn btn-sm btn-danger'>Check attendance</button>
-                                                </NavLink>
-                                          }
-                                          {
-                                                props.userType === 2 &&
-                                                <strong className='text-danger'>Contact supervisor or admin</strong>
-                                          }
-                                    </td>
-                              </tr>);
+                        if (res.status === 200)
+                              for (let i = 0; i < res.data.length; i++)
+                                    temp.push(<tr key={ i }>
+                                          <td className='align-middle text-center'>{ i + 1 }</td>
+                                          <td className='align-middle text-center'>{ res.data[i].name }</td>
+                                          <td className='align-middle text-center'>Session { res.data[i].number }</td>
+                                          <td className='align-middle text-center'>{ DMY(res.data[i].session_date) }</td>
+                                          <td className='align-middle text-center'>{ res.data[i].start_hour }</td>
+                                          <td className='align-middle text-center'>{ res.data[i].end_hour }</td>
+                                          <td className='align-middle text-center'>
+                                                {
+                                                      props.userType === 3 &&
+                                                      <NavLink to={ `/my-class-list/detail/${ res.data[i].name }/Session ${ res.data[i].number }` }>
+                                                            <button className='btn btn-sm btn-danger'>Check attendance</button>
+                                                      </NavLink>
+                                                }
+                                                {
+                                                      props.userType === 2 &&
+                                                      <strong className='text-danger'>Contact supervisor or admin</strong>
+                                                }
+                                          </td>
+                                    </tr>);
                         setMissed(temp);
                   })
                   .catch(err => console.log(err));
-      }, []);
+      }, [props.userType]);
 
       return (
             <div className='w-100 h-100 d-flex flex-column align-items-center overflow-auto hideBrowserScrollbar'>

@@ -1,7 +1,7 @@
 import styles from './Session.module.css';
 import { useParams, NavLink, useOutletContext } from 'react-router-dom';
 import { domain } from '../../../../tools/domain';
-import axios from 'axios';
+import request from '../../../../tools/request';
 import { DMDY } from '../../../../tools/dateFormat';
 import '../../../../css/scroll.css';
 import '../../../../css/modal.css';
@@ -30,10 +30,10 @@ const Student = forwardRef((props, ref) =>
 
       useEffect(() =>
       {
-            axios.post(`http://${ domain }/getStudentSessionAttendace`, { params: { className: props.className, sessionNumber: props.sessionNumber, id: props.id } }, { headers: { 'Content-Type': 'application/json' } })
+            request.post(`http://${ domain }/getStudentSessionAttendace`, { params: { className: props.className, sessionNumber: props.sessionNumber, id: props.id } }, { headers: { 'Content-Type': 'application/json' } })
                   .then(res =>
                   {
-                        if (res.data.length)
+                        if (res.status === 200)
                         {
                               setStudentStatus(res.data[0].status);
                               setStudentNote(res.data[0].note);
@@ -91,18 +91,16 @@ const StudentList = (props) =>
 {
       useEffect(() =>
       {
-            axios.post(`http://${ domain }/getSessionStudent`, { params: { name: props.name, studentName: props.searchStudent } }, { headers: { 'Content-Type': 'application/json' } })
+            request.post(`http://${ domain }/getSessionStudent`, { params: { name: props.name, studentName: props.searchStudent } }, { headers: { 'Content-Type': 'application/json' } })
                   .then(res =>
                   {
-                        if (res.data !== '')
-                        {
-                              const temp = [];
+                        const temp = [];
+                        if (res.status === 200)
                               for (let i = 0; i < res.data.length; i++)
                                     temp.push(<Student key={ i } i={ i + 1 } ref={ el => props.childrenRefs.current[i] = el }
                                           id={ res.data[i].id } name={ res.data[i].name }
                                           className={ props.name } sessionNumber={ props.number } status={ props.status } />);
-                              props.setStudentList(temp);
-                        }
+                        props.setStudentList(temp);
                   })
                   .catch(err => console.error(err));
 
@@ -211,7 +209,7 @@ const MyClassSession = () =>
             }
             if (isOK)
             {
-                  axios.post(`http://${ domain }/checkAttendance`,
+                  request.post(`http://${ domain }/checkAttendance`,
                         {
                               params: {
                                     name: name,
@@ -225,7 +223,8 @@ const MyClassSession = () =>
                         { headers: { 'Content-Type': 'application/json' } })
                         .then(res =>
                         {
-                              setShowPopUp5(true);
+                              if (res.status === 200)
+                                    setShowPopUp5(true);
                         })
                         .catch(err => console.log(err));
             }
@@ -233,32 +232,34 @@ const MyClassSession = () =>
 
       useEffect(() =>
       {
-            axios.post(`http://${ domain }/classSessionDetail`, { params: { name: name, number: number } }, { headers: { 'Content-Type': 'application/json' } })
+            request.post(`http://${ domain }/classSessionDetail`, { params: { name: name, number: number } }, { headers: { 'Content-Type': 'application/json' } })
                   .then(res =>
                   {
-                        console.log(res);
-                        setDate(res.data[0][0].sessionDate);
-                        setRoom(res.data[0][0].sessionClassroomID ? res.data[0][0].sessionClassroomID : 'N/A');
-                        setStart(res.data[0][0].startHour);
-                        setEnd(res.data[0][0].endHour);
-                        setStatus(res.data[0][0].sessionStatus ? res.data[0][0].sessionStatus : 'N/A');
-                        setMakeUp(res.data[0][0].sessionNumberMakeUpFor);
+                        if (res.status === 200)
+                        {
+                              setDate(res.data[0][0].sessionDate);
+                              setRoom(res.data[0][0].sessionClassroomID ? res.data[0][0].sessionClassroomID : 'N/A');
+                              setStart(res.data[0][0].startHour);
+                              setEnd(res.data[0][0].endHour);
+                              setStatus(res.data[0][0].sessionStatus ? res.data[0][0].sessionStatus : 'N/A');
+                              setMakeUp(res.data[0][0].sessionNumberMakeUpFor);
 
-                        setTeacherID(res.data[0][0].sessionTeacherID);
-                        setTeacherName(res.data[0][0].sessionTeacherName ? res.data[0][0].sessionTeacherName : 'N/A');
-                        setTeacherImage(res.data[0][0].sessionTeacherImage ? `http://${ domain }/image/employee/${ res.data[0][0].sessionTeacherImage }` : require('../../../../images/profile.png'));
-                        setTeacherStatus(res.data[0][0].sessionTeacherStatus);
-                        setTeacherNote(res.data[0][0].sessionTeacherNote);
+                              setTeacherID(res.data[0][0].sessionTeacherID);
+                              setTeacherName(res.data[0][0].sessionTeacherName ? res.data[0][0].sessionTeacherName : 'N/A');
+                              setTeacherImage(res.data[0][0].sessionTeacherImage ? `http://${ domain }/image/employee/${ res.data[0][0].sessionTeacherImage }` : require('../../../../images/profile.png'));
+                              setTeacherStatus(res.data[0][0].sessionTeacherStatus);
+                              setTeacherNote(res.data[0][0].sessionTeacherNote);
 
-                        setSupervisorID(res.data[0][0].sessionSupervisorID);
-                        setSupervisorName(res.data[0][0].sessionSupervisorName ? res.data[0][0].sessionSupervisorName : 'N/A');
-                        setSupervisorImage(res.data[0][0].sessionSupervisorImage ? `http://${ domain }/image/employee/${ res.data[0][0].sessionSupervisorImage }` : require('../../../../images/profile.png'));
-                        setClassNote(res.data[0][0].sessionSupervisorNote);
+                              setSupervisorID(res.data[0][0].sessionSupervisorID);
+                              setSupervisorName(res.data[0][0].sessionSupervisorName ? res.data[0][0].sessionSupervisorName : 'N/A');
+                              setSupervisorImage(res.data[0][0].sessionSupervisorImage ? `http://${ domain }/image/employee/${ res.data[0][0].sessionSupervisorImage }` : require('../../../../images/profile.png'));
+                              setClassNote(res.data[0][0].sessionSupervisorNote);
 
-                        if (res.data[0][0].sessionStatus && disableFeature)
-                              if ((res.data[0][0].sessionStatus === 1 && (userType === 2 || userType === 3)) ||
-                                    (res.data[0][0].sessionStatus === 2 && userType === 3 && isValidDate(res.data[0][0].sessionDate)))
-                                    setDisableFeature(false);
+                              if (res.data[0][0].sessionStatus && disableFeature)
+                                    if ((res.data[0][0].sessionStatus === 1 && (userType === 2 || userType === 3)) ||
+                                          (res.data[0][0].sessionStatus === 2 && userType === 3 && isValidDate(res.data[0][0].sessionDate)))
+                                          setDisableFeature(false);
+                        }
                   })
                   .catch(err => console.error(err));
 
