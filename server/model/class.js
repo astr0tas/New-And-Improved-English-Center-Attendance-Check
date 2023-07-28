@@ -119,4 +119,31 @@ export class Class
                         callback(res, null);
             });
       }
+
+      checkAttendance(name, number, students, teacher, userType, supervisor, callback)
+      {
+            let sql = '';
+            const params = [];
+            if (userType === 1 || userType === 3)
+            {
+                  sql += `update TEACHER_RESPONSIBLE set teacher_status=?,teacher_note=? where teacher_id=? and class_name=? and session_number=?;
+                  update SUPERVISOR_RESPONSIBLE set Note_for_class=? where Supervisor_ID=? and class_name=? and session_number=?;`;
+                  params.push(teacher.status, teacher.note, teacher.id, name, number,
+                        supervisor.note, supervisor.id, name, number);
+            }
+
+            for (let i = 0; i < students.length; i++)
+            {
+                  sql += 'update STUDENT_ATTENDANCE set status=?,note=? where student_id=? and class_name=? and session_number=?;';
+                  params.push(students[i].status, students[i].note, students[i].id, name, number);
+            }
+
+            this.conn.query(sql, params, (err, res) =>
+            {
+                  if (err)
+                        callback(null, err);
+                  else
+                        callback(res, null);
+            });
+      }
 }

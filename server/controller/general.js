@@ -311,7 +311,7 @@ generalRoutes.post('/classSession', (req, res) =>
       const name = req.body.params.name;
       const id = req.session.userID ? req.session.userID : null;
       const type = req.session.userType ? req.session.userType : null;
-      generalClassModel.classSession(name, id,type,(result, err) =>
+      generalClassModel.classSession(name, id, type, (result, err) =>
       {
             if (err)
             {
@@ -361,6 +361,26 @@ generalRoutes.post('/getStudentSessionAttendace', (req, res) =>
       const sessionNumber = req.body.params.sessionNumber;
       const id = req.body.params.id;
       generalClassModel.getStudentSessionAttendace(className, sessionNumber, id, (result, err) =>
+      {
+            if (err)
+            {
+                  console.log(err);
+                  res.status(500).send({ message: 'Server internal error!' });
+            }
+            else
+                  res.status(200).send(result);
+      })
+});
+
+generalRoutes.post('/checkAttendance', (req, res) =>
+{
+      const name = req.body.params.name;
+      const number = req.body.params.number;
+      const students = req.body.params.students;
+      const teacher = req.body.params.teacher;
+      const userType = req.body.params.userType ? req.body.params.userType : 1;
+      const supervisor = req.body.params.supervisor ? req.body.params.supervisor : null;
+      generalClassModel.checkAttendance(name, number, students, teacher, userType, supervisor, (result, err) =>
       {
             if (err)
             {

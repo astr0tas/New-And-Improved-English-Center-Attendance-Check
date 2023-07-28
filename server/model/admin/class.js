@@ -231,26 +231,6 @@ export class Class
             });
       }
 
-      checkAttendance(name, number, students, teacher, callback)
-      {
-            let sql = "update TEACHER_RESPONSIBLE set teacher_status=?,teacher_note=? where teacher_id=? and class_name=? and session_number=?;";
-            const params = [teacher.status, teacher.note, teacher.id, name, number];
-
-            for (let i = 0; i < students.length; i++)
-            {
-                  sql += 'update STUDENT_ATTENDANCE set status=?,note=? where student_id=? and class_name=? and session_number=?;';
-                  params.push(students[i].status, students[i].note, students[i].id, name, number);
-            }
-
-            this.conn.query(sql, params, (err, res) =>
-            {
-                  if (err)
-                        callback(null, err);
-                  else
-                        callback(res, null);
-            });
-      }
-
       cancelSession(name, number, callback)
       {
             this.conn.query(`update session set status=3 where class_name=? and number=?`, [name, number], (err, res) =>
@@ -314,7 +294,7 @@ export class Class
                   join session on session.number=teacher_responsible.session_number and session.class_name=teacher_responsible.class_name
                   join timetable on timetable.id=session.timetable_id
                   join class on class.name=session.class_name
-                  where class.status=true and not (class.start_date>? or class.end_date<?)
+                  where class.status=2 and not (class.start_date>? or class.end_date<?)
                   and WEEKDAY(session.session_date)+1=?
                   and not (timetable.start_hour>? or timetable.end_hour<?) and teacher_responsible.teacher_id is not null
                   )`, ['%' + teacherName + '%', endDate, startDate, dow, endHour, startHour], (err, res) =>
@@ -357,7 +337,7 @@ export class Class
                   join class on class.name=in_class.class_name
                   join session on session.class_name=class.name
                   join timetable on timetable.id=session.timetable_id
-                  where class.status=true and not (class.start_date>? or class.end_date<?)
+                  where class.status=2 and not (class.start_date>? or class.end_date<?)
                   and ((WEEKDAY(session.session_date)+1=?
                   and not (timetable.start_hour>? or timetable.end_hour<?))`;
             const params = ['%' + name + '%', endDate, startDate, period[0].dow, period[0].end, period[0].start];
@@ -384,7 +364,7 @@ export class Class
                   join session on session.classroom_id=classroom.id
                   join timetable on timetable.id=session.timetable_id
                   join class on class.name=session.class_name
-                  where class.status=true and not (class.start_date>? or class.end_date<?)
+                  where class.status=2 and not (class.start_date>? or class.end_date<?)
                   and WEEKDAY(session.session_date)+1=?
                   and not (timetable.start_hour>? or timetable.end_hour<?)
             ) order by id`, [seats, endDate, startDate, dow, endHour, startHour], (err, res) =>

@@ -2,7 +2,7 @@ import styles from './Session.module.css';
 import { useParams, NavLink, useOutletContext } from 'react-router-dom';
 import { domain } from '../../../../tools/domain';
 import axios from 'axios';
-import { DMDY, YMD } from '../../../../tools/dateFormat';
+import { DMDY } from '../../../../tools/dateFormat';
 import '../../../../css/scroll.css';
 import '../../../../css/modal.css';
 import { Modal } from 'react-bootstrap';
@@ -107,7 +107,7 @@ const StudentList = (props) =>
                   .catch(err => console.error(err));
 
             // eslint-disable-next-line
-      }, [props.searchStudent, props.name])
+      }, [props.searchStudent, props.name, props.status])
 
       return (
             <>
@@ -138,6 +138,7 @@ const MyClassSession = () =>
       const [supervisorID, setSupervisorID] = useState(null);
       const [supervisorName, setSupervisorName] = useState("N/A");
       const [supervisorImage, setSupervisorImage] = useState(require('../../../../images/profile.png'));
+      const [classNote, setClassNote] = useState(null);
 
       const [studentList, setStudentList] = useState([]);
       const childrenRefs = useRef([]);
@@ -191,7 +192,7 @@ const MyClassSession = () =>
       const checkAttendance = () =>
       {
             let isOK = true;
-            if (teacherStatus === -1)
+            if (teacherStatus === -1 && userType === 3)
             {
                   setShowPopUp2(true);
                   isOK = false;
@@ -210,14 +211,23 @@ const MyClassSession = () =>
             }
             if (isOK)
             {
-                  // axios.post(`http://${ domain }/admin/checkAttendance`,
-                  //       { params: { name: name, number: number, students: childrenRefs.current, teacher: { id: teacherID, status: teacherStatus, note: teacherNote } } },
-                  //       { headers: { 'Content-Type': 'application/json' } })
-                  //       .then(res =>
-                  //       {
-                  //             setShowPopUp5(true);
-                  //       })
-                  //       .catch(err => console.log(err));
+                  axios.post(`http://${ domain }/checkAttendance`,
+                        {
+                              params: {
+                                    name: name,
+                                    number: number,
+                                    students: childrenRefs.current,
+                                    userType: userType,
+                                    teacher: { id: teacherID, status: teacherStatus, note: teacherNote },
+                                    supervisor: userType === 3 ? { id: supervisorID, note: classNote } : null
+                              }
+                        },
+                        { headers: { 'Content-Type': 'application/json' } })
+                        .then(res =>
+                        {
+                              setShowPopUp5(true);
+                        })
+                        .catch(err => console.log(err));
             }
       }
 
@@ -226,6 +236,7 @@ const MyClassSession = () =>
             axios.post(`http://${ domain }/classSessionDetail`, { params: { name: name, number: number } }, { headers: { 'Content-Type': 'application/json' } })
                   .then(res =>
                   {
+                        console.log(res);
                         setDate(res.data[0][0].sessionDate);
                         setRoom(res.data[0][0].sessionClassroomID ? res.data[0][0].sessionClassroomID : 'N/A');
                         setStart(res.data[0][0].startHour);
@@ -242,8 +253,9 @@ const MyClassSession = () =>
                         setSupervisorID(res.data[0][0].sessionSupervisorID);
                         setSupervisorName(res.data[0][0].sessionSupervisorName ? res.data[0][0].sessionSupervisorName : 'N/A');
                         setSupervisorImage(res.data[0][0].sessionSupervisorImage ? `http://${ domain }/image/employee/${ res.data[0][0].sessionSupervisorImage }` : require('../../../../images/profile.png'));
+                        setClassNote(res.data[0][0].sessionSupervisorNote);
 
-                        if (res.data[0][0].sessionStatus)
+                        if (res.data[0][0].sessionStatus && disableFeature)
                               if ((res.data[0][0].sessionStatus === 1 && (userType === 2 || userType === 3)) ||
                                     (res.data[0][0].sessionStatus === 2 && userType === 3 && isValidDate(res.data[0][0].sessionDate)))
                                     setDisableFeature(false);
@@ -399,19 +411,21 @@ const MyClassSession = () =>
                         </div>
 
                         { userType === 3 &&
-                              <div className='w-100 d-flex flex-column align-items-center mb-3 mt-2'>
+                              <div className='w-100 d-flex flex-column align-items-center mb-2 mt-2'>
                                     <label htmlFor='classNote' style={ { fontWeight: 'bold' } }>Note for class&nbsp;&nbsp;</label>
-                                    <input id='classNote' type='text' style={ { width: '250px' } } disabled={ !(status === 1 || status === 2) }></input>
+                                    <input value={ classNote ? classNote : '' } id='classNote'
+                                          type='text' style={ { width: '250px' } } disabled={ !(status === 1 || status === 2) }
+                                          onChange={ e => setClassNote(e.target.value) }></input>
                               </div>
                         }
-                        <div className='w-100 d-flex align-items-center justify-content-center mb-3'>
+                        <div className='w-100 d-flex align-items-center justify-content-center mb-3 mt-2'>
                               <NavLink to={ `/my-class-list/detail/${ name }` }>
-                                    <button className='btn btn-secondary me-3'>Back</button>
-                                    {
-                                          disableFeature &&
-                                          <button className='btn btn-primary ms-3' onClick={ checkAttendance }>Confirm</button>
-                                    }
+                                    <button className={ `btn btn-secondary ${ !disableFeature ? 'me-3' : '' }` }>Back</button>
                               </NavLink>
+                              {
+                                    !disableFeature &&
+                                    <button className='btn btn-primary ms-3' onClick={ checkAttendance }>Confirm</button>
+                              }
                         </div>
                   </div>
 

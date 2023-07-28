@@ -234,24 +234,6 @@ adminRoutes.post('/addTeacherToClass', (req, res) =>
       })
 });
 
-adminRoutes.post('/checkAttendance', (req, res) =>
-{
-      const name = req.body.params.name;
-      const number = req.body.params.number;
-      const students = req.body.params.students;
-      const teacher = req.body.params.teacher;
-      classModel.checkAttendance(name, number, students, teacher, (result, err) =>
-      {
-            if (err)
-            {
-                  console.log(err);
-                  res.status(500).send({ message: 'Server internal error!' });
-            }
-            else
-                  res.status(200).send(result);
-      })
-});
-
 adminRoutes.post('/cancelSession', (req, res) =>
 {
       const name = req.body.params.name;

@@ -295,7 +295,7 @@ const StudentList = (props) =>
                   .catch(err => console.error(err));
 
             // eslint-disable-next-line
-      }, [props.searchStudent, props.name])
+      }, [props.searchStudent, props.name, props.status])
 
       return (
             <>
@@ -324,6 +324,7 @@ const AdminClassSessionDetail = () =>
       const [supervisorID, setSupervisorID] = useState(null);
       const [supervisorName, setSupervisorName] = useState("N/A");
       const [supervisorImage, setSupervisorImage] = useState(require('../../../../images/profile.png'));
+      const [classNote, setClassNote] = useState(null);
 
       const [studentList, setStudentList] = useState([]);
       const [roomList, setRoomList] = useState([]);
@@ -399,8 +400,16 @@ const AdminClassSessionDetail = () =>
             }
             if (isOK)
             {
-                  axios.post(`http://${ domain }/admin/checkAttendance`,
-                        { params: { name: name, number: number, students: childrenRefs.current, teacher: { id: teacherID, status: teacherStatus, note: teacherNote } } },
+                  axios.post(`http://${ domain }/checkAttendance`,
+                        {
+                              params: {
+                                    name: name,
+                                    number: number,
+                                    students: childrenRefs.current,
+                                    teacher: { id: teacherID, status: teacherStatus, note: teacherNote },
+                                    supservisor: { id: supervisorID, note: classNote }
+                              }
+                        },
                         { headers: { 'Content-Type': 'application/json' } })
                         .then(res =>
                         {
@@ -433,7 +442,8 @@ const AdminClassSessionDetail = () =>
                         setSupervisorName(res.data[0][0].sessionSupervisorName ? res.data[0][0].sessionSupervisorName : 'N/A');
                         setSupervisorImage(res.data[0][0].sessionSupervisorImage ? `http://${ domain }/image/employee/${ res.data[0][0].sessionSupervisorImage }` : require('../../../../images/profile.png'));
                         setNewSupervisor(res.data[0][0].sessionSupervisorID);
-
+                        setClassNote(res.data[0][0].sessionSupervisorNote);
+                        
                         if (res.data[0][0].sessionStatus === 4)
                         {
                               axios.post(`http://${ domain }/admin/getSuitableRoom`, { params: { name: name } }, { headers: { 'Content-Type': 'application/json' } })
@@ -621,18 +631,20 @@ const AdminClassSessionDetail = () =>
                                     </tbody>
                               </table>
                         </div>
-                        <div className='w-100 d-flex flex-column align-items-center mb-3 mt-2'>
+                        <div className='w-100 d-flex flex-column align-items-center mb-2 mt-2'>
                               <label htmlFor='classNote' style={ { fontWeight: 'bold' } }>Note for class&nbsp;&nbsp;</label>
-                              <input id='classNote' type='text' style={ { width: '250px' } } disabled={ !(status === 1 || status === 2) }></input>
+                              <input value={ classNote ? classNote : '' } id='classNote'
+                                    type='text' style={ { width: '250px' } } disabled={ !(status === 1 || status === 2) }
+                                    onChange={ e => setClassNote(e.target.value) }></input>
                         </div>
-                        <div className='w-100 d-flex align-items-center justify-content-center mb-3'>
+                        <div className='w-100 d-flex align-items-center justify-content-center mb-3 mt-2'>
                               <NavLink to={ `/class-list/detail/${ name }` }>
-                                    <button className='btn btn-secondary me-3'>Back</button>
-                                    {
-                                          (status === 1 || status === 2) &&
-                                          <button className='btn btn-primary ms-3' onClick={ checkAttendance }>Confirm</button>
-                                    }
+                                    <button className={ `btn btn-secondary ${ (status === 1 || status === 2) ? 'me-3' : '' }` }>Back</button>
                               </NavLink>
+                              {
+                                    (status === 1 || status === 2) &&
+                                    <button className='btn btn-primary ms-3' onClick={ checkAttendance }>Confirm</button>
+                              }
                         </div>
                   </div>
                   <Modal show={ showPopUp1 } onHide={ () => setShowPopUp1(false) } className={ `reAdjustModel hideBrowserScrollbar` } container={ containerRef.current }>
