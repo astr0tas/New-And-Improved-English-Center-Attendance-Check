@@ -7,7 +7,7 @@ import { fileURLToPath } from 'url';
 import multer from "multer";
 import fs from 'fs';
 import CryptoJS from 'crypto-js';
-import { key } from '../AESKeyGenerator.js';
+import { key } from '../model/AESKeyGenerator.js';
 
 function encryptWithAES(data)
 {
@@ -807,7 +807,7 @@ adminRoutes.post('/updateStaff', multer().fields([
       {
             const imageFile = req.files['image'][0];
             // Get the target directory to store the image
-            const directory = path.join(path.dirname(path.dirname(fileURLToPath(import.meta.url))), 'model', 'image', 'employee','staff', id);
+            const directory = path.join(path.dirname(path.dirname(fileURLToPath(import.meta.url))), 'model', 'image', 'employee', 'staff', id);
             // Create the uploads folder if it doesn't exist
             if (!fs.existsSync(directory))
                   fs.mkdirSync(directory, { recursive: true });

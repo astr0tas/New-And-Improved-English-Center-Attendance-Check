@@ -6,9 +6,9 @@ import FileStoreFactory from 'session-file-store';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { domain } from "./domain.js";
-import { key, updateKey } from './AESKeyGenerator.js';
+import { key, updateKey } from './model/AESKeyGenerator.js';
 import NodeRSA from "node-rsa";
-import { IDValidation } from './IDValidation.js';
+import { IDValidation } from './model/IDValidation.js';
 
 import staffRoutes from "./controller/staff.js";
 import adminRoutes from "./controller/admin.js";

@@ -8,7 +8,7 @@ import { fileURLToPath } from 'url';
 import multer from "multer";
 import fs from 'fs';
 import CryptoJS from 'crypto-js';
-import { key } from '../AESKeyGenerator.js';
+import { key } from '../model/AESKeyGenerator.js';
 
 function encryptWithAES(data)
 {
@@ -271,7 +271,7 @@ generalRoutes.post('/isSSNDuplicate', (req, res) =>
             else
             {
                   if (!result.length)
-                        res.status(204).send(encryptWithAES({message:'No duplication!'}));
+                        res.status(204).send(encryptWithAES({ message: 'No duplication!' }));
                   else
                         res.status(200).send(encryptWithAES({ message: 'Duplication detected!' }));
             }

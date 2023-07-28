@@ -1,7 +1,7 @@
 import express from "express";
 import { Class } from '../model/staff/class.js';
 import CryptoJS from 'crypto-js';
-import { key } from '../AESKeyGenerator.js';
+import { key } from '../model/AESKeyGenerator.js';
 
 function encryptWithAES(data)
 {
