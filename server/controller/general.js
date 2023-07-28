@@ -1,8 +1,7 @@
 import express from "express";
 import { Authentication } from "../model/authentication.js";
 import { Profile } from "../model/profile.js";
-import { AdminHome } from "../model/admin/home.js";
-import { StaffHome } from '../model/staff/home.js';
+import { Home } from "../model/home.js";
 import { Class } from '../model/class.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -270,10 +269,6 @@ generalRoutes.post('/isEmailDuplicate', (req, res) =>
       });
 });
 
-const adminHomeModel = new AdminHome();
-
-const staffHomeModel = new StaffHome();
-
 const generalClassModel = new Class();
 generalRoutes.post('/classInfo', (req, res) =>
 {
@@ -391,5 +386,39 @@ generalRoutes.post('/checkAttendance', (req, res) =>
                   res.status(200).send(result);
       })
 });
+
+const homeModel = new Home();
+generalRoutes.get('/getTodaySession', (req, res) =>
+{
+      const userID = req.session.userID;
+      const userType = req.session.userType;
+      homeModel.getTodaySession(userID,userType, (result, err) =>
+      {
+            if (err)
+            {
+                  console.log(err);
+                  res.status(500).send({ message: 'Server internal error!' });
+            }
+            else
+                  res.status(200).send(result);
+      })
+});
+
+generalRoutes.get('/getMissedSession', (req, res) =>
+{
+      const userID = req.session.userID;
+      const userType = req.session.userType;
+      homeModel.getMissedSession(userID, userType, (result, err) =>
+      {
+            if (err)
+            {
+                  console.log(err);
+                  res.status(500).send({ message: 'Server internal error!' });
+            }
+            else
+                  res.status(200).send(result);
+      })
+});
+
 
 export default generalRoutes;

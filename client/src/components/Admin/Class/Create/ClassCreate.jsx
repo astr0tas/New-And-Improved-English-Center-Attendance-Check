@@ -17,6 +17,7 @@ const PeriodSelect = (props) =>
 
       const toggle = (e, id, start, end) =>
       {
+            props.setStudentAdded([]);
             props.setTeacherDow(null);
             if (e.target.checked && !props.period.find(element => element.dow === parseInt(props.dow.split(',')[0])))
                   props.setPeriod(prev => [...prev, { dow: parseInt(props.dow.split(',')[0]), id: id, start: start, end: end, teacherID: null, dowString: props.dow.split(',')[1], teacherName: null, room: null, roomSize: null }]);
@@ -1007,7 +1008,7 @@ const ClassCreate = (props) =>
                   <SupervisorSelect addSupervisorPopUp={ addSupervisorPopUp } setAddSupervisorPopUp={ setAddSupervisorPopUp } name={ props.name }
                         containerRef={ props.containerRef } supervisor={ supervisor } setSupervisor={ setSupervisor }
                         supervisorName={ supervisorName } setSupervisorName={ setSupervisorName } />
-                  <PeriodSelect addPeriodPopUp={ addPeriodPopUp } setAddPeriodPopUp={ setAddPeriodPopUp }
+                  <PeriodSelect addPeriodPopUp={ addPeriodPopUp } setAddPeriodPopUp={ setAddPeriodPopUp } setStudentAdded={ setStudentAdded }
                         containerRef={ props.containerRef } period={ period } setPeriod={ setPeriod } dow={ periodDow } setDow={ setPeriodDow } setTeacherDow={ setTeacherDow } />
                   <AddStudent containerRef={ props.containerRef } addPopUp={ addStudentPopUp } setAddPopUp={ setAddStudentPopUp }
                         studentAdded={ studentAdded } setStudentAdded={ setStudentAdded } startDate={ startDate } endDate={ endDate } period={ period } />

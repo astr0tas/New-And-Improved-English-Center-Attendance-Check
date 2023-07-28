@@ -1,0 +1,8 @@
+.sections {
+      width: 90%;
+      height: 40%;
+      border:2px solid black;
+      border-radius: 10px;
+      min-height:300px;
+      max-width:1200px;
+}
