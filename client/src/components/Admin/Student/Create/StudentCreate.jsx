@@ -65,14 +65,14 @@ const StudentCreate = (props) =>
       {
             const pattern = /[a-zA-Z\\~!@#$%^&*()_+`|;:'"<>,.?\n\t\r\b]/;
 
-            return pattern.test(inputString);
+            return !pattern.test(inputString);
       }
 
       function isContainOnlyAlphabet(inputString)
       {
             const pattern = /[0-9\\~!@#$%^&*()_+`|;:'"<>,.?\n\t\r\b]/;
 
-            return pattern.test(inputString);
+            return !pattern.test(inputString);
       }
 
       function isValidEmail(email)
@@ -103,7 +103,7 @@ const StudentCreate = (props) =>
                   setIsEmptyName(true);
                   isOk = false;
             }
-            else if (isContainOnlyAlphabet(name))
+            else if (!isContainOnlyAlphabet(name))
             {
                   setIsEmptyName(false);
                   setInvalidName(true);
@@ -135,7 +135,7 @@ const StudentCreate = (props) =>
                   setIsEmptySSN(true);
                   isOk = false;
             }
-            else if (isContainOnlyNumeric(ssn))
+            else if (!isContainOnlyNumeric(ssn))
             {
                   setIsEmptySSN(false);
                   setInvalidSSN(true);
@@ -191,7 +191,7 @@ const StudentCreate = (props) =>
                   setIsEmptyPhone(true);
                   isOk = false;
             }
-            else if (isContainOnlyNumeric(phone))
+            else if (!isContainOnlyNumeric(phone))
             {
                   setIsEmptyPhone(false);
                   setInvalidPhone(true);

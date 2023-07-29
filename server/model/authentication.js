@@ -57,9 +57,9 @@ export class Authentication
                   });
       }
 
-      recovery(username, password, callback)
+      recovery(username, password, email, phone, callback)
       {
-            this.conn.query(`update employee set password=? where username=?`, [password, username], (err, res) =>
+            this.conn.query(`update employee set password=? where username=? and email=? and phone=?`, [password, username, email, phone], (err, res) =>
             {
                   if (err)
                         callback(null, err);
@@ -68,9 +68,20 @@ export class Authentication
             });
       }
 
-      validateUser(username, callback)
+      validateUser(username, email, phone, callback)
       {
-            this.conn.query(`select * from employee where username=?`, [username], (err, res) =>
+            this.conn.query(`select username from employee where username=? and email=? and phone=?`, [username, email, phone], (err, res) =>
+            {
+                  if (err)
+                        callback(null, err);
+                  else
+                        callback(res, null);
+            })
+      }
+
+      validateID(id, callback)
+      {
+            this.conn.query(`select id from employee where id=?`, [id], (err, res) =>
             {
                   if (err)
                         callback(null, err);

@@ -71,14 +71,14 @@ const StaffCreate = (props) =>
       {
             const pattern = /[a-zA-Z\\~!@#$%^&*()_+`|;:'"<>,.?\n\t\r\b]/;
 
-            return pattern.test(inputString);
+            return !pattern.test(inputString);
       }
 
       function isContainOnlyAlphabet(inputString)
       {
             const pattern = /[0-9\\~!@#$%^&*()_+`|;:'"<>,.?\n\t\r\b]/;
 
-            return pattern.test(inputString);
+            return !pattern.test(inputString);
       }
 
       function isUsernameInvalid(inputString)
@@ -116,7 +116,7 @@ const StaffCreate = (props) =>
                   setIsEmptyName(true);
                   isOk = false;
             }
-            else if (isContainOnlyAlphabet(name))
+            else if (!isContainOnlyAlphabet(name))
             {
                   setIsEmptyName(false);
                   setInvalidName(true);
@@ -148,7 +148,7 @@ const StaffCreate = (props) =>
                   setIsEmptySSN(true);
                   isOk = false;
             }
-            else if (isContainOnlyNumeric(ssn))
+            else if (!isContainOnlyNumeric(ssn))
             {
                   setIsEmptySSN(false);
                   setInvalidSSN(true);
@@ -204,7 +204,7 @@ const StaffCreate = (props) =>
                   setIsEmptyPhone(true);
                   isOk = false;
             }
-            else if (isContainOnlyNumeric(phone))
+            else if (!isContainOnlyNumeric(phone))
             {
                   setIsEmptyPhone(false);
                   setInvalidPhone(true);

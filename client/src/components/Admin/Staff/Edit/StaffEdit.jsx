@@ -95,14 +95,14 @@ const StaffEdit = (props) =>
       {
             const pattern = /[a-zA-Z\\~!@#$%^&*()_+`|;:'"<>,.?\n\t\r\b]/;
 
-            return pattern.test(inputString);
+            return !pattern.test(inputString);
       }
 
       function isContainOnlyAlphabet(inputString)
       {
             const pattern = /[0-9\\~!@#$%^&*()_+`|;:'"<>,.?\n\t\r\b]/;
 
-            return pattern.test(inputString);
+            return !pattern.test(inputString);
       }
 
       function isValidEmail(email)
@@ -128,7 +128,7 @@ const StaffEdit = (props) =>
       const updateStaff = async () =>
       {
             let isOk = true;
-            if (name && isContainOnlyAlphabet(name))
+            if (name && !isContainOnlyAlphabet(name))
             {
                   setInvalidName(true);
                   isOk = false;
@@ -142,7 +142,7 @@ const StaffEdit = (props) =>
             }
             else
                   setInvalidDate(false);
-            if (ssn && isContainOnlyNumeric(ssn))
+            if (ssn && !isContainOnlyNumeric(ssn))
             {
                   setInvalidSSN(true);
                   isOk = false;
@@ -184,7 +184,7 @@ const StaffEdit = (props) =>
                         })
                         .catch(err => console.error(err));
             }
-            if (phone && isContainOnlyNumeric(phone))
+            if (phone && !isContainOnlyNumeric(phone))
             {
                   setInvalidPhone(true);
                   isOk = false;
@@ -478,7 +478,7 @@ const StaffEdit = (props) =>
                                           <strong>Password</strong>
                                     </div>
                                     <div className='col d-flex align-items-center justify-content-center justify-content-sm-start'>
-                                          <input type='password' className={ `${ styles.inputs } w-100` } onChange={ e =>
+                                          <input type='password' placeholder='Enter new password' className={ `${ styles.inputs } w-100` } onChange={ e =>
                                           {
                                                 if (e.target.value === '') setPassword(null);
                                                 else setPassword(e.target.value);
@@ -490,7 +490,7 @@ const StaffEdit = (props) =>
                                           <strong>Re-enter password</strong>
                                     </div>
                                     <div className='col d-flex align-items-center justify-content-center justify-content-sm-start'>
-                                          <input type='password' className={ `${ styles.inputs } w-100` } onChange={ e =>
+                                          <input type='password' placeholder='Confirm new password' className={ `${ styles.inputs } w-100` } onChange={ e =>
                                           {
                                                 if (e.target.value === '') setRepassword(null);
                                                 else setRepassword(e.target.value);

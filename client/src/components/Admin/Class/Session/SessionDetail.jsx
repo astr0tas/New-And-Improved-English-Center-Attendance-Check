@@ -62,7 +62,7 @@ const TeacherSelect = (props) =>
                   <Modal.Header closeButton>
                         <div>
                               <FontAwesomeIcon icon={ faMagnifyingGlass } className={ `position-absolute ${ styles.search }` } />
-                              <input type='text' style={ { fontSize: '1rem', paddingLeft: '30px' } } onChange={ e =>
+                              <input placeholder='Find teacher' type='text' style={ { fontSize: '1rem', paddingLeft: '30px' } } onChange={ e =>
                               {
                                     clearTimeout(timer);
 
@@ -154,7 +154,7 @@ const SupervisorSelect = (props) =>
                   <Modal.Header closeButton>
                         <div>
                               <FontAwesomeIcon icon={ faMagnifyingGlass } className={ `position-absolute ${ styles.search }` } />
-                              <input type='text' style={ { fontSize: '1rem', paddingLeft: '30px' } } onChange={ e =>
+                              <input placeholder='Find supervisor' type='text' style={ { fontSize: '1rem', paddingLeft: '30px' } } onChange={ e =>
                               {
                                     clearTimeout(timer);
 
@@ -262,7 +262,7 @@ const Student = forwardRef((props, ref) =>
                         </input>
                   </td>
                   <td className='text-center align-middle'>
-                        <input type='text'
+                        <input type='text' placeholder='Student note'
                               value={ studentNote ? studentNote : '' }
                               onChange={ e =>
                               {
@@ -562,7 +562,7 @@ const AdminClassSessionDetail = () =>
                                                       setTeacherNote(e.target.value);
                                                 else
                                                       setTeacherNote(null);
-                                          } } disabled={ !(status === 1 || status === 2) }></input>
+                                          } } disabled={ !(status === 1 || status === 2) } placeholder='Teacher note'></input>
                                     </div>
                                     <div className='d-flex flex-column align-items-center mt-3'>
                                           <h4>{ supervisorName }</h4>
@@ -640,7 +640,7 @@ const AdminClassSessionDetail = () =>
                         </div>
                         <div className='w-100 d-flex flex-column align-items-center mb-2 mt-2'>
                               <label htmlFor='classNote' style={ { fontWeight: 'bold' } }>Note for class&nbsp;&nbsp;</label>
-                              <input value={ classNote ? classNote : '' } id='classNote'
+                              <input value={ classNote ? classNote : '' } id='classNote' placeholder='Class note'
                                     type='text' style={ { width: '250px' } } disabled={ !(status === 1 || status === 2) }
                                     onChange={ e => setClassNote(e.target.value) }></input>
                         </div>

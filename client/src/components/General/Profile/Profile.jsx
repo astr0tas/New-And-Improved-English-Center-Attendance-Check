@@ -119,14 +119,14 @@ const Profile = () =>
       {
             const pattern = /[a-zA-Z\\~!@#$%^&*()_+`|;:'"<>,.?\n\t\r\b]/;
 
-            return pattern.test(inputString);
+            return !pattern.test(inputString);
       }
 
       function isContainOnlyAlphabet(inputString)
       {
             const pattern = /[0-9\\~!@#$%^&*()_+`|;:'"<>,.?\n\t\r\b]/;
 
-            return pattern.test(inputString);
+            return !pattern.test(inputString);
       }
 
       function isValidEmail(email)
@@ -159,10 +159,10 @@ const Profile = () =>
             setIsYoung(newBirthday !== '' && !isValidAge(newBirthday));
             isOk = !(newBirthday !== '' && !isValidAge(newBirthday)) && isOk;
 
-            setInvalidName(newName !== '' && isContainOnlyAlphabet(newName));
-            isOk = !(newName !== '' && isContainOnlyAlphabet(newName)) && isOk;
+            setInvalidName(newName !== '' && !isContainOnlyAlphabet(newName));
+            isOk = !(newName !== '' && !isContainOnlyAlphabet(newName)) && isOk;
 
-            if (newSSN !== '' && isContainOnlyNumeric(newSSN))
+            if (newSSN !== '' && !isContainOnlyNumeric(newSSN))
             {
                   setInvalidSSN(true);
                   isOk = false;
@@ -183,7 +183,7 @@ const Profile = () =>
                         })
                         .catch(err => console.log(err));
             }
-            if (newPhone !== '' && isContainOnlyNumeric(newPhone))
+            if (newPhone !== '' && !isContainOnlyNumeric(newPhone))
             {
                   setInvalidPhone(true);
                   isOk = false;
@@ -332,7 +332,7 @@ const Profile = () =>
                         }
                         {
                               editMode &&
-                              <input placeholder='Enter your name' className='mt-3 mb-2' style={ { fontSize: '1.5rem', maxWidth: '250px' } } defaultValue={ name } type='text' onChange={ e => setNewName(e.target.value) }></input>
+                              <input placeholder='Enter name' className='mt-3 mb-2' style={ { fontSize: '1.5rem', maxWidth: '250px' } } defaultValue={ name } type='text' onChange={ e => setNewName(e.target.value) }></input>
                         }
                         {
                               invalidName &&
@@ -362,7 +362,7 @@ const Profile = () =>
                                                 <p className='mb-0'>{ ssn }</p>
                                           }
                                           {
-                                                editMode && <input placeholder='Enter your SSN' className={ `${ styles.inputs }` } type='text'
+                                                editMode && <input placeholder='Enter SSN' className={ `${ styles.inputs }` } type='text'
                                                       defaultValue={ ssn } onChange={ e => setNewSSN(e.target.value) } maxLength={ 12 }></input>
                                           }
                                     </div>
@@ -402,7 +402,7 @@ const Profile = () =>
                                                 <p className='mb-0 overflow-auto' style={ { whiteSpace: 'nowrap' } }>{ birthplace }</p>
                                           }
                                           {
-                                                editMode && <input placeholder='Enter your birthplace' className={ `${ styles.inputs }` }
+                                                editMode && <input placeholder='Enter birthplace' className={ `${ styles.inputs }` }
                                                       defaultValue={ birthplace } onChange={ e => setNewBirthplace(e.target.value) }></input>
                                           }
                                     </div>
@@ -413,7 +413,7 @@ const Profile = () =>
                                                 <p className='mb-0 overflow-auto' style={ { whiteSpace: 'nowrap' } }>{ email }</p>
                                           }
                                           {
-                                                editMode && <input placeholder='Enter your email' className={ `${ styles.inputs }` } type='email'
+                                                editMode && <input placeholder='Enter email' className={ `${ styles.inputs }` } type='email'
                                                       defaultValue={ email } onChange={ e => setNewEmail(e.target.value) }></input>
                                           }
                                     </div>
@@ -436,7 +436,7 @@ const Profile = () =>
                                                 <p className='mb-0'>{ phone }</p>
                                           }
                                           {
-                                                editMode && <input placeholder='Enter your phone' className={ `${ styles.inputs }` } type='text' maxLength={ 10 }
+                                                editMode && <input placeholder='Enter phone' className={ `${ styles.inputs }` } type='text' maxLength={ 10 }
                                                       defaultValue={ phone } onChange={ e => setNewPhone(e.target.value) }></input>
                                           }
                                     </div>
@@ -459,7 +459,7 @@ const Profile = () =>
                                                 <p className='mb-0 overflow-auto' style={ { whiteSpace: 'nowrap' } }>{ address }</p>
                                           }
                                           {
-                                                editMode && <input placeholder='Enter your address' className={ `${ styles.inputs }` } type='text'
+                                                editMode && <input placeholder='Enter address' className={ `${ styles.inputs }` } type='text'
                                                       defaultValue={ address } onChange={ e => setNewAddress(e.target.value) }></input>
                                           }
                                     </div>
@@ -472,12 +472,12 @@ const Profile = () =>
                                           <>
                                                 <div className='d-flex align-items-center mt-2 mb-2 justify-content-center'>
                                                       <strong className='mb-0'>Password:&nbsp;&nbsp;</strong>
-                                                      <input className={ `${ styles.inputs }` } type='password' placeholder='Change your password'
+                                                      <input className={ `${ styles.inputs }` } type='password' placeholder='Change password'
                                                             value={ password } onChange={ e => setPassword(e.target.value) }></input>
                                                 </div>
                                                 <div className='d-flex align-items-center mt-2 mb-2 justify-content-center'>
                                                       <strong className='mb-0'>Confirm password:&nbsp;&nbsp;</strong    >
-                                                      <input className={ `${ styles.inputs }` } type='password' placeholder='Re-enter your password to confirm'
+                                                      <input className={ `${ styles.inputs }` } type='password' placeholder='Confirm password'
                                                             value={ repassword } onChange={ e => setRepassword(e.target.value) }></input>
                                                 </div>
                                           </>

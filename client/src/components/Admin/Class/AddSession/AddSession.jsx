@@ -62,7 +62,7 @@ const TeacherSelect = (props) =>
                   <Modal.Header closeButton>
                         <div>
                               <FontAwesomeIcon icon={ faMagnifyingGlass } className={ `position-absolute ${ styles.search }` } />
-                              <input value={ searchTeacher } type='text' style={ { fontSize: '1rem', paddingLeft: '30px', maxWidth: '200px' } } onChange={ e =>
+                              <input placeholder='Find teacher' value={ searchTeacher } type='text' style={ { fontSize: '1rem', paddingLeft: '30px', maxWidth: '200px' } } onChange={ e =>
                               {
                                     setSearchTeacher(e.target.value);
                                     clearTimeout(timer);
@@ -155,7 +155,7 @@ const SupervisorSelect = (props) =>
                   <Modal.Header closeButton>
                         <div>
                               <FontAwesomeIcon icon={ faMagnifyingGlass } className={ `position-absolute ${ styles.search }` } />
-                              <input value={ searchSupervisor } type='text' style={ { fontSize: '1rem', paddingLeft: '30px', maxWidth: '200px' } } onChange={ e =>
+                              <input placeholder='Find supervisor' value={ searchSupervisor } type='text' style={ { fontSize: '1rem', paddingLeft: '30px', maxWidth: '200px' } } onChange={ e =>
                               {
                                     setSearchSupervisor(e.target.value);
                                     clearTimeout(timer);
@@ -339,7 +339,7 @@ const AddSession = (props) =>
                                           <strong>Session</strong>
                                     </div>
                                     <div className='col d-flex align-items-center justify-content-center justify-content-sm-start'>
-                                          <input value={ `Session ${ props.currentSession + 1 }` } disabled className={ `${ styles.inputs } w-100` }></input>
+                                          <input placeholder='Session number' value={ `Session ${ props.currentSession + 1 }` } disabled className={ `${ styles.inputs } w-100` }></input>
                                     </div>
                               </div>
                               <div className='row mt-5'>
@@ -465,7 +465,7 @@ const AddSession = (props) =>
                                           <strong>Teacher</strong>
                                     </div>
                                     <div className='col d-flex align-items-center justify-content-center justify-content-sm-start'>
-                                          <p className={ `${ styles.inputs } ${ styles.hover } w-100 mb-0 ps-2 pt-1 hideBrowserScrollbar` } onClick={ () => setAddTeacherPopUp(true) }>{ teacherName }</p>
+                                          <p className={ `${ styles.inputs } ${ styles.hover } w-100 mb-0 ps-2 pt-1 hideBrowserScrollbar` } onClick={ () => setAddTeacherPopUp(true) }>{ teacherName ? teacherName:'Choose a teacher' }</p>
                                     </div>
                               </div>
                               {
@@ -486,7 +486,7 @@ const AddSession = (props) =>
                                           <strong>Supervisor</strong>
                                     </div>
                                     <div className='col d-flex align-items-center justify-content-center justify-content-sm-start'>
-                                          <p className={ `${ styles.inputs } ${ styles.hover } w-100 mb-0 ps-2 pt-1 hideBrowserScrollbar` } onClick={ () => setAddSupervisorPopUp(true) }>{ supervisorName }</p>
+                                          <p className={ `${ styles.inputs } ${ styles.hover } w-100 mb-0 ps-2 pt-1 hideBrowserScrollbar` } onClick={ () => setAddSupervisorPopUp(true) }>{ supervisorName ? supervisorName:'Choose a supervisor' }</p>
                                     </div>
                               </div>
                               {

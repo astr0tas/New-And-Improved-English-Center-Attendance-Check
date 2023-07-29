@@ -83,11 +83,11 @@ const Menu = () =>
             })
                   .then(res =>
                   {
-                        if (!res.data.message[0])
+                        if (res.status === 204)
                               Navigate("/");
-                        else
+                        else if (res.status === 200)
                         {
-                              if (res.data.message[1] === 1)
+                              if (res.data.userType === 1)
                               {
                                     if (!window.location.pathname.includes('/profile')
                                           && !window.location.pathname.includes('/home')
@@ -103,7 +103,7 @@ const Menu = () =>
                                           && !window.location.pathname.includes('/my-class-list'))
                                           Navigate('not-found');
                               }
-                              setUserType(res.data.message[1]);
+                              setUserType(res.data.userType);
                               setActiveTab(window.location.pathname);
                         }
                   })

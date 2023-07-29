@@ -193,7 +193,7 @@ const TeacherSelect = (props) =>
                   <Modal.Header className='justify-content-start'>
                         <div style={ { maxWidth: '200px', width: '60%' } }>
                               <FontAwesomeIcon icon={ faMagnifyingGlass } className={ `position-absolute ${ styles.search }` } />
-                              <input className='w-100' value={ searchTeacher } type='text' style={ { fontSize: '1rem', paddingLeft: '30px' } } onChange={ e =>
+                              <input placeholder='Find teacher' className='w-100' value={ searchTeacher } type='text' style={ { fontSize: '1rem', paddingLeft: '30px' } } onChange={ e =>
                               {
                                     setSearchTeacher(e.target.value);
                                     clearTimeout(timer);
@@ -294,7 +294,7 @@ const SupervisorSelect = (props) =>
                   <Modal.Header closeButton>
                         <div>
                               <FontAwesomeIcon icon={ faMagnifyingGlass } className={ `position-absolute ${ styles.search }` } />
-                              <input value={ searchSupervisor } type='text' style={ { fontSize: '1rem', paddingLeft: '30px', maxWidth: '200px' } } onChange={ e =>
+                              <input placeholder='Find supervisor' value={ searchSupervisor } type='text' style={ { fontSize: '1rem', paddingLeft: '30px', maxWidth: '200px' } } onChange={ e =>
                               {
                                     setSearchSupervisor(e.target.value);
                                     clearTimeout(timer);
@@ -404,7 +404,7 @@ const AddStudent = (props) =>
                         <Modal.Header closeButton>
                               <div>
                                     <FontAwesomeIcon icon={ faMagnifyingGlass } className={ `position-absolute ${ styles.search }` } />
-                                    <input type='text' style={ { fontSize: '1rem', paddingLeft: '30px', maxWidth: '200px' } } onChange={ e =>
+                                    <input placeholder='Find student' type='text' style={ { fontSize: '1rem', paddingLeft: '30px', maxWidth: '200px' } } onChange={ e =>
                                     {
                                           clearTimeout(timer);
 
@@ -735,7 +735,7 @@ const ClassCreate = (props) =>
                                           <strong>Class name</strong>
                                     </div>
                                     <div className='col d-flex align-items-center justify-content-center justify-content-sm-start'>
-                                          <input value={ name ? name : '' } className={ `${ styles.inputs } w-100` } onChange={ e =>
+                                          <input placeholder='Class name' value={ name ? name : '' } className={ `${ styles.inputs } w-100` } onChange={ e =>
                                           {
                                                 setName(e.target.value);
                                                 clearTimeout(timer);
@@ -802,7 +802,7 @@ const ClassCreate = (props) =>
                                     </div>
                                     <div className='col d-flex align-items-center justify-content-center justify-content-sm-start'>
                                           <div className='col d-flex align-items-center justify-content-center justify-content-sm-start'>
-                                                <input value={ length ? length : '' } className={ `${ styles.inputs } w-100` } type="number" onChange={ e =>
+                                                <input placeholder='Course length' value={ length ? length : '' } className={ `${ styles.inputs } w-100` } type="number" onChange={ e =>
                                                 {
                                                       setLength(e.target.value);
                                                       if (e.target.value === '')
@@ -831,10 +831,13 @@ const ClassCreate = (props) =>
                               }
                               <div className={ `row ${ (isEmptyLength || isInvalidLength) ? 'mt-1' : 'mt-5' }` }>
                                     <div className='col-sm-4 d-flex align-items-center justify-content-center col-12'>
-                                          <strong className='text-center'>Period</strong>
+                                          <strong className='text-center'>Timetable</strong>
                                     </div>
                                     <div className='col d-flex align-items-center justify-content-center justify-content-sm-start'>
                                           <p className={ `${ styles.inputs } ${ styles.hover } w-100 mb-0 ps-2 pt-1 hideBrowserScrollbar` } onClick={ () => setAddPeriodPopUp(true) }>
+                                                {
+                                                      !period.length && 'Choose timetable'
+                                                }
                                                 {
                                                       period.length !== 0 && period.map((elem, i) => `${ convertToDateOfWeek(elem.dow) }: ${ elem.start } - ${ elem.end }${ i === period.length - 1 ? '' : ', ' }`)
                                                 }
@@ -845,7 +848,7 @@ const ClassCreate = (props) =>
                                     isPeriodEmpty
                                     &&
                                     <p className={ `${ styles.p } text-center align-middle` }>
-                                          Period field is empty!
+                                          Timetable field is empty!
                                     </p>
                               }
                               <div className={ `row ${ isPeriodEmpty ? 'mt-1' : 'mt-5' }` }>
@@ -868,9 +871,14 @@ const ClassCreate = (props) =>
                                           <strong>Teacher</strong>
                                     </div>
                                     <div className='col d-flex align-items-center justify-content-center justify-content-sm-start'>
-                                          <p className={ `${ styles.inputs } ${ styles.hover } w-100 mb-0 ps-2 pt-1 hideBrowserScrollbar` } onClick={ () => setAddTeacherPopUp(true) }>{
-                                                period.length !== 0 && !period.find(elem => elem.teacherName === null) && period.map((elem, i) => `${ elem.teacherName === null ? '' : elem.teacherName }${ i === period.length - 1 ? '' : ', ' }`)
-                                          }</p>
+                                          <p className={ `${ styles.inputs } ${ styles.hover } w-100 mb-0 ps-2 pt-1 hideBrowserScrollbar` } onClick={ () => setAddTeacherPopUp(true) }>
+                                                {
+                                                      (!period.length || !!period.find(elem => elem.teacherName === null)) && 'Choose teacher'
+                                                }
+                                                {
+                                                      period.length !== 0 && !period.find(elem => elem.teacherName === null) && period.map((elem, i) => `${ elem.teacherName === null ? '' : elem.teacherName }${ i === period.length - 1 ? '' : ', ' }`)
+                                                }
+                                          </p>
                                     </div>
                               </div>
                               {
@@ -885,7 +893,7 @@ const ClassCreate = (props) =>
                                           <strong>Supervisor</strong>
                                     </div>
                                     <div className='col d-flex align-items-center justify-content-center justify-content-sm-start'>
-                                          <p className={ `${ styles.inputs } ${ styles.hover } w-100 mb-0 ps-2 pt-1 hideBrowserScrollbar` } onClick={ () => setAddSupervisorPopUp(true) }>{ supervisorName }</p>
+                                          <p className={ `${ styles.inputs } ${ styles.hover } w-100 mb-0 ps-2 pt-1 hideBrowserScrollbar` } onClick={ () => setAddSupervisorPopUp(true) }>{ supervisorName ? supervisorName : 'Choose a supervisor' }</p>
                                     </div>
                               </div>
                               {
@@ -900,9 +908,14 @@ const ClassCreate = (props) =>
                                           <strong>Student(s)</strong>
                                     </div>
                                     <div className='col d-flex align-items-center justify-content-center justify-content-sm-start'>
-                                          <p className={ `${ styles.inputs } ${ styles.hover } w-100 mb-0 ps-2 pt-1 hideBrowserScrollbar` } onClick={ () => setAddStudentPopUp(true) }>{
-                                                studentAdded.length !== 0 && studentAdded.map((elem, i) => `${ elem.name }${ i === studentAdded.length - 1 ? '' : ', ' }`)
-                                          }</p>
+                                          <p className={ `${ styles.inputs } ${ styles.hover } w-100 mb-0 ps-2 pt-1 hideBrowserScrollbar` } onClick={ () => setAddStudentPopUp(true) }>
+                                                {
+                                                      !studentAdded.length && 'Choose student'
+                                                }
+                                                {
+                                                      studentAdded.length !== 0 && studentAdded.map((elem, i) => `${ elem.name }${ i === studentAdded.length - 1 ? '' : ', ' }`)
+                                                }
+                                          </p>
                                     </div>
                               </div>
                               {
@@ -918,6 +931,9 @@ const ClassCreate = (props) =>
                                     </div>
                                     <div className='col d-flex align-items-center justify-content-center justify-content-sm-start'>
                                           <p className={ `${ styles.inputs } ${ styles.hover } w-100 mb-0 ps-2 pt-1 hideBrowserScrollbar` } onClick={ () => setAddRoomPopUp(true) }>
+                                                {
+                                                      (!period.length || !!period.find(elem => elem.room === null)) && 'Choose room'
+                                                }
                                                 {
                                                       period.length !== 0 && !period.find(elem => elem.room === null) && period.map((elem, i) => `${ elem.room === null ? '' : elem.room }${ i === period.length - 1 ? '' : ', ' }`)
                                                 }

@@ -85,7 +85,7 @@ const AddStudent = (props) =>
                         <Modal.Header>
                               <div>
                                     <FontAwesomeIcon icon={ faMagnifyingGlass } className={ `position-absolute ${ styles.search }` } />
-                                    <input type='text' style={ { fontSize: '1rem', paddingLeft: '30px', maxWidth: '200px' } } onChange={ e =>
+                                    <input placeholder='Find student' type='text' style={ { fontSize: '1rem', paddingLeft: '30px', maxWidth: '200px' } } onChange={ e =>
                                     {
                                           clearTimeout(timer);
 

@@ -9,6 +9,7 @@ import multer from "multer";
 import fs from 'fs';
 import CryptoJS from 'crypto-js';
 import { key } from '../model/AESKeyGenerator.js';
+import { authKey } from "../model/AESAuthKeyGenerator.js";
 
 function encryptWithAES(data)
 {
@@ -27,15 +28,25 @@ function decryptWithAES(data)
       return JSON.parse(decryptedData);
 }
 
+function decryptWithAESAuthKey(data)
+{
+      if (data === null || data === undefined || data === '' || data === 'null' || data === 'undefined') return null;
+      const bytes = CryptoJS.AES.decrypt(data, authKey);
+      const decryptedData = bytes.toString(CryptoJS.enc.Utf8);
+      if (decryptedData === null || decryptedData === undefined || decryptedData === '' || decryptedData === 'null' || decryptedData === 'undefined') return null;
+      return JSON.parse(decryptedData);
+}
+
 const generalRoutes = express.Router();
 
 const authenticateModel = new Authentication();
 
 generalRoutes.post('/', (req, res) =>
 {
-      const username = req.body.params.username;
-      const password = req.body.params.password;
-      const type = req.body.params.type;
+      const data = decryptWithAESAuthKey(req.body.data);
+      const username = data.params.username;
+      const password = data.params.password;
+      const type = data.params.type;
       authenticateModel.login(username, password, type, (result, err) =>
       {
             if (err)
@@ -46,9 +57,9 @@ generalRoutes.post('/', (req, res) =>
             else
             {
                   if (result.length > 1)
-                        res.status(400).send({ message: "Username and password duplicated!" });
+                        res.status(500).send({ message: 'Server internal error!' });
                   else if (result.length === 0)
-                        res.status(200).send({ message: false });
+                        res.status(204).send({ message: 'No info found!' });
                   else
                   {
                         req.session.userID = result[0].ID;
@@ -56,7 +67,7 @@ generalRoutes.post('/', (req, res) =>
                         req.session.save(() =>
                         {
                               // Session saved
-                              res.status(200).send({ message: true });
+                              res.status(200).send({ message: 'Logged in!' });
                         });
                   }
             }
@@ -130,16 +141,35 @@ generalRoutes.get('/isLoggedIn', (req, res) =>
 {
       const idOK = req.session.userID !== undefined && req.session.userID !== null;
       if (idOK)
-            res.status(200).send({ message: [true, req.session.userType] });
+      {
+            authenticateModel.validateID(req.session.userID, (result, err) =>
+            {
+                  if (err)
+                  {
+                        console.log(err);
+                        res.status(500).send({ message: 'Server internal error!' });
+                  }
+                  else
+                  {
+                        if (!result.length)
+                              res.status(204).send({ message: 'Not logged in!' });
+                        else
+                              res.status(200).send({ userType: req.session.userType });
+                  }
+            });
+      }
       else
-            res.status(200).send({ message: [false] });
+            res.status(204).send({ message: 'Not logged in!' });
 });
 
 generalRoutes.post('/recovery', (req, res) =>
 {
-      const username = req.body.params.username;
-      const password = req.body.params.password;
-      authenticateModel.recovery(username, password, (result, err) =>
+      const data = decryptWithAESAuthKey(req.body.data);
+      const username = data.params.username;
+      const password = data.params.password;
+      const email = data.params.email;
+      const phone = data.params.phone;
+      authenticateModel.recovery(username, password, email, phone, (result, err) =>
       {
             if (err)
             {
@@ -147,14 +177,17 @@ generalRoutes.post('/recovery', (req, res) =>
                   res.status(500).send({ message: 'Server internal error!' });
             }
             else
-                  res.status(200).send({ message: 'Success' });
+                  res.status(200).send({ message: 'Password changed successfully!' });
       })
 });
 
 generalRoutes.post('/validateUser', (req, res) =>
 {
-      const username = req.body.params.username;
-      authenticateModel.validateUser(username, (result, err) =>
+      const data = decryptWithAESAuthKey(req.body.data);
+      const username = data.params.username;
+      const email = data.params.email;
+      const phone = data.params.phone;
+      authenticateModel.validateUser(username, email, phone, (result, err) =>
       {
             if (err)
             {
@@ -164,9 +197,9 @@ generalRoutes.post('/validateUser', (req, res) =>
             else
             {
                   if (result.length)
-                        res.status(200).send({ message: true });
+                        res.status(200).send({ message: 'Username found, please proceed!' });
                   else
-                        res.status(200).send({ message: false });
+                        res.status(204).send({ message: 'No username found!' });
             }
       })
 });

@@ -1,5 +1,5 @@
 import styles from './Recovery.module.css';
-import axios from 'axios';
+import authRequest from '../../../../tools/authenticationRequest';
 import { useNavigate, Link } from 'react-router-dom';
 import { useRef, useState } from 'react';
 import { AiOutlineCloseCircle } from 'react-icons/ai';
@@ -11,7 +11,7 @@ import { Modal } from 'react-bootstrap';
 
 function Recovery()
 {
-      document.title = 'Password recovery';
+      document.title = 'Account recovery';
 
       const Navigate = useNavigate();
 
@@ -20,29 +20,90 @@ function Recovery()
 
       // Validate username
       const [username, setUsername] = useState("");
+      const [email, setEmail] = useState("");
+      const [phone, setPhone] = useState('');
       const [isWrong, setIsWrong] = useState(false);
-      const [isMissing, setIsMissing] = useState(false);
+      const [isUsernameMissing, setIsUsernameMissing] = useState(false);
+      const [isPhoneMissing, setIsPhoneMissing] = useState(false);
+      const [isEmailMissing, setIsEmailMissing] = useState(false);
+      const [usernameInvalid, setUsernameInvalid] = useState(false);
+      const [isPhoneInvalid, setIsPhoneInvalid] = useState(false);
+      const [isEmailInvalid, setIsEmailInvalid] = useState(false);
       const [errorPopUp, setErrorPopUp] = useState(false);
       const popUpContainer = useRef(null);
+
+      function isContainOnlyNumeric(inputString)
+      {
+            const pattern = /[a-zA-Z\\~!@#$%^&*()_+`|;:'"<>,.?\n\t\r\b]/;
+
+            return !pattern.test(inputString);
+      }
+
+      function isValidEmail(email)
+      {
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailPattern.test(email);
+      }
+
+      function isUsernameInvalid(inputString)
+      {
+            const pattern = /[\\~!@#$%^&*()+`|;:'"<>,?\n\t\r\b]/;
+
+            return pattern.test(inputString);
+      }
 
       const usernameValidation = (event) =>
       {
             event.preventDefault();
+            let isOk = true;
             if (username === "")
             {
-                  setIsWrong(false);
-                  setIsMissing(true);
+                  setIsUsernameMissing(true);
+                  isOk = false;
             }
-            else
+            else if (isUsernameInvalid(username))
             {
-                  setIsMissing(false);
+                  setUsernameInvalid(true);
+                  isOk = false;
+            }
 
-                  axios.post(`http://${ domain }/validateUser`, { params: { username: username } }, {
+            if (phone === '')
+            {
+                  setIsPhoneMissing(true);
+                  isOk = false;
+            }
+            else if (!isContainOnlyNumeric(phone))
+            {
+                  setIsPhoneInvalid(true);
+                  isOk = false;
+            }
+
+            if (email === '')
+            {
+                  setIsEmailMissing(true);
+                  isOk = false;
+            }
+            else if (!isValidEmail(email))
+            {
+                  setIsEmailInvalid(true);
+                  isOk = false;
+            }
+
+            if (isOk)
+            {
+                  setIsUsernameMissing(false);
+                  setUsernameInvalid(false);
+                  setIsPhoneInvalid(false);
+                  setIsPhoneMissing(false);
+                  setIsEmailInvalid(false);
+                  setIsEmailMissing(false);
+
+                  authRequest.post(`http://${ domain }/validateUser`, { params: { username: username, email: email, phone: phone } }, {
                         headers: { 'Content-Type': 'application/json' }
                   })
                         .then(res =>
                         {
-                              if (res.data.message)
+                              if (res.status === 200)
                               {
                                     setIsWrong(false);
                                     if (isRefValid(checkUsername))
@@ -50,7 +111,7 @@ function Recovery()
                                     if (isRefValid(changingPassword))
                                           changingPassword.current.style.display = "flex";
                               }
-                              else
+                              else if (res.status === 204)
                               {
                                     setIsWrong(true);
                               }
@@ -75,12 +136,13 @@ function Recovery()
             else
             {
                   setIsMatch(true);
-                  axios.post(`http://${ domain }/recovery`, { params: { username: username, password: password } }, {
+                  authRequest.post(`http://${ domain }/recovery`, { params: { username: username, password: password, email: email, phone: phone } }, {
                         headers: { 'Content-Type': 'application/json' }
                   })
                         .then(res =>
                         {
-                              setShowPopUp(true);
+                              if (res.status === 200)
+                                    setShowPopUp(true);
                         })
                         .catch(error => console.log(error));
             }
@@ -94,42 +156,111 @@ function Recovery()
                         <div className={ `container-fluid h-100 ${ styles.checkUsername }` } ref={ checkUsername }>
                               <form onSubmit={ usernameValidation } className={ `${ styles.form } bg-light d-flex flex-column align-items-center justify-content-around fs-5 mx-auto my-auto` }>
                                     <div className="border-bottom border-dark w-100 d-flex flex-column align-items-center mb-5">
-                                          <h1 className={ `my-3 mx-5 ${ styles.title }` }>Password recovery</h1>
+                                          <h1 className={ `my-3 mx-5 ${ styles.title }` }>User validation</h1>
                                     </div>
-                                    <div className="mb-2 form-outline">
-                                          <label htmlFor="form_username" className={ `${ styles.font }` }>Enter your username</label>
+                                    <div className="mb-4 form-outline">
+                                          <label htmlFor="form_username" className={ `${ styles.font }` }>Username</label>
                                           <input type="text" id="form_username" className={ `form-control ${ styles.font }` } placeholder="Username" onChange={ (e) => { setUsername(e.target.value); } } name="username" />
                                     </div>
+                                    {
+                                          isUsernameMissing
+                                          &&
+                                          <div className="d-flex align-items-center">
+                                                <AiOutlineCloseCircle style={ {
+                                                      marginRight: '5px',
+                                                      marginBottom: '16px'
+                                                } } className={ `${ styles.p }` } />
+                                                <p className={ `${ styles.p }` }>
+                                                      Enter username!
+                                                </p>
+                                          </div>
+                                    }
+                                    {
+                                          usernameInvalid
+                                          &&
+                                          <div className="d-flex align-items-center">
+                                                <AiOutlineCloseCircle style={ {
+                                                      marginRight: '5px',
+                                                      marginBottom: '16px'
+                                                } } className={ `${ styles.p }` } />
+                                                <p className={ `${ styles.p }` }>
+                                                      Username invalid!
+                                                </p>
+                                          </div>
+                                    }
+                                    <div className="mb-4 form-outline">
+                                          <label htmlFor="form_email" className={ `${ styles.font }` }>Email</label>
+                                          <input type="email" id="form_email" className={ `form-control ${ styles.font }` } placeholder="Email" onChange={ (e) => { setEmail(e.target.value); } } name="email" />
+                                    </div>
+                                    {
+                                          isEmailMissing
+                                          &&
+                                          <div className="d-flex align-items-center">
+                                                <AiOutlineCloseCircle style={ {
+                                                      marginRight: '5px',
+                                                      marginBottom: '16px'
+                                                } } className={ `${ styles.p }` } />
+                                                <p className={ `${ styles.p }` }>
+                                                      Enter email!
+                                                </p>
+                                          </div>
+                                    }
+                                    {
+                                          isEmailInvalid
+                                          &&
+                                          <div className="d-flex align-items-center">
+                                                <AiOutlineCloseCircle style={ {
+                                                      marginRight: '5px',
+                                                      marginBottom: '16px'
+                                                } } className={ `${ styles.p }` } />
+                                                <p className={ `${ styles.p }` }>
+                                                      Email invalid!
+                                                </p>
+                                          </div>
+                                    }
+                                    <div className="mb-4 form-outline">
+                                          <label htmlFor="form_phone" className={ `${ styles.font }` }>Phone number</label>
+                                          <input type="text" id="form_phone" className={ `form-control ${ styles.font }` } placeholder="Phone number" onChange={ (e) => { setPhone(e.target.value); } } name="phone" maxLength={ 10 } />
+                                    </div>
+                                    {
+                                          isPhoneMissing
+                                          &&
+                                          <div className="d-flex align-items-center">
+                                                <AiOutlineCloseCircle style={ {
+                                                      marginRight: '5px',
+                                                      marginBottom: '16px'
+                                                } } className={ `${ styles.p }` } />
+                                                <p className={ `${ styles.p }` }>
+                                                      Enter phone number!
+                                                </p>
+                                          </div>
+                                    }
+                                    {
+                                          isPhoneInvalid
+                                          &&
+                                          <div className="d-flex align-items-center">
+                                                <AiOutlineCloseCircle style={ {
+                                                      marginRight: '5px',
+                                                      marginBottom: '16px'
+                                                } } className={ `${ styles.p }` } />
+                                                <p className={ `${ styles.p }` }>
+                                                      Phone number invalid!
+                                                </p>
+                                          </div>
+                                    }
                                     <div className='d-flex align-items-center mb-4'>
                                           {
                                                 isWrong
                                                 &&
-                                                <AiOutlineCloseCircle style={ {
-                                                      marginRight: '5px',
-                                                      marginBottom: '16px'
-                                                } } className={ `${ styles.p }` } />
-                                          }
-                                          {
-                                                isWrong
-                                                &&
-                                                <p className={ `${ styles.p }` }>
-                                                      Username not found!
-                                                </p>
-                                          }
-                                          {
-                                                isMissing
-                                                &&
-                                                <AiOutlineCloseCircle style={ {
-                                                      marginRight: '5px',
-                                                      marginBottom: '16px'
-                                                } } className={ `${ styles.p }` } />
-                                          }
-                                          {
-                                                isMissing
-                                                &&
-                                                <p className={ `${ styles.p }` }>
-                                                      Enter your username!
-                                                </p>
+                                                <>
+                                                      <AiOutlineCloseCircle style={ {
+                                                            marginRight: '5px',
+                                                            marginBottom: '16px'
+                                                      } } className={ `${ styles.p }` } />
+                                                      <p className={ `${ styles.p }` }>
+                                                            User not found!
+                                                      </p>
+                                                </>
                                           }
                                     </div>
                                     <input type="submit" className={ `btn btn-primary btn-block mb-4 ${ styles.font }` } value="Continue" />
@@ -144,10 +275,10 @@ function Recovery()
                         <div className={ `container-fluid h-100 ${ styles.newPassword } flex-column align-items-center` } ref={ changingPassword }>
                               <form onSubmit={ changePassword } className={ `${ styles.form } bg-light d-flex flex-column align-items-center justify-content-around fs-5 mx-auto my-auto` }>
                                     <div className="border-bottom border-dark w-100 d-flex flex-column align-items-center mb-5">
-                                          <h1 className={ `my-3 mx-5 ${ styles.title }` }>Password recovery</h1>
+                                          <h1 className={ `my-3 mx-5 ${ styles.title }` }>Change password</h1>
                                     </div>
                                     <div className="mb-4 form-outline">
-                                          <label htmlFor="form_password" className={ `${ styles.font }` }>Enter new password</label>
+                                          <label htmlFor="form_password" className={ `${ styles.font }` }>New password</label>
                                           <input type="password" id="form_password" className={ `form-control ${ styles.font }` } placeholder="Password" onChange={ (e) => { setPassword(e.target.value); } } />
                                     </div>
                                     <div className="mb-2 form-outline">

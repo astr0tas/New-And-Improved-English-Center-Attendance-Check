@@ -7,6 +7,7 @@ import React from 'react';
 import { domain } from '../../../../tools/domain';
 import { context } from '../../../../context';
 import { Modal } from 'react-bootstrap';
+import authRequest from '../../../../tools/authenticationRequest';
 
 const Login = () =>
 {
@@ -39,20 +40,20 @@ const Login = () =>
             else
             {
                   setIsMissing(false);
-                  axios.post(`http://${ domain }/`, { params: { username: inputs.username, password: inputs.password, type: chosenRole } }, {
+                  authRequest.post(`http://${ domain }/`, { params: { username: inputs.username, password: inputs.password, type: chosenRole } }, {
                         withCredentials: true,
                         headers: {
                               'Content-Type': 'application/json'
                         }
                   })
-                        .then(res =>
+                        .then(res =>      
                         {
-                              if (res.data.message)
+                              if (res.status === 200)
                               {
                                     setIsWrong(false);
                                     Navigate("./home");
                               }
-                              else
+                              else if (res.status === 204)
                               {
                                     setIsWrong(true);
                               }
@@ -72,7 +73,7 @@ const Login = () =>
             })
                   .then(res =>
                   {
-                        if (res.data.message[0])
+                        if (res.status === 200)
                               Navigate('./home');
                   })
                   .catch(error => console.log(error));

@@ -7,8 +7,9 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { domain } from "./domain.js";
 import { key, updateKey } from './model/AESKeyGenerator.js';
+import { authKey, updateAuthKey } from "./model/AESAuthKeyGenerator.js";
 import NodeRSA from "node-rsa";
-import { IDValidation } from './model/IDValidation.js';
+import { Authentication } from './model/authentication.js'
 
 import staffRoutes from "./controller/staff.js";
 import adminRoutes from "./controller/admin.js";
@@ -18,8 +19,8 @@ import { updatStatusRegularly } from './model/updateStatus.js';
 
 export const FileStore = FileStoreFactory(session);
 
-const validation = new IDValidation();
-let timer;
+const validation = new Authentication();
+let timer, authTimer;
 
 const app = express();
 app.use(cors({
@@ -110,6 +111,18 @@ app.post('/getKey', (req, res) =>
                               res.status(403).send({ message: 'No key for you!' });
                   }
             });
+});
+
+app.post('/getAuthKey', (req, res) =>
+{
+      console.log('Authentication key fetched!');
+      
+      clearTimeout(authTimer);
+      const keys = new NodeRSA(req.body.params.key, 'public', { encryptionScheme: 'pkcs1' });
+      const encryptedKey = keys.encrypt(authKey, 'base64');
+      res.status(200).send({ key: encryptedKey });
+      authTimer = updateAuthKey();
+
 });
 
 app.use('/admin', adminRoutes);

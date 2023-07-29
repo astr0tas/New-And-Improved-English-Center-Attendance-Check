@@ -90,14 +90,14 @@ const StudentEdit = (props) =>
       {
             const pattern = /[a-zA-Z\\~!@#$%^&*()_+`|;:'"<>,.?\n\t\r\b]/;
 
-            return pattern.test(inputString);
+            return !pattern.test(inputString);
       }
 
       function isContainOnlyAlphabet(inputString)
       {
             const pattern = /[0-9\\~!@#$%^&*()_+`|;:'"<>,.?\n\t\r\b]/;
 
-            return pattern.test(inputString);
+            return !pattern.test(inputString);
       }
 
       function isValidEmail(email)
@@ -123,7 +123,7 @@ const StudentEdit = (props) =>
       const updateStudent = async () =>
       {
             let isOk = true;
-            if (name && isContainOnlyAlphabet(name))
+            if (name && !isContainOnlyAlphabet(name))
             {
                   setInvalidName(true);
                   isOk = false;
@@ -137,7 +137,7 @@ const StudentEdit = (props) =>
             }
             else
                   setInvalidDate(false);
-            if (ssn && isContainOnlyNumeric(ssn))
+            if (ssn && !isContainOnlyNumeric(ssn))
             {
                   setInvalidSSN(true);
                   isOk = false;
@@ -179,7 +179,7 @@ const StudentEdit = (props) =>
                         })
                         .catch(err => console.error(err));
             }
-            if (phone && isContainOnlyNumeric(phone))
+            if (phone && !isContainOnlyNumeric(phone))
             {
                   setInvalidPhone(true);
                   isOk = false;
