@@ -1,5 +1,5 @@
 Additional features:
-      - Using AES and RSA to send and receive encrypted data (but this slows down the server).
+      - Using AES and RSA to send and receive encrypted data (but this slows down the server and also the AES key can be fetched intentionally but the user need to be logged in in order to do that).
 
 Features that worked but can cause real-life issues if the user doesn't careful:
       - Add teachers to sessions when creating a new class (this can leads to teachers have to take multiple continous sessions in different classes in a day without a break).
