@@ -28,3 +28,20 @@ BEGIN
     end if;
 END//
 DELIMITER ;
+
+-- Check if the number of students in a class reached maximum
+DROP TRIGGER IF EXISTS in_class_trigger;
+DELIMITER //
+CREATE TRIGGER in_class_trigger
+BEFORE INSERT ON in_class
+FOR EACH ROW
+BEGIN
+	declare counter int;
+    declare maximumStudent int;
+    select count(*) into counter from in_class where class_name=new.class_name;
+    select Max_students into maximumStudent from class where name=new.class_name;
+    if counter>=maximumStudent then
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "This class is full!";
+    end if;
+END//
+DELIMITER ;
