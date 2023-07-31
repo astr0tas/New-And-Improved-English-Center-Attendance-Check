@@ -11,16 +11,18 @@ import { useOutletContext } from 'react-router-dom';
 const Card = (props) =>
 {
       return (
-            <div className={ `card border border-dark` } style={ { width: '250px' } }>
-                  <img className="card-img-top" src={ require('../../../../images/english-class.jpg') } alt=""></img>
-                  <div className="align-items-center d-flex flex-column mb-2 mt-2">
-                        <h5>Classname: { props.name }</h5>
-                        <p>Period: { props.start ? DMY(props.start) : 'N/A' } - { props.end ? DMY(props.end) : 'N/A' }</p>
-                        <p>Students: { props.currentStudent ? props.currentStudent : 'N/A' } / { props.maxStudent ? props.maxStudent : 'N/A' }</p>
-                        <p>Sessions: { props.currentSession ? props.currentSession : 'N/A' } / { props.initialSession ? props.initialSession : 'N/A' }</p>
-                        <NavLink to={ `./detail/${ props.name }` }>
-                              <button className="btn btn-primary btn-sm">Detail</button>
-                        </NavLink>
+            <div className={ `col-${ 12 / props.limit } d-flex justify-content-center align-items-center` }>
+                  <div className={ `card border border-dark` } style={ { width: '250px' } }>
+                        <img className="card-img-top" src={ require('../../../../images/english-class.jpg') } alt=""></img>
+                        <div className="align-items-center d-flex flex-column mb-2 mt-2">
+                              <h5>Classname: { props.name }</h5>
+                              <p>Period: { props.start ? DMY(props.start) : 'N/A' } - { props.end ? DMY(props.end) : 'N/A' }</p>
+                              <p>Students: { props.currentStudent ? props.currentStudent : 'N/A' } / { props.maxStudent ? props.maxStudent : 'N/A' }</p>
+                              <p>Sessions: { props.currentSession ? props.currentSession : 'N/A' } / { props.initialSession ? props.initialSession : 'N/A' }</p>
+                              <NavLink to={ `./detail/${ props.name }` }>
+                                    <button className="btn btn-primary btn-sm">Detail</button>
+                              </NavLink>
+                        </div>
                   </div>
             </div>
       )
@@ -57,7 +59,7 @@ const Active = (props) =>
                                     const temp = [];
                                     for (let i = 0; i < res.data.length; i++)
                                           temp.push(<Card key={ i } name={ res.data[i][0].name } start={ res.data[i][0].startDate } end={ res.data[i][0].endDate }
-                                                maxStudent={ res.data[i][0].maxStudent } currentStudent={ res.data[i][0].currentStudents }
+                                                maxStudent={ res.data[i][0].maxStudent } currentStudent={ res.data[i][0].currentStudents } limit={ props.limit }
                                                 initialSession={ res.data[i][0].initialSession } currentSession={ res.data[i][0].currentSessions } />);
                                     setClassList(temp);
                               }
@@ -71,12 +73,12 @@ const Active = (props) =>
       }, [searchName, offset, props.limit, props.userType]);
 
       return (
-            <div className='w-100 h-100 d-flex flex-column mt-5 mb-5' style={ { maxHeight: classList.length ? '450px' : '100px' } }>
+            <div className='w-100 h-100 d-flex flex-column mt-5 mb-5' style={ { maxHeight: classList.length ? '450px' : '80px' } }>
                   <div className='ms-3 d-flex align-items-sm-center flex-column flex-sm-row'>
                         <h5 className='mb-0 me-sm-2' style={ { color: '#128400' } }>Currently</h5>
                         <div className='ms-sm-2 mt-2 mt-sm-0 position-relative'>
                               <FontAwesomeIcon icon={ faMagnifyingGlass } className={ `position-absolute ${ styles.search }` } />
-                              <input type='text' style={ { fontSize: '1rem', paddingLeft: '30px' } } onChange={ e =>
+                              <input placeholder='Find class' type='text' style={ { fontSize: '1rem', paddingLeft: '30px' } } onChange={ e =>
                               {
                                     clearTimeout(timer);
                                     timer = setTimeout(() =>
@@ -86,12 +88,17 @@ const Active = (props) =>
                               } } className={ `${ styles.searchInput }` }></input>
                         </div>
                   </div>
-                  <div className="flex-grow-1 w-100 d-flex align-items-center justify-content-around mt-2">
+                  <div className="flex-grow-1 w-100 d-flex align-items-center mt-2">
                         { classList }
                   </div>
                   <div className="mt-4 d-flex align-items-center justify-content-center">
-                        <button className="btn btn-outline-secondary btn-sm me-2" disabled={ classList.length && offset === 0 } onClick={ () => setOffset(offset - props.limit) }>&lt;</button>
-                        <button className="btn btn-outline-secondary btn-sm ms-2" onClick={ () => setOffset(offset + props.limit) } disabled={ classList.length && disableNextButton }>&gt;</button>
+                        {
+                              classList.length !== 0 &&
+                              <>
+                                    <button className="btn btn-outline-secondary btn-sm me-2" disabled={ classList.length && offset === 0 } onClick={ () => setOffset(offset - props.limit) }>&lt;</button>
+                                    <button className="btn btn-outline-secondary btn-sm ms-2" onClick={ () => setOffset(offset + props.limit) } disabled={ classList.length && disableNextButton }>&gt;</button>
+                              </>
+                        }
                   </div>
             </div>
       )
@@ -128,7 +135,7 @@ const Deactivated = (props) =>
                                     const temp = [];
                                     for (let i = 0; i < res.data.length; i++)
                                           temp.push(<Card key={ i } name={ res.data[i][0].name } start={ res.data[i][0].startDate } end={ res.data[i][0].endDate }
-                                                maxStudent={ res.data[i][0].maxStudent } currentStudent={ res.data[i][0].currentStudents }
+                                                maxStudent={ res.data[i][0].maxStudent } currentStudent={ res.data[i][0].currentStudents } limit={ props.limit }
                                                 initialSession={ res.data[i][0].initialSession } currentSession={ res.data[i][0].currentSessions } />);
                                     setClassList(temp);
                               }
@@ -142,12 +149,12 @@ const Deactivated = (props) =>
       }, [searchName, offset, props.limit, props.userType]);
 
       return (
-            <div className='w-100 h-100 d-flex flex-column mt-5 mb-5' style={ { maxHeight: classList.length ? '450px' : '100px' } }>
+            <div className='w-100 h-100 d-flex flex-column mt-5 mb-5' style={ { maxHeight: classList.length ? '450px' : '80px' } }>
                   <div className='ms-3 d-flex align-items-sm-center flex-column flex-sm-row'>
                         <h5 className='mb-0 me-sm-2' style={ { color: 'red' } }>Cancelled</h5>
                         <div className='ms-sm-2 mt-2 mt-sm-0 position-relative'>
                               <FontAwesomeIcon icon={ faMagnifyingGlass } className={ `position-absolute ${ styles.search }` } />
-                              <input type='text' style={ { fontSize: '1rem', paddingLeft: '30px' } } onChange={ e =>
+                              <input placeholder='Find class' type='text' style={ { fontSize: '1rem', paddingLeft: '30px' } } onChange={ e =>
                               {
                                     clearTimeout(timer);
                                     timer = setTimeout(() =>
@@ -157,12 +164,17 @@ const Deactivated = (props) =>
                               } } className={ `${ styles.searchInput }` }></input>
                         </div>
                   </div>
-                  <div className="flex-grow-1 w-100 d-flex align-items-center justify-content-around mt-2">
+                  <div className="flex-grow-1 w-100 d-flex align-items-center mt-2">
                         { classList }
                   </div>
                   <div className="mt-4 d-flex align-items-center justify-content-center">
-                        <button className="btn btn-outline-secondary btn-sm me-2" disabled={ classList.length && offset === 0 } onClick={ () => setOffset(offset - props.limit) }>&lt;</button>
-                        <button className="btn btn-outline-secondary btn-sm ms-2" onClick={ () => setOffset(offset + props.limit) } disabled={ classList.length && disableNextButton }>&gt;</button>
+                        {
+                              classList.length !== 0 &&
+                              <>
+                                    <button className="btn btn-outline-secondary btn-sm me-2" disabled={ classList.length && offset === 0 } onClick={ () => setOffset(offset - props.limit) }>&lt;</button>
+                                    <button className="btn btn-outline-secondary btn-sm ms-2" onClick={ () => setOffset(offset + props.limit) } disabled={ classList.length && disableNextButton }>&gt;</button>
+                              </>
+                        }
                   </div>
             </div>
       )
@@ -199,7 +211,7 @@ const Finished = (props) =>
                                     const temp = [];
                                     for (let i = 0; i < res.data.length; i++)
                                           temp.push(<Card key={ i } name={ res.data[i][0].name } start={ res.data[i][0].startDate } end={ res.data[i][0].endDate }
-                                                maxStudent={ res.data[i][0].maxStudent } currentStudent={ res.data[i][0].currentStudents }
+                                                maxStudent={ res.data[i][0].maxStudent } currentStudent={ res.data[i][0].currentStudents } limit={ props.limit }
                                                 initialSession={ res.data[i][0].initialSession } currentSession={ res.data[i][0].currentSessions } />);
                                     setClassList(temp);
                               }
@@ -213,12 +225,12 @@ const Finished = (props) =>
       }, [searchName, offset, props.limit, props.userType]);
 
       return (
-            <div className='w-100 h-100 d-flex flex-column mt-5' style={ { maxHeight: classList.length ? '450px' : '100px' } }>
+            <div className='w-100 h-100 d-flex flex-column mt-5' style={ { maxHeight: classList.length ? '450px' : '80px' } }>
                   <div className='ms-3 d-flex align-items-sm-center flex-column flex-sm-row'>
                         <h5 className='mb-0 me-sm-2' style={ { color: 'gray' } }>Finished</h5>
                         <div className='ms-sm-2 mt-2 mt-sm-0 position-relative'>
                               <FontAwesomeIcon icon={ faMagnifyingGlass } className={ `position-absolute ${ styles.search }` } />
-                              <input type='text' style={ { fontSize: '1rem', paddingLeft: '30px' } } onChange={ e =>
+                              <input placeholder='Find class' type='text' style={ { fontSize: '1rem', paddingLeft: '30px' } } onChange={ e =>
                               {
                                     clearTimeout(timer);
                                     timer = setTimeout(() =>
@@ -228,12 +240,17 @@ const Finished = (props) =>
                               } } className={ `${ styles.searchInput }` }></input>
                         </div>
                   </div>
-                  <div className="flex-grow-1 w-100 d-flex align-items-center justify-content-around mt-2">
+                  <div className="flex-grow-1 w-100 d-flex align-items-center mt-2">
                         { classList }
                   </div>
                   <div className="mt-4 d-flex align-items-center justify-content-center mb-4">
-                        <button className="btn btn-outline-secondary btn-sm me-2" disabled={ classList.length && offset === 0 } onClick={ () => setOffset(offset - props.limit) }>&lt;</button>
-                        <button className="btn btn-outline-secondary btn-sm ms-2" onClick={ () => setOffset(offset + props.limit) } disabled={ classList.length && disableNextButton }>&gt;</button>
+                        {
+                              classList.length !== 0 &&
+                              <>
+                                    <button className="btn btn-outline-secondary btn-sm me-2" disabled={ classList.length && offset === 0 } onClick={ () => setOffset(offset - props.limit) }>&lt;</button>
+                                    <button className="btn btn-outline-secondary btn-sm ms-2" onClick={ () => setOffset(offset + props.limit) } disabled={ classList.length && disableNextButton }>&gt;</button>
+                              </>
+                        }
                   </div>
             </div>
       )

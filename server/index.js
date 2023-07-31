@@ -116,7 +116,7 @@ app.post('/getKey', (req, res) =>
 app.post('/getAuthKey', (req, res) =>
 {
       console.log('Authentication key fetched!');
-      
+
       clearTimeout(authTimer);
       const keys = new NodeRSA(req.body.params.key, 'public', { encryptionScheme: 'pkcs1' });
       const encryptedKey = keys.encrypt(authKey, 'base64');

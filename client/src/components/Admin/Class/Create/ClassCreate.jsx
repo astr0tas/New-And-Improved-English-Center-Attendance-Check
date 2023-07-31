@@ -957,6 +957,7 @@ const ClassCreate = (props) =>
                                     setLength(null);
                                     setPeriod([]);
                                     setSupervisor(null);
+                                    setSupervisorName(null);
                                     setPeriodDow(null);
                                     setEndDate(null);
                                     setTeacherDow(null);
@@ -1006,6 +1007,7 @@ const ClassCreate = (props) =>
                                     setLength(null);
                                     setPeriod([]);
                                     setSupervisor(null);
+                                    setSupervisorName(null);
                                     setPeriodDow(null);
                                     setEndDate(null);
                                     setTeacherDow(null);
