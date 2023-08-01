@@ -650,7 +650,7 @@ const ClassCreate = (props) =>
             {
                   isOk = false;
                   setIsEmptyEndDate(true);
-            }
+            }                 
             else
                   setIsEmptyEndDate(false);
             if (!!period.find(elem => elem.teacherID === null))

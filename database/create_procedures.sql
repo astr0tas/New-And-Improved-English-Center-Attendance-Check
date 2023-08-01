@@ -575,25 +575,3 @@ begin
 	close reader;
 end//
 delimiter ;
-
-drop procedure if exists getMissedSession;
-delimiter //
-create procedure getMissedSession(
-	in userID varchar(15),
-    in userType int
-)
-begin
-	declare className varchar(100);
-    declare classRoomID varchar(15);
-    declare startHour time;
-    declare endHour time;
-    declare sessionNumber int;
-    declare sessionStatus int;
-    
-	if userType=2 then
-		;
-    elseif userType=3 then
-		;
-    end if;
-end//
-delimiter ;

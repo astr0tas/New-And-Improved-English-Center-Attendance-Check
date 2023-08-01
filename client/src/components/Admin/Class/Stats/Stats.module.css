@@ -16,10 +16,17 @@
       padding-top: 10dvh !important;
 }
 
-@media only screen and (min-width: 768px) {
+.div {
+      width: 100%;
+}
 
+@media only screen and (min-width: 768px) {
       .customModal {
             max-width: 75% !important;
+      }
+
+      .div {
+            width: 75%;
       }
 }
 

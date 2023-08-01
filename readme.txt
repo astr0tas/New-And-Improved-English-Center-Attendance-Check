@@ -1,8 +1,9 @@
 Additional features:
       - Using AES and RSA to send and receive encrypted data (but this slows down the server and also the AES key can be fetched intentionally but the user need to be logged in in order to do that).
 
-Features that worked but can cause real-life issues if the user doesn't careful:
+Features that worked but can cause real-life issues and the USER MUST BE CAREFUL:
       - Add teachers to sessions when creating a new class (this can leads to teachers have to take multiple continous sessions in different classes in a day without a break).
+      - Deactivating/reactivating classes (this can leads to schedules overlapping with other classes, which can lead to serious problems).
 
 Features opted out while building the system:
       - Edit class info feature (I really don't know what needed to be changed OVERALL, everything needed to edit a class details or session details is already there.

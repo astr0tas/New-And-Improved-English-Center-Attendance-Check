@@ -45,3 +45,29 @@ BEGIN
     end if;
 END//
 DELIMITER ;
+
+-- Check if the start date of class is at least 1 week from now (only use in production mode)
+DROP TRIGGER IF EXISTS class_trigger;
+DELIMITER //
+CREATE TRIGGER class_trigger
+BEFORE INSERT ON class
+FOR EACH ROW
+BEGIN
+    if new.start_date<DATE_ADD(curdate(), INTERVAL 7 DAY) then
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "New class start date invalid!";
+    end if;
+END//
+DELIMITER ;
+
+-- Check if the date of a session is at least 1 day from now (only use in production mode)
+DROP TRIGGER IF EXISTS session_trigger;
+DELIMITER //
+CREATE TRIGGER session_trigger
+BEFORE INSERT ON session
+FOR EACH ROW
+BEGIN
+    if new.session_date<DATE_ADD(curdate(), INTERVAL 1 DAY) then
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "New session date invalid!";
+    end if;
+END//
+DELIMITER ;

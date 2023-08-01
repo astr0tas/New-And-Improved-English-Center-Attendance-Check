@@ -253,11 +253,11 @@ const ClassDetail = () =>
       return (
             <div className="w-100 h-100 d-flex flex-column align-items-center" ref={ containerRef }>
                   <div className="w-100 d-flex flex-column overflow-auto hideBrowserScrollbar mt-2 mb-2 flex-grow-1">
-                        <NavLink to={ '/class-list' } style={ { textDecoration: 'none' } }>
-                              <strong className={ `ms-md-3 mb-0 me-md-0 mx-auto mt-2 ${ styles.back }` }>Back</strong>
+                        <NavLink to={ '/class-list' } style={ { textDecoration: 'none' } } className={`ms-md-3 mb-0 me-md-0 mx-auto mt-2 d-block`}>
+                              <strong className={ `${ styles.back }` }>Back</strong>
                         </NavLink>
                         <div className='mx-auto'>
-                              <h2 className='mt-4 text-center'>{ name }</h2>
+                              <h2 className='mt-2 text-center'>{ name }</h2>
                               <div className='d-flex align-items-center'>
                                     <strong className='mb-3'>Period:&nbsp;&nbsp;</strong>
                                     <p className='mb-3'>{ start === 'N/A' ? start : DMY(start) }&nbsp;&nbsp;-&nbsp;&nbsp;{ end === 'N/A' ? end : DMY(end) }</p>

@@ -421,59 +421,60 @@ export class Class
 
       classStats(name, callback)
       {
-            // select student.name, count(*) as studentOnClass from student
-            // join in_class on in_class.student_id = student.id
-            // join student_attendance on student_attendance.student_id = student.id
-            // join session on session.number = student_attendance.session_number and session.class_name and student_attendance.class_name
-            // where session.session_date <= curdate() and student_attendance.status = 1 and student_attendance.class_name =? group by student.name;
-            
-            // select student.name, count(*) as studentLate from student
-            // join in_class on in_class.student_id = student.id
-            // join student_attendance on student_attendance.student_id = student.id
-            // join session on session.number = student_attendance.session_number and session.class_name and student_attendance.class_name
-            // where session.session_date <= curdate() and student_attendance.status = 2 and student_attendance.class_name =? group by student.name;
-            
-            // select student.name, count(*) as studentAbsent from student
-            // join in_class on in_class.student_id = student.id
-            // join student_attendance on student_attendance.student_id = student.id
-            // join session on session.number = student_attendance.session_number and session.class_name and student_attendance.class_name
-            // where session.session_date <= curdate() and student_attendance.status = 3 and student_attendance.class_name =? group by student.name;
-            
-            // select student.name, count(*) as studentUncheck from student
-            // join in_class on in_class.student_id = student.id
-            // join student_attendance on student_attendance.student_id = student.id
-            // join session on session.number = student_attendance.session_number and session.class_name and student_attendance.class_name
-            // where session.session_date <= curdate() and student_attendance.status = -1 and student_attendance.class_name =? group by student.name;
-
             this.conn.query(`select count(*) as total from session where class_name=? and status!=3 and status!=5;
             select count(*) as current from session where (status=1 or status=2) and class_name=?;
-            
-            select employee.name,count(*) as teacherOnClass from employee
+
+            select employee.name,employee.id from employee join teacher on teacher.id=employee.id join teach on teach.teacher_id=employee.id where class_name=?;
+
+            select employee.name,employee.id,count(*) as teacherOnClass from employee
             join teacher on teacher.id=employee.id
             join teacher_responsible on teacher_responsible.teacher_id=teacher.id
             join session on session.number=teacher_responsible.session_number and session.class_name=teacher_responsible.class_name
-            where session.session_date<=curdate() and teacher_responsible.teacher_status=1 and teacher_responsible.class_name=? group by employee.name;
+            where session.session_date<=curdate() and teacher_responsible.teacher_status=1 and teacher_responsible.class_name=? group by employee.id;
             
-            select employee.name,count(*) as teacherLate from employee
+            select employee.name,employee.id,count(*) as teacherLate from employee
             join teacher on teacher.id=employee.id
             join teacher_responsible on teacher_responsible.teacher_id=teacher.id
             join session on session.number=teacher_responsible.session_number and session.class_name=teacher_responsible.class_name
-            where session.session_date<=curdate() and teacher_responsible.teacher_status=2 and teacher_responsible.class_name=? group by employee.name;
+            where session.session_date<=curdate() and teacher_responsible.teacher_status=2 and teacher_responsible.class_name=? group by employee.id;
             
-            select employee.name,count(*) as teacherAbsent from employee
+            select employee.name,employee.id,count(*) as teacherAbsent from employee
             join teacher on teacher.id=employee.id
             join teacher_responsible on teacher_responsible.teacher_id=teacher.id
             join session on session.number=teacher_responsible.session_number and session.class_name=teacher_responsible.class_name
-            where session.session_date<=curdate() and teacher_responsible.teacher_status=3 and teacher_responsible.class_name=? group by employee.name;
+            where session.session_date<=curdate() and teacher_responsible.teacher_status=3 and teacher_responsible.class_name=? group by employee.id;
             
-            select employee.name,count(*) as teacherUncheck from employee
+            select employee.name,employee.id,count(*) as teacherUncheck from employee
             join teacher on teacher.id=employee.id
             join teacher_responsible on teacher_responsible.teacher_id=teacher.id
             join session on session.number=teacher_responsible.session_number and session.class_name=teacher_responsible.class_name
-            where session.session_date<=curdate() and teacher_responsible.teacher_status=-1 and teacher_responsible.class_name=? group by employee.name;
+            where session.session_date<=curdate() and teacher_responsible.teacher_status=-1 and teacher_responsible.class_name=? group by employee.id;
             
+            select student.id from student join in_class on in_class.student_id=student.id where in_class.class_name=?;
+
+            select s1.name,s1.id, (select count(*) from student_attendance
+            join session on session.number = student_attendance.session_number and session.class_name=student_attendance.class_name
+            where session.session_date <= curdate() and student_attendance.status = 1 and student_attendance.student_id=s1.id) as studentOnClass
+            from student s1
+            join in_class on in_class.student_id = s1.id where in_class.class_name =?;    
             
-            `, [name, name, name, name, name, name, name, name, name, name], (err, res) =>
+            select s1.name,s1.id, (select count(*) from student_attendance
+            join session on session.number = student_attendance.session_number and session.class_name=student_attendance.class_name
+            where session.session_date <= curdate() and student_attendance.status = 2 and student_attendance.student_id=s1.id) as studentLate
+            from student s1
+            join in_class on in_class.student_id = s1.id where in_class.class_name =?;
+
+            select s1.name,s1.id, (select count(*) from student_attendance
+            join session on session.number = student_attendance.session_number and session.class_name=student_attendance.class_name
+            where session.session_date <= curdate() and student_attendance.status = 3 and student_attendance.student_id=s1.id) as studentAbsent
+            from student s1
+            join in_class on in_class.student_id = s1.id where in_class.class_name =?;
+
+            select s1.name,s1.id, (select count(*) from student_attendance
+            join session on session.number = student_attendance.session_number and session.class_name=student_attendance.class_name
+            where session.session_date <= curdate() and student_attendance.status = -1 and student_attendance.student_id=s1.id) as studentUncheck
+            from student s1
+            join in_class on in_class.student_id = s1.id where in_class.class_name =?;`, [name, name, name, name, name, name, name, name, name, name, name, name], (err, res) =>
             {
                   if (err)
                         callback(null, err);
