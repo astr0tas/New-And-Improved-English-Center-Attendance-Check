@@ -519,6 +519,26 @@ adminRoutes.post('/createClass', (req, res) =>
       })
 });
 
+adminRoutes.post('/classStats', (req, res) =>
+{
+      const data = decryptWithAES(req.body.data);
+      const name = data.params.name;
+      classModel.classStats(name, (result, err) =>
+      {
+            if (err)
+            {
+                  console.log(err);
+                  res.status(500).send({ message: 'Server internal error!' });
+            }
+            else
+            {
+                  if (!result.length)
+                        res.status(204).send(encryptWithAES({ message: 'No data!' }));
+                  res.status(200).send(encryptWithAES(result));
+            }
+      })
+});
+
 const staffModel = new Staff();
 
 adminRoutes.post('/staffList', (req, res) =>
@@ -842,6 +862,28 @@ adminRoutes.post('/updateStaff', multer().fields([
       })
 });
 
+adminRoutes.post('/teacherStats', (req, res) =>
+{
+      const data = decryptWithAES(req.body.data);
+      const id = data.params.id;
+      const name = data.params.name;
+      staffModel.teacherStats(id, name, (result, err) =>
+      {
+            if (err)
+            {
+                  console.log(err);
+                  res.status(500).send({ message: 'Server internal error!' });
+            }
+            else
+            {
+                  if (!result.length)
+                        res.status(204).send(encryptWithAES({ message: 'No data!' }));
+                  else
+                        res.status(200).send(encryptWithAES(result));
+            }
+      })
+});
+
 
 const studentModel = new Student();
 
@@ -1110,6 +1152,28 @@ adminRoutes.post('/updateStudent', multer().fields([
             }
             else
                   res.status(200).send(encryptWithAES({ message: 'Student info successfully updated!' }));
+      })
+});
+
+adminRoutes.post('/studentStats', (req, res) =>
+{
+      const data = decryptWithAES(req.body.data);
+      const id = data.params.id;
+      const name = data.params.name;
+      studentModel.studentStats(id, name, (result, err) =>
+      {
+            if (err)
+            {
+                  console.log(err);
+                  res.status(500).send({ message: 'Server internal error!' });
+            }
+            else
+            {
+                  if (!result.length)
+                        res.status(204).send(encryptWithAES({ message: 'No data!' }));
+                  else
+                        res.status(200).send(encryptWithAES(result));
+            }
       })
 });
 

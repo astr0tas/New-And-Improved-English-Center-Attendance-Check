@@ -1,0 +1,31 @@
+.customModal {
+      max-width: 95% !important;
+}
+
+.dialog {
+      max-width: 100% !important;
+      max-height: 80% !important;
+}
+
+.hover:hover {
+      cursor: pointer;
+}
+
+.customModal {
+      padding-top: 10vh !important;
+      padding-top: 10dvh !important;
+}
+
+@media only screen and (min-width: 768px) {
+
+      .customModal {
+            max-width: 75% !important;
+      }
+}
+
+@media only screen and (max-height:450px) {
+      .dialog {
+            min-height: 120% !important;
+            max-height: 120% !important;
+      }
+}

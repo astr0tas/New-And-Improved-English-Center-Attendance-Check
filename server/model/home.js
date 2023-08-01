@@ -8,7 +8,8 @@ export class Home
                   host: "localhost",
                   user: "englishcenter",
                   password: "englishcenter123",
-                  database: "english_center"
+                  database: "english_center",
+                  multipleStatements:true
             });
       }
 

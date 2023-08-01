@@ -418,4 +418,67 @@ export class Class
                         callback(res, null);
             });
       }
+
+      classStats(name, callback)
+      {
+            // select student.name, count(*) as studentOnClass from student
+            // join in_class on in_class.student_id = student.id
+            // join student_attendance on student_attendance.student_id = student.id
+            // join session on session.number = student_attendance.session_number and session.class_name and student_attendance.class_name
+            // where session.session_date <= curdate() and student_attendance.status = 1 and student_attendance.class_name =? group by student.name;
+            
+            // select student.name, count(*) as studentLate from student
+            // join in_class on in_class.student_id = student.id
+            // join student_attendance on student_attendance.student_id = student.id
+            // join session on session.number = student_attendance.session_number and session.class_name and student_attendance.class_name
+            // where session.session_date <= curdate() and student_attendance.status = 2 and student_attendance.class_name =? group by student.name;
+            
+            // select student.name, count(*) as studentAbsent from student
+            // join in_class on in_class.student_id = student.id
+            // join student_attendance on student_attendance.student_id = student.id
+            // join session on session.number = student_attendance.session_number and session.class_name and student_attendance.class_name
+            // where session.session_date <= curdate() and student_attendance.status = 3 and student_attendance.class_name =? group by student.name;
+            
+            // select student.name, count(*) as studentUncheck from student
+            // join in_class on in_class.student_id = student.id
+            // join student_attendance on student_attendance.student_id = student.id
+            // join session on session.number = student_attendance.session_number and session.class_name and student_attendance.class_name
+            // where session.session_date <= curdate() and student_attendance.status = -1 and student_attendance.class_name =? group by student.name;
+
+            this.conn.query(`select count(*) as total from session where class_name=? and status!=3 and status!=5;
+            select count(*) as current from session where (status=1 or status=2) and class_name=?;
+            
+            select employee.name,count(*) as teacherOnClass from employee
+            join teacher on teacher.id=employee.id
+            join teacher_responsible on teacher_responsible.teacher_id=teacher.id
+            join session on session.number=teacher_responsible.session_number and session.class_name=teacher_responsible.class_name
+            where session.session_date<=curdate() and teacher_responsible.teacher_status=1 and teacher_responsible.class_name=? group by employee.name;
+            
+            select employee.name,count(*) as teacherLate from employee
+            join teacher on teacher.id=employee.id
+            join teacher_responsible on teacher_responsible.teacher_id=teacher.id
+            join session on session.number=teacher_responsible.session_number and session.class_name=teacher_responsible.class_name
+            where session.session_date<=curdate() and teacher_responsible.teacher_status=2 and teacher_responsible.class_name=? group by employee.name;
+            
+            select employee.name,count(*) as teacherAbsent from employee
+            join teacher on teacher.id=employee.id
+            join teacher_responsible on teacher_responsible.teacher_id=teacher.id
+            join session on session.number=teacher_responsible.session_number and session.class_name=teacher_responsible.class_name
+            where session.session_date<=curdate() and teacher_responsible.teacher_status=3 and teacher_responsible.class_name=? group by employee.name;
+            
+            select employee.name,count(*) as teacherUncheck from employee
+            join teacher on teacher.id=employee.id
+            join teacher_responsible on teacher_responsible.teacher_id=teacher.id
+            join session on session.number=teacher_responsible.session_number and session.class_name=teacher_responsible.class_name
+            where session.session_date<=curdate() and teacher_responsible.teacher_status=-1 and teacher_responsible.class_name=? group by employee.name;
+            
+            
+            `, [name, name, name, name, name, name, name, name, name, name], (err, res) =>
+            {
+                  if (err)
+                        callback(null, err);
+                  else
+                        callback(res, null);
+            });
+      }
 }

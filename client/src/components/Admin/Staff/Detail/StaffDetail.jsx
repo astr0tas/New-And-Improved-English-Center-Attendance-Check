@@ -8,6 +8,7 @@ import { context } from '../../../../context';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import StaffEdit from '../Edit/StaffEdit';
+import Stats from '../Stats/Stats';
 
 const Class = (props) =>
 {
@@ -21,9 +22,9 @@ const Class = (props) =>
                   <td className='text-center align-middle'>{ DMY(props.end) }</td>
                   <td className='text-center align-middle' style={ {
                         color: props.status === 1 ? 'red' : (
-                              props.status === 2 ? '#128400' : 'gray')
+                              props.status === 2 ? '#128400' : (props.status === 0 ? 'gray' : 'black'))
                   } }>{ props.status === 1 ? 'Deactivated' : (
-                        props.status === 2 ? 'Active' : 'Finished'
+                        props.status === 2 ? 'Active' : (props.status === 0 ? 'Finished' : 'N/A')
                   ) }</td>
                   <td className='text-center align-middle'>
                         <div className='d-flex align-items-center justify-content-center'>
@@ -33,7 +34,14 @@ const Class = (props) =>
                                           setListType(0);
                                     } }>Detail</button>
                               </NavLink>
-                              <button className='btn btn-sm btn-secondary ms-sm-2 ms-1'>Stats</button>
+                              {
+                                    props.type === 1 &&
+                                    <button className='btn btn-sm btn-secondary ms-sm-2 ms-1' onClick={ () =>
+                                    {
+                                          props.setChosenClassName(props.name);
+                                          props.setStatsPopUp(true);
+                                    } }>Stats</button>
+                              }
                         </div>
                   </td>
             </tr>
@@ -52,7 +60,8 @@ const ClassList = (props) =>
                               const temp = [];
                               if (res.status === 200)
                                     for (let i = 0; i < res.data.length; i++)
-                                          temp.push(<Class key={ i } i={ i + 1 } name={ res.data[i].name }
+                                          temp.push(<Class key={ i } i={ i + 1 } name={ res.data[i].name } type={ props.type }
+                                                setChosenClassName={ props.setChosenClassName } setStatsPopUp={ props.setStatsPopUp }
                                                 start={ res.data[i].start_date } end={ res.data[i].end_date } status={ res.data[i].status } />);
                               props.setClasses(temp);
                         })
@@ -66,7 +75,7 @@ const ClassList = (props) =>
                               const temp = [];
                               if (res.status === 200)
                                     for (let i = 0; i < res.data.length; i++)
-                                          temp.push(<Class key={ i } i={ i + 1 } name={ res.data[i].name }
+                                          temp.push(<Class key={ i } i={ i + 1 } name={ res.data[i].name } type={ props.type }
                                                 start={ res.data[i].start_date } end={ res.data[i].end_date } status={ res.data[i].status } />);
                               props.setClasses(temp);
                         })
@@ -101,6 +110,8 @@ const StaffDetail = () =>
 
       const [render, setRender] = useState(false);
       const [editStaffPopUp, setEditStaffPopUp] = useState(false);
+      const [statsPopUp, setStatsPopUp] = useState(false);
+      const [chosenClassName, setChosenClassName] = useState(null);
       const containerRef = useRef(null);
 
       useEffect(() =>
@@ -183,7 +194,7 @@ const StaffDetail = () =>
                                     </tr>
                               </thead>
                               <tbody>
-                                    <ClassList id={ id } searchClass={ searchClass } type={ type } classes={ classes } setClasses={ setClasses } />
+                                    <ClassList id={ id } searchClass={ searchClass } type={ type } classes={ classes } setClasses={ setClasses } setChosenClassName={ setChosenClassName } setStatsPopUp={ setStatsPopUp } />
                               </tbody>
                         </table>
                   </div>
@@ -195,6 +206,7 @@ const StaffDetail = () =>
                   </div>
 
                   <StaffEdit showPopUp={ editStaffPopUp } setShowPopUp={ setEditStaffPopUp } render={ render } setRender={ setRender } containerRef={ containerRef } id={ id } staffType={ type } />
+                  <Stats containerRef={ containerRef } chosenClassName={ chosenClassName } showPopUp={ statsPopUp } setShowPopUp={ setStatsPopUp } id={ id } />
             </div>
       )
 }

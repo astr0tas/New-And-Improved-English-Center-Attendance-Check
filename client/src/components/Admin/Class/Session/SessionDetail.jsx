@@ -409,7 +409,7 @@ const AdminClassSessionDetail = () =>
                                     number: number,
                                     students: childrenRefs.current,
                                     teacher: { id: teacherID, status: teacherStatus, note: teacherNote },
-                                    supservisor: { id: supervisorID, note: classNote }
+                                    supervisor: { id: supervisorID, note: classNote }
                               }
                         },
                         { headers: { 'Content-Type': 'application/json' } })
@@ -418,7 +418,11 @@ const AdminClassSessionDetail = () =>
                               if (res.status === 200)
                                     setShowPopUp5(true);
                         })
-                        .catch(err => console.log(err));
+                        .catch(err =>
+                        {
+                              setErrorPopUp(true);
+                              console.error(err);
+                        });
             }
       }
 

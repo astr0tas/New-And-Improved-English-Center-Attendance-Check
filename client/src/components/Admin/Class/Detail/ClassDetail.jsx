@@ -15,6 +15,7 @@ import AddSession from '../AddSession/AddSession';
 import AddTeacher from '../AddTeacher/AddTeacher';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
+import Stats from '../Stats/Stats';
 
 const Student = (props) =>
 {
@@ -164,6 +165,8 @@ const ClassDetail = () =>
 
       const [removeTeacherTarget, setRemoveTeacherTarget] = useState(null);
       const [removeTeacherPopUp, setRemoveTeacherPopUp] = useState(false);
+
+      const [statsPopUp, setStatsPopUp] = useState(false);
 
       document.title = `Class ${ name }`;
 
@@ -351,7 +354,7 @@ const ClassDetail = () =>
                                     listType === 2 && status !== 0 &&
                                     <button className='btn btn-primary me-2' onClick={ () => setSessionPopUp(true) }>Add session</button>
                               }
-                              <button className='btn btn-secondary ms-2'>Stats</button>
+                              <button className='btn btn-secondary ms-2' onClick={ () => setStatsPopUp(true) }>Stats</button>
                         </div>
                   </div>
                   <Modal show={ statusPopUp } onHide={ () => setStatusPopUp(false) } className={ `reAdjustModel hideBrowserScrollbar` } container={ containerRef.current }>
@@ -448,6 +451,7 @@ const ClassDetail = () =>
                         sessionPopUp={ sessionPopUp } render={ render } setRender={ setRender } />
                   <AddTeacher containerRef={ containerRef } setTeacherPopUp={ setTeacherPopUp } name={ name }
                         teacherPopUp={ teacherPopUp } render={ render } setRender={ setRender } status={ status } />
+                  <Stats name={ name } containerRef={ containerRef } setShowPopUp={ setStatsPopUp } showPopUp={ statsPopUp } />
             </div >
       )
 }

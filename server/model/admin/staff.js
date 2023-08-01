@@ -238,4 +238,39 @@ export class Staff
                               callback(res, null);
                   })
       }
+
+      teacherStats(id, name, callback)
+      {
+            this.conn.query(`select start_date,end_date from class where name=?;
+
+            select count(*) as total from session
+            join TEACHER_RESPONSIBLE on TEACHER_RESPONSIBLE.session_number=session.number and TEACHER_RESPONSIBLE.class_name=session.class_name
+            where session.class_name=? and session.status!=3 and session.status!=5 and Teacher_ID=?;
+            
+            select count(*) as current from session
+            join TEACHER_RESPONSIBLE on TEACHER_RESPONSIBLE.session_number=session.number and TEACHER_RESPONSIBLE.class_name=session.class_name
+            where session.class_name=? and (session.status=1 or session.status=2) and Teacher_ID=?;
+
+            select count(*) as onClass from TEACHER_RESPONSIBLE
+            join session on session.class_name=TEACHER_RESPONSIBLE.class_name and session.number=TEACHER_RESPONSIBLE.session_number
+            where session.class_name=? and Teacher_ID=? and Teacher_Status=1;
+
+            select count(*) as late from TEACHER_RESPONSIBLE
+            join session on session.class_name=TEACHER_RESPONSIBLE.class_name and session.number=TEACHER_RESPONSIBLE.session_number
+            where session.class_name=? and Teacher_ID=? and Teacher_Status=2;
+
+            select count(*) as absent from TEACHER_RESPONSIBLE
+            join session on session.class_name=TEACHER_RESPONSIBLE.class_name and session.number=TEACHER_RESPONSIBLE.session_number
+            where session.class_name=? and Teacher_ID=? and Teacher_Status=3;
+
+            select count(*) as uncheck from TEACHER_RESPONSIBLE
+            join session on session.class_name=TEACHER_RESPONSIBLE.class_name and session.number=TEACHER_RESPONSIBLE.session_number
+            where session.class_name=? and Teacher_ID=? and Teacher_Status=-1 and session_date<=curdate();`, [name, name, id, name, id, name, id, name, id, name, id, name, id], (err, res) =>
+            {
+                  if (err)
+                        callback(null, err);
+                  else
+                        callback(res, null);
+            })
+      }
 }

@@ -8,11 +8,11 @@ import { context } from '../../../../context';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import StudentEdit from '../Edit/StudentEdit';
+import Stats from '../Stats/Stats';
 
 const Class = (props) =>
 {
       const { setListType } = useContext(context);
-
       return (
             <tr>
                   <td className='text-center align-middle'>{ props.i }</td>
@@ -21,9 +21,9 @@ const Class = (props) =>
                   <td className='text-center align-middle'>{ DMY(props.end) }</td>
                   <td className='text-center align-middle' style={ {
                         color: props.status === 1 ? 'red' : (
-                              props.status === 2 ? '#128400' : 'gray')
+                              props.status === 2 ? '#128400' : (props.status === 0 ? 'gray' : 'black'))
                   } }>{ props.status === 1 ? 'Deactivated' : (
-                        props.status === 2 ? 'Active' : 'Finished'
+                        props.status === 2 ? 'Active' : (props.status === 0 ? 'Finished' : 'N/A')
                   ) }</td>
                   <td className='d-flex align-items-center justify-content-center flex-column flex-sm-row'>
                         <NavLink to={ `/class-list/detail/${ props.name }` }>
@@ -32,7 +32,11 @@ const Class = (props) =>
                                     setListType(0);
                               } }>Detail</button>
                         </NavLink>
-                        <button className='btn btn-sm btn-primary mx-sm-2 my-2 my-sm-0'>Stats</button>
+                        <button className='btn btn-sm btn-primary mx-sm-2 my-2 my-sm-0' onClick={ () =>
+                        {
+                              props.setChosenClassName(props.name);
+                              props.setStatsPopUp(true);
+                        } }>Stats</button>
                   </td>
             </tr>
       )
@@ -49,7 +53,8 @@ const StudentClass = (props) =>
                         if (res.status === 200)
                               for (let i = 0; i < res.data.length; i++)
                                     temp.push(<Class key={ i } i={ i + 1 } name={ res.data[i].name }
-                                          start={ res.data[i].start_date } end={ res.data[i].end_date } status={ res.data[i].Status } />);
+                                          start={ res.data[i].start_date } end={ res.data[i].end_date } status={ res.data[i].status }
+                                          setStatsPopUp={ props.setStatsPopUp } setChosenClassName={ props.setChosenClassName } />);
                         props.setClasses(temp);
                   })
                   .catch(err => console.log(err));
@@ -83,6 +88,8 @@ const StudentDetail = () =>
 
       const [render, setRender] = useState(false);
       const [editStudentPopUp, setEditStudentPopUp] = useState(false);
+      const [statsPopUp, setStatsPopUp] = useState(false);
+      const [chosenClassName, setChosenClassName] = useState(null);
       const containerRef = useRef(null);
 
       useEffect(() =>
@@ -162,7 +169,7 @@ const StudentDetail = () =>
                                     </tr>
                               </thead>
                               <tbody>
-                                    <StudentClass id={ id } searchClass={ searchClass } classes={ classes } setClasses={ setClasses } />
+                                    <StudentClass id={ id } searchClass={ searchClass } classes={ classes } setClasses={ setClasses } setChosenClassName={ setChosenClassName } setStatsPopUp={ setStatsPopUp } />
                               </tbody>
                         </table>
                   </div>
@@ -173,6 +180,7 @@ const StudentDetail = () =>
                         <button className='btn btn-primary ms-3 ms-sm-4' onClick={ () => setEditStudentPopUp(true) }>Change info</button>
                   </div>
                   <StudentEdit showPopUp={ editStudentPopUp } setShowPopUp={ setEditStudentPopUp } render={ render } setRender={ setRender } containerRef={ containerRef } id={ id } />
+                  <Stats containerRef={ containerRef } chosenClassName={ chosenClassName } showPopUp={ statsPopUp } setShowPopUp={ setStatsPopUp } id={ id } />
             </div>
       )
 }

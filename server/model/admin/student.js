@@ -8,7 +8,8 @@ export class Student
                   host: "localhost",
                   user: "englishcenter",
                   password: "englishcenter123",
-                  database: "english_center"
+                  database: "english_center",
+                  multipleStatements: true
             });
       }
 
@@ -182,5 +183,40 @@ export class Student
                         else
                               callback(res, null);
                   })
+      }
+
+      studentStats(id, name, callback)
+      {
+            this.conn.query(`select start_date,end_date from class where name=?;
+
+            select count(*) as total from session
+            join student_attendance on student_attendance.session_number=session.number and student_attendance.class_name=session.class_name
+            where session.class_name=? and session.status!=3 and session.status!=5 and student_id=?;
+
+            select count(*) as current from session
+            join student_attendance on student_attendance.session_number=session.number and student_attendance.class_name=session.class_name
+            where session.class_name=? and (session.status=1 or session.status=2) and student_id=?;
+
+            select count(*) as onClass from student_attendance
+            join session on session.number=student_attendance.session_number and session.class_name=student_attendance.class_name
+            where session.class_name=? and student_id=? and student_attendance.status=1;
+
+            select count(*) as late from student_attendance
+            join session on session.number=student_attendance.session_number and session.class_name=student_attendance.class_name
+            where session.class_name=? and student_id=? and student_attendance.status=2;
+
+            select count(*) as absent from student_attendance
+            join session on session.number=student_attendance.session_number and session.class_name=student_attendance.class_name
+            where session.class_name=? and student_id=? and student_attendance.status=3;
+
+            select count(*) as uncheck from student_attendance
+            join session on session.number=student_attendance.session_number and session.class_name=student_attendance.class_name
+            where session.class_name=? and student_id=? and student_attendance.status=-1 and session_date<=curdate();`, [name, name, id, name, id, name, id, name, id, name, id, name, id], (err, res) =>
+            {
+                  if (err)
+                        callback(null, err);
+                  else
+                        callback(res, null);
+            })
       }
 }
