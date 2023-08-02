@@ -4,6 +4,8 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { ContextProvider } from './context';
+import { BrowserRouter} from "react-router-dom";
 // import 'bootstrap/dist/js/bootstrap.min.js';
 
 // window.addEventListener("DOMContentLoaded", function ()
@@ -14,7 +16,11 @@ if (container !== null && container !== undefined)
   const root = ReactDOM.createRoot(container);
   root.render(
     <React.StrictMode>
-      <App />
+      <BrowserRouter>
+        <ContextProvider>
+          <App />
+        </ContextProvider>
+      </BrowserRouter>
     </React.StrictMode>
   );
 }

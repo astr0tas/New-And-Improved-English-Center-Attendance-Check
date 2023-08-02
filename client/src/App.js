@@ -1,5 +1,5 @@
 import './App.css';
-import { BrowserRouter, NavLink, Route, Routes } from "react-router-dom";
+import { NavLink, Route, Routes } from "react-router-dom";
 
 // General routes
 import Login from './components/General/Authentication/Login/Login';
@@ -24,8 +24,6 @@ import MyClassList from './components/Staff/MyClass/List/MyClassList';
 import MyClassDetail from './components/Staff/MyClass/Detail/MyClassDetail';
 import MyClassSession from './components/Staff/MyClass/Session/Session';
 
-import { ContextProvider } from './context';
-
 const NotFound = () =>
 {
   document.title = "Page not found";
@@ -44,50 +42,46 @@ function App()
 {
   return (
     <div className="App">
-      <BrowserRouter>
-        <ContextProvider>
-          <Routes>
-            {/* Authentication */ }
-            <Route>
-              <Route index element={ <Login /> } />
-              <Route path='recovery' element={ <Recovery /> } />
+      <Routes>
+        {/* Authentication */ }
+        <Route index element={ <Login /> } />
+        <Route path='recovery' element={ <Recovery /> } />
+        {/* Main routes */ }
+        <Route element={ <Menu /> }>
+          {/* General profile */ }
+          <Route path='profile' element={ <Profile /> } />
+          {/* General home */ }
+          <Route path='home' element={ <Home /> } />
+          {/* Admin routes */ }
+          <Route path='class-list'>
+            <Route index element={ <ClassList /> } />
+            <Route path='detail/:name'>
+              <Route index element={ <ClassDetail /> } />
+              <Route path=':number' element={ <AdminClassSession /> } />
             </Route>
-            {/* Main routes */ }
-            <Route element={ <Menu /> }>
+          </Route>
 
-              {/* General profile */ }
-              <Route path='profile' element={ <Profile /> } />
-              {/* General home */ }
-              <Route path='home' element={ <Home /> } />
-              {/* Admin routes */ }
-              <Route>
-                <Route path='class-list' element={ <ClassList /> } />
-                <Route path='class-list/detail/:name' element={ <ClassDetail /> } />
-                <Route path='class-list/detail/:name/:number' element={ <AdminClassSession /> } />
-              </Route>
+          <Route path='staff-list'>
+            <Route index element={ <StaffList /> } />
+            <Route path='detail/:id' element={ <StaffDetail /> } />
+          </Route>
 
-              <Route>
-                <Route path='staff-list' element={ <StaffList /> } />
-                <Route path='staff-list/detail/:id' element={ <StaffDetail /> } />
-              </Route>
-
-              <Route>
-                <Route path='student-list' element={ <StudentList /> } />
-                <Route path='student-list/detail/:id' element={ <StudentDetail /> } />
-              </Route>
-              {/* Staff routes */ }
-              <Route>
-                <Route path='my-class-list' element={ <MyClassList /> } />
-                <Route path='my-class-list/detail/:name' element={ <MyClassDetail /> } />
-                <Route path='my-class-list/detail/:name/:number' element={ <MyClassSession /> } />
-              </Route>
-
+          <Route path='student-list'>
+            <Route index element={ <StudentList /> } />
+            <Route path='detail/:id' element={ <StudentDetail /> } />
+          </Route>
+          {/* Staff routes */ }
+          <Route path='my-class-list' >
+            <Route index element={ <MyClassList /> } />
+            <Route path='detail/:name'>
+              <Route index element={ <MyClassDetail /> } />
+              <Route path=':number' element={ <MyClassSession /> } />
             </Route>
-            {/* Not found */ }
-            <Route path='*' element={ <NotFound /> } />
-          </Routes>
-        </ContextProvider>
-      </BrowserRouter>
+          </Route>
+        </Route>
+        {/* Not found */ }
+        <Route path='*' element={ <NotFound /> } />
+      </Routes>
     </div >
   );
 }
