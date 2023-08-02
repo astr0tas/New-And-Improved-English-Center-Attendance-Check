@@ -207,7 +207,7 @@ const Stats = (props) =>
                               {
                                     const idx = teachers.findIndex(elem => elem.id === res.data[6][i].id);
                                     if (idx !== -1)
-                                          data0[idx] = res.data[6][i].teacherAbsent;
+                                          data0[idx] = res.data[6][i].teacherUncheck;
                               }
                               setTeacherData0(data0.find(elem => elem !== null) !== undefined ? {
                                     labels: teachers.map(elem => elem.name),
