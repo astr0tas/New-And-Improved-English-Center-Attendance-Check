@@ -337,7 +337,7 @@ export class Class
                   join class on class.name=in_class.class_name
                   join session on session.class_name=class.name
                   join timetable on timetable.id=session.timetable_id
-                  where class.status=2 and not (class.start_date>? or class.end_date<?)
+                  where class.status=2 and session.Session_number_make_up_for is null and not (class.start_date>? or class.end_date<?)
                   and ((WEEKDAY(session.session_date)+1=?
                   and not (timetable.start_hour>? or timetable.end_hour<?))`;
             const params = ['%' + name + '%', endDate, startDate, period[0].dow, period[0].end, period[0].start];

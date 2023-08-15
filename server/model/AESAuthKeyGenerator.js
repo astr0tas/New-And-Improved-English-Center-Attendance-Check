@@ -7,7 +7,7 @@ function updateAuthKey()
       return setInterval(() =>
       {
             authKey = CryptoJS.lib.WordArray.random(32).toString(CryptoJS.enc.Hex);
-            console.log('Authentication key updated!');
+            console.log('Authentication AES key updated!');
       }, 2500);
 }
 

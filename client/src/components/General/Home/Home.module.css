@@ -1,8 +1,21 @@
 .sections {
       width: 90%;
       height: 40%;
-      border:2px solid black;
+      border: 2px solid black;
       border-radius: 10px;
-      min-height:300px;
-      max-width:1200px;
+      min-height: 350px;
+      max-width: 1200px;
+      max-height: 600px;
+}
+
+.horizontal {
+      height: 2px;
+      width: 90%;
+      max-width: 400px;
+}
+
+@media only screen and (min-width:1200px) {
+      .horizontal {
+            display: none;
+      }
 }

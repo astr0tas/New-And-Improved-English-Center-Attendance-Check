@@ -7,7 +7,7 @@ function updateKey()
       return setInterval(() =>
       {
             key = CryptoJS.lib.WordArray.random(32).toString(CryptoJS.enc.Hex);
-            console.log('Key updated!');
+            console.log('Data AES key updated!');
       }, 5000);
 }
 

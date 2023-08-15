@@ -37,28 +37,29 @@ const Stats = (props) =>
                               setEnd(res.data[0][0].end_date ? res.data[0][0].end_date : null);
                               setTotalSession(res.data[1][0].total);
                               setCurrentSession(res.data[2][0].current);
-                              setData({
-                                    labels: ['On class', 'Late', 'Absent', 'Unchecked'],
-                                    datasets: [
-                                          {
-                                                label: '# of current sessions',
-                                                data: [res.data[3][0].onClass, res.data[4][0].late, res.data[5][0].absent, res.data[6][0].uncheck],
-                                                backgroundColor: [
-                                                      'rgba(18, 132, 0, 0.2)',
-                                                      'rgba(255, 165, 0, 0.2)',
-                                                      'rgba(255, 0, 0, 0.2)',
-                                                      'rgba(192,192,192,0.2)'
-                                                ],
-                                                borderColor: [
-                                                      'rgba(18, 132, 0, 1)',
-                                                      'rgba(255, 165, 0, 1)',
-                                                      'rgba(255, 0, 0, 1)',
-                                                      'rgba(192,192,192,1)'
-                                                ],
-                                                borderWidth: 1,
-                                          },
-                                    ],
-                              });
+                              if (res.data[3][0].onClass !== 0 || res.data[4][0].late !== 0 || res.data[5][0].absent !== 0 || res.data[6][0].uncheck !== 0)
+                                    setData({
+                                          labels: ['On class', 'Late', 'Absent', 'Unchecked'],
+                                          datasets: [
+                                                {
+                                                      label: '# of current sessions',
+                                                      data: [res.data[3][0].onClass, res.data[4][0].late, res.data[5][0].absent, res.data[6][0].uncheck],
+                                                      backgroundColor: [
+                                                            'rgba(18, 132, 0, 0.2)',
+                                                            'rgba(255, 165, 0, 0.2)',
+                                                            'rgba(255, 0, 0, 0.2)',
+                                                            'rgba(192,192,192,0.2)'
+                                                      ],
+                                                      borderColor: [
+                                                            'rgba(18, 132, 0, 1)',
+                                                            'rgba(255, 165, 0, 1)',
+                                                            'rgba(255, 0, 0, 1)',
+                                                            'rgba(192,192,192,1)'
+                                                      ],
+                                                      borderWidth: 1,
+                                                },
+                                          ],
+                                    });
                         })
                         .catch(error => console.error(error));
             }

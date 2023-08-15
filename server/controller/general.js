@@ -513,6 +513,7 @@ generalRoutes.get('/getTodaySession', (req, res) =>
 {
       const userID = req.session.userID;
       const userType = req.session.userType;
+      console.log(userID, userType);
       homeModel.getTodaySession(userID, userType, (result, err) =>
       {
             if (err)
@@ -522,7 +523,7 @@ generalRoutes.get('/getTodaySession', (req, res) =>
             }
             else
             {
-                  if (!res.length)
+                  if (!result.length)
                         res.status(204).send(encryptWithAES({ message: 'No session found!' }));
                   else
                         res.status(200).send(encryptWithAES(result));
@@ -543,7 +544,7 @@ generalRoutes.get('/getMissedSession', (req, res) =>
             }
             else
             {
-                  if (!res.length)
+                  if (!result.length)
                         res.status(204).send(encryptWithAES({ message: 'No session found!' }));
                   else
                         res.status(200).send(encryptWithAES(result));
@@ -551,5 +552,61 @@ generalRoutes.get('/getMissedSession', (req, res) =>
       })
 });
 
+generalRoutes.get('/getClasses', (req, res) =>
+{
+      homeModel.getClasses((result, err) =>
+      {
+            if (err)
+            {
+                  console.log(err);
+                  res.status(500).send({ message: 'Server internal error!' });
+            }
+            else
+            {
+                  if (!result.length)
+                        res.status(204).send(encryptWithAES({ message: 'No class found!' }));
+                  else
+                        res.status(200).send(encryptWithAES(result));
+            }
+      })
+});
+
+generalRoutes.get('/getStaffs', (req, res) =>
+{
+      homeModel.getStaffs((result, err) =>
+      {
+            if (err)
+            {
+                  console.log(err);
+                  res.status(500).send({ message: 'Server internal error!' });
+            }
+            else
+            {
+                  if (!result.length)
+                        res.status(204).send(encryptWithAES({ message: 'No staff found!' }));
+                  else
+                        res.status(200).send(encryptWithAES(result));
+            }
+      })
+});
+
+generalRoutes.get('/getStudents', (req, res) =>
+{
+      homeModel.getStudents((result, err) =>
+      {
+            if (err)
+            {
+                  console.log(err);
+                  res.status(500).send({ message: 'Server internal error!' });
+            }
+            else
+            {
+                  if (!result.length)
+                        res.status(204).send(encryptWithAES({ message: 'No student found!' }));
+                  else
+                        res.status(200).send(encryptWithAES(result));
+            }
+      })
+});
 
 export default generalRoutes;
