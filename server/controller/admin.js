@@ -179,7 +179,8 @@ adminRoutes.post('/getTimetable', (req, res) =>
       const data = decryptWithAES(req.body.data);
       const room = data.params.room;
       const date = data.params.date;
-      classModel.getTimetable(room, date, (result, err) =>
+      const name = data.params.name;
+      classModel.getTimetable(room, date, name, (result, err) =>
       {
             if (err)
             {

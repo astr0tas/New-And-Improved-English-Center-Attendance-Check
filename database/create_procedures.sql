@@ -575,3 +575,68 @@ begin
 	close reader;
 end//
 delimiter ;
+
+drop procedure if exists getSuitableTimetable;
+delimiter //
+create procedure getSuitableTimetable(
+	in classroom varchar(15),
+    in sessionDate date,
+    in className varchar(100)
+)
+begin
+	declare idLoop varchar(15);
+    declare tempVarStart time default null;
+    declare tempVarEnd time default null;
+    
+	DECLARE done INT DEFAULT FALSE;
+	declare reader cursor for select student_id from in_class where class_name=className;
+	DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+    
+    select start_hour,end_hour into tempVarStart,tempVarEnd from timetable join session on session.timetable_id=timetable.id where classroom_id=classroom and session_date=sessionDate;
+    
+    create table if not exists timetable_temp(
+		start_hour time,
+        end_hour time
+    );
+    
+    if tempVarStart is not null and tempVarEnd is not null then
+		insert into timetable_temp values(tempVarStart,tempVarEnd);
+    end if;
+        
+    open reader;
+        read_loop: loop
+			fetch reader into idLoop;
+            IF done THEN
+				LEAVE read_loop;
+			END IF;
+            
+            BLOCK: BEGIN
+            declare timetableIDLoop int;
+            DECLARE innerDone INT DEFAULT FALSE;
+            declare innerReader cursor for select timetable.id from timetable join session on session.timetable_id=timetable.id join class on class.name=session.class_name join in_class on in_class.class_name=class.name
+            where in_class.student_id=idLoop and session_date=sessionDate and Classroom_ID=classroom;
+            DECLARE CONTINUE HANDLER FOR NOT FOUND SET innerDone = TRUE;
+            
+            open innerReader;
+            
+            inner_loop:loop
+            fetch innerReader into timetableIDLoop;
+            IF innerDone THEN
+				LEAVE inner_loop;
+			END IF;
+			set tempVarStart=null,tempVarEnd=null;
+            select start_hour,end_hour into tempVarStart,tempVarEnd from timetable where id=timetableIDLoop;
+            if tempVarStart is not null and tempVarEnd is not null then
+				insert into timetable_temp values(tempVarStart,tempVarEnd);
+			end if;
+                        
+            end loop;
+            close innerReader;
+            END BLOCK;
+            
+        end loop;
+	close reader;
+    select * from timetable where start_hour > all (select end_hour from timetable_temp) or end_hour < all (select start_hour from timetable_temp);
+    drop table timetable_temp;
+end//
+delimiter ;

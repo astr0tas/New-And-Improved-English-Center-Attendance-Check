@@ -297,14 +297,14 @@ const AddSession = (props) =>
 
                   if (room && date)
                   {
-                        request.post(`http://${ domain }/admin/getTimetable`, { params: { room: room.split(',')[0], date: date } }, { headers: { 'Content-Type': 'application/json' } })
+                        request.post(`http://${ domain }/admin/getTimetable`, { params: { room: room.split(',')[0], date: date, name: props.name } }, { headers: { 'Content-Type': 'application/json' } })
                               .then(res =>
                               {
                                     const temp = [];
                                     if (res.status === 200)
-                                          for (let i = 0; i < res.data.length; i++)
-                                                temp.push(<Dropdown.Item key={ i } eventKey={ [res.data[i].id, `${ res.data[i].start_hour } - ${ res.data[i].end_hour }`] }>
-                                                      { res.data[i].start_hour }&nbsp;-&nbsp;{ res.data[i].end_hour }
+                                          for (let i = 0; i < res.data[0].length; i++)
+                                                temp.push(<Dropdown.Item key={ i } eventKey={ [res.data[0][i].ID, `${ res.data[0][i].Start_hour } - ${ res.data[0][i].End_hour }`] }>
+                                                      { res.data[0][i].Start_hour }&nbsp;-&nbsp;{ res.data[0][i].End_hour }
                                                 </Dropdown.Item>);
                                     setTimetableList(temp);
                               })
@@ -386,7 +386,7 @@ const AddSession = (props) =>
                                                 setTimetable(null);
                                                 if (e.target.value !== '')
                                                 {
-                                                      if (new Date(e.target.value) <= new Date())
+                                                      if (new Date(e.target.value) < new Date())
                                                       {
                                                             setDate(null);
                                                             setIsPast(true);
@@ -465,7 +465,7 @@ const AddSession = (props) =>
                                           <strong>Teacher</strong>
                                     </div>
                                     <div className='col d-flex align-items-center justify-content-center justify-content-sm-start'>
-                                          <p className={ `${ styles.inputs } ${ styles.hover } w-100 mb-0 ps-2 pt-1 hideBrowserScrollbar` } onClick={ () => setAddTeacherPopUp(true) }>{ teacherName ? teacherName:'Choose a teacher' }</p>
+                                          <p className={ `${ styles.inputs } ${ styles.hover } w-100 mb-0 ps-2 pt-1 hideBrowserScrollbar` } onClick={ () => setAddTeacherPopUp(true) }>{ teacherName ? teacherName : 'Choose a teacher' }</p>
                                     </div>
                               </div>
                               {
@@ -486,7 +486,7 @@ const AddSession = (props) =>
                                           <strong>Supervisor</strong>
                                     </div>
                                     <div className='col d-flex align-items-center justify-content-center justify-content-sm-start'>
-                                          <p className={ `${ styles.inputs } ${ styles.hover } w-100 mb-0 ps-2 pt-1 hideBrowserScrollbar` } onClick={ () => setAddSupervisorPopUp(true) }>{ supervisorName ? supervisorName:'Choose a supervisor' }</p>
+                                          <p className={ `${ styles.inputs } ${ styles.hover } w-100 mb-0 ps-2 pt-1 hideBrowserScrollbar` } onClick={ () => setAddSupervisorPopUp(true) }>{ supervisorName ? supervisorName : 'Choose a supervisor' }</p>
                                     </div>
                               </div>
                               {

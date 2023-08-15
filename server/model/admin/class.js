@@ -139,16 +139,14 @@ export class Class
             });
       }
 
-      getTimetable(room, date, callback)
+      getTimetable(room, date, name, callback)
       {
-            this.conn.query(`select id,start_hour,end_hour from timetable where id not in (
-                  select distinct timetable_id from session where classroom_id=? and session_date=?
-            )`, [room, date], (err, res) =>
+            this.conn.query(`call getSuitableTimetable(?,?,?)`, [room, date,name], (err, res) =>
             {
                   if (err)
                         callback(null, err);
                   else
-                        callback(res, null);
+                        callback(res.length ? res.filter((elem, i) => i !== res.length - 1) : [], null);
             });
       }
 
