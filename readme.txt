@@ -4,6 +4,7 @@ Additional features:
 Features that worked but can cause real-life issues and the USER MUST BE CAREFUL:
       - Add teachers to sessions when creating a new class (this can leads to teachers have to take multiple continous sessions in different classes in a day without a break).
       - Deactivating/reactivating classes (this can leads to schedules overlapping with other classes, which can lead to serious problems).
+      - Add a new session to a class (this can leads to students have to take multiple continous sessions in a day without a break).
 
 Features opted out while building the system:
       - Edit class info feature (I really don't know what needed to be changed OVERALL, everything needed to edit a class details or session details is already there.
