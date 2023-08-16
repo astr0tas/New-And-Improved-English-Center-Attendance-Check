@@ -48,45 +48,64 @@ app.use(session({
 
 app.use((req, res, next) =>
 {
-      const contentType = req.get('Content-Type');
-      const authorization = req.header('Authorization');
-
-      console.log('Content-Type:', contentType);
-      console.log('Authorization:', authorization);
-
-      // Check if it is a GET request
-      if (req.method === 'GET')
-      {
-            // Allow undefined or null Content-Type
-            if (contentType !== undefined && contentType !== null)
-            {
-                  return res.status(400).send({ message: 'Invalid Content-Type' });
-            }
-      }
+      if (req.url === '/logout' || req.url === '/isLoggedIn' || req.url === '/getAuthKey' || req.url === '/' || req.url === '/recovery' || req.url === '/getKey')
+            next();
       else
       {
-            // Verify the Content-Type header for other request methods (only POST requests are used in this project)
-            if (contentType !== 'application/json' && !contentType.includes('multipart/form-data'))
+            if (!req.session)
+                  return res.status(401).send('Session cookie not present!');
+
+            validation.validateID(req.session.userID, (result, err) =>
             {
-                  return res.status(400).send({ message: 'Invalid Content-Type' });
-            }
+                  if (err)
+                  {
+                        console.log(err);
+                        res.status(500).send({ message: 'Server internal error!' });
+                  }
+                  else
+                  {
+                        const contentType = req.get('Content-Type');
+                        // const authorization = req.header('Authorization');
+
+                        console.log('Content-Type:', contentType);
+                        // console.log('Authorization:', authorization);
+
+                        // Check if it is a GET request
+                        if (req.method === 'GET')
+                        {
+                              // Allow undefined or null Content-Type
+                              if (contentType !== undefined && contentType !== null)
+                              {
+                                    return res.status(400).send({ message: 'Invalid Content-Type' });
+                              }
+                        }
+                        else
+                        {
+                              // Verify the Content-Type header for other request methods (only POST requests are used in this project)
+                              if (contentType !== 'application/json' && !contentType.includes('multipart/form-data'))
+                              {
+                                    return res.status(400).send({ message: 'Invalid Content-Type' });
+                              }
+                        }
+
+                        // Verify the Authorization header (not needed for this project)
+                        // if (!authorization)
+                        // {
+                        //       return res.status(401).send('Authorization header is missing');
+                        // }
+
+                        // Perform any other necessary verification steps here
+
+                        // If all verification steps pass, proceed to the API endpoint
+                        next();
+                  }
+            });
       }
-
-      // Verify the Authorization header (not needed for this project)
-      // if (!authorization)
-      // {
-      //       return res.status(401).send('Authorization header is missing');
-      // }
-
-      // Perform any other necessary verification steps here
-
-      // If all verification steps pass, proceed to the API endpoint
-      next();
 });
 
 app.post('/getKey', (req, res) =>
 {
-      console.log('Key fetched!');
+      console.log('Data AES key fetched!');
       if (!req.session.userID)
             res.status(403).send({ message: 'No key for you!' });
       else
@@ -115,7 +134,7 @@ app.post('/getKey', (req, res) =>
 
 app.post('/getAuthKey', (req, res) =>
 {
-      console.log('Authentication key fetched!');
+      console.log('Authentication AES key fetched!');
 
       clearTimeout(authTimer);
       const keys = new NodeRSA(req.body.params.key, 'public', { encryptionScheme: 'pkcs1' });

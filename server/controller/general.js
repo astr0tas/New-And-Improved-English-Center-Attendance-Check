@@ -169,24 +169,7 @@ generalRoutes.post('/recovery', (req, res) =>
       const password = data.params.password;
       const email = data.params.email;
       const phone = data.params.phone;
-      authenticateModel.recovery(username, password, email, phone, (result, err) =>
-      {
-            if (err)
-            {
-                  console.log(err);
-                  res.status(500).send({ message: 'Server internal error!' });
-            }
-            else
-                  res.status(200).send({ message: 'Password changed successfully!' });
-      })
-});
 
-generalRoutes.post('/validateUser', (req, res) =>
-{
-      const data = decryptWithAESAuthKey(req.body.data);
-      const username = data.params.username;
-      const email = data.params.email;
-      const phone = data.params.phone;
       authenticateModel.validateUser(username, email, phone, (result, err) =>
       {
             if (err)
@@ -196,12 +179,23 @@ generalRoutes.post('/validateUser', (req, res) =>
             }
             else
             {
-                  if (result.length)
-                        res.status(200).send({ message: 'Username found, please proceed!' });
+                  if (!result.length)
+                        res.status(204).send(encryptWithAES({ message: 'No user found!' }));
                   else
-                        res.status(204).send({ message: 'No username found!' });
+                  {
+                        authenticateModel.recovery(username, password, email, phone, (result1, err) =>
+                        {
+                              if (err)
+                              {
+                                    console.log(err);
+                                    res.status(500).send({ message: 'Server internal error!' });
+                              }
+                              else
+                                    res.status(200).send({ message: 'Password changed successfully!' });
+                        })
+                  }
             }
-      })
+      });
 });
 
 const profileModel = new Profile();

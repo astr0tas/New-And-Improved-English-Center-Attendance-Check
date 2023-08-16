@@ -1,7 +1,9 @@
 import axios from 'axios';
 import { publicKey, encrypt, decrypt } from './encryption';
 
-const request = axios.create();
+const request = axios.create({
+      withCredentials: true
+});
 
 request.interceptors.request.use(async (config) =>
 {

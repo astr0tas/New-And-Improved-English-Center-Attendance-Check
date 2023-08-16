@@ -4,7 +4,6 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useRef, useState } from 'react';
 import { AiOutlineCloseCircle } from 'react-icons/ai';
 import { domain } from '../../../../tools/domain';
-import { isRefValid } from '../../../../tools/refChecker';
 import '../../../../../src/css/modal.css';
 import '../../../../../src/css/scroll.css';
 import { Modal } from 'react-bootstrap';
@@ -14,9 +13,6 @@ function Recovery()
       document.title = 'Account recovery';
 
       const Navigate = useNavigate();
-
-      const checkUsername = useRef(null);
-      const changingPassword = useRef(null);
 
       // Validate username
       const [username, setUsername] = useState("");
@@ -52,9 +48,15 @@ function Recovery()
             return pattern.test(inputString);
       }
 
-      const usernameValidation = (event) =>
+      // Changing password
+      const [password, setPassword] = useState();
+      const [repassword, setRepassword] = useState();
+      const [isMatch, setIsMatch] = useState(true);
+      const [showPopUp, setShowPopUp] = useState(false);
+
+      const changePassword = (e) =>
       {
-            event.preventDefault();
+            e.preventDefault();
             let isOk = true;
             if (username === "")
             {
@@ -65,6 +67,11 @@ function Recovery()
             {
                   setUsernameInvalid(true);
                   isOk = false;
+            }
+            else 
+            {
+                  setIsUsernameMissing(false);
+                  setUsernameInvalid(false);
             }
 
             if (phone === '')
@@ -77,6 +84,11 @@ function Recovery()
                   setIsPhoneInvalid(true);
                   isOk = false;
             }
+            else
+            {
+                  setIsPhoneMissing(false);
+                  setIsPhoneInvalid(false);
+            }
 
             if (email === '')
             {
@@ -88,61 +100,37 @@ function Recovery()
                   setIsEmailInvalid(true);
                   isOk = false;
             }
-
-            if (isOk)
+            else
             {
-                  setIsUsernameMissing(false);
-                  setUsernameInvalid(false);
-                  setIsPhoneInvalid(false);
-                  setIsPhoneMissing(false);
-                  setIsEmailInvalid(false);
                   setIsEmailMissing(false);
-
-                  authRequest.post(`http://${ domain }/validateUser`, { params: { username: username, email: email, phone: phone } }, {
-                        headers: { 'Content-Type': 'application/json' }
-                  })
-                        .then(res =>
-                        {
-                              if (res.status === 200)
-                              {
-                                    setIsWrong(false);
-                                    if (isRefValid(checkUsername))
-                                          checkUsername.current.style.display = "none";
-                                    if (isRefValid(changingPassword))
-                                          changingPassword.current.style.display = "flex";
-                              }
-                              else if (res.status === 204)
-                              {
-                                    setIsWrong(true);
-                              }
-                        })
-                        .catch(error => console.log(error));
+                  setIsEmailInvalid(false);
             }
-      }
 
-      // Changing password
-      const [password, setPassword] = useState();
-      const [repassword, setRepassword] = useState();
-      const [isMatch, setIsMatch] = useState(true);
-      const [showPopUp, setShowPopUp] = useState(false);
-
-      const changePassword = (e) =>
-      {
-            e.preventDefault();
             if (password !== repassword)
             {
                   setIsMatch(false);
+                  isOk = false;
             }
             else
-            {
                   setIsMatch(true);
+
+            if (isOk)
+            {
                   authRequest.post(`http://${ domain }/recovery`, { params: { username: username, password: password, email: email, phone: phone } }, {
                         headers: { 'Content-Type': 'application/json' }
                   })
                         .then(res =>
                         {
                               if (res.status === 200)
+                              {
                                     setShowPopUp(true);
+                                    setIsWrong(false);
+                              }
+                              else if (res.status === 204)
+                              {
+                                    setShowPopUp(false);
+                                    setIsWrong(true);
+                              }
                         })
                         .catch(error => console.log(error));
             }
@@ -151,12 +139,11 @@ function Recovery()
       return (
             <>
                   <div className={ `${ styles.background }` }></div>
-                  {/* Validate username first */ }
                   <div className='w-100 h-100 align-items-center d-flex flex-column' ref={ popUpContainer }>
-                        <div className={ `container-fluid h-100 ${ styles.checkUsername }` } ref={ checkUsername }>
-                              <form onSubmit={ usernameValidation } className={ `${ styles.form } bg-light d-flex flex-column align-items-center justify-content-around fs-5 mx-auto my-auto` }>
+                        <div className={ `container-fluid h-100 ${ styles.checkUsername }` }>
+                              <form onSubmit={ changePassword } className={ `${ styles.form } bg-light d-flex flex-column align-items-center justify-content-around fs-5 mx-auto my-auto` }>
                                     <div className="border-bottom border-dark w-100 d-flex flex-column align-items-center mb-5">
-                                          <h1 className={ `my-3 mx-5 ${ styles.title }` }>User validation</h1>
+                                          <h1 className={ `my-3 mx-5 ${ styles.title }` }>Account recovery</h1>
                                     </div>
                                     <div className="mb-4 form-outline">
                                           <label htmlFor="form_username" className={ `${ styles.font }` }>Username</label>
@@ -248,35 +235,6 @@ function Recovery()
                                                 </p>
                                           </div>
                                     }
-                                    <div className='d-flex align-items-center mb-4'>
-                                          {
-                                                isWrong
-                                                &&
-                                                <>
-                                                      <AiOutlineCloseCircle style={ {
-                                                            marginRight: '5px',
-                                                            marginBottom: '16px'
-                                                      } } className={ `${ styles.p }` } />
-                                                      <p className={ `${ styles.p }` }>
-                                                            User not found!
-                                                      </p>
-                                                </>
-                                          }
-                                    </div>
-                                    <input type="submit" className={ `btn btn-primary btn-block mb-4 ${ styles.font }` } value="Continue" />
-                                    <div className="row mb-4">
-                                          <div className="col">
-                                                <span className={ `${ styles.font }` }>Go back to <Link to="/" className={ `text-decoration-none` }>login</Link></span>
-                                          </div>
-                                    </div>
-                              </form>
-                        </div>
-                        {/* Changing password */ }
-                        <div className={ `container-fluid h-100 ${ styles.newPassword } flex-column align-items-center` } ref={ changingPassword }>
-                              <form onSubmit={ changePassword } className={ `${ styles.form } bg-light d-flex flex-column align-items-center justify-content-around fs-5 mx-auto my-auto` }>
-                                    <div className="border-bottom border-dark w-100 d-flex flex-column align-items-center mb-5">
-                                          <h1 className={ `my-3 mx-5 ${ styles.title }` }>Change password</h1>
-                                    </div>
                                     <div className="mb-4 form-outline">
                                           <label htmlFor="form_password" className={ `${ styles.font }` }>New password</label>
                                           <input type="password" id="form_password" className={ `form-control ${ styles.font }` } placeholder="Password" onChange={ (e) => { setPassword(e.target.value); } } />
@@ -307,41 +265,54 @@ function Recovery()
                                                 </p>
                                           }
                                     </div>
-                                    <input type="submit" className={ `btn btn-primary btn-block mb-4 ${ styles.font }` } value="Finish" />
+                                    {
+                                          isWrong
+                                          &&
+                                          <div className='d-flex align-items-center mb-4'>
+                                                <AiOutlineCloseCircle style={ {
+                                                      marginRight: '5px',
+                                                      marginBottom: '16px'
+                                                } } className={ `${ styles.p }` } />
+                                                <p className={ `${ styles.p }` }>
+                                                      User information not found!
+                                                </p>
+                                          </div>
+                                    }
+                                    <input type="submit" className={ `btn btn-primary btn-block mb-4 ${ styles.font }` } value="Continue" />
                                     <div className="row mb-4">
                                           <div className="col">
                                                 <span className={ `${ styles.font }` }>Go back to <Link to="/" className={ `text-decoration-none` }>login</Link></span>
                                           </div>
                                     </div>
                               </form>
-                              <Modal show={ showPopUp } className={ `reAdjustModel hideBrowserScrollbar` } container={ changingPassword.current }>
-                                    <Modal.Header className='border border-0'>
-                                    </Modal.Header>
-                                    <Modal.Body className='border border-0 d-flex justify-content-center'>
-                                          <h4 className='text-center'>Password changed successfully!</h4>
-                                    </Modal.Body>
-                                    <Modal.Footer className='justify-content-center border border-0'>
-                                          <button className='btn btn-primary ms-2 ms-md-4' onClick={ () =>
-                                          {
-                                                Navigate("/");
-                                          } }>Okay</button>
-                                    </Modal.Footer>
-                              </Modal>
-                              <Modal show={ errorPopUp } onHide={ () => { setErrorPopUp(false); } } className={ `reAdjustModel hideBrowserScrollbar ${ styles.confirmModal }` } container={ popUpContainer.current }>
-                                    <Modal.Header className='border border-0' closeButton>
-                                    </Modal.Header>
-                                    <Modal.Body className='border border-0 d-flex justify-content-center'>
-                                          <h4 className='text-center'>An error has occurred!</h4>
-                                    </Modal.Body>
-                                    <Modal.Footer className='justify-content-center border border-0'>
-                                          <button className={ `btn btn-primary me-2 me-md-4` } onClick={ () =>
-                                          {
-                                                setErrorPopUp(false);
-                                          } }>Okay</button>
-                                    </Modal.Footer>
-                              </Modal>
-                        </div >
-                  </div>
+                        </div>
+                        <Modal show={ showPopUp } className={ `reAdjustModel hideBrowserScrollbar` } container={ popUpContainer.current }>
+                              <Modal.Header className='border border-0'>
+                              </Modal.Header>
+                              <Modal.Body className='border border-0 d-flex justify-content-center'>
+                                    <h4 className='text-center'>Password changed successfully!</h4>
+                              </Modal.Body>
+                              <Modal.Footer className='justify-content-center border border-0'>
+                                    <button className='btn btn-primary ms-2 ms-md-4' onClick={ () =>
+                                    {
+                                          Navigate("/");
+                                    } }>Okay</button>
+                              </Modal.Footer>
+                        </Modal>
+                        <Modal show={ errorPopUp } onHide={ () => { setErrorPopUp(false); } } className={ `reAdjustModel hideBrowserScrollbar ${ styles.confirmModal }` } container={ popUpContainer.current }>
+                              <Modal.Header className='border border-0' closeButton>
+                              </Modal.Header>
+                              <Modal.Body className='border border-0 d-flex justify-content-center'>
+                                    <h4 className='text-center'>An error has occurred!</h4>
+                              </Modal.Body>
+                              <Modal.Footer className='justify-content-center border border-0'>
+                                    <button className={ `btn btn-primary me-2 me-md-4` } onClick={ () =>
+                                    {
+                                          setErrorPopUp(false);
+                                    } }>Okay</button>
+                              </Modal.Footer>
+                        </Modal>
+                  </div >
             </>
       );
 }

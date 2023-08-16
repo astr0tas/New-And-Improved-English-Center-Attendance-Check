@@ -71,7 +71,7 @@ export class Authentication
 
       validateUser(username, email, phone, callback)
       {
-            this.conn.query(`select username from employee where username=? and email=? and phone=?`, [username, email, phone], (err, res) =>
+            this.conn.query(`select * from employee where username=? and email=? and phone=?`, [username, email, phone], (err, res) =>
             {
                   if (err)
                         callback(null, err);

@@ -9,7 +9,7 @@ const publicKey = keys.getPublicKey();
 
 async function getKey()
 {
-      const res = await axios.post(`http://${ domain }/getAuthKey`, { params: { key: publicKey } }, {  headers: { 'Content-Type': 'application/json' } });
+      const res = await axios.post(`http://${ domain }/getAuthKey`, { params: { key: publicKey } }, { headers: { 'Content-Type': 'application/json' } });
       const result = keys.decrypt(res.data.key, 'utf8');
       return result;
 }
