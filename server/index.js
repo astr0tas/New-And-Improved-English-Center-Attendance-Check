@@ -64,40 +64,45 @@ app.use((req, res, next) =>
                   }
                   else
                   {
-                        const contentType = req.get('Content-Type');
-                        // const authorization = req.header('Authorization');
-
-                        console.log('Content-Type:', contentType);
-                        // console.log('Authorization:', authorization);
-
-                        // Check if it is a GET request
-                        if (req.method === 'GET')
+                        if (result.length !== 0)
                         {
-                              // Allow undefined or null Content-Type
-                              if (contentType !== undefined && contentType !== null)
+                              const contentType = req.get('Content-Type');
+                              // const authorization = req.header('Authorization');
+
+                              console.log('Content-Type:', contentType);
+                              // console.log('Authorization:', authorization);
+
+                              // Check if it is a GET request
+                              if (req.method === 'GET')
                               {
-                                    return res.status(400).send({ message: 'Invalid Content-Type' });
+                                    // Allow undefined or null Content-Type
+                                    if (contentType !== undefined && contentType !== null)
+                                    {
+                                          return res.status(400).send({ message: 'Invalid Content-Type' });
+                                    }
                               }
+                              else
+                              {
+                                    // Verify the Content-Type header for other request methods (only POST requests are used in this project)
+                                    if (contentType !== 'application/json' && !contentType.includes('multipart/form-data'))
+                                    {
+                                          return res.status(400).send({ message: 'Invalid Content-Type' });
+                                    }
+                              }
+
+                              // Verify the Authorization header (not needed for this project)
+                              // if (!authorization)
+                              // {
+                              //       return res.status(401).send('Authorization header is missing');
+                              // }
+
+                              // Perform any other necessary verification steps here
+
+                              // If all verification steps pass, proceed to the API endpoint
+                              next();
                         }
                         else
-                        {
-                              // Verify the Content-Type header for other request methods (only POST requests are used in this project)
-                              if (contentType !== 'application/json' && !contentType.includes('multipart/form-data'))
-                              {
-                                    return res.status(400).send({ message: 'Invalid Content-Type' });
-                              }
-                        }
-
-                        // Verify the Authorization header (not needed for this project)
-                        // if (!authorization)
-                        // {
-                        //       return res.status(401).send('Authorization header is missing');
-                        // }
-
-                        // Perform any other necessary verification steps here
-
-                        // If all verification steps pass, proceed to the API endpoint
-                        next();
+                              return res.status(401).send({ message: "Invalid user!" });
                   }
             });
       }
