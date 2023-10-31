@@ -1,3 +1,5 @@
+This project is just a prove a concept.
+
 Features that worked but can cause real-life issues and the USER MUST BE CAREFUL:
       - Add teachers to sessions when creating a new class (this can leads to teachers have to take multiple continous sessions in different classes in a day without a break).
       - Deactivating/reactivating classes (this can leads to schedules overlapping with other classes, which can lead to serious problems).
